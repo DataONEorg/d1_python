@@ -59,31 +59,6 @@ Configuration files for isort (`./.isort.cfg`) and Flake8 (`./.style.yapf`) are 
 ### Unit tests
 
 Testing is based on the [pytest](https://docs.pytest.org/en/latest/) unit test framework.
-
-I have found the following aliases handy for running the tests. If using the `bash` shell, these can be added to `~/.bashrc`.
-
-* Run tests serially. If the test uses one or more samples, and the result of the test has changed since the last time the sample was updated, open a diff between the current result and the sample in the PyCharm diff viewer and prompt the user for how to handle the mismatch. Options are to update the sample to match the current result and continue, ignore the mismatch for now and continue, or fail the test. When a test fails, stop the test run and open the location of the test failure in PyCharm, with the cursor set to the last line that was executed before the error and is part of d1_python.
-
-      alias p='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm'
-
-* Same as `p`, but more verbose and disabled capturing of console output. Capturing causes output from tests that passed to be hidden, making it easier to find the output from tests that failed. However, it makes debugging harder, as no output is displayed while stepping through tests that have not yet failed.
-
-      alias pc='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm -vv --capture=no'
-
-* Run tests in parallel using all available CPU cores, and create a coverage report. This greatly speeds up test execution but cannot be used with the PyCharm integration and interactive sample updates. 
-
-      alias pn='pytest -n auto --cov=. --cov-report=term --cov-report=xml'
-
-pytest searches for and runs all tests below the current directory, so starting pytest directly or via one of the aliases from the d1_python directory will run all tests.
-
-To run a specific test module, add a path to the test module. E.g.:
-
-    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py
- 
-To run only a single test, add a filter on the test number. E.g.:
-
-    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py -k 1050
-
  
 #### Sample files
 
@@ -138,6 +113,32 @@ We have added some custom functionality to pytest which can be enabled by launch
 
 Note: None of these switches can be used when running tests in parallel with xdist (`-n`, `--dist`, `--tx`).
 
+#### Aliases
+
+I have found the following aliases handy for running the tests. If using the `bash` shell, these can be added to `~/.bashrc`.
+
+* Run tests serially. If the test uses one or more samples, and the result of the test has changed since the last time the sample was updated, open a diff between the current result and the sample in the PyCharm diff viewer and prompt the user for how to handle the mismatch. Options are to update the sample to match the current result and continue, ignore the mismatch for now and continue, or fail the test. When a test fails, stop the test run and open the location of the test failure in PyCharm, with the cursor set to the last line that was executed before the error and is part of d1_python.
+
+      alias p='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm'
+
+* Same as `p`, but more verbose and disabled capturing of console output. Capturing causes output from tests that passed to be hidden, making it easier to find the output from tests that failed. However, it makes debugging harder, as no output is displayed while stepping through tests that have not yet failed.
+
+      alias pc='pytest --exitfirst --random-order-bucket=none --sample-ask --pycharm -vv --capture=no'
+
+* Run tests in parallel using all available CPU cores, and create a coverage report. This greatly speeds up test execution but cannot be used with the PyCharm integration and interactive sample updates. 
+
+      alias pn='pytest -n auto --cov=. --cov-report=term --cov-report=xml'
+
+pytest searches for and runs all tests below the current directory, so starting pytest directly or via one of the aliases from the d1_python directory will run all tests.
+
+To run a specific test module, add a path to the test module. E.g.:
+
+    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py
+ 
+To run only a single test, add a filter on the test number. E.g.:
+
+    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py -k 1050
+
 #### Debugging tests with PyCharm
 
 * By default, the PyCharm `Run context configuration (Ctrl+Shift+F10)` will generate test configurations and run the tests under the native unittest framework in Python's standard library. This will cause the tests to fail, as they require pytest. To generate pytest configurations by default, set `Settings > Tools > Python Integrated Tools > Default test runner` to pytest. See the [documentation](https://www.jetbrains.com/help/pycharm/2017.1/testing-frameworks.html) for details.
@@ -178,9 +179,15 @@ After changing any of the ORM classes in models.py, the database test fixture mu
 
 Generate the fixture file with:
 
-    $ ./dev/d1_python/gmn/src/d1_gmn/tests/mk_db_fixture.py
+    $ ./gmn/src/d1_gmn/tests/mk_db_fixture.py
 
 Fixtures can be loaded directly into the test database from the JSON files but it's much faster to keep an extra copy of the db as a template and create the test db as needed with Postgres' "create database from template" function. So we only load the fixtures into a template database and reuse the template. This is implemented in `./conftest.py`.
+
+Create template database from fixture with:
+
+    $ ./gmn/src/d1_gmn/tests/mk_db_template.py  
+
+The template is reused between test runs.
 
 Science object bytes are stored on disk, so they are not captured in the db fixture. If a test needs get(), getChecksum() and replica() to work, it must first create the correct file in GMN's object store or mock object store reads. The bytes are predetermined for a given test PID. See `d1_test.d1_test_case.generate_reproducible_sciobj_str()` and `d1_gmn.app.util.sciobj_file_path()`.
 
