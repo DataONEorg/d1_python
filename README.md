@@ -45,55 +45,16 @@ See the [documentation on ReadTheDocs](http://dataone-python.readthedocs.io/en/l
 
 Pull Requests (PRs) are welcome! Before you start coding, feel free to reach out to us and let us know what you plan to implement. We might be able to point you in the right direction.
 
-We try to follow [PEP8](https://www.python.org/dev/peps/pep-0008/), with the main exception being that we use two instead of four spaces per indent.
+We try to follow [PEP8](https://www.python.org/dev/peps/pep-0008/).
 
-To help keep the style consistent and commit logs, blame/praise and other code annotations accurate, we use the following `pre-commit` hooks to automatically format and check Python scripts before committing to GitHub:
+To help keep the style consistent and commit logs, blame/praise and other code annotations accurate, we autoformat all source with Black, isort and docformatter. A script that wraps up the formatting is available at `./dev_tools/src/d1_dev/src-format.py`. Simply call it before commit.
 
-* [YAPF](https://github.com/google/yapf) - PEP8 formatting with DataONE modifications
+* [Black](https://black.readthedocs.io/en/stable/) - Standardized source formatting
 * [isort](https://github.com/timothycrosley/isort) - Sort and group imports
-* [trailing-whitespace](git://github.com/pre-commit/pre-commit-hooks) - Remove trailing whitespace
+* [docformatter](https://github.com/myint/docformatter) - PEP257 format docstrings 
 * [Flake8](http://flake8.pycqa.org/en/latest/) - Lint, code and style validation
 
-Configuration files for YAPF (`./.flake8`), isort (`./.isort.cfg`) and Flake8
-(`./.style.yapf`) are included, and show the formatting options we have
-selected.
-
-Contributors are encouraged to set up the hooks before creating PRs. This can be done automagically with [pre-commit](pre-commit.com), for which a configuration file is also included.
-
-To set up automatic validation and formatting:
-
-    $ pip install pre-commit
-    $ cd <a folder in the Git working tree for the repository>
-    $ pre-commit autoupdate --bleeding-edge
-    $ pre-commit install
-
-Notes:
-
-* `--bleeding-edge` is required as shown above at the time of writing, Oct 2018.
-
-* If the `YAPF`, `isort` or `trailing-whitespace` hooks modify any of the files being committed, the hooks will show as `Failed` and the commit is aborted. This provides an opportunity to examine the reformatted files and run the unit and integration tests again in order make sure the reformat did not break anything. The modified files can then be staged and committed again. If no new modifications have been made, the commit then goes through, with the hooks showing a status of `Passed`.
-
-  A convenient command to "restage" the files modified by pre-commit:
-
-      $ git update-index --again
-
-  Or, to add a shortcut:
-
-      $ git config --global alias.restage "update-index --again"
-
-      $ git restage
-
-
-* `Flake8` only performs validation, not formatting. If validation fails, the issues should be fixed before committing. The modifications may then trigger a new formatting by `YAPF` and/or `trailing-whitespace`, thus requiring the files to be staged and commited again.
-
-* If desired, the number of extra staging and commits caused by reformatting and validation can be reduced with workflow adjustments:
-
-  * **trailing whitespace**: Use an editor that can strip trailing whitespace on save. E.g., for PyCharm, this setting is at `Editor > General > Strip trailing spaces on Save`.
-
-  * **YAPF formatting**: Call `YAPF` manually on the file before commit. `YAPF` searches from current directory and up in the tree for configuration files. So, as long as current directory is in the repository root or below, `YAPF` should pick up and use the configuration that is included in the repository. To call `YAPF` manually, it can either be installed separately, or an alias can be set up to call the version that `pre-commit` has installed into its own venv.
-
-  * **Flake8 validation**: the same procedure as for `YAPF` can be used, as `Flake8` searches for its configuration file in the same way. In addition, IDEs can typically do code inspections and tag issues directly in the UI, where they can be handled before commit.
-
+Configuration files for isort (`./.isort.cfg`) and Flake8 (`./.style.yapf`) are included, and show the formatting options we have selected.
 
 ### Unit tests
 
@@ -187,21 +148,13 @@ Note: None of these switches can be used when running tests in parallel with xdi
 
 The GMN tests run in the context of a database that has been prepopulated with randomized data. The fixture file for the database is a JSON file stored in
 
-    ./test_utilities/src/d1_test/test_docs/db_fixture_gmn1.gz
+    ./test_utilities/src/d1_test/test_docs/json/db_fixture.json.bz2
 
-Set up a blank database to be populated with test data:
-    
-    $ sudo -u postgres dropdb --if-exists gmn_test_db_template
-    $ sudo -u postgres createdb -E UTF8 --owner=<your user name> gmn_test_db_template
-    $ ./gmn/src/d1_gmn/manage.py migrate --settings settings_test --database template --run-syncdb
+After changing any of the ORM classes in models.py, the database test fixture must be regenerated. This will often cause sample files to have to be updated as well, by running the tests with `--sample-update`.
 
-Regenerate the fixture file:
+Generate the fixture file with:
 
-    $ ./gmn/src/d1_gmn/tests/mk_db_fixture.py
-
-The name, `gmn_test_db_template`, must match the name of the database that is set up for the dict key `template` in `settings_test.DATABASE`.
-
-After changing any of the ORM classes in models.py, the database test fixture must be regenerated. This will often cause sample files to have to be updated as well.
+    $ ./dev/d1_python/gmn/src/d1_gmn/tests/mk_db_fixture.py
 
 Fixtures can be loaded directly into the test database from the JSON files but it's much faster to keep an extra copy of the db as a template and create the test db as needed with Postgres' "create database from template" function. So we only load the fixtures into a template database and reuse the template. This is implemented in `./conftest.py`.
 
