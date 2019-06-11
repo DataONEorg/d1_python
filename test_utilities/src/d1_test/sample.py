@@ -151,7 +151,10 @@ def path_lock(path):
     finally:
         sem.release()
         logger.debug("Released lock on path: {}".format(path))
-        sem.unlink()
+        try:
+            sem.unlink()
+        except posix_ipc.ExistentialError:
+            pass
 
 
 @contextlib.contextmanager
