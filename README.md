@@ -254,8 +254,23 @@ Edit `~/.pypirc`:
 
 Update all packages managed by pip:
 
-    $ cd d1_python
     $ ./dev_tools/src/d1_dev/pip-update-all.py
+
+The DataONE Python stack specifies the versions that were tested in CI builds before release as the lowest required versions, and allows any later versions to be installed as part of regular maintenance.
+
+Check that there are no package version conflicts:
+
+    $ pip check 
+
+As updating the versions in the `setup.py` files manually is time consuming and error prone, a script is included that automates the task. The script updates the version information for the dependencies in the `setup.py` files to match the versions of the currently installed dependencies. Update the `setup.py` files with:
+
+    $ ./dev_tools/src/d1_dev/src-sync-dependencies.py . <version>
+
+The `<version>` argument specifies what the version will be for the release. E.g., `"2.3.1"`. We keep the version numbers in sync between all of the packages in the d1_python git repository, so only one version string needs to be specified.
+
+The current version can be found in any of the `setup.py` files and in the `VERSION` string in `./lib_common/src/d1_common/const/.py`
+
+Run the tests, ensure that they pass and update sample files as necessary.
 
 The `requirements.txt` file contains a list of packages and pinned versions that will be used in CI builds. It designates the exact Python environment in which the unit tests will run in CI builds.
 
