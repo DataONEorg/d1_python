@@ -13,7 +13,7 @@ form-data; name=\"post_data_2\"
     "Connection": "keep-alive",
     "Content-Length": "230",
     "Content-Type": "multipart/form-data; boundary=[BOUNDARY]",
-    "User-Agent": "DataONE-Python[VERSION] +http://dataone.org/"
+    "User-Agent": "DataONE-Python/[VERSION] +http://dataone.org/"
   },
   "query_dict": {}
 }

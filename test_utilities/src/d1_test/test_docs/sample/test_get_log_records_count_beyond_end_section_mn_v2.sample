@@ -4,7 +4,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_ftoniuyiithm</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2068-11-19T08:12:13Z</dateLogged>
@@ -14,7 +14,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_htduueeaisbu</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2068-11-23T21:01:43Z</dateLogged>
@@ -24,7 +24,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_crepyfkbiiqm</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-01-13T10:42:46Z</dateLogged>
@@ -34,7 +34,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_chuolqzvshdk</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-01-30T05:03:19Z</dateLogged>
@@ -44,7 +44,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_vlkxyavdzolj</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-03-13T11:11:22Z</dateLogged>
@@ -54,7 +54,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_bxpewjyafvhp</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-08-16T00:07:13Z</dateLogged>
@@ -64,7 +64,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_gcdbczqdrycm</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-09-03T15:27:08Z</dateLogged>
@@ -74,7 +74,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_veycdapaylzz</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-11-15T13:14:55Z</dateLogged>
@@ -84,7 +84,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_mbhnbijfukkx</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-11-15T23:22:59Z</dateLogged>
@@ -94,7 +94,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_uyojxnqbirgh</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-12-06T03:49:42Z</dateLogged>

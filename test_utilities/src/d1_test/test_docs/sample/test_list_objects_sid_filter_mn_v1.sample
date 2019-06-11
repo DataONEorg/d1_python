@@ -1,17 +1,17 @@
 <?xml version="1.0" ?>
 <ns1:objectList count="2" start="0" total="2" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <objectInfo>
-    <identifier>PID_GMNFXT_vchqnhswfkww</identifier>
-    <formatId>application/vnd.ms-powerpoint</formatId>
-    <checksum algorithm="SHA-1">fb40bfc1085b289529de697552a60fb1787223db</checksum>
-    <dateSysMetadataModified>2002-04-07T00:00:00Z</dateSysMetadataModified>
-    <size>251</size>
+    <identifier>PID_GMNFXT_axzqdjifrerv</identifier>
+    <formatId>application/x-python</formatId>
+    <checksum algorithm="SHA-1">d19d766e8152838cc4d745ef38929980cb289294</checksum>
+    <dateSysMetadataModified>2002-08-29T00:00:00Z</dateSysMetadataModified>
+    <size>254</size>
   </objectInfo>
   <objectInfo>
-    <identifier>PID_GMNFXT_giejqujkenbh</identifier>
-    <formatId>image/jpeg</formatId>
-    <checksum algorithm="SHA-1">996f2534094a1c93ea3c9e43d86a802b7fb23385</checksum>
-    <dateSysMetadataModified>2054-06-10T15:18:34Z</dateSysMetadataModified>
-    <size>231</size>
+    <identifier>PID_GMNFXT_bdvllxaonqdm</identifier>
+    <formatId>http://www.w3.org/TR/rdf-testcases/#ntriples</formatId>
+    <checksum algorithm="SHA-1">fb661f5ba837556eca44aee15b0d496d78402613</checksum>
+    <dateSysMetadataModified>2046-09-15T20:12:40Z</dateSysMetadataModified>
+    <size>322</size>
   </objectInfo>
 </ns1:objectList>

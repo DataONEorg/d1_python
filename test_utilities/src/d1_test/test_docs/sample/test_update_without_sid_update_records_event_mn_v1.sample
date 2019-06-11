@@ -4,7 +4,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_rzfqevloxcky</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2013-08-10T05:54:39Z</dateLogged>
@@ -14,7 +14,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_rzfqevloxcky</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>update</event>
     <dateLogged>2063-06-25T19:19:10Z</dateLogged>

@@ -4,7 +4,7 @@
     <entryId>[ENTRY-ID]</entryId>
     <identifier>PID_GMNFXT_uyojxnqbirgh</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
     <dateLogged>2069-12-06T03:49:42Z</dateLogged>

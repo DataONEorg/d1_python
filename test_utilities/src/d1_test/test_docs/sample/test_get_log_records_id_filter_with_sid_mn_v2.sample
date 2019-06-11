@@ -2,32 +2,32 @@
 <ns1:log count="3" start="0" total="3" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_joxoaqfkrafj</identifier>
+    <identifier>PID_GMNFXT_ilhaqqyqjfbp</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>create</event>
-    <dateLogged>1991-08-23T12:36:06Z</dateLogged>
+    <dateLogged>1993-11-24T06:38:25Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
   <logEntry>
     <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_qdvmvuapzxwc</identifier>
+    <identifier>PID_GMNFXT_okrcnfpzwoqa</identifier>
     <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
-    <subject>trusted_subj</subject>
-    <event>create</event>
-    <dateLogged>2035-06-21T03:11:39Z</dateLogged>
-    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
-  </logEntry>
-  <logEntry>
-    <entryId>[ENTRY-ID]</entryId>
-    <identifier>PID_GMNFXT_joxoaqfkrafj</identifier>
-    <ipAddress>127.0.0.1</ipAddress>
-    <userAgent>DataONE-Python[VERSION] +http://dataone.org/</userAgent>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
     <subject>trusted_subj</subject>
     <event>update</event>
-    <dateLogged>2035-06-21T03:11:39Z</dateLogged>
+    <dateLogged>1993-11-24T06:38:25Z</dateLogged>
+    <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
+  </logEntry>
+  <logEntry>
+    <entryId>[ENTRY-ID]</entryId>
+    <identifier>PID_GMNFXT_okrcnfpzwoqa</identifier>
+    <ipAddress>127.0.0.1</ipAddress>
+    <userAgent>DataONE-Python/[VERSION] +http://dataone.org/</userAgent>
+    <subject>trusted_subj</subject>
+    <event>create</event>
+    <dateLogged>2058-07-02T20:16:13Z</dateLogged>
     <nodeIdentifier>urn:node:GMNUnitTestInstance</nodeIdentifier>
   </logEntry>
 </ns1:log>

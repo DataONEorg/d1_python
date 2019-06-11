@@ -4,7 +4,7 @@
 < Connection: keep-alive
 < GET /node/v2/object?count=10 HTTP/1.1
 < Host: gmn.client
-< User-Agent: DataONE-Python[VERSION] +http://dataone.org/
+< User-Agent: DataONE-Python/[VERSION] +http://dataone.org/
 
 > Access-Control-Allow-Credentials: true
 > Access-Control-Allow-Headers: Authorization
