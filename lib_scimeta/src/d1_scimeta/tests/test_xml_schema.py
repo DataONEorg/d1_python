@@ -18,9 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-
 import d1_scimeta.xml_schema
+import pytest
 
 import d1_test.d1_test_case
 

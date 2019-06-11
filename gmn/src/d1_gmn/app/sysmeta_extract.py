@@ -15,14 +15,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Extract SciObj values from models"""
+"""Extract SciObj values from models."""
 import d1_gmn.app
+import d1_gmn.app.auth
 import d1_gmn.app.models
+
+import d1_common.types.exceptions
 import d1_common.util
 
 import django.contrib.postgres.aggregates
-import d1_gmn.app.auth
-import d1_common.types.exceptions
 
 
 def extract_values_query(query, field_list, out_stream=None):
@@ -129,6 +130,7 @@ def _write_stream(query, lookup_list, lookup_dict, generate_dict, out_stream):
 def assert_invalid_field_list(field_list):
     """raise d1_common.types.exceptions.InvalidRequest() if ``field_list`` contains any
     invalid field names. A list of the invalid fields is included in the exception.
+
     - Implicitly called by ``extract_values()``.
 
     """
@@ -194,6 +196,7 @@ def _value_list_to_sciobj_dict(
 def _split_field_list(field_list):
     """Split the list of fields for which to extract values into lists by extraction
     methods.
+
     - Remove any duplicated field names.
     - Raises ValueError with list of any invalid field names in ``field_list``.
 

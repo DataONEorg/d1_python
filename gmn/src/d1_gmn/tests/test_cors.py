@@ -107,7 +107,10 @@ class TestCors(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.sample.assert_equals(
             response.headers, 'get_without_origin', gmn_client_v1_v2
         )
-        assert response.headers['Access-Control-Allow-Origin'] == '*'
+        assert (
+            response.headers['Access-Control-Allow-Origin']
+            == 'https://search.dataone.org'
+        )
 
     @responses.activate
     def test_1090(self, gmn_client_v1_v2):

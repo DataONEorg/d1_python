@@ -17,13 +17,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Test MNStorage.updateSystemMetadata()"""
+"""Test MNStorage.updateSystemMetadata().
 
+Method only available in v2.
+
+"""
 import datetime
 
 import freezegun
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
@@ -36,6 +40,7 @@ import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.access_policy
+import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 
 
@@ -91,7 +96,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1010(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata(): Update blocked due to modified timestamp
         mismatch."""
-        # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
                 gmn_client_v2, sid=True
@@ -110,7 +114,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1020(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata(): Successful update."""
-        # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
                 gmn_client_v2, sid=True, rights_holder='rights_holder_subj'
@@ -137,7 +140,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         - Does update dateSysMetadataModified
 
         """
-        # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Create base object with SID
             with freezegun.freeze_time('1988-11-01') as freeze_time:
@@ -167,7 +169,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         connection correctly frees up the connection
 
         """
-        # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Create base object with SID
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
@@ -186,7 +187,6 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1050(self, gmn_client_v2):
         """MNStorage.updateSystemMetadata(): Add new preferred and blocked nodes."""
-        # Not relevant for v1
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Create base object with SID
             base_pid, sid, sciobj_bytes, ver1_sysmeta_pyxb = self.create_obj(
@@ -224,3 +224,21 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             assert d1_common.system_metadata.are_equivalent_pyxb(
                 ver3_sysmeta_pyxb, ver4_sysmeta_pyxb
             )
+
+    @responses.activate
+    def test_1060(self, gmn_client_v2):
+        """MNStorage.updateSystemMetadata() and MNStorage.getSystemMetadata():
+
+        Updating an object that does not have a SID: Setting a new, valid (unknown) SID
+
+        """
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
+                gmn_client_v2, sid=None
+            )
+            sciobj_bytes, sysmeta_pyxb = self.get_obj(gmn_client_v2, pid)
+            sysmeta_pyxb.seriesId = (
+                pid
+            )  # d1_test.instance_generator.identifier.generate_sid()
+            gmn_client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
+            # self.sample.assert_equals(sysmeta_pyxb, 'test')

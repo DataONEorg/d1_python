@@ -16,8 +16,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test the bulk importer management command."""
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_test_case
 
@@ -28,7 +29,7 @@ import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.list_objects
 
 
-@pytest.mark.skip('Need to find if responces can be mocked for aiohttp')
+@pytest.mark.skip('Need to find if responses can be mocked for aiohttp')
 # See: https://docs.aiohttp.org/en/stable/testing.html
 @d1_test.d1_test_case.reproducible_random_decorator('TestMgmtImport')
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):

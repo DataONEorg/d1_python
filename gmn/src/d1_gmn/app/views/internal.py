@@ -216,6 +216,10 @@ def get_total_event_count():
     return d1_gmn.app.models.EventLog.objects.count()
 
 
+def get_total_format_count():
+    return d1_gmn.app.models.ScienceObjectFormat.objects.count()
+
+
 def get_object_count_by_format():
     return {
         d['format__format']: d['count']

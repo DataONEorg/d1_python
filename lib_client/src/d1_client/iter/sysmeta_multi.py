@@ -49,8 +49,9 @@ low max queue size.
 
 import logging
 
-import d1_client.iter.base_multi
 import d1_common.xml
+
+import d1_client.iter.base_multi
 
 logger = logging.getLogger(__name__)
 

@@ -372,18 +372,15 @@ class Command(django.core.management.base.BaseCommand):
         client: pid:
 
         """
-        abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
-        if os.path.isfile(abs_sciobj_path):
+        if d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid):
             self._events.log_and_count(
-                "Skipped download of existing sciobj bytes",
-                'pid="{}" path="{}"'.format(pid, abs_sciobj_path),
+                "Skipped download of existing sciobj bytes", 'pid="{}"'.format(pid)
             )
         else:
-            d1_common.utils.filesystem.create_missing_directories_for_file(
-                abs_sciobj_path
-            )
-            client.get_and_save(pid, abs_sciobj_path)
-        return
+            with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(
+                pid, write=True
+            ) as sciobj_file:
+                client.get_and_save(pid, sciobj_file)
 
     def _get_client_dict(self):
         client_dict = {

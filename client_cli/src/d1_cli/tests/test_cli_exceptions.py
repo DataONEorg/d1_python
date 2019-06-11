@@ -19,10 +19,9 @@
 # limitations under the License.
 """Test the CLI exceptions."""
 
-import pytest
-
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
+import pytest
 
 import d1_test.d1_test_case
 

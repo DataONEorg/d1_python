@@ -115,7 +115,8 @@ def format_all(args, format_path_list):
 
 
 def format_single(args, format_path):
-    run_cmd('black', '--skip-string-normalization', format_path)
+    # run_cmd('black', '--skip-string-normalization', format_path)
+    run_cmd('black', format_path)
     run_cmd('isort', format_path)
     run_cmd(
         'docformatter',

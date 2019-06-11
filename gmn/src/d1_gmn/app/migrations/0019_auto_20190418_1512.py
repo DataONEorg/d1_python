@@ -5,17 +5,9 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('app', '0018_auto_20180901_0115'),
-    ]
+    dependencies = [('app', '0018_auto_20180901_0115')]
 
     operations = [
-        migrations.AlterModelOptions(
-            name='eventlog',
-            options={},
-        ),
-        migrations.AlterModelOptions(
-            name='scienceobject',
-            options={},
-        ),
+        migrations.AlterModelOptions(name='eventlog', options={}),
+        migrations.AlterModelOptions(name='scienceobject', options={}),
     ]

@@ -24,12 +24,12 @@ import freezegun
 import responses
 
 import d1_common.types.dataoneTypes
+import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.mock_api.get_log_records
 
 import d1_client.iter.logrecord_multi
-import d1_common.xml
 
 
 # @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")
@@ -67,12 +67,12 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1000(self):
-        """PageSize=5, no date filter"""
+        """PageSize=5, no date filter."""
         self._log_record_iterator_test(5)
 
     @responses.activate
     def test_1010(self):
-        """PageSize=100, from- and to-date filter"""
+        """PageSize=100, from- and to-date filter."""
         self._log_record_iterator_test(
             100,
             from_date=datetime.datetime(2005, 1, 1),

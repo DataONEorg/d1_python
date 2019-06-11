@@ -16,11 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Views for vendor specific extensions for GMN."""
+import d1_gmn.app.sysmeta
 import d1_gmn.app.sysmeta_extract
 import d1_gmn.app.util
 import d1_gmn.app.views.decorators
 import d1_gmn.app.views.util
-import d1_gmn.app.sysmeta
 
 import d1_common
 import d1_common.const

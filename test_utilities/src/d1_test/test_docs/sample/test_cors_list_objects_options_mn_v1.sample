@@ -5,12 +5,12 @@
 < Content-Length: 0
 < Host: gmn.client
 < OPTIONS /node/v1/object HTTP/1.1
-< User-Agent: DataONE-Python/[VERSION] +http://dataone.org/
+< User-Agent: DataONE-Python[VERSION] +http://dataone.org/
 
 > Access-Control-Allow-Credentials: true
 > Access-Control-Allow-Headers: Authorization
 > Access-Control-Allow-Methods: GET,POST,OPTIONS
-> Access-Control-Allow-Origin: *
+> Access-Control-Allow-Origin: https://search.dataone.org
 > Allow: GET,POST,OPTIONS
 > Content-Type:[CONTENT-TYPE]
 > HTTP-Version: HTTP/1.1

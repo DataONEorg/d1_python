@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """REST call handlers for DataONE Member Node APIs."""
-
+import contextlib
 import logging
 import uuid
 
@@ -29,6 +29,7 @@ import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
 import d1_gmn.app.models
 import d1_gmn.app.node
+import d1_gmn.app.object_format_cache
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
@@ -39,12 +40,11 @@ import d1_gmn.app.views.decorators
 import d1_gmn.app.views.headers
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
-import d1_gmn.app.object_format_cache
 
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
-import d1_common.iter.file
+import d1_common.iter.stream
 import d1_common.object_format_cache
 import d1_common.types.exceptions
 import d1_common.xml
@@ -108,7 +108,7 @@ def dispatch_object_list(request):
 def get_monitor_ping(request):
     """MNCore.ping() → Boolean."""
     response = d1_gmn.app.views.util.http_response_with_boolean_true_type()
-    d1_gmn.app.views.headers.add_http_date_header(response)
+    d1_gmn.app.views.headers.add_http_date(response)
     return response
 
 
@@ -182,22 +182,17 @@ def get_node(request):
 @d1_gmn.app.views.decorators.read_permission
 def get_object(request, pid):
     """MNRead.get(session, did) → OctetStream."""
+    # TODO: Replace all ScienceObject.objects.get() with d1_gmn.app.model_util.get_sci_model()
     sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
     content_type_str = d1_gmn.app.object_format_cache.get_content_type(
         sciobj.format.format
     )
+    # Return local or proxied SciObj bytes
     response = django.http.StreamingHttpResponse(
         _get_sciobj_iter(sciobj), content_type_str
     )
     d1_gmn.app.views.headers.add_sciobj_properties_headers_to_response(response, sciobj)
-    # Log the access of this object.
     d1_gmn.app.event_log.log_read_event(pid, request)
-    # Since the iterator that generates data for StreamingHttpResponse runs
-    # after the view has returned, it is not protected by the implicit transaction
-    # around a request. However, in the unlikely event that a request is made to
-    # delete the object on disk that is being returned, Linux will only hide
-    # the file until this request releases its file handle, at which point the
-    # file is fully deleted.
     return response
 
 
@@ -205,13 +200,7 @@ def _get_sciobj_iter(sciobj):
     if d1_gmn.app.util.is_proxy_url(sciobj.url):
         return _get_sciobj_iter_remote(sciobj.url)
     else:
-        return _get_sciobj_iter_local(sciobj.url)
-
-
-def _get_sciobj_iter_local(sciobj_url):
-    return d1_common.iter.file.FileIterator(
-        d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_url(sciobj_url)
-    )
+        return d1_gmn.app.sciobj_store.get_sciobj_iter_by_url(sciobj.url)
 
 
 def _get_sciobj_iter_remote(url):
@@ -279,10 +268,10 @@ def get_checksum(request, pid):
         )
 
     sciobj_model = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-    sciobj_iter = _get_sciobj_iter(sciobj_model)
-    checksum_obj = d1_common.checksum.create_checksum_object_from_iterator(
-        sciobj_iter, algorithm
-    )
+    with _get_sciobj_iter(sciobj_model) as sciobj_iter:
+        checksum_obj = d1_common.checksum.create_checksum_object_from_iterator(
+            sciobj_iter, algorithm
+        )
     # Log the access of this object.
     # TODO: look into log type other than 'read'
     d1_gmn.app.event_log.log_read_event(pid, request)
@@ -335,10 +324,14 @@ def get_replica(request, pid):
     """MNReplication.getReplica(session, did) → OctetStream."""
     _assert_node_is_authorized(request, pid)
     sciobj = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-    response = django.http.HttpResponse()
+    content_type_str = d1_gmn.app.object_format_cache.get_content_type(
+        sciobj.format.format
+    )
+    # Replica is always a local file that can be handled with FileResponse()
+    response = django.http.FileResponse(
+        d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid), content_type_str
+    )
     d1_gmn.app.views.headers.add_sciobj_properties_headers_to_response(response, sciobj)
-    response._container = _get_sciobj_iter(sciobj)
-    response._is_str = False
     # Log the replication of this object.
     d1_gmn.app.event_log.log_replicate_event(pid, request)
     return response

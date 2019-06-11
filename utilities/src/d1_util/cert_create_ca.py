@@ -21,6 +21,7 @@
 
 The certificate can be used for issuing certificates and sign CSRs that are locally
 trusted.
+
 """
 import argparse
 import logging

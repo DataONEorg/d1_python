@@ -27,6 +27,7 @@
 import logging
 import warnings
 
+# noinspection PyUnresolvedReferences
 from d1_gmn.app.settings_default import *
 
 import d1_common.utils.filesystem
@@ -95,23 +96,13 @@ MAX_SLICE_ITEMS = 5000
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'gmn_test_db',
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',
-        'PORT': '',
-        'ATOMIC_REQUESTS': False,
-        # 'AUTOCOMMIT': False,
-    },
-    'template': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'gmn_test_db_template',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
         'PORT': '',
         'ATOMIC_REQUESTS': False,
-        # 'AUTOCOMMIT': False,
+        'AUTOCOMMIT': False,
     },
 }
 

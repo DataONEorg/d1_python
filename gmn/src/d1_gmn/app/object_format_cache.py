@@ -37,6 +37,18 @@ else:
 
 
 def get_filename(sciobj_model):
+    """Generate a safe filename for SciObj.
+
+    - The returned filename will not have any characters, such as slashes or
+    backslashes, that may cause file access to occur outside of the intended directory
+    in the filesystem.
+    - If a filename is provided in SysMeta, return a safe version of it.
+    - If filename is not provided in SysMeta, generate a filename from a safe version of
+    the PID plus extension derived from the FormatId.
+    - If the FormatId is unknown (not in the CN ObjectFormatList cache), use ".data" as
+    the extension.
+
+    """
     return d1_common.utils.filesystem.gen_safe_path_element(
         sciobj_model.filename
         or (

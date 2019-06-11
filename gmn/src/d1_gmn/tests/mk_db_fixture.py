@@ -43,7 +43,7 @@ isort:skip_file
 import bz2
 import datetime
 import logging
-import os
+# import os
 import random
 import io
 import sys
@@ -55,9 +55,6 @@ import django
 import django.core.management
 import django.db
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings_test'
-django.setup()
-
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 import d1_gmn.app.sysmeta_extract
@@ -68,7 +65,7 @@ import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.user_agent
 
 # Dict lookup key matching the default key in settings_test.DATABASE
-TEST_DB_KEY = 'default'
+TEST_DB_KEY = "default"
 
 N_OBJECTS = 1000
 N_READ_EVENTS = 2 * N_OBJECTS
@@ -88,7 +85,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         # We control the timestamps of newly created objects directly and use
         # freeze_time to control the timestamps that GMN sets on updated objects
         # and events.
-        with freezegun.freeze_time('2001-02-03') as freeze_time:
+        with freezegun.freeze_time("2001-02-03") as freeze_time:
             with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
                 self.clear_db()
                 self.create_objects(freeze_time)
@@ -99,7 +96,7 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     def clear_db(self):
         django.core.management.call_command(
-            'flush', interactive=False, database=TEST_DB_KEY
+            "flush", interactive=False, database=TEST_DB_KEY
         )
 
     def commit(self):
@@ -110,14 +107,14 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         head_pid_set = set()
         with d1_gmn.tests.gmn_mock.disable_auth():
             for i in range(N_OBJECTS):
-                logging.info('-' * 100)
-                logging.info('Creating sciobj: {} / {}'.format(i + 1, N_OBJECTS))
+                logging.info("-" * 100)
+                logging.info("Creating sciobj: {} / {}".format(i + 1, N_OBJECTS))
 
                 freeze_time.tick(delta=datetime.timedelta(days=1))
 
                 do_chain = random.random() < 0.5
 
-                pid = d1_test.instance_generator.identifier.generate_pid('PID_GMNFXT_')
+                pid = d1_test.instance_generator.identifier.generate_pid("PID_GMNFXT_")
                 pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
                     client, pid
                 )
@@ -143,8 +140,8 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 for o in client.listObjects(count=N_OBJECTS).objectInfo
             ]
         for i in range(N_READ_EVENTS):
-            logging.info('-' * 100)
-            logging.info('Creating read event: {} / {}'.format(i + 1, N_READ_EVENTS))
+            logging.info("-" * 100)
+            logging.info("Creating read event: {} / {}".format(i + 1, N_READ_EVENTS))
 
             freeze_time.tick(delta=datetime.timedelta(days=1))
 
@@ -160,26 +157,26 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 client.get(
                     random.choice(pid_list),
                     vendorSpecific={
-                        'User-Agent': d1_test.instance_generator.user_agent.generate()
+                        "User-Agent": d1_test.instance_generator.user_agent.generate()
                     },
                 )
 
     def save_compressed_db_fixture(self):
         fixture_file_path = self.test_files.get_abs_test_file_path(
-            'json/db_fixture.json.bz2'
+            "json/db_fixture.json.bz2"
         )
         logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
         buf = io.StringIO()
         django.core.management.call_command(
-            'dumpdata',
-            exclude=['auth.permission', 'contenttypes'],
+            "dumpdata",
+            exclude=["auth.permission", "contenttypes"],
             database=TEST_DB_KEY,
             stdout=buf,
         )
         with bz2.BZ2File(
-            fixture_file_path, 'w', buffering=1024 ** 2, compresslevel=9
+            fixture_file_path, "w", buffering=1024 ** 2, compresslevel=9
         ) as bz2_file:
-            bz2_file.write(buf.getvalue().encode('utf-8'))
+            bz2_file.write(buf.getvalue().encode("utf-8"))
 
     def save_pid_list_sample(self):
         """Get list of all PIDs in the DB fixture.
@@ -188,14 +185,18 @@ class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
         available in the DB.
 
         """
-        for did in ['pid', 'sid']:
+        for did in ["pid", "sid"]:
             with open(
-                self.test_files.get_abs_test_file_path('json/db_fixture_{}.json'.format(did)),
-                'w',
-                encoding='utf-8',
+                self.test_files.get_abs_test_file_path(
+                    "json/db_fixture_{}.json".format(did)
+                ),
+                "w",
+                encoding="utf-8",
             ) as f:
-                d1_gmn.app.sysmeta_extract.extract_values(field_list=[did], out_stream=f)
+                d1_gmn.app.sysmeta_extract.extract_values(
+                    field_list=[did], out_stream=f
+                )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

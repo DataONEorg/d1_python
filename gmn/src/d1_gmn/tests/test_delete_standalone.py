@@ -22,8 +22,9 @@ obsoletedBy are unset). For v2, the objects may or may not have a SID
 
 """
 
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case

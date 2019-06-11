@@ -25,8 +25,9 @@ tested in MNStorage.create()
 """
 
 import freezegun
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_test_case
 

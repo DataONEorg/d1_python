@@ -47,6 +47,7 @@ import io
 import sys
 
 import d1_common.const
+import d1_common.date_time
 import d1_common.env
 import d1_common.types.dataoneTypes
 
@@ -122,8 +123,8 @@ def main():
         help='Amount of time to wait for calls to complete (seconds)',
     )
 
-    # Create a Member Node client that can be used for running commands against
-    # a specific Member Node.
+    # Create a Member Node client that can be used for running commands against a
+    # specific Member Node.
     client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
         MN_BASE_URL,
         cert_pem_path=CERTIFICATE_FOR_CREATE,
@@ -132,18 +133,18 @@ def main():
     # Get the bytes for the Science Object.
     science_object = open(SCIENCE_OBJECT_FILE_PATH, 'rb').read()
 
-    # Create the System Metadata for the object that is to be uploaded. The
-    # System Metadata contains information about the object, such as its
-    # format, access control list and size.
+    # Create the System Metadata for the object that is to be uploaded. The System
+    # Metadata contains information about the object, such as its format, access control
+    # list and size.
     sys_meta = generate_system_metadata_for_science_object(science_object)
 
-    # Create the object on the Member Node. The create() call takes an open
-    # file-like object for the Science Object. Since we already have the data in a
-    # string, we use StringIO. Another way would be to open the file again, with
-    # "f = open(filename, 'rb')", and then pass "f". The StringIO method is more
-    # efficient if the file fits in memory, as it already had to be read from disk
-    # once, for the MD5 checksum calculation.
-    client.create(SCIENCE_OBJECT_PID, io.StringIO(science_object), sys_meta)
+    # Create the object on the Member Node. The create() call takes an open file-like
+    # object for the Science Object. Since we already have the data in a bytes object,
+    # we use BytesIO. Another way would be to open the file again, with "f =
+    # open(filename, 'rb')", and then pass "f". The BytesIO method may be more efficient
+    # if the file fits in memory, as it already had to be read from disk once, for the
+    # MD5 checksum calculation.
+    client.create(SCIENCE_OBJECT_PID, io.BytesIO(science_object), sys_meta)
 
     print('Object created successfully')
 

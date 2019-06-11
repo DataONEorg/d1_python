@@ -26,7 +26,6 @@ import d1_common.types.exceptions
 import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
-
 # Defaults
 PAGE_SIZE = 1000
 MAX_WORKERS = 16

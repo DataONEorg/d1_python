@@ -29,9 +29,8 @@
 
 import xml
 
-import pytest
-
 import context
+import pytest
 import test_client
 
 import d1_common.date_time

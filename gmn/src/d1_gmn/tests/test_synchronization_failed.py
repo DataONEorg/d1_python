@@ -19,8 +19,9 @@
 # limitations under the License.
 """Test MNStorage.synchronizationFailed()"""
 
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case

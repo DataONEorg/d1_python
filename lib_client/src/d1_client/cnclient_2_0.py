@@ -114,8 +114,8 @@ class CoordinatingNodeClient_2_0(
     # CNView.view(session, theme, id) → OctetStream
     # GET /views/{theme}/{id}
 
-    def viewResponse(self, theme, did):
-        return self.GET(['views', theme, did])
+    def viewResponse(self, theme, did, vendorSpecific=None):
+        return self.GET(['views', theme, did], headers=vendorSpecific)
 
     def view(self, theme, did):
         response = self.viewResponse(theme, did)
@@ -124,8 +124,8 @@ class CoordinatingNodeClient_2_0(
     # CNView.listViews(session) → OptionList
     # GET /views
 
-    def listViewsResponse(self):
-        return self.GET(['views'])
+    def listViewsResponse(self, vendorSpecific=None):
+        return self.GET(['views'], headers=vendorSpecific)
 
     def listViews(self):
         response = self.listViewsResponse()
@@ -138,35 +138,39 @@ class CoordinatingNodeClient_2_0(
     # CNDiagnostic.echoCredentials(session) → SubjectInfo
     # GET /diag/subject
 
-    def echoCredentialsResponse(self):
-        return self.GET(['diag', 'subject'])
+    def echoCredentialsResponse(self, vendorSpecific=None):
+        return self.GET(['diag', 'subject'], headers=vendorSpecific)
 
-    def echoCredentials(self):
-        response = self.echoCredentialsResponse()
+    def echoCredentials(self, vendorSpecific=None):
+        response = self.echoCredentialsResponse(vendorSpecific)
         return self._read_dataone_type_response(response, 'SubjectInfo')
 
     # CNDiagnostic.echoSystemMetadata(session, sysmeta) → SystemMetadata
     # POST /diag/sysmeta
 
-    def echoSystemMetadataResponse(self, sysmeta_pyxb):
+    def echoSystemMetadataResponse(self, sysmeta_pyxb, vendorSpecific=None):
         mmp_dict = {'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8'))}
-        return self.POST(['diag', 'sysmeta'], fields=mmp_dict)
+        return self.POST(['diag', 'sysmeta'], fields=mmp_dict, headers=vendorSpecific)
 
-    def echoSystemMetadata(self, sysmeta_pyxb):
-        response = self.echoSystemMetadataResponse(sysmeta_pyxb)
+    def echoSystemMetadata(self, sysmeta_pyxb, vendorSpecific=None):
+        response = self.echoSystemMetadataResponse(sysmeta_pyxb, vendorSpecific)
         return self._read_dataone_type_response(response, 'SystemMetadata')
 
     # CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
     # POST /diag/object
 
-    def echoIndexedObjectResponse(self, queryEngine, sysmeta_pyxb, obj):
+    def echoIndexedObjectResponse(
+        self, queryEngine, sysmeta_pyxb, obj, vendorSpecific=None
+    ):
         mmp_dict = {
             'queryEngine': queryEngine.encode('utf-8'),
             'object': ('content.bin', obj),
             'sysmeta': ('sysmeta.xml', sysmeta_pyxb.toxml('utf-8')),
         }
-        return self.POST(['diag', 'object'], fields=mmp_dict)
+        return self.POST(['diag', 'object'], fields=mmp_dict, headers=vendorSpecific)
 
-    def echoIndexedObject(self, queryEngine, sysmeta_pyxb, obj):
-        response = self.echoIndexedObjectResponse(queryEngine, sysmeta_pyxb, obj)
+    def echoIndexedObject(self, queryEngine, sysmeta_pyxb, obj, vendorSpecific=None):
+        response = self.echoIndexedObjectResponse(
+            queryEngine, sysmeta_pyxb, obj, vendorSpecific
+        )
         return self._read_stream_response(response)

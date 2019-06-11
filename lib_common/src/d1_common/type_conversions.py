@@ -46,8 +46,11 @@ to:
 """
 
 import re
+import xml.dom
+import xml.dom.minidom
 import xml.etree
 import xml.etree.ElementTree
+import xml.sax
 
 import pyxb
 import pyxb.namespace.utility
@@ -549,10 +552,31 @@ def etree_to_str(etree_obj, encoding='utf-8'):
         ``bytes``.
 
     Returns:
-      str: API XML doc matching the API version of ``etree_obj``.
+      str: XML doc.
 
     """
     return xml.etree.ElementTree.tostring(etree_obj, encoding)
+
+
+def etree_to_pretty_xml(etree_obj, encoding='unicode'):
+    """Serialize ElementTree to pretty printed XML doc.
+
+    Args:
+      etree_obj: ElementTree
+
+      encoding: str
+        Encoder to use when converting the Unicode strings in the ElementTree to XML doc
+        ``bytes``.
+
+    Returns:
+      str: Pretty printed XML doc.
+
+    """
+    doc_xml = xml.etree.ElementTree.tostring(etree_obj, encoding)
+    dom_obj = xml.dom.minidom.parseString(doc_xml)
+    pretty_xml = dom_obj.toprettyxml(indent='  ')
+    # Remove empty lines in the result caused by a bug in toprettyxml()
+    return re.sub(r'^\s*$\n', r'', pretty_xml, flags=re.MULTILINE)
 
 
 def pyxb_to_etree(pyxb_obj):

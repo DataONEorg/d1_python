@@ -59,8 +59,6 @@ def create_sciobj(request, sysmeta_pyxb):
     d1_gmn.app.views.assert_db.is_valid_pid_for_create(pid)
     d1_gmn.app.views.assert_sysmeta.sanity(request, sysmeta_pyxb)
 
-    abs_sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
-
     if _is_proxy_sciobj(request):
         sciobj_url = _get_sciobj_proxy_url(request)
         _sanity_check_proxy_url(sciobj_url)
@@ -69,12 +67,10 @@ def create_sciobj(request, sysmeta_pyxb):
 
     if not _is_proxy_sciobj(request):
         if d1_gmn.app.resource_map.is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
-            _create_resource_map(
-                pid, request, abs_sciobj_path, sysmeta_pyxb, sciobj_url
-            )
+            _create_resource_map(pid, request, sysmeta_pyxb, sciobj_url)
         else:
-            _save_sciobj_bytes_from_request(request, abs_sciobj_path)
-            d1_gmn.app.scimeta.assert_valid(sysmeta_pyxb, abs_sciobj_path)
+            _save_sciobj_bytes_from_request(request, pid)
+            d1_gmn.app.scimeta.assert_valid(sysmeta_pyxb, pid)
 
     d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
 
@@ -87,12 +83,14 @@ def create_sciobj(request, sysmeta_pyxb):
     )
 
 
-def _create_resource_map(pid, request, sciobj_path, sysmeta_pyxb, sciobj_url):
+def _create_resource_map(pid, request, sysmeta_pyxb, sciobj_url):
     map_xml = _read_sciobj_bytes_from_request(request)
     resource_map = d1_gmn.app.resource_map.parse_resource_map_from_str(map_xml)
     d1_gmn.app.resource_map.assert_map_is_valid_for_create(resource_map)
-    d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
-    _save_sciobj_bytes_from_str(map_xml, sciobj_path)
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_ctx(
+        pid, write=True
+    ) as sciobj_file:
+        sciobj_file.write(map_xml)
     d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
     d1_gmn.app.resource_map.create_or_update(pid, resource_map)
 
@@ -118,7 +116,7 @@ def _read_sciobj_bytes_from_request(request):
     return sciobj_bytes
 
 
-def _save_sciobj_bytes_from_request(request, sciobj_path):
+def _save_sciobj_bytes_from_request(request, pid):
     """Django stores small uploads in memory and streams large uploads directly to disk.
 
     Uploads stored in memory are represented by UploadedFile and on disk,
@@ -128,21 +126,18 @@ def _save_sciobj_bytes_from_request(request, sciobj_path):
     the models, but GMN is not using those, so has to do it manually here.
 
     """
-    d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
-    try:
+    sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
+    if hasattr(request.FILES['object'], 'temporary_file_path'):
+        d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
         django.core.files.move.file_move_safe(
             request.FILES['object'].temporary_file_path(), sciobj_path
         )
-    except AttributeError:
-        with open(sciobj_path, 'wb') as f:
+    else:
+        with d1_gmn.app.sciobj_store.open_sciobj_file_by_path_ctx(
+            sciobj_path, write=True
+        ) as sciobj_stream:
             for chunk in request.FILES['object'].chunks():
-                f.write(chunk)
-
-
-def _save_sciobj_bytes_from_str(map_xml, sciobj_path):
-    d1_common.utils.filesystem.create_missing_directories_for_file(sciobj_path)
-    with open(sciobj_path, 'wb') as f:
-        f.write(map_xml)
+                sciobj_stream.write(chunk)
 
 
 def set_mn_controlled_values(request, sysmeta_pyxb, is_modification):

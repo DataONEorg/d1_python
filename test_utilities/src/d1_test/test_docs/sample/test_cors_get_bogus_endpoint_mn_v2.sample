@@ -4,7 +4,7 @@
 < Connection: keep-alive
 < GET /node/v2/bogus/endpoint HTTP/1.1
 < Host: gmn.client
-< User-Agent: DataONE-Python/[VERSION] +http://dataone.org/
+< User-Agent: DataONE-Python[VERSION] +http://dataone.org/
 
 > Content-Type:[CONTENT-TYPE]
 > HTTP-Version: HTTP/1.1

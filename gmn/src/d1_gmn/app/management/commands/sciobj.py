@@ -16,8 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Export Science Metadata System Metadata values to a JSON file.
-"""
+"""Export Science Metadata System Metadata values to a JSON file."""
 
 import logging
 
@@ -25,10 +24,10 @@ import d1_gmn.app.management.commands.util.standard_args
 import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
+import d1_gmn.app.sysmeta_extract
 
 import d1_common.util
 import d1_common.utils.progress_logger
-import d1_gmn.app.sysmeta_extract
 
 import django.core.management.base
 import django.db.models

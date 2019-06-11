@@ -23,8 +23,9 @@ Note: Does not test authentication.
 
 """
 
-import pytest
 import responses
+
+import pytest
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case

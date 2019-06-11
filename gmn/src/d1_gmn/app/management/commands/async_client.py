@@ -67,7 +67,9 @@ class AsyncDataONEClient:
                 ssl_context=ssl_ctx, limit=max_concurrent_connections
             )  # ssl=False
         else:
-            tcp_connector = aiohttp.TCPConnector(limit=max_concurrent_connections)
+            tcp_connector = aiohttp.TCPConnector(
+                ssl_context=ssl_ctx, limit=max_concurrent_connections
+            )
 
         self._session = aiohttp.ClientSession(
             connector=tcp_connector,
@@ -218,26 +220,28 @@ class AsyncDataONEClient:
         mmp_dict=None,
         vendor_specific=None,
     ):
-        e = None
+        final_exception = None
         url = self._prep_url(url_element_list)
         params = self._prep_query_dict(query_dict) if query_dict else None
         data = mmp_dict
         headers = vendor_specific
 
         request_arg_dict = {
-            'method': method_str,
-            'url': url,
-            'params': params,
-            'data': data,
-            'headers': headers,
+            "method": method_str,
+            "url": url,
+            "params": params,
+            "data": data,
+            "headers": headers,
         }
 
-        self._logger.debug('Request: {}'.format(request_arg_dict))
+        self._logger.debug("Request: {}".format(request_arg_dict))
 
         for i in range(self._retry_count):
             try:
                 response = await self._session.request(**request_arg_dict)
             except aiohttp.ClientError as e:
+                # This assignment is required in Py3. See doc for try/except.
+                final_exception = e
                 self._logger.warning(
                     "Retrying due to exception: {}: {}".format(
                         e.__class__.__name__, str(e)
@@ -249,7 +253,7 @@ class AsyncDataONEClient:
                 return response
 
         self._logger.error("Giving up after {} tries".format(self._retry_count))
-        raise e
+        raise final_exception
 
     def _prep_url(self, url_element_list):
         if isinstance(url_element_list, str):

@@ -17,8 +17,9 @@
 # limitations under the License.
 
 import freezegun
-import pytest
 import responses
+
+import pytest
 
 import d1_common.types.exceptions
 

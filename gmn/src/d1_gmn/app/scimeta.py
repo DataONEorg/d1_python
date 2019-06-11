@@ -19,13 +19,15 @@
 
 import d1_scimeta.xml_schema
 
+import d1_gmn.app.sciobj_store
+
 import d1_common.types
 import d1_common.types.exceptions
 
 import django.conf
 
 
-def assert_valid(sysmeta_pyxb, sciobj_path):
+def assert_valid(sysmeta_pyxb, pid):
     """Validate file at {sciobj_path} against schema selected via formatId and raise
     InvalidRequest if invalid.
 
@@ -55,9 +57,9 @@ def assert_valid(sysmeta_pyxb, sciobj_path):
                 ),
             )
 
-    with open(sciobj_path, 'rb') as f:
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_ctx(pid) as sciobj_file:
         try:
-            d1_scimeta.xml_schema.validate(sysmeta_pyxb.formatId, f.read())
+            d1_scimeta.xml_schema.validate(sysmeta_pyxb.formatId, sciobj_file.read())
         except d1_scimeta.xml_schema.SciMetaValidationError as e:
             raise d1_common.types.exceptions.InvalidRequest(0, str(e))
 

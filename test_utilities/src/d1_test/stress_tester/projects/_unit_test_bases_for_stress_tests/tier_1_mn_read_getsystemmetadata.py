@@ -27,9 +27,8 @@
   - python 2.6
 """
 
-import pytest
-
 import context
+import pytest
 import test_client
 
 import d1_common.types.exceptions

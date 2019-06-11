@@ -25,9 +25,10 @@ The mode is selectable on a per object basis
 import io
 import os
 
-import pytest
 import requests
 import responses
+
+import pytest
 
 import d1_gmn.app.sciobj_store
 import d1_gmn.tests.gmn_mock
@@ -79,8 +80,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 )
             # Check
             # Object was not stored locally
-            sciobj_path = d1_gmn.app.sciobj_store.get_abs_sciobj_file_path_by_pid(pid)
-            assert not os.path.isfile(sciobj_path)
+            assert not d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid)
 
             received_sciobj_bytes = self.call_d1_client(
                 client.get, pid, vendorSpecific=self.vendor_proxy_mode(proxy_url)

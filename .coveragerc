@@ -15,35 +15,30 @@ concurrency = multiprocessing
 branch = True
 
 omit =
-  # Tracked
+  # All dot files and dirs
+  */.*
 
-  */__init__.py
+  # All underscore files and dirs
+  */_*
+
+  # Files
   */conftest.py
   */settings*.py
   */setup.py
-  */t.py
   */test.py
 
+  # Dirs
+  */build/*
   */dev_tools/*
+  */develop-eggs/*
+  */dist-packages/*
+  */dist/*
   */drivers/*
   */generated/*
   */migrations/*
-  */mockup/*
+  */sdist/*
   */tests/*
   */tools/*
-
-  # Any tracked and untracked dot-files and dot-dirs
-  */.*
-
-  # Untracked
-
-  */__pycache__/*
-  */src/_build/*
-  */src/build/*
-  */src/develop-eggs/*
-  */src/dist-packages/*
-  */src/dist/*
-  */src/sdist/*
 
 [report]
 # Regexes for lines to exclude from consideration

@@ -55,13 +55,17 @@ def random_cn(min_len=1, max_len=1):
 def random_subj(min_len=1, max_len=2, fixed_len=None, group_chance=0.1):
     if fixed_len is not None:
         min_len = max_len = fixed_len
-    return 'subj_{}{}'.format(random_lower_ascii(min_len, max_len),
-                              '_group' if random.random() <= group_chance else '')
+    return 'subj_{}{}'.format(
+        random_lower_ascii(min_len, max_len),
+        '_group' if random.random() <= group_chance else '',
+    )
 
 
-def random_regular_or_symbolic_subj(min_len=1, max_len=2, fixed_len=None, symbolic_chance=0.1, group_chance=0.1):
-    """Return a random regular subject on the form ``subj_xx`` or a random symbolic subject.
-    """
+def random_regular_or_symbolic_subj(
+    min_len=1, max_len=2, fixed_len=None, symbolic_chance=0.1, group_chance=0.1
+):
+    """Return a random regular subject on the form ``subj_xx`` or a random symbolic
+    subject."""
     if random.random() <= symbolic_chance:
         return random_symbolic_subject()
     else:
@@ -70,12 +74,16 @@ def random_regular_or_symbolic_subj(min_len=1, max_len=2, fixed_len=None, symbol
 
 def random_symbolic_subject():
     """Return a random symbolic subject.
+
     ``public``, ``verifiedUser`` or ``authenticatedUser``.
+
     """
     return random.choice(SYMBOLIC_SUBJECT_LIST)
 
 
-def random_lower_ascii(min_len=2, max_len=2):
+def random_lower_ascii(min_len=2, max_len=2, fixed_len=None):
+    if fixed_len is not None:
+        min_len = max_len = fixed_len
     return ''.join(
         [
             random.choice(string.ascii_lowercase)

@@ -19,13 +19,13 @@
 # limitations under the License.
 """Local cache of the DataONE ObjectFormatList for a given DataONE environment.
 
-The cache is stored in a file and is automatically updated periodically.
-
-Simple methods for looking up elements of the ObjectFormatList are provided.
-
 As part of the metadata for a science object, DataONE stores a type identifier called an
 ObjectFormatID. The ObjectFormatList allows mapping ObjectFormatIDs to filename
 extensions and content type.
+
+The cache is stored in a file and is automatically updated periodically.
+
+Simple methods for looking up elements of the ObjectFormatList are provided.
 
 Examples:
 
