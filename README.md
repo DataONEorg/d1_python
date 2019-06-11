@@ -261,21 +261,8 @@ The `requirements.txt` file contains a list of packages and pinned versions that
 
 Update the `requirements.txt` file:
 
-    $ cd d1_python
     $ ./dev_tools/src/d1_dev/update-requirements-txt.py
 
-The DataONE Python stack specifies the versions that were tested in CI builds before release as the lowest required versions, and allows any later versions to be installed as part of regular maintenance.
-
-As updating the versions in the `setup.py` files manually is time consuming and error prone, a script is included that automates the task. The script updates the version information for the dependencies in the `setup.py` files to match the versions of the currently installed dependencies. Run the script with:
-
-    $ cd d1_python
-    $ ./dev_tools/src/d1_dev/src-sync-dependencies.py . <version>
-
-The `<version>` argument specifies what the version will be for the release. E.g., `"2.3.1"`. We keep the version numbers in sync between all of the packages in the d1_python git repository, so only one version string needs to be specified.
-
-Check that there are no package version conflicts:
-
-    $ pip check
 
 Commit and push the changes, and check the build on Travis.
 

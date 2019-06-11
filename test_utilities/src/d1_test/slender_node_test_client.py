@@ -34,7 +34,6 @@ SYSMETA_EXT_STR = ".sysmeta.xml"
 SID_MAP_FILENAME = "sid.json"
 
 
-# noinspection PyUnusedLocal
 class SlenderNodeTestClient:
     """A simple drop-in replacement for a MN client, for use when developing and testing
     SlenderNode scripts.
@@ -50,8 +49,8 @@ class SlenderNodeTestClient:
         self,
         sciobj_store_path=DEFAULT_SCIOBJ_STORE_PATH,
         keep_existing=False,
-        *args,
-        **kwargs
+        *_args,
+        **_kwargs
     ):
         """Create the test client.
 

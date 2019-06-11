@@ -114,7 +114,7 @@ def format_all(args, format_path_list):
     pool.join()
 
 
-def format_single(args, format_path):
+def format_single(_args, format_path):
     run_cmd("black", format_path)
     run_cmd("isort", format_path)
     run_cmd(

@@ -796,12 +796,20 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
     def get_sid_with_min_chain_length(self, min_len=2):
         """Get list of all SIDs in the DB fixture."""
-        sid_list = self.db_fixture_sid_list.copy()
+        sid_list = self.get_sid_list()
         random.shuffle(sid_list)
         for sid in sid_list:
             pid_list = d1_gmn.app.revision.get_all_pid_by_sid(sid)
             if len(pid_list) >= min_len:
                 return sid
+
+    def get_sid_list(self):
+        """Get list of all SIDs in the DB"""
+        return [o.sid.did for o in d1_gmn.app.models.Chain.objects.filter(sid__isnull=False)]
+
+    def get_pid_list(self):
+        """Get list of all PIDs in the DB"""
+        return [o.pid.did for o in d1_gmn.app.models.ScienceObject.objects.all()]
 
     def get_total_log_records(self, client, **filters):
         return client.getLogRecords(start=0, count=0, **filters).total

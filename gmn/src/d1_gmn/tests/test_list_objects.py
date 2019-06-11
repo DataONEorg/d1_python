@@ -118,7 +118,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """MNRead.listObjects(): DID filter: Existing DID returns a list with a single
         item."""
         with d1_gmn.tests.gmn_mock.disable_auth():
-            pid = random.choice(self.db_fixture_pid_list)
+            pid = random.choice(self.get_pid_list())
             object_list_pyxb = gmn_client_v1_v2.listObjects(identifier=pid)
             self.sample.assert_equals(
                 object_list_pyxb, "pid_filter_existing", gmn_client_v1_v2
@@ -129,7 +129,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """MNRead.listObjects(): DID filter: SID returns list of the objects in the
         chain."""
         with d1_gmn.tests.gmn_mock.disable_auth():
-            sid = random.choice(self.db_fixture_sid_list)
+            sid = random.choice(self.get_sid_list())
             object_list_pyxb = gmn_client_v1_v2.listObjects(identifier=sid)
             self.sample.assert_equals(object_list_pyxb, "sid_filter", gmn_client_v1_v2)
 
@@ -190,7 +190,7 @@ class TestListObjects(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1120(self, gmn_client_v1_v2):
         """MNRead.listObjects(): replicaStatus filter."""
         with d1_gmn.tests.gmn_mock.disable_auth():
-            pid_list = self.db_fixture_pid_list
+            pid_list = self.get_pid_list()
             rnd_pid = random.choice(pid_list)
 
             n_obj_reg_1 = self.get_total_objects(gmn_client_v1_v2, replicaStatus=False)

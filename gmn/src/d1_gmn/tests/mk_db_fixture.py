@@ -88,7 +88,6 @@ def main():
             create_read_events(client, freeze_time)
 
     d1_gmn.tests.gmn_test_case.django_save_db_fixture()
-    save_pid_list_sample()
 
 
 def create_objects(client, freeze_time):
@@ -147,24 +146,6 @@ def create_read_events(client, freeze_time):
                     "User-Agent": d1_test.instance_generator.user_agent.generate()
                 },
             )
-
-
-def save_pid_list_sample():
-    """Get list of all PIDs in the DB fixture.
-
-    These are for use in any tests that need to know which PIDs and SIDs are available
-    in the DB.
-
-    """
-    for did in ["pid", "sid"]:
-        with open(
-            d1_test.test_files.get_abs_test_file_path(
-                "json/db_fixture_{}.json".format(did)
-            ),
-            "w",
-            encoding="utf-8",
-        ) as f:
-            d1_gmn.app.sysmeta_extract.extract_values(field_list=[did], out_stream=f)
 
 
 if __name__ == "__main__":
