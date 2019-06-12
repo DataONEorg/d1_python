@@ -27,8 +27,9 @@
   - python 2.6
 """
 
-import context
 import pytest
+
+import context
 import test_client
 import test_utilities
 

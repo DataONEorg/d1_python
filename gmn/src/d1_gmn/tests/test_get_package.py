@@ -18,19 +18,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test MNPackage.getPackage()"""
-
+import io
 import tempfile
+import zipfile
 
-import responses
-
+import freezegun
 import pytest
+import responses
 
 import d1_gmn.tests.gmn_test_case
 
 import d1_common.bagit
 import d1_common.types.exceptions
 
+import d1_test.d1_test_case
+import d1_test.instance_generator.identifier
 
+
+@d1_test.d1_test_case.reproducible_random_decorator("TestGetPackage")
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v2):

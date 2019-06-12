@@ -94,7 +94,7 @@ def nested_update(d, u):
 
     """
     for k, v in list(u.items()):
-        if isinstance(v, collections.Mapping):
+        if isinstance(v, collections.abc.Mapping):
             r = nested_update(d.get(k, {}), v)
             d[k] = r
         else:

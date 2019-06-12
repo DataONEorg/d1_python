@@ -21,9 +21,8 @@
 buffered in memory."""
 import logging
 
-import requests_toolbelt
-
 import pytest
+import requests_toolbelt
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case

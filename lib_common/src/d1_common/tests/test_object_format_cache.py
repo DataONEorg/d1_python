@@ -20,9 +20,8 @@
 import tempfile
 
 import freezegun
-import responses
-
 import pytest
+import responses
 
 import d1_common.object_format_cache
 

@@ -18,9 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pyxb
-
 import pytest
+import pyxb
 
 import d1_common.system_metadata
 

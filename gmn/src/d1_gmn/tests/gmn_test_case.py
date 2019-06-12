@@ -471,7 +471,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 new_pid=update_pid,
                 sid=base_sid,
                 *args,
-                **kwargs
+                **kwargs,
             )
             pid_chain_list.append(update_pid)
             base_pid = update_pid
@@ -551,6 +551,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         disable_auth=True,
         vendor_dict=None,
         now_dt=True,
+        **sysmeta_generator_option_dict,
     ):
         """Generate a test object and call MNStorage.create() Parameters:
 
@@ -558,7 +559,14 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
         """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
-            client, pid, sid, submitter, rights_holder, permission_list, now_dt
+            client,
+            pid,
+            sid,
+            submitter,
+            rights_holder,
+            permission_list,
+            now_dt,
+            **sysmeta_generator_option_dict,
         )
         with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
             self.call_d1_client(
@@ -712,6 +720,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         rights_holder=True,
         permission_list=True,
         now_dt=True,
+        **sysmeta_generator_option_dict,
     ):
         permission_list = (
             d1_test.d1_test_case.DEFAULT_PERMISSION_LIST
@@ -739,6 +748,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
             )
             if v is not True
         }
+        option_dict.update(sysmeta_generator_option_dict)
         pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
             client, None if pid is True else pid, option_dict
         )
@@ -804,11 +814,13 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 return sid
 
     def get_sid_list(self):
-        """Get list of all SIDs in the DB"""
-        return [o.sid.did for o in d1_gmn.app.models.Chain.objects.filter(sid__isnull=False)]
+        """Get list of all SIDs in the DB."""
+        return [
+            o.sid.did for o in d1_gmn.app.models.Chain.objects.filter(sid__isnull=False)
+        ]
 
     def get_pid_list(self):
-        """Get list of all PIDs in the DB"""
+        """Get list of all PIDs in the DB."""
         return [o.pid.did for o in d1_gmn.app.models.ScienceObject.objects.all()]
 
     def get_total_log_records(self, client, **filters):

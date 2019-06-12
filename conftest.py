@@ -22,7 +22,6 @@ import sys
 import tempfile
 
 import mock
-
 import pytest
 
 import d1_gmn.app.sciobj_store
@@ -30,6 +29,7 @@ import d1_gmn.app.views.internal
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
+import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 import d1_test.sample
 import d1_test.test_files
@@ -387,6 +387,9 @@ def mn_client_v1_v2(request):
     yield request.param(d1_test.d1_test_case.MOCK_MN_BASE_URL)
 
 
+# Misc
+
+
 @pytest.fixture(
     scope="function",
     params=d1_test.test_files.load_json("combined_tricky_identifiers_unicode.json"),
@@ -398,6 +401,15 @@ def tricky_identifier_dict(request):
     Each value is a dict with keys, 'unescaped', 'path_escaped', 'query_escaped'.
 
     """
+    yield request.param
+
+
+@pytest.fixture(
+    scope="function",
+    params=[d1_test.instance_generator.identifier.generate_pid("DID_")],
+)
+def did(request):
+    """Return a random identifier."""
     yield request.param
 
 

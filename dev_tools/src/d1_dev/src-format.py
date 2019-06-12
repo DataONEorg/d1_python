@@ -34,6 +34,9 @@ import d1_common.util
 
 DEFAULT_WORKER_COUNT = 16
 
+# These are applied in addition to the default exclude list in the path iterator.
+DEFAULT_EXCLUDE_GLOB_LIST = ["_ignore/"]
+
 logger = logging.getLogger(__name__)
 
 
@@ -47,7 +50,12 @@ def main():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("path", nargs="+", help="File or directory path")
-    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
+    parser.add_argument(
+        "--exclude",
+        nargs="+",
+        default=DEFAULT_EXCLUDE_GLOB_LIST,
+        help="Exclude glob patterns",
+    )
     parser.add_argument(
         "--no-recursive",
         dest="recursive",
@@ -76,6 +84,8 @@ def main():
     repo = git.Repo(repo_path)
 
     specified_file_path_list = get_specified_file_path_list(args)
+    # for p in sorted(specified_file_path_list):
+    #     print(p)
     tracked_path_list = list(d1_dev.util.get_tracked_files(repo))
     format_path_list = sorted(
         set(specified_file_path_list).intersection(tracked_path_list)
@@ -92,7 +102,7 @@ def get_specified_file_path_list(args):
             exclude_glob_list=args.exclude,
             recursive=args.recursive,
             ignore_invalid=args.ignore_invalid,
-            default_excludes=False,
+            default_excludes=True,
             return_dir_paths=True,
         )
     ]

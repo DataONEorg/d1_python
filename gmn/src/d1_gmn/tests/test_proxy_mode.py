@@ -25,10 +25,9 @@ The mode is selectable on a per object basis
 import io
 import os
 
+import pytest
 import requests
 import responses
-
-import pytest
 
 import d1_gmn.app.sciobj_store
 import d1_gmn.tests.gmn_mock

@@ -21,9 +21,8 @@
 
 import xml.sax
 
-import pyxb
-
 import pytest
+import pyxb
 
 import d1_common.checksum
 import d1_common.types.dataoneTypes

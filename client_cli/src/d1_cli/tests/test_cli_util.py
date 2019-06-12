@@ -22,12 +22,12 @@
 import io
 import tempfile
 
+import pytest
 import responses
 
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
 import d1_cli.impl.util
-import pytest
 
 import d1_test.d1_test_case
 import d1_test.mock_api.get
