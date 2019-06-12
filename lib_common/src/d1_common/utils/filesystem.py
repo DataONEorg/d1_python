@@ -44,6 +44,9 @@ def gen_safe_path_element(s):
     """Escape characters that are not allowed or often cause issues when used in file-
     or directory names.
 
+    Leading and trailing "." (period) are stripped out in order to prevent inadvertently
+    creating hidden files.
+
     Args:
         s: str
             Any string, such as a PID, SID or URL
@@ -52,7 +55,7 @@ def gen_safe_path_element(s):
         str : A string safe for use as a file- or directory name.
 
     """
-    return urllib.parse.quote(s.encode("utf-8"), safe=FILENAME_SAFE_CHARS)
+    return urllib.parse.quote(s.encode("utf-8"), safe=FILENAME_SAFE_CHARS).strip(".")
 
 
 def create_missing_directories_for_file(file_path):

@@ -21,6 +21,8 @@ import os
 import d1_gmn.app
 import d1_gmn.app.object_format_cache
 import d1_gmn.app.revision
+import d1_gmn.app.scimeta
+import d1_gmn.app.sysmeta
 import d1_gmn.app.views.util
 
 import d1_common.const
@@ -93,7 +95,7 @@ def _add_sciobj_standard(response, sciobj_model):
         sciobj_model
     )
     response["Content-Disposition"] = 'attachment; filename="{}"'.format(
-        d1_gmn.app.object_format_cache.get_filename(sciobj_model)
+        d1_gmn.app.sysmeta.get_filename(sciobj_model)
     )
 
 
@@ -101,7 +103,7 @@ def _add_bagit_standard(response, sciobj_model):
     """Use the base of any name provided in the SysMeta for the underlying ORE RDF
     SciObj and change any provided extension (typically .rdf) to .zip."""
     response["Content-Type"] = "application/zip"
-    rdf_file_name = d1_gmn.app.object_format_cache.get_filename(sciobj_model)
+    rdf_file_name = d1_gmn.app.sysmeta.get_filename(sciobj_model)
     zip_file_name = os.path.splitext(rdf_file_name)[0] + ".zip"
     response["Content-Disposition"] = 'attachment; filename="{}"'.format(zip_file_name)
 

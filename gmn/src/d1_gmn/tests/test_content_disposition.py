@@ -29,9 +29,6 @@ import responses
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
-import d1_common.utils
-import d1_common.utils.filesystem
-
 import d1_test.d1_test_case
 
 logger = logging.getLogger(__name__)
@@ -128,18 +125,3 @@ class TestContentDisposition(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         """
         self._check(gmn_client_v2, did, did, "unknown_format_id", did, ".data")
-
-    def test_0140(self, gmn_client_v2, did, tricky_identifier_dict):
-        """SciObj without fileName returns a safe filename for tricky Unicode
-        identifiers."""
-        file_name = tricky_identifier_dict["unescaped"]
-        base_name, file_ext = os.path.splitext(file_name)
-        expected_base_name = d1_common.utils.filesystem.gen_safe_path_element(base_name)
-        self._check(
-            gmn_client_v2,
-            did,
-            base_name,
-            "unknown_format_id",
-            expected_base_name,
-            ".data",
-        )

@@ -133,6 +133,44 @@ def create_or_update(sysmeta_pyxb, sciobj_url=None):
     return sci_model
 
 
+def get_filename(sciobj_model):
+    """Generate a safe filename for SciObj.
+
+    - The returned filename will not have any characters, such as slashes or
+    backslashes, that may cause file access to occur outside of the intended directory
+    in the filesystem.
+
+    - If a filename is provided in SysMeta but is missing base_name (such as ".bin"),
+    use the PID as the basename.
+    - If a filename is provided in SysMeta but is missing the extension(such as "my
+    file"), use extension derived from the FormatId.
+    - If filename is not provided in SysMeta, handle it as if both base_name and
+    extension is missing.
+    - When using extension derived from the FormatId, if the FormatId is unknown (not in
+    the CN ObjectFormatList cache), use ".data" as the extension.
+
+    """
+    file_name = ""
+    file_ext = ""
+
+    if sciobj_model.filename:
+        file_name, file_ext = os.path.splitext(sciobj_model.filename)
+
+    # Fix filenames such as ".bin", which are split into (".bin", "")
+    if file_name.startswith(".") and file_ext == "":
+        file_name, file_ext = file_ext, file_name
+
+    return d1_common.utils.filesystem.gen_safe_path_element(
+        (file_name or sciobj_model.pid.did)
+        + (
+            file_ext
+            or d1_gmn.app.object_format_cache.get_filename_extension(
+                sciobj_model.format.format, ".data"
+            )
+        )
+    )
+
+
 def update_modified_timestamp(pid):
     sci_model = d1_gmn.app.model_util.get_sci_model(pid)
     _update_modified_timestamp(sci_model)
@@ -191,7 +229,9 @@ def _base_model_to_pyxb(sciobj_model):
     )
     base_pyxb.dateUploaded = sciobj_model.uploaded_timestamp
     base_pyxb.formatId = sciobj_model.format.format
-    base_pyxb.fileName = sciobj_model.filename
+    # Generate a safe filename for SciObj. Fall back to PID and file extension derived
+    # from formatId if required.
+    base_pyxb.fileName = get_filename(sciobj_model)
     base_pyxb.checksum = d1_common.types.dataoneTypes.Checksum(sciobj_model.checksum)
     base_pyxb.checksum.algorithm = sciobj_model.checksum_algorithm.checksum_algorithm
     base_pyxb.size = sciobj_model.size

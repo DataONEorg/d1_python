@@ -24,15 +24,17 @@ import os
 
 DEFAULT_EXCLUDE_GLOB_LIST = [
     # Dirs
+    "*egg-info/",
+    ".git/",
+    ".idea/",
+    "__pycache__/",
+    ".eggs/",
+    ".pytest_cache/",
     "build/",
     "dist/",
-    "*egg-info/",
-    "generated/",
-    ".git/",
     "doc/",
-    ".idea/",
+    "generated/",
     "migrations/",
-    "__pycache__/",
     # Files
     "*~",
     "*.bak",
