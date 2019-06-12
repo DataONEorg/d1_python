@@ -27,6 +27,7 @@ See Also:
 """
 
 import logging
+import os
 import re
 import zipfile
 
@@ -181,12 +182,33 @@ def _calculate_checksum_of_member(bagit_zip, manifest_info):
 
 
 def _add_path(dir_name, payload_info_list):
-    """Add a key with the path to each payload_info_dict."""
+    """Add a key to each payload_info_dict with the path under which the file will be
+    stored in the ZIP file and which will be used for the file when the ZIP is
+    uncompressed.
+
+    Since there is no unique restriction on the `fileName` element in SysMeta, this
+    method checks for duplicated files and adds a count to filenames as needed in order
+    to keep them unique.
+
+    E.g.,
+        file.xml
+        file.xml
+
+    becomes:
+        file.xml
+        file(2).xml
+
+    """
+    path_count_dict = {}
     for payload_info_dict in payload_info_list:
         file_name = payload_info_dict["filename"] or payload_info_dict["pid"]
-        payload_info_dict["path"] = d1_common.utils.filesystem.gen_safe_path(
-            dir_name, "data", file_name
-        )
+        path = d1_common.utils.filesystem.gen_safe_path(dir_name, "data", file_name)
+        path_count_dict.setdefault(path, 0)
+        path_count_dict[path] += 1
+        if path_count_dict[path] > 1:
+            path_base, path_ext = os.path.splitext(path)
+            path = "{}({}){}".format(path_base, path_count_dict[path], path_ext)
+        payload_info_dict["path"] = path
 
 
 def _add_payload_files(zip_file, payload_info_list):
