@@ -23,7 +23,6 @@ import logging
 import os
 import re
 import subprocess
-import sys
 import tempfile
 import textwrap
 import traceback
@@ -41,7 +40,6 @@ import d1_common.xml
 
 import d1_test.pycharm
 import d1_test.test_files
-import d1_test.xml_normalize
 
 import d1_client.d1client
 import d1_client.util

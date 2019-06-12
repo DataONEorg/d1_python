@@ -17,7 +17,6 @@
 # limitations under the License.
 """Extract SciObj values from models."""
 import d1_gmn.app
-import d1_gmn.app.auth
 import d1_gmn.app.models
 
 import d1_common.types.exceptions

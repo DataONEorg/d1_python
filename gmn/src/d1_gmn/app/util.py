@@ -26,7 +26,6 @@ import urllib.parse
 
 import d1_common
 import d1_common.const
-import d1_common.object_format_cache
 
 import django.conf
 import django.contrib.staticfiles.templatetags.staticfiles

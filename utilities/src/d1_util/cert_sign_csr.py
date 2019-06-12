@@ -23,7 +23,6 @@ import logging
 import os
 
 import d1_common.cert.x509
-import d1_common.env
 
 
 def main():

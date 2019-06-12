@@ -67,6 +67,9 @@ def main():
     parser.add_argument(
         "--dry-run", action="store_true", help="Process files but do not write results"
     )
+    parser.add_argument(
+        "--comment", action="store_true", help="Comment out instead of deleting imports"
+    )
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
@@ -82,7 +85,7 @@ def main():
     # )
     format_path_list = specified_file_path_list
     for format_path in format_path_list:
-        comment_unused_imports(args, format_path)
+        remove_unused_imports(args, format_path)
 
 
 def get_specified_file_path_list(args):
@@ -94,25 +97,34 @@ def get_specified_file_path_list(args):
             exclude_glob_list=args.exclude,
             recursive=args.recursive,
             ignore_invalid=args.ignore_invalid,
-            default_excludes=False,
+            default_excludes=True,
             return_dir_paths=False,
         )
     ]
     return specified_file_path_list
 
 
-def comment_unused_imports(args, format_path):
+# noinspection PyBroadException
+def remove_unused_imports(args, format_path):
     logger.info("")
-    logger.info("{}".format(format_path))
+    logger.info(format_path)
 
-    r = d1_dev.util.redbaron_module_path_to_tree(format_path)
+    try:
+        r = d1_dev.util.redbaron_module_path_to_tree(format_path)
+    except Exception as e:
+        logger.fatal('RedBaron was unable to parse the file. error="{}"'.format(str(e)))
+        return
+
     unused_import_list = get_unused_import_list(r)
     if not unused_import_list:
         return
-    for unused_dot_list in unused_import_list:
-        comment_import(r, unused_dot_list)
 
-    # d1_dev.util.update_module_file(r, format_path, show_diff=False, dry_run=True)
+    for unused_dot_list in unused_import_list:
+        if args.comment:
+            comment_import(r, unused_dot_list)
+        else:
+            delete_import(r, unused_dot_list)
+
     d1_dev.util.update_module_file(
         r, format_path, show_diff=args.show_diff, dry_run=args.dry_run
     )
@@ -122,13 +134,13 @@ def get_unused_import_list(r):
     # logger.info(r.help(True))
 
     import_list = get_import_list(r)
-    print_list("Imports", import_list)
+    print_list(logger.debug, "Imports", import_list)
 
     atom_list = get_atomtrailer_list(r)
-    print_list("AtomTrailers", atom_list)
+    print_list(logger.debug, "AtomTrailers", atom_list)
 
     dotted_name_list = get_dotted_name_list(r)
-    print_list("DottedNames", dotted_name_list)
+    print_list(logger.debug, "DottedNames", dotted_name_list)
 
     unused_import_list = []
 
@@ -139,7 +151,7 @@ def get_unused_import_list(r):
         else:
             unused_import_list.append(import_dot_list)
 
-    print_list("Unused imports", unused_import_list)
+    print_list(logger.info, "Unused imports", unused_import_list)
 
     return unused_import_list
 
@@ -155,13 +167,22 @@ def comment_import(r, unused_dot_list):
             break
 
 
-def print_list(head_str, dot_list):
-    logger.info("")
-    logger.info("{}:".format(head_str))
+def delete_import(r, unused_dot_list):
+    """Delete import for {dot_str}."""
+    unused_dot_str = ".".join(unused_dot_list)
+    for n in r("ImportNode"):
+        if n.names()[0] == unused_dot_str:
+            del r.node_list[n.index_on_parent_raw]
+            break
+
+
+def print_list(log_func, head_str, dot_list):
+    log_func("")
+    log_func("{}:".format(head_str))
     for v in dot_list:
-        logger.info("  {}".format(".".join(v)))
+        log_func("  {}".format(".".join(v)))
     if not dot_list:
-        logger.info("  None")
+        log_func("  None")
 
 
 def get_import_list(r):

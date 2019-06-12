@@ -48,14 +48,13 @@ import responses
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
-import d1_gmn.app.sysmeta_extract
 
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.user_agent
 import d1_test.mock_api.django_client
-import d1_test.test_files
+
 
 import d1_client.mnclient_2_0
 

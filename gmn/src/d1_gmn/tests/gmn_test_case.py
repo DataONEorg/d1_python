@@ -64,7 +64,7 @@ import d1_common.types
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-import d1_common.utils.filesystem
+
 import d1_common.xml
 
 import d1_test.d1_test_case

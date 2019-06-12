@@ -61,8 +61,6 @@ import time
 
 import d1_common.const
 import d1_common.date_time
-import d1_common.env
-import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.utils.filesystem

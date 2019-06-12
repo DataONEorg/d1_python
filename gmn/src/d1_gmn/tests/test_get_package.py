@@ -55,7 +55,7 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
             d1_common.bagit.validate_bagit_file(tmp_file.name)
 
     @responses.activate
-    def test_1020(self, gmn_client_v2, did):
+    def test_1020(self, gmn_client_v2):
         """MNPackage.getPackage(): BagIt package ZIP archive member filenames."""
         pid_list = [
             "pid_first_only",

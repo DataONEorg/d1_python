@@ -132,7 +132,11 @@ def print_alias(head_str, alias_dict):
 
 
 def remove_import_alias(red):
-    """Remove the alias from an import import a.b.c as d -> import a.b.c."""
+    """Remove the alias from an import.
+
+    import a.b.c as d -> import a.b.c.
+
+    """
     for n in red.find_all("import"):
         # print(n.help())
         n.value[0].target = ""

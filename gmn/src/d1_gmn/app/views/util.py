@@ -25,8 +25,6 @@ import d1_gmn.app.db_filter
 import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
-import d1_gmn.app.views.external
 import d1_gmn.app.views.slice
 
 import d1_common.const

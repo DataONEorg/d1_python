@@ -19,8 +19,6 @@
 # limitations under the License.
 
 import io
-import urllib
-import urllib.parse
 # TODO: Move this to docs
 #
 # d1_pyore Examples
@@ -295,7 +293,6 @@ import urllib.parse
 #
 import warnings
 
-import pytest
 import rdflib
 
 import d1_common.resource_map

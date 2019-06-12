@@ -18,6 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test that the Content-Disposition holds the correct filename."""
+import d1_test.instance_generator.identifier
+import d1_test.instance_generator
 import logging
 import os
 import re
@@ -72,13 +74,14 @@ class TestContentDisposition(d1_gmn.tests.gmn_test_case.GMNTestCase):
         ).group(1)
         return os.path.splitext(file_name)
 
-    def test_0100(self, gmn_client_v2, did):
+    def test_0100(self, gmn_client_v2):
         """SciObj without fileName returns filename generated from PID and formatId.
 
         When formatId is unknown, returns filename with extension, ".data".
 
         """
-        self._check(gmn_client_v2, did, None, "unknown_format_id", did, ".data")
+        pid = d1_test.instance_generator.identifier.generate_pid()
+        self._check(gmn_client_v2, pid, None, "unknown_format_id", pid, ".data")
 
     @pytest.mark.parametrize(
         "format_id,file_ext",
@@ -88,13 +91,14 @@ class TestContentDisposition(d1_gmn.tests.gmn_test_case.GMNTestCase):
             ("-//ecoinformatics.org//eml-access-2.0.0beta4//EN", ".xml"),
         ],
     )
-    def test_0110(self, gmn_client_v2, did, format_id, file_ext):
+    def test_0110(self, gmn_client_v2, format_id, file_ext):
         """SciObj without fileName returns filename generated from PID and formatId.
 
         When formatId is valid, returns filename with extension from objectFormatList.
 
         """
-        self._check(gmn_client_v2, did, None, format_id, did, file_ext)
+        pid = d1_test.instance_generator.identifier.generate_pid()
+        self._check(gmn_client_v2, pid, None, format_id, pid, file_ext)
 
     @pytest.mark.parametrize(
         "format_id,file_ext,base_name",
@@ -108,20 +112,22 @@ class TestContentDisposition(d1_gmn.tests.gmn_test_case.GMNTestCase):
             ),
         ],
     )
-    def test_0120(self, gmn_client_v2, did, format_id, base_name, file_ext):
+    def test_0120(self, gmn_client_v2, format_id, base_name, file_ext):
         """SciObj with fileName without extension returns filename generated from
         fileName and formatId.
 
         When formatId is valid, returns filename with extension from objectFormatList.
 
         """
-        self._check(gmn_client_v2, did, base_name, format_id, base_name, file_ext)
+        pid = d1_test.instance_generator.identifier.generate_pid()
+        self._check(gmn_client_v2, pid, base_name, format_id, base_name, file_ext)
 
-    def test_0130(self, gmn_client_v2, did):
+    def test_0130(self, gmn_client_v2):
         """SciObj with fileName without extension returns filename generated from
         fileName and formatId.
 
         When formatId is unknown, returns filename with extension, ".data".
 
         """
-        self._check(gmn_client_v2, did, did, "unknown_format_id", did, ".data")
+        pid = d1_test.instance_generator.identifier.generate_pid()
+        self._check(gmn_client_v2, pid, pid, "unknown_format_id", pid, ".data")

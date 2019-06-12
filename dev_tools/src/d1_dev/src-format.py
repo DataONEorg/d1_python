@@ -63,6 +63,17 @@ def main():
         help="Search directories recursively",
     )
     parser.add_argument(
+        "--no-default-excludes",
+        dest="default_excludes",
+        action="store_false",
+        help="Don't add default glob exclude patterns",
+    )
+    parser.add_argument(
+        "--include-untracked",
+        action="store_true",
+        help="Also process files not tracked by git",
+    )
+    parser.add_argument(
         "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
@@ -83,14 +94,15 @@ def main():
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     repo = git.Repo(repo_path)
 
-    specified_file_path_list = get_specified_file_path_list(args)
-    # for p in sorted(specified_file_path_list):
-    #     print(p)
-    tracked_path_list = list(d1_dev.util.get_tracked_files(repo))
-    format_path_list = sorted(
-        set(specified_file_path_list).intersection(tracked_path_list)
-    )
-    format_all(args, format_path_list)
+    specified_file_path_set = set(get_specified_file_path_list(args))
+
+    if args.include_untracked:
+        format_path_set = specified_file_path_set
+    else:
+        tracked_path_set = set(d1_dev.util.get_tracked_files(repo))
+        format_path_set = specified_file_path_set.intersection(tracked_path_set)
+
+    format_all(args, sorted(format_path_set))
 
 
 def get_specified_file_path_list(args):
@@ -102,7 +114,7 @@ def get_specified_file_path_list(args):
             exclude_glob_list=args.exclude,
             recursive=args.recursive,
             ignore_invalid=args.ignore_invalid,
-            default_excludes=True,
+            default_excludes=args.default_excludes,
             return_dir_paths=True,
         )
     ]

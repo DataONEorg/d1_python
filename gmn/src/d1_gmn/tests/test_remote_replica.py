@@ -71,7 +71,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
         assert send_sciobj_bytes == recv_sciobj_bytes
         assert d1_common.system_metadata.are_equivalent_pyxb(
-            send_sysmeta_pyxb, recv_sysmeta_pyxb
+            send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_filename=True
         )
 
     @responses.activate
@@ -129,7 +129,7 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
         assert send_sciobj_1_str == recv_sciobj_1_str
         assert d1_common.system_metadata.are_equivalent_pyxb(
-            send_sysmeta_1_pyxb, recv_sysmeta_1_pyxb
+            send_sysmeta_1_pyxb, recv_sysmeta_1_pyxb, ignore_filename=True
         )
         # Check that pid_2 retains initial replica info for node1 and node2
         recv_sciobj_2_str, recv_sysmeta_2_pyxb = self.get_obj(
@@ -137,5 +137,5 @@ class TestRemoteReplica(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
         assert send_sciobj_2_str == recv_sciobj_2_str
         assert d1_common.system_metadata.are_equivalent_pyxb(
-            send_sysmeta_2_pyxb, recv_sysmeta_2_pyxb
+            send_sysmeta_2_pyxb, recv_sysmeta_2_pyxb, ignore_filename=True
         )

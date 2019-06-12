@@ -24,8 +24,6 @@ import tempfile
 import mock
 import pytest
 
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.views.internal
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
@@ -39,10 +37,7 @@ import d1_client.cnclient_2_0
 import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
-import django.conf
-import django.core.management
 import django.db
-import django.test
 
 if not "TRAVIS" in os.environ:
     import d1_test.pycharm

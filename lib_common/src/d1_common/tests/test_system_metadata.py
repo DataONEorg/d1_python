@@ -41,12 +41,12 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
         modified_pyxb = self.test_files.load_xml_to_pyxb("systemMetadata_v2_0.xml")
         modified_pyxb.identifier = "modifiedIdentifier"
         assert not d1_common.system_metadata.are_equivalent_pyxb(
-            self.sm_pyxb, modified_pyxb
+            self.sm_pyxb, modified_pyxb, ignore_filename=True
         )
 
     def test_1020(self):
         """are_equivalent() Returns True for duplicated sysmeta."""
-        assert d1_common.system_metadata.are_equivalent_pyxb(self.sm_pyxb, self.sm_pyxb)
+        assert d1_common.system_metadata.are_equivalent_pyxb(self.sm_pyxb, self.sm_pyxb, ignore_filename=True)
 
     def test_1030(self):
         """are_equivalent() Returns True for sysmeta where elements that can occur in
@@ -55,7 +55,7 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
             "systemMetadata_v2_0.swizzled.xml"
         )
         assert d1_common.system_metadata.are_equivalent_pyxb(
-            self.sm_pyxb, swizzled_pyxb
+            self.sm_pyxb, swizzled_pyxb, ignore_filename=True
         )
 
     def test_1040(self):

@@ -48,7 +48,6 @@ import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.util
-import d1_common.utils.filesystem
 import d1_common.xml
 
 import d1_client.d1client

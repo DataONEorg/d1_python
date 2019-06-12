@@ -140,7 +140,7 @@ def is_sysmeta_pyxb(sysmeta_pyxb):
     )
 
 
-def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
+def normalize_in_place(sysmeta_pyxb, reset_timestamps=False, reset_filename=False):
     """Normalize SystemMetadata PyXB object in-place.
 
     Args:
@@ -194,9 +194,11 @@ def normalize_in_place(sysmeta_pyxb, reset_timestamps=False):
             replica_pyxb.replicaVerified = d1_common.date_time.round_to_nearest(
                 replica_pyxb.replicaVerified
             )
+    if reset_filename:
+        sysmeta_pyxb.fileName = None
 
 
-def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
+def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False, ignore_filename=False):
     """Determine if SystemMetadata PyXB objects are semantically equivalent.
 
     Normalize then compare SystemMetadata PyXB objects for equivalency.
@@ -204,10 +206,14 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
     Args:
       a_pyxb, b_pyxb : SystemMetadata PyXB objects to compare
 
-      reset_timestamps: bool
-        ``True``: Timestamps in the SystemMetadata are set to a standard value so that
-        objects that are compared after normalization register as equivalent if only
-        their timestamps differ.
+      ignore_timestamps: bool
+        ``True``: Timestamps are ignored during the comparison.
+
+      ignore_filename: bool
+        ``True``: FileName elements are ignored during the comparison.
+
+        This is necessary in cases where GMN returns a generated filename because one
+        was not provided in the SysMeta.
 
     Returns:
       bool: **True** if SystemMetadata PyXB objects are semantically equivalent.
@@ -219,8 +225,8 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False):
       un-normalized one.
 
     """
-    normalize_in_place(a_pyxb, ignore_timestamps)
-    normalize_in_place(b_pyxb, ignore_timestamps)
+    normalize_in_place(a_pyxb, ignore_timestamps, ignore_filename)
+    normalize_in_place(b_pyxb, ignore_timestamps, ignore_filename)
     a_xml = d1_common.xml.serialize_to_xml_str(a_pyxb)
     b_xml = d1_common.xml.serialize_to_xml_str(b_pyxb)
     are_equivalent = d1_common.xml.are_equivalent(a_xml, b_xml)

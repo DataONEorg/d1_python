@@ -46,13 +46,11 @@ def test_1000(self):
 import logging
 import re
 
-import mock
 import requests_toolbelt
 import responses
 
 import django.http
 import django.test
-import django.test.client
 
 base_url_list = []
 

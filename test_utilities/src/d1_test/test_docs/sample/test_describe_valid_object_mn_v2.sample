@@ -4,7 +4,7 @@
   "Access-Control-Allow-Methods": "GET,HEAD,PUT,DELETE,OPTIONS",
   "Access-Control-Allow-Origin": "https://search.dataone.org",
   "Allow": "GET,HEAD,PUT,DELETE,OPTIONS",
-  "Content-Disposition": "attachment; filename=\"file_xxhqdhvidrye\"",
+  "Content-Disposition": "attachment; filename=\"file_xxhqdhvidrye.wav\"",
   "Content-Length": "248",
   "Content-Type": "application/octet-stream",
   "DataONE-Checksum": "SHA-1,6f7f17cffdff694f0b8e16362d72d9fcfd0c0909",

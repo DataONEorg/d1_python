@@ -32,7 +32,6 @@ import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
 
-import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
 # App

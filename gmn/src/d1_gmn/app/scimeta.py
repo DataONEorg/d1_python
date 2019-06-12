@@ -18,13 +18,10 @@
 """Utilities for Science Metadata."""
 import d1_scimeta.xml_schema
 
-import d1_gmn.app.object_format_cache
 import d1_gmn.app.sciobj_store
 
 import d1_common.types
 import d1_common.types.exceptions
-import d1_common.utils
-import d1_common.utils.filesystem
 
 import django.conf
 

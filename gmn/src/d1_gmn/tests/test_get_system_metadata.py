@@ -90,7 +90,6 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             d1_common.system_metadata.normalize_in_place(
                 recv_sysmeta_pyxb, reset_timestamps=True
             )
-            # self.kdiff_pyxb(orig_sysmeta_pyxb, recv_sysmeta_pyxb)
             assert d1_common.system_metadata.are_equivalent_pyxb(
-                orig_sysmeta_pyxb, recv_sysmeta_pyxb
+                orig_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_filename=True,
             )

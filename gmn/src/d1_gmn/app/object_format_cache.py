@@ -19,7 +19,6 @@
 
 import d1_common.const
 import d1_common.object_format_cache
-import d1_common.utils
 
 import django.conf
 

@@ -23,7 +23,6 @@ The mode is selectable on a per object basis
 """
 
 import io
-import os
 
 import pytest
 import requests

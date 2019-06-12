@@ -33,9 +33,7 @@ import re
 import contextlib2
 
 import d1_gmn
-import d1_gmn.app
 
-import d1_common.const
 import d1_common.iter
 import d1_common.iter.stream
 import d1_common.types

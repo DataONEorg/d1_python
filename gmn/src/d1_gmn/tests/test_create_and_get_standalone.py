@@ -219,7 +219,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             )
             recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
             assert d1_common.system_metadata.are_equivalent_pyxb(
-                send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
+                send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True, ignore_filename=True
             )
             assert pid == unicode_pid
             assert recv_sysmeta_pyxb.identifier.value() == unicode_pid

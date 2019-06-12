@@ -39,7 +39,6 @@ import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.access_policy
-import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 
 
@@ -221,7 +220,7 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             # Check
             ver4_sciobj_bytes, ver4_sysmeta_pyxb = self.get_obj(gmn_client_v2, base_pid)
             assert d1_common.system_metadata.are_equivalent_pyxb(
-                ver3_sysmeta_pyxb, ver4_sysmeta_pyxb
+                ver3_sysmeta_pyxb, ver4_sysmeta_pyxb, ignore_filename=True
             )
 
     @responses.activate

@@ -50,7 +50,6 @@ import xml.dom
 import xml.dom.minidom
 import xml.etree
 import xml.etree.ElementTree
-import xml.sax
 
 import pyxb
 import pyxb.namespace.utility

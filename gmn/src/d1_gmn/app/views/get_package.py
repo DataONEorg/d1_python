@@ -17,9 +17,7 @@
 # limitations under the License.
 """MNPackage.getPackage(session, packageType, id) → OctetStream."""
 import d1_gmn.app.model_util
-import d1_gmn.app.object_format_cache
 import d1_gmn.app.resource_map
-import d1_gmn.app.scimeta
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.views.decorators

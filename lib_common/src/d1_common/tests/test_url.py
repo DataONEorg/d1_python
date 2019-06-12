@@ -22,7 +22,6 @@
 import d1_common.url
 
 import d1_test.d1_test_case
-import d1_test.test_files
 
 
 class TestUrl(d1_test.d1_test_case.D1TestCase):

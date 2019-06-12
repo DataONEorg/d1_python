@@ -30,9 +30,7 @@ When active, the test framework will:
 """
 import logging
 import os
-import select
 import subprocess
-import sys
 import time
 
 import d1_dev.util
