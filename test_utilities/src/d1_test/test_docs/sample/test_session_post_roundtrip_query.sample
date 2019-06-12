@@ -6,7 +6,7 @@
     "Charset": "utf-8",
     "Connection": "keep-alive",
     "Content-Length": "9",
-    "User-Agent": "DataONE-Python[VERSION] +http://dataone.org/",
+    "User-Agent": "DataONE-Python/[VERSION] +http://dataone.org/",
     "ijkl": "9876",
     "mnop": "5432"
   },
