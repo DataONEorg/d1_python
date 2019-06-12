@@ -83,7 +83,7 @@ class FUSECallbacks(fuse.Operations):
         Returns a list of file and directory names for the directory.
 
         """
-        log.debug('readdir(): {}'.format(path))
+        log.debug("readdir(): {}".format(path))
         try:
             dir = self._directory_cache[path]
         except KeyError:
@@ -97,7 +97,7 @@ class FUSECallbacks(fuse.Operations):
         Determines if the provided path and open flags are valid.
 
         """
-        log.debug('open(): {}'.format(path))
+        log.debug("open(): {}".format(path))
         # ONEDrive is currently read only. Anything but read access is denied.
         if (flags & self._READ_ONLY_ACCESS_MODE) != os.O_RDONLY:
             self._raise_error_permission_denied(path)
@@ -106,7 +106,7 @@ class FUSECallbacks(fuse.Operations):
         return attribute.is_dir()
 
     def read(self, path, size, offset, fh):
-        log.debug('read(): {}'.format(path))
+        log.debug("read(): {}".format(path))
         try:
             return self._root_resolver.read_file(path, size, offset)
         except d1_onedrive.impl.onedrive_exceptions.PathException:
@@ -117,8 +117,8 @@ class FUSECallbacks(fuse.Operations):
     def _get_directory(self, path):
         try:
             d = self._root_resolver.get_directory(path)
-            d.append('.')
-            d.append('..')
+            d.append(".")
+            d.append("..")
             return d
         except d1_onedrive.impl.onedrive_exceptions.PathException:
             self._raise_error_no_such_file_or_directory(path)
@@ -163,9 +163,9 @@ class FUSECallbacks(fuse.Operations):
             self._raise_error_no_such_file_or_directory(path)
 
     def _raise_error_no_such_file_or_directory(self, path):
-        log.debug('Error: No such file or directory: {}'.format(path))
+        log.debug("Error: No such file or directory: {}".format(path))
         raise fuse.FuseOSError(errno.ENOENT)
 
     def _raise_error_permission_denied(self, path):
-        log.debug('Error: Permission denied: {}'.format(path))
+        log.debug("Error: Permission denied: {}".format(path))
         raise fuse.FuseOSError(errno.EACCES)

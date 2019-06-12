@@ -39,22 +39,22 @@ import d1_test.instance_generator.identifier
 logger = logging.getLogger(__name__)
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestCreateAndGetStandalone')
+@d1_test.d1_test_case.reproducible_random_decorator("TestCreateAndGetStandalone")
 class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
         """get(): Response contains expected headers."""
-        with freezegun.freeze_time('1981-01-02'):
+        with freezegun.freeze_time("1981-01-02"):
             with d1_gmn.tests.gmn_mock.disable_auth():
                 pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
                     gmn_client_v1_v2,
-                    pid='get_response',
+                    pid="get_response",
                     now_dt=datetime.datetime(2010, 10, 10, 10, 10, 10),
                 )
                 response = gmn_client_v1_v2.get(pid)
                 response_str = gmn_client_v1_v2.dump_request_and_response(response)
                 self.sample.assert_equals(
-                    response_str, 'get_response_headers', gmn_client_v1_v2
+                    response_str, "get_response_headers", gmn_client_v1_v2
                 )
 
     @responses.activate
@@ -82,8 +82,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with pytest.raises(d1_common.types.exceptions.NotAuthorized):
             self.create_obj(
                 gmn_client_v1_v2,
-                active_subj_list=['subj1', 'subj2', 'subj3'],
-                trusted_subj_list=['subj4', 'subj5'],
+                active_subj_list=["subj1", "subj2", "subj3"],
+                trusted_subj_list=["subj4", "subj5"],
                 disable_auth=False,
             )
 
@@ -92,8 +92,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """create(): Creates the object if one or more trusted subjects are active."""
         self.create_obj(
             gmn_client_v1_v2,
-            active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
-            trusted_subj_list=['active_and_trusted_subj', 'subj4'],
+            active_subj_list=["subj1", "subj2", "active_and_trusted_subj"],
+            trusted_subj_list=["active_and_trusted_subj", "subj4"],
             disable_auth=False,
         )
 
@@ -105,8 +105,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.get_obj(
             gmn_client_v1_v2,
             pid,
-            active_subj_list=['subj1', 'subj2', 'active_and_trusted_subj'],
-            trusted_subj_list=['active_and_trusted_subj', 'subj4'],
+            active_subj_list=["subj1", "subj2", "active_and_trusted_subj"],
+            trusted_subj_list=["active_and_trusted_subj", "subj4"],
             disable_auth=False,
         )
 
@@ -123,8 +123,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.get_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=['subj1', 'subj2', 'shared_subj', 'subj4'],
-                trusted_subj_list=['subj5', 'subj6'],
+                active_subj_list=["subj1", "subj2", "shared_subj", "subj4"],
+                trusted_subj_list=["subj5", "subj6"],
                 disable_auth=False,
             )
 
@@ -164,10 +164,10 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """create() / get(): Object that has read access for subject can be retrieved by
         that subject."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-            gmn_client_v1_v2, permission_list=[(['subj5'], ['read'])]
+            gmn_client_v1_v2, permission_list=[(["subj5"], ["read"])]
         )
         self.get_obj(
-            gmn_client_v1_v2, pid, active_subj_list='subj5', disable_auth=False
+            gmn_client_v1_v2, pid, active_subj_list="subj5", disable_auth=False
         )
 
     @responses.activate
@@ -175,10 +175,10 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """create() / get(): Object that has higher level access for subject also allows
         lower level access by subject."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
-            gmn_client_v1_v2, permission_list=[(['subj5'], ['changePermission'])]
+            gmn_client_v1_v2, permission_list=[(["subj5"], ["changePermission"])]
         )
         self.get_obj(
-            gmn_client_v1_v2, pid, active_subj_list='subj5', disable_auth=False
+            gmn_client_v1_v2, pid, active_subj_list="subj5", disable_auth=False
         )
 
     @responses.activate
@@ -203,24 +203,24 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with pytest.raises(pyxb.SimpleFacetValueError):
             self.create_obj(
                 gmn_client_v1_v2,
-                'x y',
-                permission_list=[(['subj5'], ['changePermission'])],
+                "x y",
+                permission_list=[(["subj5"], ["changePermission"])],
             )
 
     @responses.activate
     def test_1120(self, gmn_client_v1_v2, tricky_identifier_dict):
         """create() / get(): Tricky unicode identifers are handled correctly."""
-        if tricky_identifier_dict['status'] != 'pass':
+        if tricky_identifier_dict["status"] != "pass":
             return
-        unicode_pid = tricky_identifier_dict['unescaped']
+        unicode_pid = tricky_identifier_dict["unescaped"]
         with d1_gmn.tests.gmn_mock.disable_auth():
-            logger.debug('Testing PID: {}'.format(unicode_pid))
+            logger.debug("Testing PID: {}".format(unicode_pid))
             pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.create_obj(
                 gmn_client_v1_v2, pid=unicode_pid, sid=True
             )
             recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
             assert d1_common.system_metadata.are_equivalent_pyxb(
-                send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True
+                send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True, ignore_filename=True
             )
             assert pid == unicode_pid
             assert recv_sysmeta_pyxb.identifier.value() == unicode_pid

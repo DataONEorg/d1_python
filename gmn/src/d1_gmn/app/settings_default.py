@@ -47,27 +47,27 @@ TRUST_CLIENT_DATESYSMETADATAMODIFIED = False
 TRUST_CLIENT_SERIALVERSION = False
 TRUST_CLIENT_DATEUPLOADED = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
-NODE_IDENTIFIER = 'urn:node:MyMemberNode'
-NODE_NAME = 'My Member Node'
-NODE_DESCRIPTION = 'Test Member Node'
-NODE_BASEURL = 'https://localhost/mn'
+NODE_IDENTIFIER = "urn:node:MyMemberNode"
+NODE_NAME = "My Member Node"
+NODE_DESCRIPTION = "Test Member Node"
+NODE_BASEURL = "https://localhost/mn"
 NODE_SYNCHRONIZE = True
-NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
-NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
-NODE_STATE = 'up'
+NODE_SUBJECT = "CN=urn:node:MyMemberNode,DC=dataone,DC=org"
+NODE_CONTACT_SUBJECT = "CN=My Name,O=Google,C=US,DC=cilogon,DC=org"
+NODE_STATE = "up"
 NODE_LOGO_ROOT = (
-    'https://raw.githubusercontent.com/'
-    'DataONEorg/member-node-info/master/production/graphics/web/'
+    "https://raw.githubusercontent.com/"
+    "DataONEorg/member-node-info/master/production/graphics/web/"
 )
-NODE_SYNC_SCHEDULE_YEAR = '*'
-NODE_SYNC_SCHEDULE_MONTH = '*'
-NODE_SYNC_SCHEDULE_WEEKDAY = '?'
-NODE_SYNC_SCHEDULE_MONTHDAY = '*'
-NODE_SYNC_SCHEDULE_HOUR = '*'
-NODE_SYNC_SCHEDULE_MINUTE = '42'
-NODE_SYNC_SCHEDULE_SECOND = '0'
+NODE_SYNC_SCHEDULE_YEAR = "*"
+NODE_SYNC_SCHEDULE_MONTH = "*"
+NODE_SYNC_SCHEDULE_WEEKDAY = "?"
+NODE_SYNC_SCHEDULE_MONTHDAY = "*"
+NODE_SYNC_SCHEDULE_HOUR = "*"
+NODE_SYNC_SCHEDULE_MINUTE = "42"
+NODE_SYNC_SCHEDULE_SECOND = "0"
 
 LOG_IGNORE_USER_AGENT = []
 LOG_IGNORE_IP_ADDRESS = []
@@ -75,12 +75,12 @@ LOG_IGNORE_SUBJECT = []
 LOG_IGNORE_TRUSTED_SUBJECT = True
 LOG_IGNORE_NODE_SUBJECT = True
 
-CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
+CLIENT_CERT_PATH = "/var/local/dataone/certs/client/client_cert.pem"
 CLIENT_CERT_PRIVATE_KEY_PATH = (
-    '/var/local/dataone/certs/client/client_key_nopassword.pem'
+    "/var/local/dataone/certs/client/client_key_nopassword.pem"
 )
 
-OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
+OBJECT_STORE_PATH = "/var/local/dataone/gmn_object_store"
 
 NODE_REPLICATE = False
 
@@ -98,21 +98,21 @@ DATAONE_SEARCH = d1_common.const.URL_DATAONE_SEARCH
 
 DATAONE_TRUSTED_SUBJECTS = set([])
 
-ADMINS = (('unset', 'unset@unset.tld'),)
+ADMINS = (("unset", "unset@unset.tld"),)
 
 PUBLIC_OBJECT_LIST = True
 PUBLIC_LOG_RECORDS = True
 REQUIRE_WHITELIST_FOR_UPDATE = True
 
-RESOURCE_MAP_CREATE = 'block'
+RESOURCE_MAP_CREATE = "block"
 
 SCIMETA_VALIDATION_ENABLED = True
 SCIMETA_VALIDATION_MAX_SIZE = 100 * 1024 ** 2
-SCIMETA_VALIDATION_OVER_SIZE_ACTION = 'reject'
+SCIMETA_VALIDATION_OVER_SIZE_ACTION = "reject"
 
 PROXY_MODE_BASIC_AUTH_ENABLED = False
-PROXY_MODE_BASIC_AUTH_USERNAME = ''
-PROXY_MODE_BASIC_AUTH_PASSWORD = ''
+PROXY_MODE_BASIC_AUTH_USERNAME = ""
+PROXY_MODE_BASIC_AUTH_PASSWORD = ""
 PROXY_MODE_STREAM_TIMEOUT = 30
 
 # Fallback origin to use if the CGI environment does not contain HTTP_ORIGIN.
@@ -133,8 +133,8 @@ MAX_SLICE_ITEMS = 5000
 # - GNM always serves static files. This is not safe for production.
 STATIC_SERVER = False
 
-STATIC_URL = '/static/'
-STATIC_ROOT = d1_common.utils.filesystem.abs_path('./static')
+STATIC_URL = "/static/"
+STATIC_ROOT = d1_common.utils.filesystem.abs_path("./static")
 
 # ObjectFormatList cache
 
@@ -151,21 +151,21 @@ OBJECT_FORMAT_CACHE_REFRESH_PERIOD = datetime.timedelta(days=30)
 
 # Postgres database connection.
 DATABASES = {
-    'default': {
+    "default": {
         # Postgres
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
         # The database in tables required by GMN are stored. The database itself
         # is typically owned by the postgres user while the tables are owned by the
         # gmn user.
-        'NAME': 'gmn3',
+        "NAME": "gmn3",
         # By default, GMN uses Postgres Peer authentication, which does not
         # require a username and password.
-        'USER': '',
-        'PASSWORD': '',
+        "USER": "",
+        "PASSWORD": "",
         # Set HOST to empty string for localhost.
-        'HOST': '',
+        "HOST": "",
         # Set PORT to empty string for default.
-        'PORT': '',
+        "PORT": "",
         # Wrap each HTTP request in an implicit transaction. The transaction is
         # rolled back if the view does not return successfully. Upon a successful
         # return, the transaction is committed, thus making all modifications that
@@ -178,53 +178,53 @@ DATABASES = {
         #
         # Do not change ATOMIC_REQUESTS from "True", as implicit transactions form
         # the basis of concurrency control in GMN.
-        'ATOMIC_REQUESTS': True,
+        "ATOMIC_REQUESTS": True,
     }
 }
 
 # Logging
 
-LOG_LEVEL = 'DEBUG' if DEBUG or DEBUG_GMN else 'INFO'
+LOG_LEVEL = "DEBUG" if DEBUG or DEBUG_GMN else "INFO"
 
 # Write log files to /var/local/dataone/logs if the directory exists. Else,
 # write to the root of the d1_gmn package directory.
 LOG_FILE_PATH = (
-    '/var/local/dataone/logs/gmn.log'
-    if os.path.isdir('/var/local/dataone/logs')
-    else d1_common.utils.filesystem.abs_path('../gmn.log')
+    "/var/local/dataone/logs/gmn.log"
+    if os.path.isdir("/var/local/dataone/logs")
+    else d1_common.utils.filesystem.abs_path("../gmn.log")
 )
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'formatters': {
-        'verbose': {
-            'format': '%(asctime)s %(levelname)-8s %(name)s %(module)s '
-            '%(process)d %(thread)d %(message)s',
-            'datefmt': '%Y-%m-%d %H:%M:%S',
+    "version": 1,
+    "disable_existing_loggers": True,
+    "formatters": {
+        "verbose": {
+            "format": "%(asctime)s %(levelname)-8s %(name)s %(module)s "
+            "%(process)d %(thread)d %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
         }
     },
-    'handlers': {
+    "handlers": {
         # Write logs to a rotating set of files, much like logrotate.
-        'rotating_file': {
-            'level': LOG_LEVEL,
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': LOG_FILE_PATH,
-            'maxBytes': 10 * 1024 * 1024,
-            'backupCount': 5,
-            'formatter': 'verbose',
+        "rotating_file": {
+            "level": LOG_LEVEL,
+            "class": "logging.handlers.RotatingFileHandler",
+            "filename": LOG_FILE_PATH,
+            "maxBytes": 10 * 1024 * 1024,
+            "backupCount": 5,
+            "formatter": "verbose",
         },
         # Write logs to stdout. Useful when running via ./manage.py runserver.
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-            'level': LOG_LEVEL,
-            'stream': 'ext://sys.stdout',
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+            "level": LOG_LEVEL,
+            "stream": "ext://sys.stdout",
         },
     },
-    'loggers': {
+    "loggers": {
         # The "catch all" logger is at the root of the tree, denoted by ''.
-        '': {'handlers': ['rotating_file'], 'level': LOG_LEVEL, 'propagate': True},
+        "": {"handlers": ["rotating_file"], "level": LOG_LEVEL, "propagate": True},
         # Examples for how to capture and redirect log records written by loggers
         # below the root logger in the tree. When these are disabled, all logs
         # flow to the root logger.
@@ -260,47 +260,47 @@ LOGGING = {
 }
 
 MIDDLEWARE = (
-    'd1_gmn.app.middleware.request_handler.RequestHandler',
-    'd1_gmn.app.middleware.exception_handler.ExceptionHandler',
-    'd1_gmn.app.middleware.response_handler.ResponseHandler',
+    "d1_gmn.app.middleware.request_handler.RequestHandler",
+    "d1_gmn.app.middleware.exception_handler.ExceptionHandler",
+    "d1_gmn.app.middleware.response_handler.ResponseHandler",
     # 'd1_gmn.app.middleware.profiling_handler.ProfilingHandler',
-    'd1_gmn.app.middleware.view_handler.ViewHandler',
+    "d1_gmn.app.middleware.view_handler.ViewHandler",
 )
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [d1_common.utils.filesystem.abs_path('./app/templates')],  # noqa: F405
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [d1_common.utils.filesystem.abs_path("./app/templates")],  # noqa: F405
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ]
         },
     }
 ]
 
-TEMPLATE_CONTEXT_PROCESSORS = ('app.context_processors.global_settings',)
+TEMPLATE_CONTEXT_PROCESSORS = ("app.context_processors.global_settings",)
 
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'TIMEOUT': 60 * 60,
+    "default": {
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "TIMEOUT": 60 * 60,
     }
 }
 
-ROOT_URLCONF = 'd1_gmn.app.urls'
+ROOT_URLCONF = "d1_gmn.app.urls"
 
 INSTALLED_APPS = [
     # These are required in order for 404 not to trigger 500 when DEBUG=False
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.staticfiles',
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.staticfiles",
     # Check settings and start GMN
-    'd1_gmn.app.gmn.Startup',
+    "d1_gmn.app.gmn.Startup",
 ]
 
 # Django uses SECRET_KEY for a number of security related features, such as
@@ -310,14 +310,14 @@ INSTALLED_APPS = [
 # Django that may cause this setting to be used, GMN automatically generates a
 # persistent SECRET_KEY, which is used instead of the placeholder value
 # specified here. Also see SECRET_KEY_PATH setting.
-SECRET_KEY = '<Do not modify this placeholder value>'
+SECRET_KEY = "<Do not modify this placeholder value>"
 
 # Path to file holding the secret key. Typically, the file does not exist when
 # GMN is first installed, and is automatically created and written with a
 # generated key when GMN is first launched after install. If the file exists,
 # the contents are used as the key. The file and key may be created manually if
 # desired. The parent directories must exist. Also see the SECRET_KEY setting.
-SECRET_KEY_PATH = d1_common.utils.filesystem.abs_path('./secret_key.txt')
+SECRET_KEY_PATH = d1_common.utils.filesystem.abs_path("./secret_key.txt")
 
 # Only set cookies when running through SSL.
 # Default: True
@@ -325,7 +325,7 @@ SESSION_COOKIE_SECURE = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
 # Django's internationalization support is not used by GMN.
 #
@@ -341,4 +341,4 @@ USE_TZ = True
 # trailing slash if there is a path component (optional in other cases).
 # Not used by GMN.
 # Default: ''
-MEDIA_URL = ''
+MEDIA_URL = ""

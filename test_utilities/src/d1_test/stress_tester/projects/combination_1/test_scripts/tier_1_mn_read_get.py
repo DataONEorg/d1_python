@@ -43,7 +43,7 @@ class Transaction(transaction.Transaction):
         response.read()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     t = Transaction()
     t.run()
     # import cProfile

@@ -40,7 +40,7 @@ Contents:
 from functools import reduce
 
 __version__ = "0.1.2"
-__author__ = 'Joe Gregorio'
+__author__ = "Joe Gregorio"
 __email__ = "joe@bitworking.org"
 __credits__ = ""
 
@@ -60,8 +60,8 @@ def parse_mime_type(mime_type):
     full_type = parts[0].strip()
     # Java URLConnection class sends an Accept header that includes a single "*"
     # Turn it into a legal wildcard.
-    if full_type == '*':
-        full_type = '*/*'
+    if full_type == "*":
+        full_type = "*/*"
     (type, subtype) = full_type.split("/")
     return (type.strip(), subtype.strip(), params)
 
@@ -80,13 +80,13 @@ def parse_media_range(range):
     """
     (type, subtype, params) = parse_mime_type(range)
     if (
-        'q' not in params
-        or 'q' not in params
-        or not float(params['q'])
-        or float(params['q']) > 1
-        or float(params['q']) < 0
+        "q" not in params
+        or "q" not in params
+        or not float(params["q"])
+        or float(params["q"]) > 1
+        or float(params["q"]) < 0
     ):
-        params['q'] = '1'
+        params["q"] = "1"
     return (type, subtype, params)
 
 
@@ -103,15 +103,15 @@ def fitness_and_quality_parsed(mime_type, parsed_ranges):
     best_fit_q = 0
     (target_type, target_subtype, target_params) = parse_media_range(mime_type)
     for (type, subtype, params) in parsed_ranges:
-        if (type == target_type or type == '*' or target_type == '*') and (
-            subtype == target_subtype or subtype == '*' or target_subtype == '*'
+        if (type == target_type or type == "*" or target_type == "*") and (
+            subtype == target_subtype or subtype == "*" or target_subtype == "*"
         ):
             param_matches = reduce(
                 lambda x, y: x + y,
                 [
                     1
                     for (key, value) in list(target_params.items())
-                    if key != 'q' and key in params and value == params[key]
+                    if key != "q" and key in params and value == params[key]
                 ],
                 0,
             )
@@ -120,7 +120,7 @@ def fitness_and_quality_parsed(mime_type, parsed_ranges):
             fitness += param_matches
             if fitness > best_fitness:
                 best_fitness = fitness
-                best_fit_q = params['q']
+                best_fit_q = params["q"]
 
     return best_fitness, float(best_fit_q)
 
@@ -165,4 +165,4 @@ def best_match(supported, header):
         for mime_type in supported
     ]
     weighted_matches.sort()
-    return weighted_matches[-1][0][1] and weighted_matches[-1][1] or ''
+    return weighted_matches[-1][0][1] and weighted_matches[-1][1] or ""

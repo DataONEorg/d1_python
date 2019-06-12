@@ -24,11 +24,11 @@ import d1_test.instance_generator.user_agent
 # ===============================================================================
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestUserAgent')
+@d1_test.d1_test_case.reproducible_random_decorator("TestUserAgent")
 class TestUserAgent(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """generate()"""
         user_agent_list = [
             d1_test.instance_generator.user_agent.generate() for _ in range(10)
         ]
-        self.sample.assert_equals(user_agent_list, 'inst_gen_generate')
+        self.sample.assert_equals(user_agent_list, "inst_gen_generate")

@@ -45,14 +45,14 @@ class RequestHandler:
         if django.conf.settings.DEBUG_GMN:
             if (
                 django.conf.settings.DEBUG_ECHO_REQUEST
-                or 'HTTP_VENDOR_GMN_ECHO_REQUEST' in request.META
+                or "HTTP_VENDOR_GMN_ECHO_REQUEST" in request.META
             ):
                 return d1_gmn.app.util.create_http_echo_response(request)
 
         response = self.next_in_chain_func(request)
 
         if isinstance(response, django.http.response.HttpResponseBase) and hasattr(
-            request, 'allowed_method_list'
+            request, "allowed_method_list"
         ):
             d1_gmn.app.views.headers.add_cors(response, request)
 

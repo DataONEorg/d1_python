@@ -63,7 +63,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         }
 
     def get_attributes(self, path):
-        log.debug('get_attributes: {}'.format(path))
+        log.debug("get_attributes: {}".format(path))
         p = self._split_and_unescape_path(path)
         self._raise_if_os_special_file(p)
         if self._is_readme_file(path):
@@ -71,7 +71,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return self._get_attributes(p)
 
     def get_directory(self, path):
-        log.debug('get_directory: {}'.format(path))
+        log.debug("get_directory: {}".format(path))
         p = self._split_and_unescape_path(path)
         self._raise_if_os_special_file(p)
 
@@ -84,7 +84,7 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return self._get_directory(p)
 
     def read_file(self, path, size, offset):
-        log.debug('read_file: {}, {}, {}'.format(path, size, offset))
+        log.debug("read_file: {}, {}, {}".format(path, size, offset))
         p = self._split_and_unescape_path(path)
         self._raise_if_os_special_file(p)
         if self._is_readme_file(path):
@@ -141,13 +141,13 @@ class RootResolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         try:
             return self._resolvers[path[0]]
         except KeyError:
-            raise onedrive_exceptions.PathException('Invalid root directory')
+            raise onedrive_exceptions.PathException("Invalid root directory")
 
     def _raise_if_os_special_file(self, path):
         # For each file of "name", Finder on Mac OS X attempts to access ".name".
         if path[-1] in self._options.ignore_special:
-            log.debug('Ignored file: {}'.format(path[-1]))
-            raise onedrive_exceptions.PathException('Ignored OS special file')
+            log.debug("Ignored file: {}".format(path[-1]))
+            raise onedrive_exceptions.PathException("Ignored OS special file")
 
     def _is_root(self, path):
-        return path == ['']
+        return path == [""]

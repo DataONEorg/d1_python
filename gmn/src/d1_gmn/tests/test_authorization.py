@@ -45,7 +45,7 @@ class TestAuthorization(d1_gmn.tests.gmn_test_case.GMNTestCase):
         return self.create_obj(self.client_v2, sid=True)
 
     def _get(self, pid, active_subj_list):
-        with d1_gmn.tests.gmn_mock.set_auth_context(active_subj_list, ['trusted_subj']):
+        with d1_gmn.tests.gmn_mock.set_auth_context(active_subj_list, ["trusted_subj"]):
             self.client_v2.get(pid)
 
     @responses.activate
@@ -53,24 +53,24 @@ class TestAuthorization(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """Attempted object read by single unknown subject raises NotAuthorized."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
         with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-            self._get(pid, ['unk_subj'])
+            self._get(pid, ["unk_subj"])
 
     @responses.activate
     def test_1010(self):
         """Attempted object read by multiple unknown subjects raise NotAuthorized."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
         with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-            self._get(pid, ['unk_subj', 'subj2_', '_subj33', 'subj12!'])
+            self._get(pid, ["unk_subj", "subj2_", "_subj33", "subj12!"])
 
     @responses.activate
     def test_1020(self):
         """Attempted object read by a single known subject allowed."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
-        self._get(pid, ['subj12'])
+        self._get(pid, ["subj12"])
 
     @responses.activate
     def test_1030(self):
         """Attempted object read by a single known subject is allowed even if there are
         also unknown subjects."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
-        self._get(pid, ['unk_subj', 'subj2_', '_subj33', 'subj12!', 'subj1'])
+        self._get(pid, ["unk_subj", "subj2_", "_subj33", "subj12!", "subj1"])

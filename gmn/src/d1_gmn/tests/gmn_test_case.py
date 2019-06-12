@@ -15,11 +15,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# The Django init needs to occur before the django and gmn_test_case imports, so we're
+# stuck with a bit of a messy import section that isort and flake8 don't like.
+# isort:skip_file
+
+import bz2
 import contextlib
 import copy
 import datetime
 import io
-import json
 import logging
 import os
 import random
@@ -28,6 +33,18 @@ import sys
 import tempfile
 import traceback
 
+import django
+import django.conf
+import django.core.management
+import django.db
+import django.test
+
+os.environ["DJANGO_SETTINGS_MODULE"] = "d1_gmn.settings_test"
+django.setup()
+
+import d1_test.test_files
+import psycopg2
+import psycopg2.extensions
 import requests
 
 import pytest
@@ -36,6 +53,8 @@ import d1_gmn.app
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
+import d1_gmn.app.views.internal
+import d1_gmn.tests
 import d1_gmn.tests.gmn_mock
 
 import d1_common.checksum
@@ -45,7 +64,7 @@ import d1_common.types
 import d1_common.types.dataoneTypes_v1_1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
-import d1_common.utils.filesystem
+
 import d1_common.xml
 
 import d1_test.d1_test_case
@@ -59,14 +78,11 @@ import d1_test.mock_api.django_client
 import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
-import django.core.management
-import django.db
-import django.test
-
 ENABLE_SQL_PROFILING = False
 
 MOCK_GMN_BASE_URL = "http://gmn.client/node"
-
+REL_DB_FIXTURE_PATH = "json/db_fixture.json.bz2"
+DEFAULT_DB_KEY = "default"
 
 logger = logging.getLogger(__name__)
 
@@ -78,8 +94,8 @@ def unique_sciobj_store(store_root_path):
         store_root_path,
         d1_test.instance_generator.random_data.random_lower_ascii(fixed_len=10),
     )
-    store_path = os.path.join(root_path, 'store')
-    upload_path = os.path.join(root_path, 'upload')
+    store_path = os.path.join(root_path, "store")
+    upload_path = os.path.join(root_path, "upload")
     with django.test.override_settings(
         OBJECT_STORE_PATH=store_path, FILE_UPLOAD_TEMP_DIR=upload_path
     ):
@@ -96,10 +112,167 @@ def unique_sciobj_store(store_root_path):
             shutil.rmtree(root_path)
 
 
+# Postgres DB
+
+
+def postgres_drop_if_exists(db_name):
+    logger.debug("Dropping DB if exists: db_name={}".format(db_name))
+    run_postgres_sql("postgres", "drop database if exists {};".format(db_name))
+
+
+def postgres_create_blank(db_name):
+    logger.debug("Creating blank DB. db_name={}".format(db_name))
+    run_postgres_sql("postgres", "create database {} encoding 'utf-8';".format(db_name))
+
+
+def postgres_db_exists(db_name):
+    logger.debug("Checking if DB exists. db_name={}".format(db_name))
+    exists_bool = bool(
+        run_postgres_sql(
+            "postgres", "select 1 from pg_database WHERE datname='{}'".format(db_name)
+        )
+    )
+    if exists_bool:
+        logger.debug("DB exists")
+    else:
+        logger.debug("DB does not exist")
+    return exists_bool
+
+
+def run_postgres_sql(db, sql):
+    try:
+        conn = psycopg2.connect(database=db)
+        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
+        cur = conn.cursor()
+        cur.execute(sql)
+    except psycopg2.DatabaseError as e:
+        logger.debug("SQL query error: {}".format(str(e)))
+        raise
+    try:
+        return cur.fetchall()
+    except psycopg2.DatabaseError:
+        return None
+    finally:
+        conn.close()
+        d1_gmn.tests.gmn_test_case.django_close_all_connections()
+
+
+# Django DB
+
+
+def django_get_db_name_by_key(db_key=DEFAULT_DB_KEY):
+    return django.conf.settings.DATABASES[db_key]["NAME"]
+
+
+def django_set_db_name_by_key(db_name, db_key=DEFAULT_DB_KEY):
+    django.conf.settings.DATABASES[db_key]["NAME"] = db_name
+
+
+def django_save_db_fixture(db_key=DEFAULT_DB_KEY):
+    fixture_file_path = d1_test.test_files.get_abs_test_file_path(REL_DB_FIXTURE_PATH)
+    logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
+    buf = io.StringIO()
+    django.core.management.call_command(
+        "dumpdata",
+        exclude=["auth.permission", "contenttypes"],
+        database=db_key,
+        stdout=buf,
+    )
+    with bz2.BZ2File(
+        fixture_file_path, "w", buffering=1024 ** 2, compresslevel=9
+    ) as bz2_file:
+        bz2_file.write(buf.getvalue().encode("utf-8"))
+
+
+def django_load_db_fixture(rel_json_fixture_path, db_key=DEFAULT_DB_KEY):
+    logger.debug(
+        "Populating DB from compressed JSON fixture file. db_key={}".format(db_key)
+    )
+    fixture_file_path = d1_test.test_files.get_abs_test_file_path(rel_json_fixture_path)
+    django.core.management.call_command("loaddata", fixture_file_path, database=db_key)
+    django_commit_and_close(db_key)
+
+
+def django_migrate(db_key=DEFAULT_DB_KEY):
+    logger.debug("Applying DB migrations. db_key={}".format(db_key))
+    django.core.management.call_command("migrate", "--run-syncdb", database=db_key)
+    django_commit_and_close(db_key)
+
+
+def django_dump_db_stats():
+    logger.debug("Database:")
+    logger.debug(
+        "  db_name={}".format(django.conf.settings.DATABASES["default"]["NAME"])
+    )
+    logger.debug(
+        "  total_sciobj_count={}".format(
+            d1_gmn.app.views.internal.get_total_sciobj_count()
+        )
+    )
+    logger.debug(
+        "  unique_subject_count={}".format(
+            d1_gmn.app.views.internal.get_unique_subject_count()
+        )
+    )
+    logger.debug(
+        "  total_permissions_count={}".format(
+            d1_gmn.app.views.internal.get_total_permissions_count()
+        )
+    )
+    logger.debug(
+        "  total_event_count={}".format(
+            d1_gmn.app.views.internal.get_total_event_count()
+        )
+    )
+    logger.debug(
+        "  total_format_count={}".format(
+            d1_gmn.app.views.internal.get_total_format_count()
+        )
+    )
+    logger.debug(
+        "  avg_sci_data_size_bytes={}".format(
+            d1_gmn.app.views.internal.get_avg_sci_data_size_bytes()
+        )
+    )
+    logger.debug(
+        "  sciobj_storage_used_bytes={}".format(
+            d1_gmn.app.views.internal.get_sciobj_storage_used_bytes()
+        )
+    )
+    logger.debug(
+        "  last_hour_event_count={}".format(
+            d1_gmn.app.views.internal.get_last_hour_event_count()
+        )
+    )
+
+
+def django_clear_db(db_key=DEFAULT_DB_KEY):
+    django.core.management.call_command("flush", interactive=False, database=db_key)
+
+
+def django_commit_and_close(db_key=DEFAULT_DB_KEY):
+    django_commit(db_key)
+    django_close_all_connections()
+
+
+def django_commit(db_key=DEFAULT_DB_KEY):
+    django.db.connections[db_key].commit()
+
+
+def django_close_all_connections():
+    for connection in django.db.connections.all():
+        connection.close()
+    # TODO: Needed?
+    django.db.connections.close_all()
+
+
+# =============================================================================
+
+
 class GMNTestCase(d1_test.d1_test_case.D1TestCase):
     def setup_method(self, method):
         """Run for each test method that derives from GMNTestCase."""
-        # logging.error('GMNTestCase.setup_method()')
+        # logger.error('GMNTestCase.setup_method()')
         d1_test.mock_api.django_client.add_callback(MOCK_GMN_BASE_URL)
         # d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_BASE_URL)
         self.client_v1 = d1_client.mnclient_1_2.MemberNodeClient_1_2(MOCK_GMN_BASE_URL)
@@ -109,9 +282,10 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         # )
         self.v1 = d1_common.types.dataoneTypes_v1_1
         self.v2 = d1_common.types.dataoneTypes_v2_0
-        # # Remove limit on max diff to show. This can cause debug output to
-        # # explode...
-        self.maxDiff = None
+        # Remove limit on max diff to show. This can cause debug output to
+        # explode...
+        # TODO
+        # self.maxDiff = None
 
     @property
     def mock(self):
@@ -140,7 +314,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         exc_type, exc_value, exc_traceback = sys.exc_info()
         if not isinstance(exc_value, Exception):
             return
-        logging.exception("Test failed with exception:")
+        logger.exception("Test failed with exception:")
         if not isinstance(exc_value, d1_common.types.exceptions.DataONEException):
             return
         func_name_str = GMNTestCase.get_test_func_name()
@@ -150,7 +324,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         # Dump the entire exception
         with open(file_path, "w") as f:
             f.write(str(exc_value))
-        logging.error('Wrote exception to file. path="{}"'.format(file_path))
+        logger.error('Wrote exception to file. path="{}"'.format(file_path))
         # Dump any HTML (typically from the Django diags page)
         if exc_value.traceInformation:
             ss = io.StringIO()
@@ -164,7 +338,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 file_path = os.path.join(tempfile.gettempdir(), "gmn_test_failed.html")
                 with open(file_path, "w") as f:
                     f.write(str(ss.getvalue()))
-                logging.error(
+                logger.error(
                     'Wrote HTML from exception to file. path="{}"'.format(file_path)
                 )
 
@@ -238,13 +412,13 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         assert d1_common.checksum.are_checksums_equal(a_pyxb, b_pyxb)
 
     def assert_valid_chain(self, client, pid_chain_list, sid):
-        logging.debug("Chain: {}".format(" - ".join(pid_chain_list)))
+        logger.debug("Chain: {}".format(" - ".join(pid_chain_list)))
         pad_pid_chain_list = [None] + pid_chain_list + [None]
         i = 0
         for prev_pid, cur_pid, next_pid in zip(
             pad_pid_chain_list, pad_pid_chain_list[1:], pad_pid_chain_list[2:]
         ):
-            logging.debug(
+            logger.debug(
                 "Link {}: {} <- {} -> {}".format(i, prev_pid, cur_pid, next_pid)
             )
             obj_str, sysmeta_pyxb = self.get_obj(client, cur_pid)
@@ -297,7 +471,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 new_pid=update_pid,
                 sid=base_sid,
                 *args,
-                **kwargs
+                **kwargs,
             )
             pid_chain_list.append(update_pid)
             base_pid = update_pid
@@ -377,6 +551,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         disable_auth=True,
         vendor_dict=None,
         now_dt=True,
+        **sysmeta_generator_option_dict,
     ):
         """Generate a test object and call MNStorage.create() Parameters:
 
@@ -384,7 +559,14 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
         """
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
-            client, pid, sid, submitter, rights_holder, permission_list, now_dt
+            client,
+            pid,
+            sid,
+            submitter,
+            rights_holder,
+            permission_list,
+            now_dt,
+            **sysmeta_generator_option_dict,
         )
         with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
             self.call_d1_client(
@@ -538,6 +720,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         rights_holder=True,
         permission_list=True,
         now_dt=True,
+        **sysmeta_generator_option_dict,
     ):
         permission_list = (
             d1_test.d1_test_case.DEFAULT_PERMISSION_LIST
@@ -565,6 +748,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
             )
             if v is not True
         }
+        option_dict.update(sysmeta_generator_option_dict)
         pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
             client, None if pid is True else pid, option_dict
         )
@@ -606,28 +790,38 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         return {"VENDOR-GMN-REMOTE-URL": object_stream_url}
 
     def dump_permissions(self):
-        logging.debug("Permissions:")
+        logger.debug("Permissions:")
         for s in d1_gmn.app.models.Permission.objects.order_by(
             "subject__subject", "level", "sciobj__pid__did"
         ):
-            logging.debug(s.sciobj.pid.did)
-            logging.debug(s.subject)
-            logging.debug(s.level)
-            logging.debug("")
+            logger.debug(s.sciobj.pid.did)
+            logger.debug(s.subject)
+            logger.debug(s.level)
+            logger.debug("")
 
     def dump_subjects(self):
-        logging.debug("Subjects:")
+        logger.debug("Subjects:")
         for s in d1_gmn.app.models.Subject.objects.order_by("subject"):
-            logging.debug("  {}".format(s.subject))
+            logger.debug("  {}".format(s.subject))
 
     def get_sid_with_min_chain_length(self, min_len=2):
         """Get list of all SIDs in the DB fixture."""
-        sid_list = self.db_fixture_sid_list.copy()
+        sid_list = self.get_sid_list()
         random.shuffle(sid_list)
         for sid in sid_list:
             pid_list = d1_gmn.app.revision.get_all_pid_by_sid(sid)
             if len(pid_list) >= min_len:
                 return sid
+
+    def get_sid_list(self):
+        """Get list of all SIDs in the DB."""
+        return [
+            o.sid.did for o in d1_gmn.app.models.Chain.objects.filter(sid__isnull=False)
+        ]
+
+    def get_pid_list(self):
+        """Get list of all PIDs in the DB."""
+        return [o.pid.did for o in d1_gmn.app.models.ScienceObject.objects.all()]
 
     def get_total_log_records(self, client, **filters):
         return client.getLogRecords(start=0, count=0, **filters).total
@@ -668,13 +862,13 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
 
         try:
             with django.db.connection.cursor() as cursor:
-                logging.debug("Running SQL query: {}".format(sql_str.strip()))
-                logging.debug("SQL query args: {}".format(", ".join(sql_arg_list)))
+                logger.debug("Running SQL query: {}".format(sql_str.strip()))
+                logger.debug("SQL query args: {}".format(", ".join(sql_arg_list)))
                 cursor.execute(sql_str, sql_arg_list)
                 row_dict = dict_fetchall(cursor)
-                logging.debug("SQL query result:")
+                logger.debug("SQL query result:")
                 if dump:
                     self.sample.dump(row_dict)
         except Exception as e:
-            logging.error("SQL query error: {}".format(str(e)))
+            logger.error("SQL query error: {}".format(str(e)))
             raise

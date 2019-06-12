@@ -71,7 +71,7 @@ def is_valid_pid_to_be_updated(did):
     if not d1_gmn.app.did.is_valid_pid_to_be_updated(did):
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'Object cannot be updated because the identifier for the object to be '
+            "Object cannot be updated because the identifier for the object to be "
             'updated is {}. did="{}"'.format(
                 d1_gmn.app.did.classify_identifier(did), did
             ),
@@ -90,7 +90,7 @@ def is_existing_object(did):
     if not d1_gmn.app.did.is_existing_object(did):
         raise d1_common.types.exceptions.NotFound(
             0,
-            'Identifier is {}. Expected a Persistent ID (PID) for an existing '
+            "Identifier is {}. Expected a Persistent ID (PID) for an existing "
             'object. id="{}"'.format(d1_gmn.app.did.classify_identifier(did), did),
             identifier=did,
         )
@@ -152,15 +152,15 @@ def post_has_mime_parts(request, parts):
     missing = []
 
     for part_type, part_name in parts:
-        if part_type == 'header':
-            if 'HTTP_' + part_name.upper() not in request.META:
-                missing.append('{}: {}'.format(part_type, part_name))
-        elif part_type == 'file':
+        if part_type == "header":
+            if "HTTP_" + part_name.upper() not in request.META:
+                missing.append("{}: {}".format(part_type, part_name))
+        elif part_type == "file":
             if part_name not in list(request.FILES.keys()):
-                missing.append('{}: {}'.format(part_type, part_name))
-        elif part_type == 'field':
+                missing.append("{}: {}".format(part_type, part_name))
+        elif part_type == "field":
             if part_name not in list(request.POST.keys()):
-                missing.append('{}: {}'.format(part_type, part_name))
+                missing.append("{}: {}".format(part_type, part_name))
         else:
             raise d1_common.types.exceptions.ServiceFailure(
                 0, 'Invalid part_type. part_type="{}"'.format(part_type)
@@ -170,7 +170,7 @@ def post_has_mime_parts(request, parts):
         raise d1_common.types.exceptions.InvalidRequest(
             0,
             'Missing part(s) in MIME Multipart document. missing="{}"'.format(
-                ', '.join(missing)
+                ", ".join(missing)
             ),
         )
 
@@ -202,11 +202,11 @@ def url_is_retrievable(url):
             r.raise_for_status()
             for _ in r.iter_content(chunk_size=1):
                 return True
-        raise IOError('Object appears to be empty')
+        raise IOError("Object appears to be empty")
     except Exception as e:
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'Invalid URL specified for remote storage. The referenced object is not '
+            "Invalid URL specified for remote storage. The referenced object is not "
             'retrievable. url="{}", error="{}"'.format(url, str(e)),
         )
 
@@ -215,8 +215,8 @@ def is_not_replica(pid):
     if d1_gmn.app.did.is_local_replica(pid):
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'Object is a replica and cannot be updated on this Member Node. '
-            'The operation must be performed on the authoritative Member Node. '
+            "Object is a replica and cannot be updated on this Member Node. "
+            "The operation must be performed on the authoritative Member Node. "
             'pid="{}"'.format(pid),
             identifier=pid,
         )
@@ -226,7 +226,7 @@ def is_not_archived(pid):
     if d1_gmn.app.did.is_archived(pid):
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'The object has been archived and cannot be updated. '
+            "The object has been archived and cannot be updated. "
             'pid="{}"'.format(pid),
             identifier=pid,
         )

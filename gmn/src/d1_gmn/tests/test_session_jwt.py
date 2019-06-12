@@ -36,38 +36,38 @@ class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):
         # d1_common.cert.jwt.log_jwt_bu64_info(logging.info, 'JWT', jwt_bu64)
         return cert_obj, jwt_bu64
 
-    @freezegun.freeze_time('2011-02-01')
+    @freezegun.freeze_time("2011-02-01")
     def test_1000(self):
         """_download_and_decode_cn_cert(): Successfully retrieves and decodes CN server
         cert."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
-            'cert_cn_ucsb_1_dataone_org_20120604_191249.pem',
-            'jwt_token_20170612_232523.base64',
+            "cert_cn_ucsb_1_dataone_org_20120604_191249.pem",
+            "jwt_token_20170612_232523.base64",
         )
         with self.mock_ssl_download(cert_obj) as (mock_connect, mock_getpeercert):
             cert_obj = d1_gmn.app.middleware.session_jwt._download_and_decode_cn_cert()
-            mock_connect.assert_called_with(('mock', 443))
-            self.sample.assert_equals(cert_obj.subject, 'download_and_decode')
+            mock_connect.assert_called_with(("mock", 443))
+            self.sample.assert_equals(cert_obj.subject, "download_and_decode")
 
-    @freezegun.freeze_time('2011-02-01')
+    @freezegun.freeze_time("2011-02-01")
     def test_1010(self):
         """_get_cn_cert(): Retrieves the cert from the CN on the first download and from
         the cache on the second."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
-            'cert_cn_ucsb_1_dataone_org_20120604_191249.pem',
-            'jwt_token_20170612_232523.base64',
+            "cert_cn_ucsb_1_dataone_org_20120604_191249.pem",
+            "jwt_token_20170612_232523.base64",
         )
         with self.mock_ssl_download(cert_obj) as (mock_connect, mock_getpeercert):
             # Remote read
             cert_obj = d1_gmn.app.middleware.session_jwt._get_cn_cert()
-            mock_connect.assert_called_with(('mock', 443))
-            self.sample.assert_equals(cert_obj.subject, 'download_and_decode')
+            mock_connect.assert_called_with(("mock", 443))
+            self.sample.assert_equals(cert_obj.subject, "download_and_decode")
             assert len(mock_connect.mock_calls) == 1
             assert len(mock_getpeercert.mock_calls) == 1
             # Cache
             cert_obj = d1_gmn.app.middleware.session_jwt._get_cn_cert()
-            mock_connect.assert_called_with(('mock', 443))
-            self.sample.assert_equals(cert_obj.subject, 'download_and_decode')
+            mock_connect.assert_called_with(("mock", 443))
+            self.sample.assert_equals(cert_obj.subject, "download_and_decode")
             # Did not call connect() and getpeercert() again
             assert len(mock_connect.mock_calls) == 1
             assert len(mock_getpeercert.mock_calls) == 1

@@ -64,35 +64,35 @@ def process_input(input, decode=False, path=False):
     return res
 
 
-if __name__ == '__main__':
-    usage = 'usage: %prog [options]'
+if __name__ == "__main__":
+    usage = "usage: %prog [options]"
     parser = optparse.OptionParser(usage=usage)
     parser.add_option(
-        '-l',
-        '--loglevel',
-        dest='llevel',
+        "-l",
+        "--loglevel",
+        dest="llevel",
         default=40,
-        type='int',
-        help='Reporting level: 10=debug, 20=Info, 30=Warning, 40=Error, 50=Fatal '
-        '[default: %default]',
+        type="int",
+        help="Reporting level: 10=debug, 20=Info, 30=Warning, 40=Error, 50=Fatal "
+        "[default: %default]",
     )
     parser.add_option(
-        '-p',
-        '--path',
-        action='store_true',
-        help='Only apply path encoding rules as per RFC3986 [default: %default]',
+        "-p",
+        "--path",
+        action="store_true",
+        help="Only apply path encoding rules as per RFC3986 [default: %default]",
     )
     parser.add_option(
-        '-d',
-        '--decode',
-        action='store_true',
-        help='URL decode the string [default: %default]',
+        "-d",
+        "--decode",
+        action="store_true",
+        help="URL decode the string [default: %default]",
     )
     parser.add_option(
-        '-s',
-        '--stdin',
-        action='store_true',
-        help='Read input from stdin instead of command line args [default: %default]',
+        "-s",
+        "--stdin",
+        action="store_true",
+        help="Read input from stdin instead of command line args [default: %default]",
     )
     (options, args) = parser.parse_args(sys.argv)
     if options.llevel not in [10, 20, 30, 40, 50]:

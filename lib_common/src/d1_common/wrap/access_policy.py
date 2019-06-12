@@ -213,7 +213,7 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.xml
 
-ORDERED_PERM_LIST = ['read', 'write', 'changePermission']
+ORDERED_PERM_LIST = ["read", "write", "changePermission"]
 
 
 @contextlib2.contextmanager
@@ -361,11 +361,11 @@ class AccessPolicyWrapper(object):
 
     def dump(self):
         """Dump the current state to debug level log."""
-        logging.debug('AccessPolicy:')
+        logging.debug("AccessPolicy:")
         map(
             logging.debug,
             [
-                '  {}'.format(s)
+                "  {}".format(s)
                 for s in pprint.pformat(self.get_normalized_perm_list()).splitlines()
             ],
         )
@@ -378,7 +378,7 @@ class AccessPolicyWrapper(object):
         bool: ``True`` if AccessPolicy allows public ``read``.
 
         """
-        return self.subj_has_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
+        return self.subj_has_perm(d1_common.const.SUBJECT_PUBLIC, "read")
 
     def is_private(self):
         """Returns:
@@ -386,7 +386,7 @@ class AccessPolicyWrapper(object):
         bool: **True** if AccessPolicy does not grant access to any subjects.
 
         """
-        return not self.get_subjects_with_equal_or_higher_perm('read')
+        return not self.get_subjects_with_equal_or_higher_perm("read")
 
     def is_empty(self):
         """Returns:
@@ -451,7 +451,7 @@ class AccessPolicyWrapper(object):
         ``read`` or higher to ``public``.
 
         """
-        self.add_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
+        self.add_perm(d1_common.const.SUBJECT_PUBLIC, "read")
 
     def add_authenticated_read(self):
         """Add ``read`` perm for all authenticated subj.
@@ -459,8 +459,8 @@ class AccessPolicyWrapper(object):
         Public ``read`` is removed if present.
 
         """
-        self.remove_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
-        self.add_perm(d1_common.const.SUBJECT_AUTHENTICATED, 'read')
+        self.remove_perm(d1_common.const.SUBJECT_PUBLIC, "read")
+        self.add_perm(d1_common.const.SUBJECT_AUTHENTICATED, "read")
 
     def add_verified_read(self):
         """Add ``read`` perm for all verified subj.
@@ -468,8 +468,8 @@ class AccessPolicyWrapper(object):
         Public ``read`` is removed if present.
 
         """
-        self.remove_perm(d1_common.const.SUBJECT_PUBLIC, 'read')
-        self.add_perm(d1_common.const.SUBJECT_VERIFIED, 'read')
+        self.remove_perm(d1_common.const.SUBJECT_PUBLIC, "read")
+        self.add_perm(d1_common.const.SUBJECT_VERIFIED, "read")
 
     def add_perm(self, subj_str, perm_str):
         """Add a permission for a subject.
@@ -649,7 +649,7 @@ class AccessPolicyWrapper(object):
 
     def _has_access_policy(self, sysmeta_pyxb):
         """Return True if there is an AccessPolicy in the SystemMetadata."""
-        return bool(getattr(sysmeta_pyxb, 'accessPolicy', False))
+        return bool(getattr(sysmeta_pyxb, "accessPolicy", False))
 
     def _assert_valid_permission(self, perm_str):
         """Raise D1 exception if ``perm_str`` is not a valid permission."""
@@ -657,7 +657,7 @@ class AccessPolicyWrapper(object):
             raise d1_common.types.exceptions.InvalidRequest(
                 0,
                 'Permission must be one of {}. perm_str="{}"'.format(
-                    ', '.join(ORDERED_PERM_LIST), perm_str
+                    ", ".join(ORDERED_PERM_LIST), perm_str
                 ),
             )
 
@@ -766,5 +766,5 @@ def mk_func(func_name):
 
 for method in inspect.getmembers(AccessPolicyWrapper):
     method_name, method_obj = method
-    if not method_name.startswith('_'):
+    if not method_name.startswith("_"):
         setattr(sys.modules[__name__], method_name, mk_func(method_name))

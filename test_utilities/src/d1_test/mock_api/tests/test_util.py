@@ -27,10 +27,10 @@ class TestMockUtil(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """parse_rest_url() 1."""
         version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
-            '/v1/log'
+            "/v1/log"
         )
-        assert version_tag == 'v1'
-        assert endpoint_str == 'log'
+        assert version_tag == "v1"
+        assert endpoint_str == "log"
         assert param_list == []
         assert query_dict == {}
         assert (
@@ -43,17 +43,17 @@ class TestMockUtil(d1_test.d1_test_case.D1TestCase):
         # identifier={identifier}&formatId={formatId}&replicaStatus={replicaStatus}
         # &start={start}&count={count}]
         version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
-            'http://dataone.server.edu/dataone/mn/v2/object/'
-            'ar%2f%2fg1/arg2%2f?fromDate=date1&toDate=date2&start=500&count=50'
+            "http://dataone.server.edu/dataone/mn/v2/object/"
+            "ar%2f%2fg1/arg2%2f?fromDate=date1&toDate=date2&start=500&count=50"
         )
-        assert version_tag == 'v2'
-        assert endpoint_str == 'object'
-        assert param_list == ['ar//g1', 'arg2/']
+        assert version_tag == "v2"
+        assert endpoint_str == "object"
+        assert param_list == ["ar//g1", "arg2/"]
         assert query_dict == {
-            'count': ['50'],
-            'toDate': ['date2'],
-            'fromDate': ['date1'],
-            'start': ['500'],
+            "count": ["50"],
+            "toDate": ["date2"],
+            "fromDate": ["date1"],
+            "start": ["500"],
         }
         assert (
             client.pyxb_binding.Namespace == d1_common.types.dataoneTypes_v2_0.Namespace

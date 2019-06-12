@@ -26,7 +26,7 @@ import d1_test.instance_generator.replica
 # ===============================================================================
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestReplica')
+@d1_test.d1_test_case.reproducible_random_decorator("TestReplica")
 class TestReplica(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """generate()"""
@@ -34,9 +34,9 @@ class TestReplica(d1_test.d1_test_case.D1TestCase):
         replica_xml_list = [
             d1_common.xml.serialize_to_xml_str(obj_pyxb) for obj_pyxb in replica_list
         ]
-        self.sample.assert_equals(replica_xml_list, 'inst_gen_generate')
+        self.sample.assert_equals(replica_xml_list, "inst_gen_generate")
 
     def test_1010(self):
         """generate_single()"""
         replica_pyxb = d1_test.instance_generator.replica.generate_single()
-        self.sample.assert_equals(replica_pyxb, 'inst_gen_generate_single')
+        self.sample.assert_equals(replica_pyxb, "inst_gen_generate_single")

@@ -43,32 +43,32 @@ def create_log_entry(object_model, event, ip_address, user_agent, subject):
 
 
 def create(pid, request, timestamp=None):
-    _log(pid, request, 'create', timestamp)
+    _log(pid, request, "create", timestamp)
 
 
 def log_read_event(pid, request, timestamp=None):
     if not _is_ignored_read_event(request):
-        _log(pid, request, 'read', timestamp)
+        _log(pid, request, "read", timestamp)
 
 
 def log_update_event(pid, request, timestamp=None):
-    _log(pid, request, 'update', timestamp)
+    _log(pid, request, "update", timestamp)
 
 
 def log_delete_event(pid, request, timestamp=None):
-    _log(pid, request, 'delete', timestamp)
+    _log(pid, request, "delete", timestamp)
 
 
 def log_replicate_event(pid, request, timestamp=None):
-    _log(pid, request, 'replicate', timestamp)
+    _log(pid, request, "replicate", timestamp)
 
 
 def log_synchronization_failed_event(pid, request, timestamp=None):
-    _log(pid, request, 'synchronization_failed', timestamp)
+    _log(pid, request, "synchronization_failed", timestamp)
 
 
 def log_replication_failed_event(pid, request, timestamp=None):
-    _log(pid, request, 'replication_failed', timestamp)
+    _log(pid, request, "replication_failed", timestamp)
 
 
 def has_event_log(pid):
@@ -95,8 +95,8 @@ def _log(pid, request, event, timestamp=None):
     event_log_model = create_log_entry(
         sciobj_model,
         event,
-        request.META['REMOTE_ADDR'],
-        request.META.get('HTTP_USER_AGENT', '<not provided>'),
+        request.META["REMOTE_ADDR"],
+        request.META.get("HTTP_USER_AGENT", "<not provided>"),
         request.primary_subject_str,
     )
 
@@ -127,11 +127,11 @@ def _is_ignored_read_event(request):
     ):
         return True
     if _has_regex_match(
-        request.META['REMOTE_ADDR'], django.conf.settings.LOG_IGNORE_IP_ADDRESS
+        request.META["REMOTE_ADDR"], django.conf.settings.LOG_IGNORE_IP_ADDRESS
     ):
         return True
     if _has_regex_match(
-        request.META.get('HTTP_USER_AGENT', '<not provided>'),
+        request.META.get("HTTP_USER_AGENT", "<not provided>"),
         django.conf.settings.LOG_IGNORE_USER_AGENT,
     ):
         return True

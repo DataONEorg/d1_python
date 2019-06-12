@@ -37,15 +37,15 @@ import d1_common.util
 
 import d1_test.mock_api.d1_exception
 
-CREATE_ENDPOINT_RX = r'v([123])/object'
+CREATE_ENDPOINT_RX = r"v([123])/object"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.POST,
-        re.compile(r'^' + d1_common.url.joinPathElements(base_url, CREATE_ENDPOINT_RX)),
+        re.compile(r"^" + d1_common.url.joinPathElements(base_url, CREATE_ENDPOINT_RX)),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -96,31 +96,31 @@ def _request_callback(request):
     return (
         200,
         header_dict,
-        d1_common.types.dataoneTypes.identifier('echo-post').toxml('utf-8'),
+        d1_common.types.dataoneTypes.identifier("echo-post").toxml("utf-8"),
     )
 
 
 def pack_echo_header(body_bytes, headers, url_obj):
     return {
-        'Content-Type': d1_common.const.CONTENT_TYPE_XML,
-        'Echo-POST-JSON-Base64': base64.standard_b64encode(
+        "Content-Type": d1_common.const.CONTENT_TYPE_XML,
+        "Echo-POST-JSON-Base64": base64.standard_b64encode(
             d1_common.util.serialize_to_normalized_pretty_json(
                 {
-                    'query': urllib.parse.parse_qs(url_obj.query),
-                    'headers': dict(headers),
+                    "query": urllib.parse.parse_qs(url_obj.query),
+                    "headers": dict(headers),
                     # TODO: Need to include body, but it must be normalized. As it is, the
                     # MMP parts arrive in random order
                     # 'body': body_bytes,
                 }
-            ).encode('utf-8')
-        ).decode('ascii'),
+            ).encode("utf-8")
+        ).decode("ascii"),
     }
 
 
 def unpack_echo_header(header_dict):
     return base64.standard_b64decode(
-        header_dict['Echo-POST-JSON-Base64'].encode('ascii')
-    ).decode('utf-8')
+        header_dict["Echo-POST-JSON-Base64"].encode("ascii")
+    ).decode("utf-8")
 
     # TODO: MMP normalization
 

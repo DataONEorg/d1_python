@@ -22,6 +22,7 @@
 - Query the database for System Metadata properties.
 
 """
+import os
 
 import pyxb
 
@@ -30,6 +31,7 @@ import d1_gmn.app.auth
 import d1_gmn.app.did
 import d1_gmn.app.model_util
 import d1_gmn.app.models
+import d1_gmn.app.object_format_cache
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.views.util
@@ -39,6 +41,8 @@ import d1_common.date_time
 import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.utils
+import d1_common.utils.filesystem
 import d1_common.wrap.access_policy
 import d1_common.xml
 
@@ -63,7 +67,7 @@ def archive_sciobj(pid):
 def serialize(sysmeta_pyxb, pretty=False):
     try:
         return d1_common.xml.serialize_for_transport(
-            sysmeta_pyxb, pretty, xslt_url=django.urls.base.reverse('home_xslt')
+            sysmeta_pyxb, pretty, xslt_url=django.urls.base.reverse("home_xslt")
         )
     except pyxb.IncompleteElementContentError as e:
         raise d1_common.types.exceptions.ServiceFailure(
@@ -129,6 +133,44 @@ def create_or_update(sysmeta_pyxb, sciobj_url=None):
     return sci_model
 
 
+def get_filename(sciobj_model):
+    """Generate a safe filename for SciObj.
+
+    - The returned filename will not have any characters, such as slashes or
+    backslashes, that may cause file access to occur outside of the intended directory
+    in the filesystem.
+
+    - If a filename is provided in SysMeta but is missing base_name (such as ".bin"),
+    use the PID as the basename.
+    - If a filename is provided in SysMeta but is missing the extension(such as "my
+    file"), use extension derived from the FormatId.
+    - If filename is not provided in SysMeta, handle it as if both base_name and
+    extension is missing.
+    - When using extension derived from the FormatId, if the FormatId is unknown (not in
+    the CN ObjectFormatList cache), use ".data" as the extension.
+
+    """
+    file_name = ""
+    file_ext = ""
+
+    if sciobj_model.filename:
+        file_name, file_ext = os.path.splitext(sciobj_model.filename)
+
+    # Fix filenames such as ".bin", which are split into (".bin", "")
+    if file_name.startswith(".") and file_ext == "":
+        file_name, file_ext = file_ext, file_name
+
+    return d1_common.utils.filesystem.gen_safe_path_element(
+        (file_name or sciobj_model.pid.did)
+        + (
+            file_ext
+            or d1_gmn.app.object_format_cache.get_filename_extension(
+                sciobj_model.format.format, ".data"
+            )
+        )
+    )
+
+
 def update_modified_timestamp(pid):
     sci_model = d1_gmn.app.model_util.get_sci_model(pid)
     _update_modified_timestamp(sci_model)
@@ -156,7 +198,7 @@ def _base_pyxb_to_model(sci_model, sysmeta_pyxb):
         sysmeta_pyxb.dateSysMetadataModified
     )
     sci_model.format = d1_gmn.app.models.format(sysmeta_pyxb.formatId)
-    sci_model.filename = getattr(sysmeta_pyxb, 'fileName', None)
+    sci_model.filename = getattr(sysmeta_pyxb, "fileName", None)
     sci_model.checksum = d1_common.xml.get_req_val(sysmeta_pyxb.checksum)
     sci_model.checksum_algorithm = d1_gmn.app.models.checksum_algorithm(
         sysmeta_pyxb.checksum.algorithm
@@ -187,7 +229,9 @@ def _base_model_to_pyxb(sciobj_model):
     )
     base_pyxb.dateUploaded = sciobj_model.uploaded_timestamp
     base_pyxb.formatId = sciobj_model.format.format
-    base_pyxb.fileName = sciobj_model.filename
+    # Generate a safe filename for SciObj. Fall back to PID and file extension derived
+    # from formatId if required.
+    base_pyxb.fileName = get_filename(sciobj_model)
     base_pyxb.checksum = d1_common.types.dataoneTypes.Checksum(sciobj_model.checksum)
     base_pyxb.checksum.algorithm = sciobj_model.checksum_algorithm.checksum_algorithm
     base_pyxb.size = sciobj_model.size
@@ -223,7 +267,7 @@ def _update_modified_timestamp(sci_model):
 
 
 def _has_media_type_pyxb(sysmeta_pyxb):
-    return hasattr(sysmeta_pyxb, 'mediaType') and sysmeta_pyxb.mediaType is not None
+    return hasattr(sysmeta_pyxb, "mediaType") and sysmeta_pyxb.mediaType is not None
 
 
 def _media_type_pyxb_to_model(sci_model, sysmeta_pyxb):
@@ -265,7 +309,7 @@ def _media_type_model_to_pyxb(sciobj_model):
 
     for media_type_property_model in d1_gmn.app.models.MediaTypeProperty.objects.filter(
         media_type=media_type_model
-    ).order_by('name', 'value'):
+    ).order_by("name", "value"):
         media_type_property_pyxb = d1_common.types.dataoneTypes.MediaTypeProperty(
             media_type_property_model.value, name=media_type_property_model.name
         )
@@ -327,7 +371,7 @@ def _has_access_policy_db(sciobj_model):
 
 def _has_access_policy_pyxb(sysmeta_pyxb):
     return (
-        hasattr(sysmeta_pyxb, 'accessPolicy') and sysmeta_pyxb.accessPolicy is not None
+        hasattr(sysmeta_pyxb, "accessPolicy") and sysmeta_pyxb.accessPolicy is not None
     )
 
 
@@ -360,7 +404,7 @@ def _access_policy_model_to_pyxb(sciobj_model):
     access_policy_pyxb = d1_common.types.dataoneTypes.AccessPolicy()
     for permission_model in d1_gmn.app.models.Permission.objects.filter(
         sciobj=sciobj_model
-    ).order_by('subject', 'level', 'sciobj__pid__did'):
+    ).order_by("subject", "level", "sciobj__pid__did"):
         # Skip implicit permissions for rightsHolder.
         if permission_model.subject.subject == sciobj_model.rights_holder.subject:
             continue
@@ -394,12 +438,12 @@ def _replication_policy_pyxb_to_model(sciobj_model, sysmeta_pyxb):
     replication_policy_model.sciobj = sciobj_model
     replication_policy_model.replication_is_allowed = d1_common.xml.get_opt_attr(
         sysmeta_pyxb.replicationPolicy,
-        'replicationAllowed',
+        "replicationAllowed",
         d1_common.const.DEFAULT_REPLICATION_ALLOWED,
     )
     replication_policy_model.desired_number_of_replicas = d1_common.xml.get_opt_attr(
         sysmeta_pyxb.replicationPolicy,
-        'numberReplicas',
+        "numberReplicas",
         d1_common.const.DEFAULT_NUMBER_OF_REPLICAS,
     )
 
@@ -442,7 +486,7 @@ def _delete_existing_replication_policy(sciobj_model):
 
 def _has_replication_policy_pyxb(sysmeta_pyxb):
     return (
-        hasattr(sysmeta_pyxb, 'replicationPolicy')
+        hasattr(sysmeta_pyxb, "replicationPolicy")
         and sysmeta_pyxb.replicationPolicy is not None
     )
 
@@ -462,7 +506,7 @@ def _replication_policy_model_to_pyxb(sciobj_model):
     def add(rep_pyxb, rep_node_model):
         for rep_node in rep_node_model.objects.filter(
             replication_policy=replication_policy_model
-        ).order_by('node__urn'):
+        ).order_by("node__urn"):
             rep_pyxb.append(rep_node.node.urn)
 
     add(
@@ -475,9 +519,9 @@ def _replication_policy_model_to_pyxb(sciobj_model):
 
 
 def revision_pyxb_to_model(sci_model, sysmeta_pyxb, pid):
-    sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
-    obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletes')
-    obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'obsoletedBy')
+    sid = d1_common.xml.get_opt_val(sysmeta_pyxb, "seriesId")
+    obsoletes_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, "obsoletes")
+    obsoleted_by_pid = d1_common.xml.get_opt_val(sysmeta_pyxb, "obsoletedBy")
     d1_gmn.app.revision.set_revision_links(sci_model, obsoletes_pid, obsoleted_by_pid)
     d1_gmn.app.revision.create_or_update_chain(
         pid, sid, obsoletes_pid, obsoleted_by_pid
@@ -518,7 +562,7 @@ def replica_model_to_pyxb(sciobj_model):
     replica_pyxb_list = []
     for replica_model in d1_gmn.app.models.RemoteReplica.objects.filter(
         sciobj=sciobj_model
-    ).order_by('info__timestamp', 'info__member_node__urn'):
+    ).order_by("info__timestamp", "info__member_node__urn"):
         replica_pyxb = d1_common.types.dataoneTypes.Replica()
         replica_pyxb.replicaMemberNode = replica_model.info.member_node.urn
         replica_pyxb.replicationStatus = replica_model.info.status.status

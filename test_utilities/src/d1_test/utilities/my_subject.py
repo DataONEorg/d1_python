@@ -95,8 +95,8 @@ def getSubjectFromCertFile(certFileName):
     logging.debug("Not after: %s" % x509.get_notAfter())
     return (
         {
-            'subject': getSubjectFromName(x509.get_subject()),
-            'subjectInfo': getSubjectInfoFromCert(x509),
+            "subject": getSubjectFromName(x509.get_subject()),
+            "subjectInfo": getSubjectInfoFromCert(x509),
         },
         status,
     )
@@ -106,25 +106,25 @@ if __name__ == "__main__":
     usage = "usage: %prog [options] cert_file_name"
     parser = optparse.OptionParser(usage=usage)
     parser.add_option(
-        '-l',
-        '--loglevel',
-        dest='llevel',
+        "-l",
+        "--loglevel",
+        dest="llevel",
         default=20,
-        type='int',
-        help='Reporting level: 10=debug, 20=Info, 30=Warning, '
-        '40=Error, 50=Fatal [default: %default]',
+        type="int",
+        help="Reporting level: 10=debug, 20=Info, 30=Warning, "
+        "40=Error, 50=Fatal [default: %default]",
     )
     parser.add_option(
-        '-i',
-        '--info',
-        action='store_true',
-        help='Show subject info in certificate [default: %default]',
+        "-i",
+        "--info",
+        action="store_true",
+        help="Show subject info in certificate [default: %default]",
     )
     parser.add_option(
-        '-f',
-        '--format',
-        action='store_true',
-        help='Format output for people [default: %default]',
+        "-f",
+        "--format",
+        action="store_true",
+        help="Format output for people [default: %default]",
     )
 
     (options, args) = parser.parse_args(sys.argv)
@@ -137,24 +137,24 @@ if __name__ == "__main__":
 
     fname = args[1]
     subject, status = getSubjectFromCertFile(fname)
-    print(subject['subject'])
+    print(subject["subject"])
     if options.info:
-        if subject['subjectInfo'] is not None:
+        if subject["subjectInfo"] is not None:
             if options.format:
-                root = etree.fromstring(str(subject['subjectInfo']))
+                root = etree.fromstring(str(subject["subjectInfo"]))
                 print("SubjectInfo:")
                 print(
                     (
                         etree.tostring(
                             root,
                             pretty_print=True,
-                            encoding='utf-8',
+                            encoding="utf-8",
                             xml_declaration=True,
                         )
                     )
                 )
             else:
-                print(str(subject['subjectInfo']))
+                print(str(subject["subjectInfo"]))
     if status == 0:
         sys.exit(2)
     sys.exit(0)

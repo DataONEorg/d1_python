@@ -37,25 +37,25 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('path', nargs='+', help='File or directory path')
-    parser.add_argument('--include', nargs='+', help='Include glob patterns')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", nargs="+", help="File or directory path")
+    parser.add_argument("--include", nargs="+", help="Include glob patterns")
+    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
-        '--no-default-excludes',
-        dest='default_excludes',
-        action='store_false',
-        help='Don\'t add default glob exclude patterns',
+        "--no-default-excludes",
+        dest="default_excludes",
+        action="store_false",
+        help="Don't add default glob exclude patterns",
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
 
@@ -73,5 +73,5 @@ def main():
             logging.info(file_path)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

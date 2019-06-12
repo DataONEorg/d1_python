@@ -53,30 +53,30 @@ def generate_random(client, option_dict=None, normalize=True):
     sysmeta_pyxb = client.pyxb_binding.systemMetadata()
     sysmeta_pyxb.serialVersion = random.randint(1, 100)
     sysmeta_pyxb.identifier = lazy_get(
-        option_dict, 'identifier', d1_test.instance_generator.identifier.generate_pid
+        option_dict, "identifier", d1_test.instance_generator.identifier.generate_pid
     )
     sysmeta_pyxb.formatId = lazy_get(
-        option_dict, 'formatId', d1_test.instance_generator.format_id.generate
+        option_dict, "formatId", d1_test.instance_generator.format_id.generate
     )
-    sysmeta_pyxb.size = lazy_get(option_dict, 'size', random.randint, 1, 1024 ** 4)
+    sysmeta_pyxb.size = lazy_get(option_dict, "size", random.randint, 1, 1024 ** 4)
     sysmeta_pyxb.checksum = lazy_get(
-        option_dict, 'checksum', d1_test.instance_generator.checksum.generate
+        option_dict, "checksum", d1_test.instance_generator.checksum.generate
     )
     sysmeta_pyxb.submitter = lazy_get(
-        option_dict, 'submitter', d1_test.instance_generator.random_data.random_subj
+        option_dict, "submitter", d1_test.instance_generator.random_data.random_subj
     )
     sysmeta_pyxb.rightsHolder = lazy_get(
-        option_dict, 'rightsHolder', d1_test.instance_generator.random_data.random_subj
+        option_dict, "rightsHolder", d1_test.instance_generator.random_data.random_subj
     )
     sysmeta_pyxb.accessPolicy = lazy_get(
         option_dict,
-        'accessPolicy',
+        "accessPolicy",
         d1_test.instance_generator.access_policy.generate,
         min_rules=0,
     )
     sysmeta_pyxb.replicationPolicy = lazy_get(
         option_dict,
-        'replicationPolicy',
+        "replicationPolicy",
         d1_test.instance_generator.replication_policy.generate,
     )
 
@@ -86,41 +86,41 @@ def generate_random(client, option_dict=None, normalize=True):
 
     sysmeta_pyxb.dateUploaded = lazy_get(
         option_dict,
-        'dateUploaded',
+        "dateUploaded",
         d1_test.instance_generator.date_time.reproducible_datetime,
         sysmeta_pyxb.identifier.value(),
     )
     # Set dateSysMetadataModified to a fixed time after dateUploaded
     sysmeta_pyxb.dateSysMetadataModified = option_dict.get(
-        'dateSysMetadataModified',
+        "dateSysMetadataModified",
         sysmeta_pyxb.dateUploaded + datetime.timedelta(days=10),
     )
     sysmeta_pyxb.originMemberNode = lazy_get(
         option_dict,
-        'originMemberNode',
+        "originMemberNode",
         d1_test.instance_generator.random_data.random_mn,
     )
     sysmeta_pyxb.authoritativeMemberNode = lazy_get(
         option_dict,
-        'authoritativeMemberNode',
+        "authoritativeMemberNode",
         d1_test.instance_generator.random_data.random_mn,
     )
     sysmeta_pyxb.replica = lazy_get(
-        option_dict, 'replica', d1_test.instance_generator.replica.generate
+        option_dict, "replica", d1_test.instance_generator.replica.generate
     )
     sysmeta_pyxb.seriesId = lazy_get(
         option_dict,
-        'seriesId',
+        "seriesId",
         d1_test.instance_generator.identifier.generate_sid,
         probability=0.5,
     )
     sysmeta_pyxb.mediaType = lazy_get(
-        option_dict, 'mediaType', d1_test.instance_generator.media_type.generate
+        option_dict, "mediaType", d1_test.instance_generator.media_type.generate
     )
     sysmeta_pyxb.fileName = lazy_get(
         option_dict,
-        'fileName',
-        'file_{}'.format,
+        "fileName",
+        "file_{}".format,
         d1_test.instance_generator.random_data.random_lower_ascii(
             min_len=12, max_len=12
         ),
@@ -144,12 +144,12 @@ def lazy_get(d, key, func, *args, **kwargs):
 
 def generate_from_file(client, f, option_dict=None):
     option_dict = option_dict or {}
-    option_dict['checksum'] = d1_common.checksum.create_checksum_object_from_stream(f)
+    option_dict["checksum"] = d1_common.checksum.create_checksum_object_from_stream(f)
     f.seek(0, os.SEEK_END)
-    option_dict['size'] = f.tell()
+    option_dict["size"] = f.tell()
     return generate_random(client, option_dict)
 
 
 def generate_from_file_path(client, path, option_dict=None):
-    with open(path, 'rb') as f:
+    with open(path, "rb") as f:
         return generate_from_file(client, f, option_dict)

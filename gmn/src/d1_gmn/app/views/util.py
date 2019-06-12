@@ -25,8 +25,6 @@ import d1_gmn.app.db_filter
 import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.sysmeta
-import d1_gmn.app.util
-import d1_gmn.app.views.external
 import d1_gmn.app.views.slice
 
 import d1_common.const
@@ -56,15 +54,15 @@ def dataoneTypes(request):
 
 
 def is_v1_api(request):
-    return re.match(r'/v1(/|$)', request.path_info)
+    return re.match(r"/v1(/|$)", request.path_info)
 
 
 def is_v2_api(request):
-    return re.match(r'/v2(/|$)', request.path_info)
+    return re.match(r"/v2(/|$)", request.path_info)
 
 
 def is_diag_api(request):
-    return re.match(r'/diag(/|$)', request.path_info)
+    return re.match(r"/diag(/|$)", request.path_info)
 
 
 def is_bool_param(request_param):
@@ -72,17 +70,17 @@ def is_bool_param(request_param):
 
 
 def is_true_param(request_param):
-    return request_param in (True, 1, 'True', 'true', '1')
+    return request_param in (True, 1, "True", "true", "1")
 
 
 def is_false_param(request_param):
-    return request_param in (False, 0, 'False', 'false', '0')
+    return request_param in (False, 0, "False", "false", "0")
 
 
 def read_utf8_xml(stream_obj):
     try:
         return stream_obj.read(django.conf.settings.MAX_XML_DOCUMENT_SIZE).decode(
-            'utf-8'
+            "utf-8"
         )
     except IOError as e:
         raise d1_common.types.exceptions.ServiceFailure(
@@ -113,8 +111,8 @@ def assert_xml_file_is_under_size_limit(xml_file):
     if xml_file.size > django.conf.settings.MAX_XML_DOCUMENT_SIZE:
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'XML document size restriction exceeded. '
-            'xml_size={} bytes, max_size={} bytes'.format(
+            "XML document size restriction exceeded. "
+            "xml_size={} bytes, max_size={} bytes".format(
                 xml_file.size, django.conf.settings.MAX_XML_DOCUMENT_SIZE
             ),
         )
@@ -128,39 +126,39 @@ def generate_sysmeta_xml_matching_api_version(request, pid):
     elif is_v2_api(request):
         return d1_common.type_conversions.str_to_v2_str(sysmeta_xml_str)
     else:
-        assert False, 'Unable to determine API version'
+        assert False, "Unable to determine API version"
 
 
 def http_response_with_boolean_true_type():
-    return django.http.HttpResponse('OK', d1_common.const.CONTENT_TYPE_TEXT)
+    return django.http.HttpResponse("OK", d1_common.const.CONTENT_TYPE_TEXT)
 
 
 def query_object_list(request, type_name):
     query = (
         d1_gmn.app.models.ScienceObject.objects.all()
-        .annotate(timestamp=django.db.models.F('modified_timestamp'))
-        .order_by('modified_timestamp', 'id')
+        .annotate(timestamp=django.db.models.F("modified_timestamp"))
+        .order_by("modified_timestamp", "id")
     )
     if not d1_gmn.app.auth.is_trusted_subject(request):
-        query = d1_gmn.app.db_filter.add_access_policy_filter(request, query, 'id')
+        query = d1_gmn.app.db_filter.add_access_policy_filter(request, query, "id")
     query = d1_gmn.app.db_filter.add_datetime_filter(
-        request, query, 'modified_timestamp', 'fromDate', 'gte'
+        request, query, "modified_timestamp", "fromDate", "gte"
     )
     query = d1_gmn.app.db_filter.add_datetime_filter(
-        request, query, 'modified_timestamp', 'toDate', 'lt'
+        request, query, "modified_timestamp", "toDate", "lt"
     )
     query = d1_gmn.app.db_filter.add_string_filter(
-        request, query, 'format__format', 'formatId'
+        request, query, "format__format", "formatId"
     )
-    did = request.GET.get('identifier', None)
+    did = request.GET.get("identifier", None)
     if did is not None:
         if d1_gmn.app.did.is_sid(did):
             query = d1_gmn.app.db_filter.add_sid_filter(
-                request, query, 'pid__did', 'identifier'
+                request, query, "pid__did", "identifier"
             )
         else:
             query = d1_gmn.app.db_filter.add_string_filter(
-                request, query, 'pid__did', 'identifier'
+                request, query, "pid__did", "identifier"
             )
     query = d1_gmn.app.db_filter.add_replica_filter(request, query)
     total_int = query.count()
@@ -168,11 +166,11 @@ def query_object_list(request, type_name):
         request, query, total_int
     )
     return {
-        'query': query,
-        'start': start,
-        'count': count,
-        'total': total_int,
-        'type': type_name,
+        "query": query,
+        "start": start,
+        "count": count,
+        "total": total_int,
+        "type": type_name,
     }
 
 

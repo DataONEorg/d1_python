@@ -23,12 +23,10 @@ import argparse
 import logging
 import re
 
-import d1_gmn.app.auth
 import d1_gmn.app.delete
 # noinspection PyProtectedMember
 import d1_gmn.app.did
 import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.models
 import d1_gmn.app.sysmeta
 
 import d1_common.iter.path

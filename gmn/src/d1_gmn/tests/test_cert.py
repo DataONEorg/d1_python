@@ -27,7 +27,7 @@ import d1_test.test_files
 
 class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
     cert_simple_subject_info_pem = d1_test.test_files.load_cert(
-        'cert_with_simple_subject_info.pem'
+        "cert_with_simple_subject_info.pem"
     )
 
     @responses.activate
@@ -40,10 +40,10 @@ class TestCert(d1_gmn.tests.gmn_test_case.GMNTestCase):
         primary_str, equivalent_set = d1_gmn.app.middleware.session_cert.get_authenticated_subjects(
             self.cert_simple_subject_info_pem
         )
-        assert primary_str == 'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org'
+        assert primary_str == "CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org"
         assert sorted(equivalent_set) == [
-            'CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org',
-            'authenticatedUser',
-            'public',
-            'verifiedUser',
+            "CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org",
+            "authenticatedUser",
+            "public",
+            "verifiedUser",
         ]

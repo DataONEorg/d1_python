@@ -38,18 +38,18 @@ def log_setup(is_debug=False, is_multiprocess=False):
 
     """
     format_str = (
-        '%(asctime)s %(name)s %(module)s:%(lineno)d %(process)4d %(levelname)-8s %(message)s'
+        "%(asctime)s %(name)s %(module)s:%(lineno)d %(process)4d %(levelname)-8s %(message)s"
         if is_multiprocess
-        else '%(asctime)s %(name)s %(module)s:%(lineno)d %(levelname)-8s %(message)s'
+        else "%(asctime)s %(name)s %(module)s:%(lineno)d %(levelname)-8s %(message)s"
     )
-    formatter = logging.Formatter(format_str, '%Y-%m-%d %H:%M:%S')
+    formatter = logging.Formatter(format_str, "%Y-%m-%d %H:%M:%S")
     console_logger = logging.StreamHandler(sys.stdout)
     console_logger.setFormatter(formatter)
-    logging.getLogger('').addHandler(console_logger)
+    logging.getLogger("").addHandler(console_logger)
     if is_debug:
-        logging.getLogger('').setLevel(logging.DEBUG)
+        logging.getLogger("").setLevel(logging.DEBUG)
     else:
-        logging.getLogger('').setLevel(logging.INFO)
+        logging.getLogger("").setLevel(logging.INFO)
 
 
 def get_content_type(content_type):
@@ -73,7 +73,7 @@ def get_content_type(content_type):
 
     """
     m = email.message.Message()
-    m['Content-Type'] = content_type
+    m["Content-Type"] = content_type
     return m.get_content_type()
 
 
@@ -94,7 +94,7 @@ def nested_update(d, u):
 
     """
     for k, v in list(u.items()):
-        if isinstance(v, collections.Mapping):
+        if isinstance(v, collections.abc.Mapping):
             r = nested_update(d.get(k, {}), v)
             d[k] = r
         else:
@@ -172,7 +172,7 @@ class EventCounter(object):
 
         """
         logger.info(
-            ' - '.join(map(str, [v for v in (event_str, msg_str, inc_int) if v]))
+            " - ".join(map(str, [v for v in (event_str, msg_str, inc_int) if v]))
         )
         self.count(event_str, inc_int or 1)
 
@@ -184,11 +184,11 @@ class EventCounter(object):
 
         """
         if self._event_dict:
-            logger.info('Events:')
+            logger.info("Events:")
             for event_str, count_int in sorted(self._event_dict.items()):
-                logger.info('  {}: {}'.format(event_str, count_int))
+                logger.info("  {}: {}".format(event_str, count_int))
         else:
-            logger.info('No Events')
+            logger.info("No Events")
 
 
 # ===============================================================================
@@ -219,7 +219,7 @@ def print_logging():
     old_level_list = [h.level for h in root_logger.handlers]
     for h in root_logger.handlers:
         h.setLevel(logging.WARN)
-    log_format = logging.Formatter('%(message)s')
+    log_format = logging.Formatter("%(message)s")
     stream_handler = logging.StreamHandler(sys.stdout)
     stream_handler.setFormatter(log_format)
     stream_handler.setLevel(logging.DEBUG)
@@ -249,7 +249,7 @@ def save_json(py_obj, json_path):
       ToJsonCompatibleTypes()
 
     """
-    with open(json_path, 'w', encoding='utf-8') as f:
+    with open(json_path, "w", encoding="utf-8") as f:
         f.write(serialize_to_normalized_pretty_json(py_obj))
 
 
@@ -264,7 +264,7 @@ def load_json(json_path):
       object : Typically a nested structure of ``list`` and ``dict`` objects.
 
     """
-    with open(json_path, 'r', encoding='utf-8') as f:
+    with open(json_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -317,7 +317,7 @@ def serialize_to_normalized_compact_json(py_obj):
 
     """
     return json.dumps(
-        py_obj, sort_keys=True, separators=(',', ':'), cls=ToJsonCompatibleTypes
+        py_obj, sort_keys=True, separators=(",", ":"), cls=ToJsonCompatibleTypes
     )
 
 
@@ -334,7 +334,7 @@ class ToJsonCompatibleTypes(json.JSONEncoder):
     def default(self, o):
         # bytes -> str (assume UTF-8)
         if isinstance(o, bytes):
-            return o.decode('utf-8', errors='replace')
+            return o.decode("utf-8", errors="replace")
         # set -> sorted list
         if isinstance(o, set):
             return sorted([v for v in o])
@@ -358,4 +358,4 @@ def format_sec_to_dhm(sec):
     rem_int, s_int = divmod(int(sec), 60)
     rem_int, m_int, = divmod(rem_int, 60)
     d_int, h_int, = divmod(rem_int, 24)
-    return '{}d{:02d}h{:02d}m'.format(d_int, h_int, m_int)
+    return "{}d{:02d}h{:02d}m".format(d_int, h_int, m_int)

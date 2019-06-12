@@ -35,7 +35,7 @@ from d1_onedrive.impl import onedrive_exceptions
 log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
 
-README_FILENAME = 'readme.txt'
+README_FILENAME = "readme.txt"
 
 
 class Resolver(object):
@@ -44,10 +44,10 @@ class Resolver(object):
     def __init__(self, options, object_tree):
         self._options = options
         self._object_tree = object_tree
-        self._readme_txt = ''
+        self._readme_txt = ""
 
     def is_root(self, path):
-        return path == ['', '']
+        return path == ["", ""]
 
     def _is_root(self, path):
         return not len(path)
@@ -60,7 +60,7 @@ class Resolver(object):
             raise onedrive_exceptions.PathException(msg)
 
     def _raise_invalid_pid(self, pid):
-        raise onedrive_exceptions.PathException('Invalid PID: {}'.format(pid))
+        raise onedrive_exceptions.PathException("Invalid PID: {}".format(pid))
 
     # Readme file.
 

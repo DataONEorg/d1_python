@@ -47,26 +47,26 @@ import d1_common.util
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Find all pip packages that are imported by a set of scripts'
+        description="Find all pip packages that are imported by a set of scripts"
     )
-    parser.add_argument('path', nargs='+', help='File or directory path')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", nargs="+", help="File or directory path")
+    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
-    )
-    parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--no-default-excludes',
-        dest='default_excludes',
-        action='store_false',
-        help='Don\'t add default glob exclude patterns',
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument(
+        "--no-default-excludes",
+        dest="default_excludes",
+        action="store_false",
+        help="Don't add default glob exclude patterns",
+    )
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
 
@@ -75,16 +75,16 @@ def main():
     pkg_name_list = find_pkg_names(args)
 
     with d1_common.util.print_logging():
-        logging.info('Dependent on packages:')
+        logging.info("Dependent on packages:")
         for pkg_name_str in pkg_name_list:
-            logging.info('  {}'.format(pkg_name_str))
+            logging.info("  {}".format(pkg_name_str))
 
 
 def find_pkg_names(args):
     dep_set = set()
     for module_path in d1_common.iter.path.path_generator(
         path_list=args.path,
-        include_glob_list=['*.py'],
+        include_glob_list=["*.py"],
         exclude_glob_list=args.exclude,
         recursive=args.recursive,
         ignore_invalid=args.ignore_invalid,
@@ -101,7 +101,7 @@ def find_deps_in_source(module_path):
         dep_list = find_deps_in_tree(
             d1_dev.util.redbaron_module_path_to_tree(module_path)
         )
-        logging.debug('Deps: {}'.format(', '.join(dep_list)))
+        logging.debug("Deps: {}".format(", ".join(dep_list)))
         return dep_list
     except Exception as e:
         logging.error(
@@ -115,41 +115,41 @@ def find_deps_in_source(module_path):
 def find_deps_in_tree(r):
     # logging.debug(r.help(True))
     regular_import_list = [
-        v for n in r('ImportNode') for v in get_import_node_dotted_name_list(n)
+        v for n in r("ImportNode") for v in get_import_node_dotted_name_list(n)
     ]
     from_import_list = []
-    for from_n in r('FromImportNode'):
-        from_import_list.append('.'.join(v.value for v in from_n.value))
+    for from_n in r("FromImportNode"):
+        from_import_list.append(".".join(v.value for v in from_n.value))
     return regular_import_list + from_import_list
 
 
 def get_import_node_dotted_name_list(import_node):
     # Is there a simpler way?
     return [
-        '.'.join([n.value for n in dotted_node.value]) for dotted_node in import_node
+        ".".join([n.value for n in dotted_node.value]) for dotted_node in import_node
     ]
 
 
 def get_pkg_name_set(dep_set):
-    dep_pkg_set = {v.split('.')[0] for v in dep_set}
+    dep_pkg_set = {v.split(".")[0] for v in dep_set}
     pip_pkg_set = {
-        v.key.split('==')[0].strip() for v in pip.get_installed_distributions()
+        v.key.split("==")[0].strip() for v in pip.get_installed_distributions()
     }
     return dep_pkg_set & pip_pkg_set
 
 
 def get_external_deps(dep_set):
-    return {n.split('.')[0] for n in dep_set if is_external_library(n)}
+    return {n.split(".")[0] for n in dep_set if is_external_library(n)}
 
 
 def is_external_library(module_name):
     try:
         mod = importlib.import_module(module_name)
     except Exception:
-        logging.error('Unable to import: {}'.format(module_name))
+        logging.error("Unable to import: {}".format(module_name))
         return True
     try:
-        return '/dist-packages/' in mod.__file__
+        return "/dist-packages/" in mod.__file__
     except AttributeError:
         return False
 
@@ -158,5 +158,5 @@ class DepSearchException(Exception):
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

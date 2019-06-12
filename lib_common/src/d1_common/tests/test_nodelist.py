@@ -27,10 +27,10 @@ import d1_test.d1_test_case
 
 class TestNodeList(d1_test.d1_test_case.D1TestCase):
     parameterize_dict = {
-        'test_1000': [
-            dict(filename='node_list_gmn_valid.xml', raises_pyxb_exc=False),
-            dict(filename='node_list_invalid_1.xml', raises_pyxb_exc=True),
-            dict(filename='node_list_invalid_2.xml', raises_pyxb_exc=True),
+        "test_1000": [
+            dict(filename="node_list_gmn_valid.xml", raises_pyxb_exc=False),
+            dict(filename="node_list_invalid_1.xml", raises_pyxb_exc=True),
+            dict(filename="node_list_invalid_2.xml", raises_pyxb_exc=True),
         ]
     }
 

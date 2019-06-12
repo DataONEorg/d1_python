@@ -73,14 +73,14 @@ class SolrException(Exception):
         self.body = body
 
     def __repr__(self):
-        return 'HTTP code=%s, Reason=%s, body=%s' % (
+        return "HTTP code=%s, Reason=%s, body=%s" % (
             self.httpcode,
             self.reason,
             self.body,
         )
 
     def __str__(self):
-        return 'HTTP code=%s, reason=%s' % (self.httpcode, self.reason)
+        return "HTTP code=%s, reason=%s" % (self.httpcode, self.reason)
 
 
 # ===============================================================================
@@ -91,55 +91,55 @@ class SolrConnection:
 
     def __init__(
         self,
-        host='localhost:8080',
-        solrBase='/v1/solr',
+        host="localhost:8080",
+        solrBase="/v1/solr",
         persistent=True,
         postHeaders={},
     ):
-        self.logger = logging.getLogger('solrclient.SolrConnection')
+        self.logger = logging.getLogger("solrclient.SolrConnection")
         self.fieldtypes = {
-            't': 'text',
-            's': 'string',
-            'dt': 'date',
-            'd': 'double',
-            'f': 'float',
-            'i': 'int',
-            'l': 'long',
-            'tw': 'text_ws',
-            'text': 'text',
-            'guid': 'string',
-            'itype': 'string',
-            'origin': 'string',
-            'oid': 'string',
-            'gid': 'string',
-            'modified': 'date',
-            'created': 'date',
+            "t": "text",
+            "s": "string",
+            "dt": "date",
+            "d": "double",
+            "f": "float",
+            "i": "int",
+            "l": "long",
+            "tw": "text_ws",
+            "text": "text",
+            "guid": "string",
+            "itype": "string",
+            "origin": "string",
+            "oid": "string",
+            "gid": "string",
+            "modified": "date",
+            "created": "date",
         }
         self.host = host
         self.solrBase = solrBase
         self.persistent = persistent
         self.reconnects = 0
-        self.encoder = codecs.getencoder('utf-8')
+        self.encoder = codecs.getencoder("utf-8")
         # responses from Solr will always be in utf-8
-        self.decoder = codecs.getdecoder('utf-8')
+        self.decoder = codecs.getdecoder("utf-8")
         # a real connection to the server is not opened at this point.
         self.conn = http.client.HTTPConnection(self.host)
         ##Cache fields
         self._fields = None
         # self.conn.set_debuglevel(1000000)
-        self.xmlheaders = {'Content-Type': 'text/xml; charset=utf-8'}
+        self.xmlheaders = {"Content-Type": "text/xml; charset=utf-8"}
         self.xmlheaders.update(postHeaders)
         if not self.persistent:
-            self.xmlheaders['Connection'] = 'close'
+            self.xmlheaders["Connection"] = "close"
         self.formheaders = {
-            'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8'
+            "Content-Type": "application/x-www-form-urlencoded; charset=utf-8"
         }
         if not self.persistent:
-            self.formheaders['Connection'] = 'close'
+            self.formheaders["Connection"] = "close"
 
     def __str__(self):
         return (
-            'SolrConnection{host=%s, solrBase=%s, persistent=%s, postHeaders=%s, reconnects=%s}'
+            "SolrConnection{host=%s, solrBase=%s, persistent=%s, postHeaders=%s, reconnects=%s}"
             % (
                 self.host,
                 self.solrBase,
@@ -172,15 +172,15 @@ class SolrConnection:
 
     def doPost(self, url, body, headers):
         try:
-            self.conn.request('POST', url, body, headers)
+            self.conn.request("POST", url, body, headers)
         except (socket.error, http.client.CannotSendRequest):
             # Reconnect in case the connection was broken from the server going down,
             # the server timing out our persistent connection, or another
             # network failure. Also catch httplib.CannotSendRequest because the
             # HTTPConnection object can get in a bad state.
-            self.logger.info('SOLR connection socket error, trying to resend')
+            self.logger.info("SOLR connection socket error, trying to resend")
             self.__reconnect()
-            self.conn.request('POST', url, body, headers)
+            self.conn.request("POST", url, body, headers)
         finally:
             if not self.persistent:
                 self.conn.close()
@@ -189,16 +189,16 @@ class SolrConnection:
             res = self.__errcheck(self.conn.getresponse())
         except http.client.BadStatusLine:
             self.logger.exception(
-                'Received bad response from SOLR connection.  Retrying.'
+                "Received bad response from SOLR connection.  Retrying."
             )
             self.__reconnect()
-            self.conn.request('POST', url, body, headers)
+            self.conn.request("POST", url, body, headers)
             res = self.__errcheck(self.conn.getresponse())
         return res
 
     def doUpdateXML(self, request):
         # logging.debug(request)
-        rsp = self.doPost(self.solrBase + '/update', request, self.xmlheaders)
+        rsp = self.doPost(self.solrBase + "/update", request, self.xmlheaders)
         data = rsp.read()
         # detect old-style error response (HTTP response code of
         # 200 with a non-zero status.
@@ -207,7 +207,7 @@ class SolrConnection:
         ):
             data = self.decoder(data)[0]
             parsed = xml.dom.minidom.parseString(data)
-            status = parsed.documentElement.getAttribute('status')
+            status = parsed.documentElement.getAttribute("status")
             if status != 0:
                 # reason = parsed.documentElement.firstChild.nodeValue
                 reason = data
@@ -219,25 +219,25 @@ class SolrConnection:
     + - && || ! ( ) { } [ ] ^ " ~ * ? : \
     """
         reserved = [
-            '+',
-            '-',
-            '&',
-            '|',
-            '!',
-            '(',
-            ')',
-            '{',
-            '}',
-            '[',
-            ']',
-            '^',
+            "+",
+            "-",
+            "&",
+            "|",
+            "!",
+            "(",
+            ")",
+            "{",
+            "}",
+            "[",
+            "]",
+            "^",
             '"',
-            '~',
-            '*',
-            '?',
-            ':',
+            "~",
+            "*",
+            "?",
+            ":",
         ]
-        term = term.replace('\\', '\\\\')
+        term = term.replace("\\", "\\\\")
         for c in reserved:
             term = term.replace(c, "\%s" % c)
         return term
@@ -251,13 +251,13 @@ class SolrConnection:
         if term == "*":
             return term
         addstar = False
-        if term[len(term) - 1] == '*':
+        if term[len(term) - 1] == "*":
             addstar = True
             term = term[0 : len(term) - 1]
         term = self.escapeQueryTerm(term)
         if addstar:
-            term = '%s*' % term
-        if self.getSolrType(field) in ['string', 'text', 'text_ws']:
+            term = "%s*" % term
+        if self.getSolrType(field) in ["string", "text", "text_ws"]:
             return '"%s"' % term
         return term
 
@@ -273,11 +273,11 @@ class SolrConnection:
         return self.encoder(key)[0]  # to utf8
 
     def delete(self, id):
-        xstr = '<delete><id>' + self.escapeVal(str(id)) + '</id></delete>'
+        xstr = "<delete><id>" + self.escapeVal(str(id)) + "</id></delete>"
         return self.doUpdateXML(xstr)
 
     def deleteByQuery(self, query):
-        xstr = '<delete><query>' + self.escapeVal(query) + '</query></delete>'
+        xstr = "<delete><query>" + self.escapeVal(query) + "</query></delete>"
         return self.doUpdateXML(xstr)
 
     def coerceType(self, ftype, value):
@@ -289,25 +289,25 @@ class SolrConnection:
         """
         if value is None:
             return None
-        if ftype == 'string':
+        if ftype == "string":
             return str(value)
-        elif ftype == 'text':
+        elif ftype == "text":
             return str(value)
-        elif ftype == 'int':
+        elif ftype == "int":
             try:
                 v = int(value)
                 return str(v)
             except Exception:
                 return None
-        elif ftype == 'float':
+        elif ftype == "float":
             try:
                 v = float(value)
                 return str(v)
             except Exception:
                 return None
-        elif ftype == 'date':
+        elif ftype == "date":
             try:
-                v = datetime.datetime.strptime(value, '%b %d %Y %I:%M%p')
+                v = datetime.datetime.strptime(value, "%b %d %Y %I:%M%p")
                 return v.isoformat()
             except Exception:
                 return None
@@ -320,13 +320,13 @@ class SolrConnection:
         code for the field name.
 
         """
-        ftype = 'string'
+        ftype = "string"
         try:
             ftype = self.fieldtypes[field]
             return ftype
         except Exception:
             pass
-        fta = field.split('_')
+        fta = field.split("_")
         if len(fta) > 1:
             ft = fta[len(fta) - 1]
             try:
@@ -338,7 +338,7 @@ class SolrConnection:
         return ftype
 
     def __add(self, lst, fields):
-        lst.append('<doc>')
+        lst.append("<doc>")
         for f, v in list(fields.items()):
             ftype = self.getSolrType(f)
             if isinstance(v, list):
@@ -349,7 +349,7 @@ class SolrConnection:
                         lst.append(self.escapeKey(str(f)))
                         lst.append('">')
                         lst.append(self.escapeVal(vi))
-                        lst.append('</field>')
+                        lst.append("</field>")
             else:
                 v = self.coerceType(ftype, v)
                 if v is not None:
@@ -357,99 +357,99 @@ class SolrConnection:
                     lst.append(self.escapeKey(str(f)))
                     lst.append('">')
                     lst.append(self.escapeVal(v))
-                    lst.append('</field>')
-        lst.append('</doc>')
+                    lst.append("</field>")
+        lst.append("</doc>")
 
     def add(self, **fields):
-        lst = ['<add>']
+        lst = ["<add>"]
         self.__add(lst, fields)
-        lst.append('</add>')
-        xstr = ''.join(lst)
+        lst.append("</add>")
+        xstr = "".join(lst)
         return self.doUpdateXML(xstr)
 
     def addDocs(self, docs):
         """docs is a list of fields that are a dictionary of name:value for a record."""
-        lst = ['<add>']
+        lst = ["<add>"]
         for fields in docs:
             self.__add(lst, fields)
-        lst.append('</add>')
-        xstr = ''.join(lst)
+        lst.append("</add>")
+        xstr = "".join(lst)
         return self.doUpdateXML(xstr)
 
     def addMany(self, arrOfMap):
-        lst = ['<add>']
+        lst = ["<add>"]
         for doc in arrOfMap:
             self.__add(lst, doc)
-        lst.append('</add>')
-        xstr = ''.join(lst)
+        lst.append("</add>")
+        xstr = "".join(lst)
         return self.doUpdateXML(xstr)
 
     def commit(self, waitFlush=True, waitSearcher=True, optimize=False):
-        xstr = '<commit'
+        xstr = "<commit"
         if optimize:
-            xstr = '<optimize'
+            xstr = "<optimize"
         if not waitSearcher:  # just handle deviations from the default
             if not waitFlush:
                 xstr += ' waitFlush="false" waitSearcher="false"'
             else:
                 xstr += ' waitSearcher="false"'
-        xstr += '/>'
+        xstr += "/>"
         return self.doUpdateXML(xstr)
 
     def search(self, params):
-        params['wt'] = 'python'
+        params["wt"] = "python"
         request = urllib.parse.urlencode(params, doseq=True)
-        rsp = self.doPost(self.solrBase + '', request, self.formheaders)
+        rsp = self.doPost(self.solrBase + "", request, self.formheaders)
         data = eval(rsp.read())
         return data
 
-    def count(self, q='*:*', fq=None):
+    def count(self, q="*:*", fq=None):
         """Return the number of entries that match query."""
-        params = {'q': q, 'rows': '0'}
+        params = {"q": q, "rows": "0"}
         if fq is not None:
-            params['fq'] = fq
+            params["fq"] = fq
         res = self.search(params)
-        hits = res['response']['numFound']
+        hits = res["response"]["numFound"]
         return hits
 
-    def getIds(self, query='*:*', fq=None, start=0, rows=1000):
+    def getIds(self, query="*:*", fq=None, start=0, rows=1000):
         """Returns a dictionary of: matches: number of matches failed: if true, then an
         exception was thrown start: starting index ids: [id, id, ...]
 
         See also the SOLRSearchResponseIterator class
 
         """
-        params = {'q': query, 'start': str(start), 'rows': str(rows), 'wt': 'python'}
+        params = {"q": query, "start": str(start), "rows": str(rows), "wt": "python"}
         if fq is not None:
-            params['fq'] = fq
+            params["fq"] = fq
         request = urllib.parse.urlencode(params, doseq=True)
         data = None
-        response = {'matches': 0, 'start': start, 'failed': True, 'ids': []}
+        response = {"matches": 0, "start": start, "failed": True, "ids": []}
         try:
-            rsp = self.doPost(self.solrBase + '', request, self.formheaders)
+            rsp = self.doPost(self.solrBase + "", request, self.formheaders)
             data = eval(rsp.read())
         except Exception:
             pass
         if data is None:
             return response
-        response['failed'] = False
-        response['matches'] = data['response']['numFound']
-        for doc in data['response']['docs']:
-            response['ids'].append(doc['id'][0])
+        response["failed"] = False
+        response["matches"] = data["response"]["numFound"]
+        for doc in data["response"]["docs"]:
+            response["ids"].append(doc["id"][0])
         return response
 
     def get(self, id):
         """Retrieves the specified document."""
-        params = {'q': 'id:%s' % str(id), 'wt': 'python'}
+        params = {"q": "id:%s" % str(id), "wt": "python"}
         request = urllib.parse.urlencode(params, doseq=True)
         data = None
         try:
-            rsp = self.doPost(self.solrBase + '', request, self.formheaders)
+            rsp = self.doPost(self.solrBase + "", request, self.formheaders)
             data = eval(rsp.read())
         except Exception:
             pass
-        if data['response']['numFound'] > 0:
-            return data['response']['docs'][0]
+        if data["response"]["numFound"] > 0:
+            return data["response"]["docs"][0]
         return None
 
     def getFields(self, numTerms=1):
@@ -491,9 +491,9 @@ class SolrConnection:
     """
         if self._fields is not None:
             return self._fields
-        params = {'numTerms': str(numTerms), 'wt': 'python'}
+        params = {"numTerms": str(numTerms), "wt": "python"}
         request = urllib.parse.urlencode(params, doseq=True)
-        rsp = self.doPost(self.solrBase + '/admin/luke', request, self.formheaders)
+        rsp = self.doPost(self.solrBase + "/admin/luke", request, self.formheaders)
         data = eval(rsp.read())
         self._fields = data
         return data
@@ -513,23 +513,23 @@ class SolrConnection:
 
         """
         params = {
-            'q': q,
-            'rows': '0',
-            'facet': 'true',
-            'facet.field': name,
-            'facet.limit': str(maxvalues),
-            'facet.zeros': 'false',
-            'wt': 'python',
-            'facet.sort': 'false',
+            "q": q,
+            "rows": "0",
+            "facet": "true",
+            "facet.field": name,
+            "facet.limit": str(maxvalues),
+            "facet.zeros": "false",
+            "wt": "python",
+            "facet.sort": "false",
         }
         if fq is not None:
-            params['fq'] = fq
+            params["fq"] = fq
         request = urllib.parse.urlencode(params, doseq=True)
-        rsp = self.doPost(self.solrBase + '', request, self.formheaders)
+        rsp = self.doPost(self.solrBase + "", request, self.formheaders)
         data = eval(rsp.read())
-        return data['facet_counts']['facet_fields']  # , data['response']['numFound']
+        return data["facet_counts"]["facet_fields"]  # , data['response']['numFound']
 
-    def fieldMinMax(self, name, q='*:*', fq=None):
+    def fieldMinMax(self, name, q="*:*", fq=None):
         """Returns the minimum and maximum values of the specified field. This requires
         two search calls to the service, each requesting a single value of a single
         field.
@@ -545,22 +545,22 @@ class SolrConnection:
         oldpersist = self.persistent
         self.persistent = True
         params = {
-            'q': q,
-            'rows': 1,
-            'fl': name,
-            'sort': '%s asc' % name,
-            'wt': 'python',
+            "q": q,
+            "rows": 1,
+            "fl": name,
+            "sort": "%s asc" % name,
+            "wt": "python",
         }
         if fq is not None:
-            params['fq'] = fq
+            params["fq"] = fq
         try:
             data = self.search(params)
-            minmax[0] = data['response']['docs'][0][name][0]
-            params['sort'] = '%s desc' % name
+            minmax[0] = data["response"]["docs"][0][name][0]
+            params["sort"] = "%s desc" % name
             data = self.search(params)
-            minmax[1] = data['response']['docs'][0][name][0]
+            minmax[1] = data["response"]["docs"][0][name][0]
         except Exception as e:
-            self.logger.debug('Exception in MinMax: %s' % str(e))
+            self.logger.debug("Exception in MinMax: %s" % str(e))
             pass
         finally:
             self.persistent = oldpersist
@@ -578,21 +578,21 @@ class SolrConnection:
         """
         fields = self.getFields()
         try:
-            fld = fields['fields'][name]
+            fld = fields["fields"][name]
         except Exception:
             return str
-        if fld['type'] in ['string', 'text', 'stext', 'text_ws']:
+        if fld["type"] in ["string", "text", "stext", "text_ws"]:
             return str
-        if fld['type'] in ['sint', 'integer', 'long', 'slong']:
+        if fld["type"] in ["sint", "integer", "long", "slong"]:
             return int
-        if fld['type'] in ['sdouble', 'double', 'sfloat', 'float']:
+        if fld["type"] in ["sdouble", "double", "sfloat", "float"]:
             return float
-        if fld['type'] in ['boolean']:
+        if fld["type"] in ["boolean"]:
             return bool
-        return fld['type']
+        return fld["type"]
 
     def fieldAlphaHistogram(
-        self, name, q='*:*', fq=None, nbins=10, includequeries=True
+        self, name, q="*:*", fq=None, nbins=10, includequeries=True
     ):
         """Generates a histogram of values from a string field. Output is:
 
@@ -619,7 +619,7 @@ class SolrConnection:
                 # Use equivalence instead of range queries to retrieve the values
                 for i in range(0, nbins):
                     bin = [fvals[name][i * 2], fvals[name][i * 2], 0]
-                    binq = '%s:%s' % (name, self.prepareQueryTerm(name, bin[0]))
+                    binq = "%s:%s" % (name, self.prepareQueryTerm(name, bin[0]))
                     qbin.append(binq)
                     bins.append(bin)
             else:
@@ -629,12 +629,12 @@ class SolrConnection:
                     # remainder of terms
                     for i in range(0, nbins - 2):
                         bin = [fvals[name][i * 2], fvals[name][i * 2], 0]
-                        binq = '%s:%s' % (name, self.prepareQueryTerm(name, bin[0]))
+                        binq = "%s:%s" % (name, self.prepareQueryTerm(name, bin[0]))
                         qbin.append(binq)
                         bins.append(bin)
                     term = fvals[name][(nbins - 1) * 2]
                     bin = [term, fvals[name][((nvalues - 1) * 2)], 0]
-                    binq = '%s:[%s TO *]' % (name, self.prepareQueryTerm(name, term))
+                    binq = "%s:[%s TO *]" % (name, self.prepareQueryTerm(name, term))
                     qbin.append(binq)
                     bins.append(bin)
                 else:
@@ -647,51 +647,51 @@ class SolrConnection:
                         idxu = (int(coffset + delta) * 2) - 2
                         bin = [fvals[name][idxl], fvals[name][idxu], 0]
                         # logging.info(str(bin))
-                        binq = ''
+                        binq = ""
                         try:
                             if i == 0:
-                                binq = '%s:[* TO %s]' % (
+                                binq = "%s:[* TO %s]" % (
                                     name,
                                     self.prepareQueryTerm(name, bin[1]),
                                 )
                             elif i == nbins - 1:
-                                binq = '%s:[%s TO *]' % (
+                                binq = "%s:[%s TO *]" % (
                                     name,
                                     self.prepareQueryTerm(name, bin[0]),
                                 )
                             else:
-                                binq = '%s:[%s TO %s]' % (
+                                binq = "%s:[%s TO %s]" % (
                                     name,
                                     self.prepareQueryTerm(name, bin[0]),
                                     self.prepareQueryTerm(name, bin[1]),
                                 )
                         except Exception:
-                            self.logger.exception('Exception 1 in fieldAlphaHistogram:')
+                            self.logger.exception("Exception 1 in fieldAlphaHistogram:")
                         qbin.append(binq)
                         bins.append(bin)
                         coffset = coffset + delta
             # now execute the facet query request
             params = {
-                'q': q,
-                'rows': '0',
-                'facet': 'true',
-                'facet.field': name,
-                'facet.limit': '1',
-                'facet.mincount': 1,
-                'wt': 'python',
+                "q": q,
+                "rows": "0",
+                "facet": "true",
+                "facet.field": name,
+                "facet.limit": "1",
+                "facet.mincount": 1,
+                "wt": "python",
             }
             request = urllib.parse.urlencode(params, doseq=True)
             for sq in qbin:
                 try:
-                    request = request + '&%s' % urllib.parse.urlencode(
-                        {'facet.query': self.encoder(sq)[0]}
+                    request = request + "&%s" % urllib.parse.urlencode(
+                        {"facet.query": self.encoder(sq)[0]}
                     )
                 except Exception:
-                    self.logger.exception('Exception 2 in fieldAlphaHistogram')
-            rsp = self.doPost(self.solrBase + '', request, self.formheaders)
+                    self.logger.exception("Exception 2 in fieldAlphaHistogram")
+            rsp = self.doPost(self.solrBase + "", request, self.formheaders)
             data = eval(rsp.read())
             for i in range(0, len(bins)):
-                v = data['facet_counts']['facet_queries'][qbin[i]]
+                v = data["facet_counts"]["facet_queries"][qbin[i]]
                 bins[i][2] = v
                 if includequeries:
                     bins[i].append(qbin[i])
@@ -752,42 +752,42 @@ class SolrConnection:
                     bin[0] = int(bin[0])
                     bin[1] = int(bin[1])
                     if i == 0:
-                        binq = '%s:[* TO %d]' % (name, bin[1])
+                        binq = "%s:[* TO %d]" % (name, bin[1])
                     elif i == nbins - 1:
-                        binq = '%s:[%d TO *]' % (name, bin[0] + minoffset)
+                        binq = "%s:[%d TO *]" % (name, bin[0] + minoffset)
                         bin[0] = bin[0] + minoffset
                         if bin[1] < bin[0]:
                             bin[1] = bin[0]
                     else:
-                        binq = '%s:[%d TO %d]' % (name, bin[0] + minoffset, bin[1])
+                        binq = "%s:[%d TO %d]" % (name, bin[0] + minoffset, bin[1])
                         bin[0] = bin[0] + minoffset
                 else:
                     if i == 0:
-                        binq = '%s:[* TO %f]' % (name, bin[1])
+                        binq = "%s:[* TO %f]" % (name, bin[1])
                     elif i == nbins - 1:
-                        binq = '%s:[%f TO *]' % (name, bin[0] + minoffset)
+                        binq = "%s:[%f TO *]" % (name, bin[0] + minoffset)
                     else:
-                        binq = '%s:[%f TO %f]' % (name, bin[0] + minoffset, bin[1])
+                        binq = "%s:[%f TO %f]" % (name, bin[0] + minoffset, bin[1])
                 qbin.append(binq)
                 bins.append(bin)
 
             # now execute the facet query request
             params = {
-                'q': q,
-                'rows': '0',
-                'facet': 'true',
-                'facet.field': name,
-                'facet.limit': '1',
-                'facet.mincount': 1,
-                'wt': 'python',
+                "q": q,
+                "rows": "0",
+                "facet": "true",
+                "facet.field": name,
+                "facet.limit": "1",
+                "facet.mincount": 1,
+                "wt": "python",
             }
             request = urllib.parse.urlencode(params, doseq=True)
             for sq in qbin:
-                request = request + '&%s' % urllib.parse.urlencode({'facet.query': sq})
-            rsp = self.doPost(self.solrBase + '', request, self.formheaders)
+                request = request + "&%s" % urllib.parse.urlencode({"facet.query": sq})
+            rsp = self.doPost(self.solrBase + "", request, self.formheaders)
             data = eval(rsp.read())
             for i in range(0, len(bins)):
-                v = data['facet_counts']['facet_queries'][qbin[i]]
+                v = data["facet_counts"]["facet_queries"][qbin[i]]
                 bins[i][2] = v
                 if includequeries:
                     bins[i].append(qbin[i])
@@ -818,23 +818,23 @@ class SolrConnection:
         """
 
         def _mkQterm(name, minv, maxv, isint, isfirst, islast):
-            q = ''
+            q = ""
             if isint:
                 minv = int(minv)
                 maxv = int(maxv)
                 if isfirst:
-                    q = '%s:[* TO %d]' % (name, maxv)
+                    q = "%s:[* TO %d]" % (name, maxv)
                 elif islast:
-                    q = '%s:[%d TO *]' % (name, maxv)
+                    q = "%s:[%d TO *]" % (name, maxv)
                 else:
-                    q = '%s:[%d TO %d]' % (name, minv, maxv)
+                    q = "%s:[%d TO %d]" % (name, minv, maxv)
             else:
                 if isfirst:
-                    q = '%s:[* TO %f]' % (name, maxv)
+                    q = "%s:[* TO %f]" % (name, maxv)
                 elif islast:
-                    q = '%s:[%f TO *]' % (name, maxv)
+                    q = "%s:[%f TO *]" % (name, maxv)
                 else:
-                    q = '%s:[%f TO %f]' % (name, minv, maxv)
+                    q = "%s:[%f TO %f]" % (name, minv, maxv)
             return q
 
         oldpersist = self.persistent
@@ -842,11 +842,11 @@ class SolrConnection:
         ftype_col = self.getftype(colname)
         ftype_row = self.getftype(rowname)
         result = {
-            'colname': colname,
-            'rowname': rowname,
-            'cols': [],
-            'rows': [],
-            'z': [],
+            "colname": colname,
+            "rowname": rowname,
+            "cols": [],
+            "rows": [],
+            "z": [],
         }
         minoffsetcol = 1
         minoffsetrow = 1
@@ -866,7 +866,7 @@ class SolrConnection:
 
             for rowidx in range(0, nrows):
                 rmin = rowminmax[0] + (rowidx * rowdelta)
-                result['rows'].append(rmin)
+                result["rows"].append(rmin)
                 rmax = rmin + rowdelta
                 rowq = _mkQterm(
                     rowname,
@@ -882,7 +882,7 @@ class SolrConnection:
                 cline = []
                 for colidx in range(0, ncols):
                     cmin = colminmax[0] + (colidx * coldelta)
-                    result['cols'].append(cmin)
+                    result["cols"].append(cmin)
                     cmax = cmin + coldelta
                     colq = _mkQterm(
                         colname,
@@ -896,27 +896,27 @@ class SolrConnection:
                     bins.append(bin)
                 # now execute the facet query request
                 params = {
-                    'q': qq,
-                    'rows': '0',
-                    'facet': 'true',
-                    'facet.field': colname,
-                    'facet.limit': '1',
-                    'facet.mincount': 1,
-                    'wt': 'python',
+                    "q": qq,
+                    "rows": "0",
+                    "facet": "true",
+                    "facet.field": colname,
+                    "facet.limit": "1",
+                    "facet.mincount": 1,
+                    "wt": "python",
                 }
                 if fq is not None:
-                    params['fq'] = fq
+                    params["fq"] = fq
                 request = urllib.parse.urlencode(params, doseq=True)
                 for bin in bins:
-                    request = request + '&%s' % urllib.parse.urlencode(
-                        {'facet.query': bin[7]}
+                    request = request + "&%s" % urllib.parse.urlencode(
+                        {"facet.query": bin[7]}
                     )
-                rsp = self.doPost(self.solrBase + '', request, self.formheaders)
+                rsp = self.doPost(self.solrBase + "", request, self.formheaders)
                 data = eval(rsp.read())
                 for bin in bins:
-                    v = data['facet_counts']['facet_queries'][bin[7]]
+                    v = data["facet_counts"]["facet_queries"][bin[7]]
                     cline.append(v)
-                result['z'].append(cline)
+                result["z"].append(cline)
         finally:
             self.persistent = oldpersist
             if not self.persistent:
@@ -948,7 +948,7 @@ class SOLRRecordTransformer(object):
 class SOLRArrayTransformer(SOLRRecordTransformer):
     """A transformer that returns a list of values for the sepcified columns."""
 
-    def __init__(self, cols=['lng', 'lat']):
+    def __init__(self, cols=["lng", "lat"]):
         self.cols = cols
 
     def transform(self, record):
@@ -977,7 +977,7 @@ class SOLRSearchResponseIterator(object):
         client,
         q,
         fq=None,
-        fields='*',
+        fields="*",
         pagesize=100,
         transformer=SOLRRecordTransformer(),
     ):
@@ -990,7 +990,7 @@ class SOLRSearchResponseIterator(object):
         @param pagesize(int) Number of rows to retrieve in each call.
 
         """
-        self.logger = logging.getLogger('solrclient.SOLRSearchResponseIterator')
+        self.logger = logging.getLogger("solrclient.SOLRSearchResponseIterator")
         self.client = client
         self.q = q
         self.fq = fq
@@ -1002,23 +1002,23 @@ class SOLRSearchResponseIterator(object):
         self.transformer = transformer
         self._nextPage(self.crecord)
         self._numhits = 0
-        self.logger.debug("Iterator hits=%s" % str(self.res['response']['numFound']))
+        self.logger.debug("Iterator hits=%s" % str(self.res["response"]["numFound"]))
 
     def _nextPage(self, offset):
         """Retrieves the next set of results from the service."""
         self.logger.debug("Iterator crecord=%s" % str(self.crecord))
         params = {
-            'q': self.q,
-            'start': str(offset),
-            'rows': str(self.pagesize),
-            'fl': self.fields,
-            'explainOther': '',
-            'hl.fl': '',
+            "q": self.q,
+            "start": str(offset),
+            "rows": str(self.pagesize),
+            "fl": self.fields,
+            "explainOther": "",
+            "hl.fl": "",
         }
         if self.fq is not None:
-            params['fq'] = self.fq
+            params["fq"] = self.fq
         self.res = self.client.search(params)
-        self._numhits = int(self.res['response']['numFound'])
+        self._numhits = int(self.res["response"]["numFound"])
 
     def __iter__(self):
         return self
@@ -1030,14 +1030,14 @@ class SOLRSearchResponseIterator(object):
     def __next__(self):
         if self.done:
             raise StopIteration()
-        idx = self.crecord - self.res['response']['start']
+        idx = self.crecord - self.res["response"]["start"]
         try:
-            row = self.res['response']['docs'][idx]
+            row = self.res["response"]["docs"][idx]
         except IndexError:
             self._nextPage(self.crecord)
-            idx = self.crecord - self.res['response']['start']
+            idx = self.crecord - self.res["response"]["start"]
             try:
-                row = self.res['response']['docs'][idx]
+                row = self.res["response"]["docs"][idx]
             except IndexError:
                 self.done = True
                 raise StopIteration()
@@ -1056,13 +1056,13 @@ class SOLRArrayResponseIterator(SOLRSearchResponseIterator):
 
     """
 
-    def __init__(self, client, q, fq=None, pagesize=100, cols=['lng', 'lat']):
+    def __init__(self, client, q, fq=None, pagesize=100, cols=["lng", "lat"]):
         transformer = SOLRArrayTransformer(cols)
         fields = ",".join(cols)
         SOLRSearchResponseIterator.__init__(
             self, client, q, fq, fields, pagesize, transformer=transformer
         )
-        self.logger = logging.getLogger('solrclient.SOLRArrayResponseIterator')
+        self.logger = logging.getLogger("solrclient.SOLRArrayResponseIterator")
 
 
 # ===============================================================================
@@ -1082,7 +1082,7 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
         client,
         q,
         fq=None,
-        fields='*',
+        fields="*",
         pagesize=100,
         nsamples=10000,
         transformer=SOLRRecordTransformer(),
@@ -1105,16 +1105,16 @@ class SOLRSubsampleResponseIterator(SOLRSearchResponseIterator):
         and when necessary selecting the next page from the randomly generated list."""
         if self.done:
             raise StopIteration()
-        idx = self.crecord - self.res['response']['start']
+        idx = self.crecord - self.res["response"]["start"]
         try:
-            row = self.res['response']['docs'][idx]
+            row = self.res["response"]["docs"][idx]
         except IndexError:
             self._cpage += 1
             try:
                 self._crecord = self._pagestarts[self._cpage]
                 self._nextPage(self.crecord)
-                idx = self.crecord - self.res['response']['start']
-                row = self.res['response']['docs'][idx]
+                idx = self.crecord - self.res["response"]["start"]
+                row = self.res["response"]["docs"][idx]
             except IndexError:
                 self.done = True
                 raise StopIteration()
@@ -1132,7 +1132,7 @@ class SOLRValuesResponseIterator(object):
 
     """
 
-    def __init__(self, client, field, q='*:*', fq=None, pagesize=1000):
+    def __init__(self, client, field, q="*:*", fq=None, pagesize=1000):
         """Initialize.
 
         @param client(SolrConnection) An instance of a solr connection to use.
@@ -1143,7 +1143,7 @@ class SOLRValuesResponseIterator(object):
         @param pagesize(int) Number of rows to retrieve in each call.
 
         """
-        self.logger = logging.getLogger('solrclient.SOLRValuesResponseIterator')
+        self.logger = logging.getLogger("solrclient.SOLRValuesResponseIterator")
         self.client = client
         self.q = q
         self.fq = fq
@@ -1162,24 +1162,24 @@ class SOLRValuesResponseIterator(object):
         self.logger.debug("Iterator crecord=%s" % str(self.crecord))
 
         params = {
-            'q': self.q,
-            'rows': '0',
-            'facet': 'true',
-            'facet.field': self.field,
-            'facet.limit': str(self.pagesize),
-            'facet.offset': str(offset),
-            'facet.zeros': 'false',
-            'wt': 'python',
+            "q": self.q,
+            "rows": "0",
+            "facet": "true",
+            "facet.field": self.field,
+            "facet.limit": str(self.pagesize),
+            "facet.offset": str(offset),
+            "facet.zeros": "false",
+            "wt": "python",
         }
         if self.fq is not None:
-            params['fq'] = self.fq
+            params["fq"] = self.fq
         request = urllib.parse.urlencode(params, doseq=True)
         rsp = self.client.doPost(
-            self.client.solrBase + '', request, self.client.formheaders
+            self.client.solrBase + "", request, self.client.formheaders
         )
         data = eval(rsp.read())
         try:
-            self.res = data['facet_counts']['facet_fields'][self.field]
+            self.res = data["facet_counts"]["facet_fields"][self.field]
             self.logger.debug(self.res)
         except Exception:
             self.res = []
@@ -1208,15 +1208,15 @@ class SOLRValuesResponseIterator(object):
 
 # ===============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # some simple tests
 
     def test1():
 
         client = SolrConnection(host="cn-dev-unm-1.test.dataone.org/", solrBase="/solr")
-        q = 'sciName_s:Ba*'
+        q = "sciName_s:Ba*"
         fq = None
-        fields = 'lat,lng'
+        fields = "lat,lng"
         pagesize = 5
         rows = SOLRSearchResponseIterator(
             client, q, fq=fq, fields=fields, pagesize=pagesize

@@ -34,6 +34,9 @@ import d1_common.util
 
 DEFAULT_WORKER_COUNT = 16
 
+# These are applied in addition to the default exclude list in the path iterator.
+DEFAULT_EXCLUDE_GLOB_LIST = ["_ignore/"]
+
 logger = logging.getLogger(__name__)
 
 
@@ -46,19 +49,35 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('path', nargs='+', help='File or directory path')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", nargs="+", help="File or directory path")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
+        "--exclude",
+        nargs="+",
+        default=DEFAULT_EXCLUDE_GLOB_LIST,
+        help="Exclude glob patterns",
     )
     parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--pycharm', action='store_true', help='Enable PyCharm integration'
+        "--no-default-excludes",
+        dest="default_excludes",
+        action="store_false",
+        help="Don't add default glob exclude patterns",
+    )
+    parser.add_argument(
+        "--include-untracked",
+        action="store_true",
+        help="Also process files not tracked by git",
+    )
+    parser.add_argument(
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
+    )
+    parser.add_argument(
+        "--pycharm", action="store_true", help="Enable PyCharm integration"
     )
     parser.add_argument(
         "--workers",
@@ -75,12 +94,15 @@ def main():
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     repo = git.Repo(repo_path)
 
-    specified_file_path_list = get_specified_file_path_list(args)
-    tracked_path_list = list(d1_dev.util.get_tracked_files(repo))
-    format_path_list = sorted(
-        set(specified_file_path_list).intersection(tracked_path_list)
-    )
-    format_all(args, format_path_list)
+    specified_file_path_set = set(get_specified_file_path_list(args))
+
+    if args.include_untracked:
+        format_path_set = specified_file_path_set
+    else:
+        tracked_path_set = set(d1_dev.util.get_tracked_files(repo))
+        format_path_set = specified_file_path_set.intersection(tracked_path_set)
+
+    format_all(args, sorted(format_path_set))
 
 
 def get_specified_file_path_list(args):
@@ -88,11 +110,11 @@ def get_specified_file_path_list(args):
         os.path.realpath(p)
         for p in d1_common.iter.path.path_generator(
             path_list=args.path,
-            include_glob_list=['*.py'],
+            include_glob_list=["*.py"],
             exclude_glob_list=args.exclude,
             recursive=args.recursive,
             ignore_invalid=args.ignore_invalid,
-            default_excludes=False,
+            default_excludes=args.default_excludes,
             return_dir_paths=True,
         )
     ]
@@ -114,28 +136,28 @@ def format_all(args, format_path_list):
     pool.join()
 
 
-def format_single(args, format_path):
-    run_cmd('black', '--skip-string-normalization', format_path)
-    run_cmd('isort', format_path)
+def format_single(_args, format_path):
+    run_cmd("black", format_path)
+    run_cmd("isort", format_path)
     run_cmd(
-        'docformatter',
-        '-i',
-        '--wrap-summaries',
-        '88',
-        '--wrap-descriptions',
-        '88',
+        "docformatter",
+        "-i",
+        "--wrap-summaries",
+        "88",
+        "--wrap-descriptions",
+        "88",
         format_path,
     )
 
 
 def run_cmd(*cmd_list):
-    print('Running command: {}'.format(' '.join(cmd_list)))
+    print("Running command: {}".format(" ".join(cmd_list)))
     try:
         subprocess.check_call(cmd_list)
     except subprocess.CalledProcessError as e:
-        print('Failed: {}'.format(str(e)))
+        print("Failed: {}".format(str(e)))
         raise
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

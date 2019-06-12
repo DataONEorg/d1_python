@@ -105,7 +105,7 @@ class Command(django.core.management.base.BaseCommand):
         parser.add_argument(
             "--pid-path",
             action="store",
-            help='Import only the Science Objects specified by a text file. The file must be UTF-8 encoded and contain one PIDs or SIDs per line',
+            help="Import only the Science Objects specified by a text file. The file must be UTF-8 encoded and contain one PIDs or SIDs per line",
         )
         parser.add_argument("pid", nargs="*", help="")
 
@@ -165,7 +165,7 @@ class Command(django.core.management.base.BaseCommand):
         async with self.create_async_client() as async_client:
             node_type, api_major = await self.probe_node_type_major(async_client)
 
-            if not self.options['pid_path']:
+            if not self.options["pid_path"]:
                 await self.bulk_import(async_client, node_type)
             else:
                 await self.restricted_import(async_client, node_type)
@@ -265,12 +265,12 @@ class Command(django.core.management.base.BaseCommand):
 
         """
         item_task_name = "Importing objects"
-        pid_path = self.options['pid_path']
+        pid_path = self.options["pid_path"]
 
         if not os.path.exists(pid_path):
-            raise ConnectionError('File does not exist: {}'.format(pid_path))
+            raise ConnectionError("File does not exist: {}".format(pid_path))
 
-        with open(pid_path, encoding='UTF-8') as pid_file:
+        with open(pid_path, encoding="UTF-8") as pid_file:
             self.progress_logger.start_task_type(
                 item_task_name, len(pid_file.readlines())
             )
@@ -294,7 +294,7 @@ class Command(django.core.management.base.BaseCommand):
         If the SciObj is a Resource Map, also recursively import the aggregated objects.
 
         """
-        self._logger.info('Importing: {}'.format(pid))
+        self._logger.info("Importing: {}".format(pid))
 
         task_set = set()
 

@@ -51,7 +51,7 @@ import django.urls
 
 def get_pretty_xml(api_major_int=2):
     return d1_common.xml.serialize_for_transport(
-        _get_pyxb(api_major_int), xslt_url=django.urls.base.reverse('home_xslt')
+        _get_pyxb(api_major_int), xslt_url=django.urls.base.reverse("home_xslt")
     )
 
 
@@ -59,7 +59,7 @@ def get_xml(api_major_int):
     return d1_common.xml.serialize_for_transport(
         _get_pyxb(api_major_int),
         pretty=False,
-        xslt_url=django.urls.base.reverse('home_xslt'),
+        xslt_url=django.urls.base.reverse("home_xslt"),
     )
 
 
@@ -83,7 +83,7 @@ def _get_pyxb(api_major_int):
     node_pyxb.baseURL = django.conf.settings.NODE_BASEURL
     node_pyxb.replicate = django.conf.settings.NODE_REPLICATE
     node_pyxb.synchronize = django.conf.settings.NODE_SYNCHRONIZE
-    node_pyxb.type = 'mn'
+    node_pyxb.type = "mn"
     node_pyxb.state = django.conf.settings.NODE_STATE
     node_pyxb.subject.append(pyxb_binding.Subject(django.conf.settings.NODE_SUBJECT))
     node_pyxb.contactSubject.append(
@@ -131,18 +131,18 @@ def _create_replication_policy_pyxb(pyxb_binding):
 def _create_service_list_pyxb(pyxb_binding):
     # Both v1/node and v2/node list v2 services
     service_list_pyxb = pyxb_binding.services()
-    service_list_pyxb.extend(_create_service_list_for_version_pyxb(pyxb_binding, 'v1'))
-    service_list_pyxb.extend(_create_service_list_for_version_pyxb(pyxb_binding, 'v2'))
+    service_list_pyxb.extend(_create_service_list_for_version_pyxb(pyxb_binding, "v1"))
+    service_list_pyxb.extend(_create_service_list_for_version_pyxb(pyxb_binding, "v2"))
     return service_list_pyxb
 
 
 def _create_service_list_for_version_pyxb(pyxb_binding, service_version):
     return [
-        _create_service_pyxb(pyxb_binding, 'MNCore', service_version),
-        _create_service_pyxb(pyxb_binding, 'MNRead', service_version),
-        _create_service_pyxb(pyxb_binding, 'MNAuthorization', service_version),
-        _create_service_pyxb(pyxb_binding, 'MNStorage', service_version),
-        _create_service_pyxb(pyxb_binding, 'MNReplication', service_version),
+        _create_service_pyxb(pyxb_binding, "MNCore", service_version),
+        _create_service_pyxb(pyxb_binding, "MNRead", service_version),
+        _create_service_pyxb(pyxb_binding, "MNAuthorization", service_version),
+        _create_service_pyxb(pyxb_binding, "MNStorage", service_version),
+        _create_service_pyxb(pyxb_binding, "MNReplication", service_version),
     ]
 
 

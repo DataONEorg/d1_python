@@ -17,9 +17,9 @@
 # limitations under the License.
 """MNPackage.getPackage(session, packageType, id) → OctetStream."""
 import d1_gmn.app.model_util
-import d1_gmn.app.object_format_cache
 import d1_gmn.app.resource_map
 import d1_gmn.app.sciobj_store
+import d1_gmn.app.sysmeta
 import d1_gmn.app.views.decorators
 import d1_gmn.app.views.headers
 import d1_gmn.app.views.util
@@ -80,7 +80,7 @@ def _create_sciobj_info_list(request, pid_list):
 def _create_sciobj_info_dict(sciobj_model):
     return {
         "pid": sciobj_model.pid.did,
-        "filename": d1_gmn.app.object_format_cache.get_filename(sciobj_model),
+        "filename": d1_gmn.app.sysmeta.get_filename(sciobj_model),
         "iter": d1_gmn.app.sciobj_store.get_sciobj_iter_by_pid(sciobj_model.pid.did),
         "checksum": sciobj_model.checksum,
         "checksum_algorithm": sciobj_model.checksum_algorithm.checksum_algorithm,
@@ -92,7 +92,7 @@ def _create_sysmeta_info_dict(request, sciobj_model):
     return {
         "pid": sciobj_model.pid.did,
         "filename": "{}.sysmeta.xml".format(
-            d1_gmn.app.object_format_cache.get_filename(sciobj_model)
+            d1_gmn.app.sysmeta.get_filename(sciobj_model)
         ),
         "iter": sysmeta_iter,
         "checksum": d1_common.checksum.calculate_checksum_on_iterator(sysmeta_iter),

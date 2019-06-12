@@ -52,11 +52,11 @@ except ImportError:
 class ZoteroClient(object):
     def __init__(self, options):
         self._options = options
-        self._user_id = self._get_setting('ZOTERO_USER')
-        self._api_access_key = self._get_setting('ZOTERO_API_ACCESS_KEY')
+        self._user_id = self._get_setting("ZOTERO_USER")
+        self._api_access_key = self._get_setting("ZOTERO_API_ACCESS_KEY")
         self._check_api_key()
         self._zotero_client = pyzotero.zotero.Zotero(
-            self._user_id, 'user', self._api_access_key
+            self._user_id, "user", self._api_access_key
         )
 
     def __enter__(self):
@@ -70,14 +70,14 @@ class ZoteroClient(object):
     def refresh(self):
         """Refresh the local cache of the online Zotero library if stale."""
         while self.cache_is_stale():
-            logging.info('Refreshing Zotero Library cache')
+            logging.info("Refreshing Zotero Library cache")
             self.force_refresh()
 
     def force_refresh(self):
         self._init_cache()
-        self._cache['collection_trees'] = self._create_collection_trees()
-        self._cache['filtered_tree'] = self.create_filtered_tree()
-        self._cache['library_version'] = self._get_current_library_version()
+        self._cache["collection_trees"] = self._create_collection_trees()
+        self._cache["filtered_tree"] = self.create_filtered_tree()
+        self._cache["library_version"] = self._get_current_library_version()
 
     def get_filtered_sub_tree(self, path):
         """Get a sub-tree rooted at [path] that contains only DataONE items.
@@ -88,42 +88,42 @@ class ZoteroClient(object):
         return self._get_filtered_sub_tree_recursive(path)
 
     def iterate_collection_trees(self):
-        for collection_tree in self._cache['collection_trees']:
-            yield collection_tree, [collection_tree['name']]
+        for collection_tree in self._cache["collection_trees"]:
+            yield collection_tree, [collection_tree["name"]]
             for f in self.iterate_collection_tree(collection_tree):
                 yield f
 
     def iterate_collection_tree(self, collection_tree, path=None):
         if path is None:
             path = []
-        for collection in collection_tree['collections']:
-            yield collection, path + [collection['name']]
+        for collection in collection_tree["collections"]:
+            yield collection, path + [collection["name"]]
             for f in self.iterate_collection_tree(
-                collection, path + [collection['name']]
+                collection, path + [collection["name"]]
             ):
                 yield f
 
     def iterate_filtered_tree(self, filtered_tree=None, path=None):
         if filtered_tree is None:
-            filtered_tree = self._cache['filtered_tree']
+            filtered_tree = self._cache["filtered_tree"]
             yield filtered_tree, []
         if path is None:
             path = []
-        for f in filtered_tree['collections']:
-            yield filtered_tree['collections'][f], path + [f]
+        for f in filtered_tree["collections"]:
+            yield filtered_tree["collections"][f], path + [f]
             for f in self.iterate_filtered_tree(
-                filtered_tree['collections'][f], path + [f]
+                filtered_tree["collections"][f], path + [f]
             ):
                 yield f
 
     def cache_is_stale(self):
         current_library_version = self._get_current_library_version()
         logging.debug(
-            'Zotero online version: {}. Cached version: {}'.format(
-                self._cache['library_version'], current_library_version
+            "Zotero online version: {}. Cached version: {}".format(
+                self._cache["library_version"], current_library_version
             )
         )
-        return self._cache['library_version'] < current_library_version
+        return self._cache["library_version"] < current_library_version
 
     #
     # Private.
@@ -137,13 +137,13 @@ class ZoteroClient(object):
                 return os.environ[key]
             except KeyError:
                 raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
-                    'Required value must be set in settings.py or OS environment: {}'.format(
+                    "Required value must be set in settings.py or OS environment: {}".format(
                         key
                     )
                 )
 
     def _init_cache(self):
-        self._cache = {'filtered_tree': {}, 'collections': None, 'library_version': 0}
+        self._cache = {"filtered_tree": {}, "collections": None, "library_version": 0}
 
     def _create_collection_trees(self):
         collections = self._zotero_client.collections()
@@ -157,23 +157,23 @@ class ZoteroClient(object):
         #
         # Since Python creates references instead of copies when objects are
         # appended to a list, the tree can be built with only two passes.
-        t = dict((e['collectionKey'], e) for e in collections)
+        t = dict((e["collectionKey"], e) for e in collections)
         for e in collections:
-            e['collections'] = []
+            e["collections"] = []
         for e in collections:
-            if e['parent']:
-                t[e['parent']]['collections'].append(e)
+            if e["parent"]:
+                t[e["parent"]]["collections"].append(e)
         # May now have many trees. Return the ones that start at root (they include
         # all others)
         trees = []
         for e in collections:
-            if not e['parent']:
+            if not e["parent"]:
                 trees.append(e)
         return trees
 
     def create_filtered_tree(self):
         filtered_tree = {}
-        for t in self._cache['collection_trees']:
+        for t in self._cache["collection_trees"]:
             self._create_filtered_trees_from_collections_recursive(filtered_tree, t)
         self._add_top_level_items_to_filtered_tree_root(filtered_tree)
         return filtered_tree
@@ -181,18 +181,18 @@ class ZoteroClient(object):
     def _create_filtered_trees_from_collections_recursive(
         self, filtered_tree, collection_tree
     ):
-        sub_tree = {'collections': {}}
+        sub_tree = {"collections": {}}
         self._add_collection_items_to_filtered_tree(sub_tree, collection_tree)
-        filtered_tree.setdefault('collections', {})
-        filtered_tree['collections'][collection_tree['name']] = sub_tree
-        for c in collection_tree['collections']:
+        filtered_tree.setdefault("collections", {})
+        filtered_tree["collections"][collection_tree["name"]] = sub_tree
+        for c in collection_tree["collections"]:
             self._create_filtered_trees_from_collections_recursive(sub_tree, c)
 
     def _add_collection_items_to_filtered_tree(self, filtered_tree, collection):
-        filtered_tree.setdefault('identifiers', [])
-        filtered_tree.setdefault('queries', [])
+        filtered_tree.setdefault("identifiers", [])
+        filtered_tree.setdefault("queries", [])
         collection_items = self._zotero_client.collection_items(
-            collection['collectionKey']
+            collection["collectionKey"]
         )
         for i in collection_items:
             self._add_item_to_filtered_tree_if_dataone_pid(filtered_tree, i)
@@ -203,8 +203,8 @@ class ZoteroClient(object):
         # https://groups.google.com/forum/#!topic/zotero-dev/MsJ3JBvpNrM
         # Parents are typically top-level objects with metadata, and children are
         # usually things like notes and file attachments.
-        filtered_tree.setdefault('identifiers', [])
-        filtered_tree.setdefault('queries', [])
+        filtered_tree.setdefault("identifiers", [])
+        filtered_tree.setdefault("queries", [])
         top_level_items = self._zotero_client.everything(self._zotero_client.top())
         for i in top_level_items:
             self._add_item_to_filtered_tree_if_dataone_pid(filtered_tree, i)
@@ -212,49 +212,49 @@ class ZoteroClient(object):
 
     def _add_item_to_filtered_tree_if_dataone_pid(self, filtered_tree, item):
         # tree.setdefault('identifiers', [])
-        m = re.match(r'(https://cn.dataone.org/cn/v1/resolve/)(.*)', item['url'])
+        m = re.match(r"(https://cn.dataone.org/cn/v1/resolve/)(.*)", item["url"])
         if m:
-            filtered_tree['identifiers'].append(m.group(2))
+            filtered_tree["identifiers"].append(m.group(2))
 
     def _add_item_to_filtered_tree_if_dataone_query(self, filtered_tree, item):
         # filtered_tree.setdefault('queries', [])
-        m = re.match(r'(https://cn.dataone.org/cn/v1/query/solr/\?)(.*)', item['url'])
+        m = re.match(r"(https://cn.dataone.org/cn/v1/query/solr/\?)(.*)", item["url"])
         if m:
-            filtered_tree['queries'].append(m.group(2))
+            filtered_tree["queries"].append(m.group(2))
 
     def _unpickle_from_disk(self):
         try:
-            with open(self._options.zotero_cache_path, 'rb') as f:
+            with open(self._options.zotero_cache_path, "rb") as f:
                 self._cache = pickle.load(f)
         except (IOError, pickle.PickleError):
             pass
 
     def _pickle_to_disk(self):
-        with open(self._options.zotero_cache_path, 'wb') as f:
+        with open(self._options.zotero_cache_path, "wb") as f:
             pickle.dump(self._cache, f)
 
     def _get_filtered_sub_tree_recursive(self, path, filtered_tree=None):
         if filtered_tree is None:
-            filtered_tree = self._cache['filtered_tree']
+            filtered_tree = self._cache["filtered_tree"]
         if not path:
             return filtered_tree
         try:
             return self._get_filtered_sub_tree_recursive(
-                path[1:], filtered_tree['collections'][path[0]]
+                path[1:], filtered_tree["collections"][path[0]]
             )
         except KeyError:
-            raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException('Invalid path')
+            raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException("Invalid path")
 
     def _check_api_key(self):
-        host = 'api.zotero.org'
-        url = '/users/{}/items?limit=1&key={}&v=3'.format(
+        host = "api.zotero.org"
+        url = "/users/{}/items?limit=1&key={}&v=3".format(
             self._user_id, self._api_access_key
         )
         connection = http.client.HTTPSConnection(host)
-        connection.request('GET', url)
+        connection.request("GET", url)
         if connection.getresponse().status == 403:
             raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
-                'Invalid Zotero User ID or API key. UserID: {}, API Key: {}.'.format(
+                "Invalid Zotero User ID or API key. UserID: {}, API Key: {}.".format(
                     self._user_id, self._api_access_key
                 )
             )
@@ -262,11 +262,11 @@ class ZoteroClient(object):
     def _get_current_library_version(self):
         # As far as I can tell, this information is not exposed in pyzotero, so
         # I use a direct web api call.
-        host = 'api.zotero.org'
-        url = '/users/{}/items?limit=1&format=versions&key={}&v=3'.format(
+        host = "api.zotero.org"
+        url = "/users/{}/items?limit=1&format=versions&key={}&v=3".format(
             self._user_id, self._api_access_key
         )
         connection = http.client.HTTPSConnection(host)
-        connection.request('GET', url)
+        connection.request("GET", url)
         response = connection.getresponse()
-        return int(response.getheader('Last-Modified-Version'))
+        return int(response.getheader("Last-Modified-Version"))

@@ -43,15 +43,15 @@ import d1_test.mock_api.util
 
 # Config
 
-META_ENDPOINT_RX = r'v([123])/meta/(.*)'
+META_ENDPOINT_RX = r"v([123])/meta/(.*)"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
-        re.compile(r'^' + d1_common.url.joinPathElements(base_url, META_ENDPOINT_RX)),
+        re.compile(r"^" + d1_common.url.joinPathElements(base_url, META_ENDPOINT_RX)),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -63,22 +63,22 @@ def _request_callback(request):
         return exc_response_tup
     # Return NotFound
     pid, client = _parse_url(request.url)
-    if pid.startswith('<NotFound>'):
+    if pid.startswith("<NotFound>"):
         return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
     # Return regular response
     pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
         client, pid
     )
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
-    return 200, header_dict, sysmeta_pyxb.toxml('utf-8')
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_XML}
+    return 200, header_dict, sysmeta_pyxb.toxml("utf-8")
 
 
 def _parse_url(url):
     version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
         url
     )
-    assert endpoint_str == 'meta'
+    assert endpoint_str == "meta"
     assert (
         len(param_list) == 1
-    ), 'getSystemMetadata() accepts a single parameter, the PID'
+    ), "getSystemMetadata() accepts a single parameter, the PID"
     return param_list[0], client

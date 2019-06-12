@@ -25,34 +25,34 @@ import setuptools
 
 def main():
     setuptools.setup(
-        name='dataone.util',
-        version='3.4.1',
-        description='DataONE Utilities and Examples',
-        author='DataONE Project',
-        author_email='developers@dataone.org',
-        url='https://github.com/DataONEorg/d1_tools',
-        license='Apache License, Version 2.0',
+        name="dataone.util",
+        version="3.4.2",
+        description="DataONE Utilities and Examples",
+        author="DataONE Project",
+        author_email="developers@dataone.org",
+        url="https://github.com/DataONEorg/d1_tools",
+        license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        exclude_package_data={'': ['settings.py']},
+        exclude_package_data={"": ["settings.py"]},
         install_requires=[
             # These are not yet available when bootstrapping on Travis
-            'dataone.cli >= 3.4.1',
-            'dataone.common >= 3.4.1',
-            'dataone.libclient >= 3.4.1',
+            "dataone.cli >= 3.4.2",
+            "dataone.common >= 3.4.2",
+            "dataone.libclient >= 3.4.2",
         ],
-        setup_requires=['setuptools_git >= 1.1'],
+        setup_requires=["setuptools_git >= 1.1"],
         classifiers=[
-            'Development Status :: 5 - Production/Stable',
-            'Intended Audience :: Developers',
-            'Topic :: Scientific/Engineering',
-            'License :: OSI Approved :: Apache Software License',
-            'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.6',
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Developers",
+            "Topic :: Scientific/Engineering",
+            "License :: OSI Approved :: Apache Software License",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.6",
         ],
-        keywords='DataONE python',
+        keywords="DataONE python",
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

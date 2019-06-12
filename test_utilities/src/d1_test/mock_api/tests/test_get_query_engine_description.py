@@ -30,7 +30,7 @@ class TestMockQueryEngineDescription(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.query_engine_description.add_callback(
             d1_test.d1_test_case.MOCK_CN_BASE_URL
         )
-        qed_xml = cn_client_v1_v2.getQueryEngineDescription('solr')
+        qed_xml = cn_client_v1_v2.getQueryEngineDescription("solr")
         self.sample.assert_equals(
-            qed_xml, 'get_query_engine_description', cn_client_v1_v2
+            qed_xml, "get_query_engine_description", cn_client_v1_v2
         )

@@ -104,10 +104,10 @@ def deserialize(dataone_exception_xml):
         )
     except ValueError as e:
         raise ServiceFailure(
-            detailCode='0',
+            detailCode="0",
             description='Deserialization failed. error="{}" doc="{}"'.format(
                 str(e),
-                '<empty response>'
+                "<empty response>"
                 if not dataone_exception_xml
                 else dataone_exception_xml,
             ),
@@ -129,12 +129,12 @@ def deserialize_from_headers(headers):
     """Deserialize a DataONE Exception that is stored in a map of HTTP headers (used in
     responses to HTTP HEAD requests)."""
     return create_exception_by_name(
-        _get_header(headers, 'DataONE-Exception-Name'),
-        _get_header(headers, 'DataONE-Exception-DetailCode'),
-        _get_header(headers, 'DataONE-Exception-Description'),
-        _get_header(headers, 'DataONE-Exception-TraceInformation'),
-        _get_header(headers, 'DataONE-Exception-Identifier'),
-        _get_header(headers, 'DataONE-Exception-NodeId'),
+        _get_header(headers, "DataONE-Exception-Name"),
+        _get_header(headers, "DataONE-Exception-DetailCode"),
+        _get_header(headers, "DataONE-Exception-Description"),
+        _get_header(headers, "DataONE-Exception-TraceInformation"),
+        _get_header(headers, "DataONE-Exception-Identifier"),
+        _get_header(headers, "DataONE-Exception-NodeId"),
     )
 
 
@@ -148,14 +148,14 @@ def _get_header(headers, header):
         return None
     # As a header must be on a single line, the Python stack uses a
     # convention of replacing newlines with " / ".
-    return header.replace(' / ', '\n')
+    return header.replace(" / ", "\n")
 
 
 # noinspection PyIncorrectDocstring
 def create_exception_by_name(
     name,
-    detailCode='0',
-    description='',
+    detailCode="0",
+    description="",
     traceInformation=None,
     identifier=None,
     nodeId=None,
@@ -189,8 +189,8 @@ def create_exception_by_name(
 # noinspection PyIncorrectDocstring
 def create_exception_by_error_code(
     errorCode,
-    detailCode='0',
-    description='',
+    detailCode="0",
+    description="",
     traceInformation=None,
     identifier=None,
     nodeId=None,
@@ -214,7 +214,7 @@ def _get_trace_information_content(err_pyxb):
     if err_pyxb.traceInformation is None:
         return None
     try:
-        return '\n'.join(err_pyxb.traceInformation.content())
+        return "\n".join(err_pyxb.traceInformation.content())
     except TypeError:
         return d1_common.xml.serialize_to_xml_str(
             err_pyxb.traceInformation, pretty=True, strip_prolog=True
@@ -230,8 +230,8 @@ class DataONEException(Exception):
     def __init__(
         self,
         errorCode,
-        detailCode='0',
-        description='',
+        detailCode="0",
+        description="",
         traceInformation=None,
         identifier=None,
         nodeId=None,
@@ -264,18 +264,18 @@ class DataONEException(Exception):
         self.nodeId = nodeId
 
     def __repr__(self):
-        s = '{}({})'.format(
+        s = "{}({})".format(
             self.__class__.__name__,
-            ', '.join(
+            ", ".join(
                 [
                     '{}="{}"'.format(attr_str, getattr(self, attr_str))
                     for attr_str in [
-                        'errorCode',
-                        'detailCode',
-                        'description',
-                        'traceInformation',
-                        'identifier',
-                        'nodeId',
+                        "errorCode",
+                        "detailCode",
+                        "description",
+                        "traceInformation",
+                        "identifier",
+                        "nodeId",
                     ]
                 ]
             ),
@@ -286,13 +286,13 @@ class DataONEException(Exception):
     def __str__(self):
         """String representation of the exception."""
         msg = io.StringIO()
-        msg.write(self._fmt('name', self.name))
-        msg.write(self._fmt('errorCode', self.errorCode))
-        msg.write(self._fmt('detailCode', self.detailCode))
-        msg.write(self._fmt('description', self.description))
-        msg.write(self._fmt('traceInformation', self.traceInformation))
-        msg.write(self._fmt('identifier', self.identifier))
-        msg.write(self._fmt('nodeId', self.nodeId))
+        msg.write(self._fmt("name", self.name))
+        msg.write(self._fmt("errorCode", self.errorCode))
+        msg.write(self._fmt("detailCode", self.detailCode))
+        msg.write(self._fmt("description", self.description))
+        msg.write(self._fmt("traceInformation", self.traceInformation))
+        msg.write(self._fmt("identifier", self.identifier))
+        msg.write(self._fmt("nodeId", self.nodeId))
         return msg.getvalue()
 
     def _fmt(self, tag, msg):
@@ -303,29 +303,29 @@ class DataONEException(Exception):
         truncated to 1024 chars.
 
         """
-        msg = msg or '<unset>'
+        msg = msg or "<unset>"
         msg = str(msg)
         msg = msg.strip()
         if not msg:
             return
         if len(msg) > 2048:
-            msg = msg[:1024] + '...'
-        if msg.count('\n') <= 1:
-            return '{}: {}\n'.format(tag, msg.strip())
+            msg = msg[:1024] + "..."
+        if msg.count("\n") <= 1:
+            return "{}: {}\n".format(tag, msg.strip())
         else:
-            return '{}:\n  {}\n'.format(tag, msg.replace('\n', '\n  ').strip())
+            return "{}:\n  {}\n".format(tag, msg.replace("\n", "\n  ").strip())
 
     def friendly_format(self):
         """Serialize to a format more suitable for displaying to end users."""
         if self.description is not None:
             msg = self.description
         else:
-            msg = 'errorCode: {} / detailCode: {}'.format(
+            msg = "errorCode: {} / detailCode: {}".format(
                 self.errorCode, self.detailCode
             )
         return self._fmt(self.name, msg)
 
-    def serialize_to_transport(self, encoding='utf-8', xslt_url=None):
+    def serialize_to_transport(self, encoding="utf-8", xslt_url=None):
         """Serialize to XML ``bytes`` with prolog.
 
         Args:
@@ -339,7 +339,7 @@ class DataONEException(Exception):
           bytes: XML holding a DataONEError based type.
 
         """
-        assert encoding in ('utf-8', 'UTF-8')
+        assert encoding in ("utf-8", "UTF-8")
         dataone_exception_pyxb = self.get_pyxb()
         return d1_common.xml.serialize_for_transport(
             dataone_exception_pyxb, xslt_url=xslt_url
@@ -356,7 +356,7 @@ class DataONEException(Exception):
             self.get_pyxb(), pretty=True, xslt_url=xslt_url
         )
 
-    def encode(self, encoding='utf-8'):
+    def encode(self, encoding="utf-8"):
         """Serialize to UTF-8 encoded XML bytes with prolog."""
         return self.serialize_to_transport(encoding)
 
@@ -370,15 +370,15 @@ class DataONEException(Exception):
 
         """
         return {
-            'DataONE-Exception-Name': self.__class__.__name__,
-            'DataONE-Exception-ErrorCode': self._format_header(self.errorCode),
-            'DataONE-Exception-DetailCode': self._format_header(self.detailCode),
-            'DataONE-Exception-Description': self._format_header(self.description),
-            'DataONE-Exception-TraceInformation': self._format_header(
+            "DataONE-Exception-Name": self.__class__.__name__,
+            "DataONE-Exception-ErrorCode": self._format_header(self.errorCode),
+            "DataONE-Exception-DetailCode": self._format_header(self.detailCode),
+            "DataONE-Exception-Description": self._format_header(self.description),
+            "DataONE-Exception-TraceInformation": self._format_header(
                 self.traceInformation
             ),
-            'DataONE-Exception-Identifier': self._format_header(self.identifier),
-            'DataONE-Exception-NodeID': self._format_header(self.nodeId),
+            "DataONE-Exception-Identifier": self._format_header(self.identifier),
+            "DataONE-Exception-NodeID": self._format_header(self.nodeId),
         }
 
     def get_pyxb(self):
@@ -403,9 +403,9 @@ class DataONEException(Exception):
 
     def _format_header(self, v):
         if v is None:
-            return ''
+            return ""
         else:
-            return str(v)[:1024].replace('\n', ' / ')
+            return str(v)[:1024].replace("\n", " / ")
 
     @property
     def name(self):

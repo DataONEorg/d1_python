@@ -43,21 +43,21 @@ import django.conf
 import django.test
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestSystemMetadataChanged')
+@d1_test.d1_test_case.reproducible_random_decorator("TestSystemMetadataChanged")
 class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def _call_process_refresh_queue(self):
         d1_test.mock_api.get_system_metadata.add_callback(
             django.conf.settings.DATAONE_ROOT
         )
-        self.call_management_command('process_refresh_queue', '--debug')
+        self.call_management_command("process_refresh_queue", "--debug")
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
         """systemMetadataChanged(): Access by untrusted subject raises NotAuthorized."""
-        with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
+        with d1_gmn.tests.gmn_mock.set_auth_context(["unk_subj"], ["trusted_subj"]):
             with pytest.raises(d1_common.types.exceptions.NotAuthorized):
                 gmn_client_v1_v2.systemMetadataChanged(
-                    'test', 0, d1_common.date_time.utc_now()
+                    "test", 0, d1_common.date_time.utc_now()
                 )
 
     @responses.activate
@@ -66,7 +66,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with d1_gmn.tests.gmn_mock.disable_auth():
             with pytest.raises(d1_common.types.exceptions.NotFound):
                 gmn_client_v1_v2.systemMetadataChanged(
-                    '_bogus_pid_', 1, d1_common.date_time.utc_now()
+                    "_bogus_pid_", 1, d1_common.date_time.utc_now()
                 )
 
     @responses.activate
@@ -86,7 +86,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """systemMetadataChanged(): Async processing."""
         # Create 3 new objects and add them to the refresh queue
         sysmeta_pyxb_list = []
-        with freezegun.freeze_time('2014-12-14') as freeze_time:
+        with freezegun.freeze_time("2014-12-14") as freeze_time:
             with d1_gmn.tests.gmn_mock.disable_auth():
                 for i in range(3):
                     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
@@ -112,7 +112,7 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
                         before_sysmeta_pyxb, after_sysmeta_pyxb
                     )
                     self.sample.assert_equals(
-                        diff_str, 'async_processing_diff_{}'.format(i), gmn_client_v1_v2
+                        diff_str, "async_processing_diff_{}".format(i), gmn_client_v1_v2
                     )
 
     @responses.activate

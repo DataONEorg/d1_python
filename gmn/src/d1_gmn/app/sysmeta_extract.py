@@ -122,7 +122,7 @@ def _write_stream(query, lookup_list, lookup_dict, generate_dict, out_stream):
         json_list = json_str.splitlines()
         for i, json_line in enumerate(json_list):
             is_last_line = i == len(json_list) - 1
-            sep_str = ',' if is_last_line and not is_last_dict else ''
+            sep_str = "," if is_last_line and not is_last_dict else ""
             out_stream.write("  {}{}\n".format(json_line, sep_str))
     out_stream.write("]\n")
 

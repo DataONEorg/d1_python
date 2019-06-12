@@ -16,7 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utilities for Science Metadata."""
-
 import d1_scimeta.xml_schema
 
 import d1_gmn.app.sciobj_store
@@ -49,10 +48,10 @@ def assert_valid(sysmeta_pyxb, pid):
         else:
             raise d1_common.types.exceptions.InvalidRequest(
                 0,
-                'Science Metadata file is above size limit for validation and this '
-                'node has been configured to reject unvalidated Science Metadata '
-                'files. For more information, see the SCIMETA_VALIDATE* settings. '
-                'size={} size_limit={}'.format(
+                "Science Metadata file is above size limit for validation and this "
+                "node has been configured to reject unvalidated Science Metadata "
+                "files. For more information, see the SCIMETA_VALIDATE* settings. "
+                "size={} size_limit={}".format(
                     sysmeta_pyxb.size, django.conf.settings.SCIMETA_VALIDATION_MAX_SIZE
                 ),
             )
@@ -80,4 +79,4 @@ def _is_above_size_limit(sysmeta_pyxb):
 
 
 def _is_action_accept():
-    return django.conf.settings.SCIMETA_VALIDATION_OVER_SIZE_ACTION == 'accept'
+    return django.conf.settings.SCIMETA_VALIDATION_OVER_SIZE_ACTION == "accept"

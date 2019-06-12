@@ -293,7 +293,7 @@ class Session(object):
 
         mmp_stream = requests_toolbelt.MultipartEncoder(
             fields=fields,
-            boundary=(kwargs.get('headers', None) or {}).pop(
+            boundary=(kwargs.get("headers", None) or {}).pop(
                 "mmp_boundary", self._mmp_boundary_str
             ),
         )

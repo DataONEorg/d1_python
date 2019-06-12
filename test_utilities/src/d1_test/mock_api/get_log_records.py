@@ -45,15 +45,15 @@ import d1_test.mock_api.util
 # Config
 
 N_TOTAL = 100
-LOG_ENDPOINT_RX = r'v([123])/log(/.*)?'
+LOG_ENDPOINT_RX = r"v([123])/log(/.*)?"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
-        re.compile(r'^' + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)),
+        re.compile(r"^" + d1_common.url.joinPathElements(base_url, LOG_ENDPOINT_RX)),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -68,7 +68,7 @@ def _request_callback(request):
     n_start, n_count = d1_test.mock_api.util.get_page(query_dict, N_TOTAL)
     # TODO: Add support for filters: fromDate, toDate, pidFilter
     body_str = _generate_log_records(client, n_start, n_count)
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_XML}
     return 200, header_dict, body_str
 
 
@@ -76,8 +76,8 @@ def _parse_log_url(url):
     version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
         url
     )
-    assert endpoint_str == 'log'
-    assert len(param_list) == 0, 'log() does not accept any parameters'
+    assert endpoint_str == "log"
+    assert len(param_list) == 0, "log() does not accept any parameters"
     return query_dict, client
 
 
@@ -91,13 +91,13 @@ def _generate_log_records(client, n_start, n_count):
         logEntry = client.pyxb_binding.LogEntry()
 
         logEntry.entryId = str(i)
-        logEntry.identifier = 'object#{:04d}'.format(n_start + i)
-        logEntry.ipAddress = '1.2.3.4'
-        logEntry.userAgent = 'Mock getLogRecords() UserAgent #{}'.format(i)
-        logEntry.subject = 'Mock getLogRecords() Subject #{}'.format(i)
-        logEntry.event = 'create'
+        logEntry.identifier = "object#{:04d}".format(n_start + i)
+        logEntry.ipAddress = "1.2.3.4"
+        logEntry.userAgent = "Mock getLogRecords() UserAgent #{}".format(i)
+        logEntry.subject = "Mock getLogRecords() Subject #{}".format(i)
+        logEntry.event = "create"
         logEntry.dateLogged = d1_common.date_time.utc_now()
-        logEntry.nodeIdentifier = 'urn:node:MockLogRecords'
+        logEntry.nodeIdentifier = "urn:node:MockLogRecords"
 
         log.logEntry.append(logEntry)
 
@@ -105,4 +105,4 @@ def _generate_log_records(client, n_start, n_count):
     log.count = len(log.logEntry)
     log.total = N_TOTAL
 
-    return log.toxml('utf-8')
+    return log.toxml("utf-8")

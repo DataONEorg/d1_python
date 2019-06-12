@@ -30,9 +30,9 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def _get_db_subj(self):
         return set(
             [
-                v['subject']
-                for v in d1_gmn.app.models.Subject.objects.order_by('subject').values(
-                    'subject'
+                v["subject"]
+                for v in d1_gmn.app.models.Subject.objects.order_by("subject").values(
+                    "subject"
                 )
             ]
         )
@@ -43,7 +43,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
         return [
             (
                 [d1_test.instance_generator.random_data.random_subj(fixed_len=12)],
-                ['write'],
+                ["write"],
             )
             for _ in range(10)
         ]
@@ -69,7 +69,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
             obj_1_pid, obj_1_sid, obj_1_sciobj_bytes, obj_1_sysmeta_pyxb = self.create_obj(
                 gmn_client_v2,
                 sid=True,
-                submitter='obj_1_submitter',
+                submitter="obj_1_submitter",
                 rights_holder=obj_1_rights_holder,
                 permission_list=obj_1_perm_list,
             )
@@ -79,7 +79,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
             # object.
 
             obj_2_perm_list = self._gen_perm_list()
-            obj_2_perm_list.append(([obj_1_2_shared], ['changePermission']))
+            obj_2_perm_list.append(([obj_1_2_shared], ["changePermission"]))
             obj_2_subj_set = self._get_subj_set(obj_2_perm_list)
             obj_2_subj_list = sorted(obj_2_subj_set)
             obj_2_rights_holder = obj_2_subj_list[1]
@@ -87,7 +87,7 @@ class TestAppUtil(d1_gmn.tests.gmn_test_case.GMNTestCase):
             obj_2_pid, obj_2_sid, obj_2_sciobj_bytes, obj_2_sysmeta_pyxb = self.create_obj(
                 gmn_client_v2,
                 sid=True,
-                submitter='obj_2_submitter',
+                submitter="obj_2_submitter",
                 rights_holder=obj_2_rights_holder,
                 permission_list=obj_2_perm_list,
             )

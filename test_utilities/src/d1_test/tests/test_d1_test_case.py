@@ -31,13 +31,13 @@ class TestD1TestCase(d1_test.d1_test_case.D1TestCase):
     def _eat_memory(self, chunk_count, chunk_size):
         buf = []
         for i in range(chunk_count):
-            logging.debug('Allocated memory: {:,} bytes'.format(i * chunk_size))
+            logging.debug("Allocated memory: {:,} bytes".format(i * chunk_size))
             buf.append(bytearray(chunk_size))
 
     def test_1000(self):
         """mock_input():"""
-        expected_prompt_str = 'user prompt'
-        expected_answer_str = 'user answer'
+        expected_prompt_str = "user prompt"
+        expected_answer_str = "user answer"
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             with d1_test.d1_test_case.mock_input(expected_answer_str):
                 received_answer_str = input(expected_prompt_str)

@@ -112,7 +112,7 @@ class SimpleXMLWrapper(object):
     def parse_xml(self, xml_str):
         return xml.etree.ElementTree.fromstring(xml_str)
 
-    def get_xml(self, encoding='unicode'):
+    def get_xml(self, encoding="unicode"):
         """Returns:
 
         str : Current state of the wrapper as XML
@@ -120,7 +120,7 @@ class SimpleXMLWrapper(object):
         """
         return xml.etree.ElementTree.tostring(self._root_el, encoding)
 
-    def get_pretty_xml(self, encoding='unicode'):
+    def get_pretty_xml(self, encoding="unicode"):
         """Returns:
 
         str : Current state of the wrapper as a pretty printed XML string.
@@ -130,7 +130,7 @@ class SimpleXMLWrapper(object):
             xml.etree.ElementTree.tostring(self._root_el, encoding)
         )
 
-    def get_xml_below_element(self, el_name, el_idx=0, encoding='unicode'):
+    def get_xml_below_element(self, el_name, el_idx=0, encoding="unicode"):
         """
     Args:
       el_name : str
@@ -158,7 +158,7 @@ class SimpleXMLWrapper(object):
 
       If there are no matching elements, an empty list is returned.
     """
-        return self._root_el.findall('.//{}'.format(el_name), namespaces)
+        return self._root_el.findall(".//{}".format(el_name), namespaces)
 
     def get_element_list_by_attr_key(self, attr_key, namespaces=None):
         """
@@ -171,7 +171,7 @@ class SimpleXMLWrapper(object):
 
       If there are no matching elements, an empty list is returned.
     """
-        return self._root_el.findall('.//*[@{}]'.format(attr_key), namespaces)
+        return self._root_el.findall(".//*[@{}]".format(attr_key), namespaces)
 
     # get element
 
@@ -187,7 +187,7 @@ class SimpleXMLWrapper(object):
       If there are no matching elements, an empty list is returned.
     """
         try:
-            return self._root_el.findall('.' + xpath_str, namespaces)
+            return self._root_el.findall("." + xpath_str, namespaces)
         except (ValueError, xml.etree.ElementTree.ParseError) as e:
             raise SimpleXMLWrapperException(
                 'XPath select raised exception. xpath_str="{}" error="{}"'.format(
@@ -214,7 +214,7 @@ class SimpleXMLWrapper(object):
         except IndexError:
             raise SimpleXMLWrapperException(
                 'Element not found. element_name="{}" requested_idx={} '
-                'available_elements={}'.format(el_name, el_idx, len(el_list))
+                "available_elements={}".format(el_name, el_idx, len(el_list))
             )
 
     def get_element_by_attr_key(self, attr_key, el_idx=0):
@@ -236,7 +236,7 @@ class SimpleXMLWrapper(object):
         except IndexError:
             raise SimpleXMLWrapperException(
                 'Element with tag not found. tag_name="{}" requested_idx={} '
-                'available_elements={}'.format(attr_key, el_idx, len(el_list))
+                "available_elements={}".format(attr_key, el_idx, len(el_list))
             )
 
     # set/get text by element name

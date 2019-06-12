@@ -33,8 +33,8 @@ class TestOptions:
 class TestOneDriveSolrClient(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
         options = TestOptions()
-        options.base_url = 'https://localhost/'
-        options.solr_query_path = ''
+        options.base_url = "https://localhost/"
+        options.solr_query_path = ""
         options.solr_query_timeout_sec = 30
         options.max_objects_for_query = 10
         self.c = d1_onedrive.impl.clients.onedrive_solr_client.OneDriveSolrClient(

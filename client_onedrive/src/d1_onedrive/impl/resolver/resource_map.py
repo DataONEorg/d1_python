@@ -52,7 +52,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     # resource map, control is also handed to the d1_object resolver.
 
     def get_attributes(self, object_tree_root, path):
-        log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_attributes: {}".format(util.string_from_path_elements(path)))
         if self._is_readme_file(path):
             return self._get_readme_file_attributes()
         is_resource_map = self._is_resource_map(path[0])
@@ -68,7 +68,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return self._get_attributes(object_tree_root, path)
 
     def get_directory(self, object_tree_root, path):
-        log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_directory: {}".format(util.string_from_path_elements(path)))
         is_resource_map = self._is_resource_map(path[0])
         if not is_resource_map:
             return self._d1_object_resolver.get_directory(object_tree_root, path)
@@ -83,7 +83,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def read_file(self, object_tree_root, path, size, offset):
         log.debug(
-            'read_file: {}, {}, {}'.format(
+            "read_file: {}, {}, {}".format(
                 util.string_from_path_elements(path), size, offset
             )
         )
@@ -107,9 +107,9 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def _get_resource_map_size(self, pid):
         return {
-            'total': self._get_total_size_of_objects_in_resource_map,
-            'number': self._get_number_of_objects_in_resource_map,
-            'zero': self._get_zero,
+            "total": self._get_total_size_of_objects_in_resource_map,
+            "number": self._get_number_of_objects_in_resource_map,
+            "zero": self._get_zero,
         }[self._options.folder_size_for_resource_maps](pid)
 
     def _is_resource_map(self, pid):
@@ -117,7 +117,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
             record = self._object_tree.get_object_record(pid)
         except ONEDriveException:
             self._raise_invalid_pid(pid)
-        return record['formatId'] == d1_common.resource_map.RDFXML_FORMATID
+        return record["formatId"] == d1_common.resource_map.RDFXML_FORMATID
 
     def _deserialize_resource_map(self, resource_map):
         package = d1_common.resource_map.ResourceMapParser(resource_map)
@@ -131,7 +131,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         total = 0
         for pid in pids:
             o = self._object_tree.get_solr_record(pid)
-            total += o['size']
+            total += o["size"]
         return total
 
     def _get_number_of_objects_in_resource_map(self, resource_map_pid):
@@ -144,6 +144,6 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     r = Resolver()
     r.deserialize_resource_map()

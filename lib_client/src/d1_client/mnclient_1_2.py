@@ -56,7 +56,7 @@ class MemberNodeClient_1_2(
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.view
 
     def viewResponse(self, theme, did, vendorSpecific=None, **kwargs):
-        return self.GET(['views', theme, did], query=kwargs, headers=vendorSpecific)
+        return self.GET(["views", theme, did], query=kwargs, headers=vendorSpecific)
 
     def view(self, theme, did, **kwargs):
         response = self.viewResponse(theme, did, **kwargs)
@@ -66,11 +66,11 @@ class MemberNodeClient_1_2(
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNView.listViews
 
     def listViewsResponse(self, vendorSpecific=None, **kwargs):
-        return self.GET(['view'], query=kwargs, headers=vendorSpecific)
+        return self.GET(["view"], query=kwargs, headers=vendorSpecific)
 
     def listViews(self, **kwargs):
         response = self.listViewsResponse(**kwargs)
-        return self._read_dataone_type_response(response, 'OptionList')
+        return self._read_dataone_type_response(response, "OptionList")
 
     # MNPackage.getPackage(session, packageType, id) → OctetStream
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNPackage.getPackage
@@ -83,7 +83,7 @@ class MemberNodeClient_1_2(
         **kwargs
     ):
         return self.GET(
-            ['packages', packageType, did], query=kwargs, headers=vendorSpecific
+            ["packages", packageType, did], query=kwargs, headers=vendorSpecific
         )
 
     def getPackage(

@@ -38,12 +38,12 @@ def parseUrl(url):
         for k, v in list(urllib.parse.parse_qs(query).items())
     }
     return {
-        'scheme': scheme,
-        'netloc': netloc,
-        'url': url,
-        'params': params,
-        'query': query_dict,
-        'fragment': fragment,
+        "scheme": scheme,
+        "netloc": netloc,
+        "url": url,
+        "params": params,
+        "query": query_dict,
+        "fragment": fragment,
     }
 
 
@@ -53,14 +53,14 @@ def isHttpOrHttps(url):
     Upper and lower case protocol names are recognized.
 
     """
-    return urllib.parse.urlparse(url).scheme in ('http', 'https')
+    return urllib.parse.urlparse(url).scheme in ("http", "https")
 
 
 def encodePathElement(element):
     """Encode a URL path element according to RFC3986."""
     return urllib.parse.quote(
         (
-            element.encode('utf-8')
+            element.encode("utf-8")
             if isinstance(element, str)
             else str(element)
             if isinstance(element, int)
@@ -79,7 +79,7 @@ def encodeQueryElement(element):
     """Encode a URL query element according to RFC3986."""
     return urllib.parse.quote(
         (
-            element.encode('utf-8')
+            element.encode("utf-8")
             if isinstance(element, str)
             else str(element)
             if isinstance(element, int)
@@ -91,12 +91,12 @@ def encodeQueryElement(element):
 
 def decodeQueryElement(element):
     """Decode a URL query element according to RFC3986."""
-    return urllib.parse.unquote(element).decode('utf-8')
+    return urllib.parse.unquote(element).decode("utf-8")
 
 
 def stripElementSlashes(element):
     """Strip any slashes from the front and end of an URL element."""
-    return element.strip('/')
+    return element.strip("/")
 
 
 def joinPathElements(*elements):
@@ -106,7 +106,7 @@ def joinPathElements(*elements):
     element ('') causes an empty spot in the path ('//').
 
     """
-    return '/'.join([stripElementSlashes(e) for e in elements])
+    return "/".join([stripElementSlashes(e) for e in elements])
 
 
 def encodeAndJoinPathElements(*elements):
@@ -122,7 +122,7 @@ def encodeAndJoinPathElements(*elements):
 
 def normalizeTarget(target):
     """If necessary, modify target so that it ends with '/'."""
-    return target.rstrip('/?') + '/'
+    return target.rstrip("/?") + "/"
 
 
 # TODO: verify the Unicode encoding process - looks a bit suspect.
@@ -179,19 +179,19 @@ def urlencode(query, doseq=0):
         for k, v in query:
             k = encodeQueryElement(str(k))
             v = encodeQueryElement(str(v))
-            l.append(k + '=' + v)
+            l.append(k + "=" + v)
     else:
         for k, v in query:
             k = encodeQueryElement(str(k))
             if isinstance(v, str):
                 v = encodeQueryElement(v)
-                l.append(k + '=' + v)
+                l.append(k + "=" + v)
             elif isinstance(v, str):
                 # is there a reasonable way to convert to ASCII?
                 # encode generates a string, but "replace" or "ignore"
                 # lose information and "strict" can raise UnicodeError
                 v = encodeQueryElement(v.encode("ASCII", "replace"))
-                l.append(k + '=' + v)
+                l.append(k + "=" + v)
             else:
                 try:
                     # is this a sufficient test for sequence-ness?
@@ -199,12 +199,12 @@ def urlencode(query, doseq=0):
                 except TypeError:
                     # not a sequence
                     v = encodeQueryElement(str(v))
-                    l.append(k + '=' + v)
+                    l.append(k + "=" + v)
                 else:
                     # loop over the sequence
                     for elt in v:
-                        l.append(k + '=' + encodeQueryElement(str(elt)))
-    return '&'.join(sorted(l))
+                        l.append(k + "=" + encodeQueryElement(str(elt)))
+    return "&".join(sorted(l))
 
 
 def makeCNBaseURL(url):
@@ -218,7 +218,7 @@ def makeCNBaseURL(url):
         netloc = o.netloc
         path = d1_common.const.DEFAULT_CN_PATH
     elif o.path:
-        s = o.path.split('/', 1)
+        s = o.path.split("/", 1)
         netloc = s[0]
         if len(s) == 1:
             path = d1_common.const.DEFAULT_CN_PATH
@@ -243,7 +243,7 @@ def makeMNBaseURL(url):
         netloc = o.netloc
         path = d1_common.const.DEFAULT_MN_PATH
     elif o.path:
-        s = o.path.split('/', 1)
+        s = o.path.split("/", 1)
         netloc = s[0]
         if len(s) == 1:
             path = d1_common.const.DEFAULT_MN_PATH
@@ -297,7 +297,7 @@ def find_url_mismatches(a_url, b_url):
     if a_param_list != b_param_list:
         diff_list.append(
             'Parameters differ. a="{}" b="{}"'.format(
-                ', '.join(a_param_list), ', '.join(b_param_list)
+                ", ".join(a_param_list), ", ".join(b_param_list)
             )
         )
     # query
@@ -305,7 +305,7 @@ def find_url_mismatches(a_url, b_url):
     b_query_dict = urllib.parse.parse_qs(b_parts.query)
     if len(list(a_query_dict.keys())) != len(list(b_query_dict.keys())):
         diff_list.append(
-            'Number of query keys differs. a={} b={}'.format(
+            "Number of query keys differs. a={} b={}".format(
                 len(list(a_query_dict.keys())), len(list(b_query_dict.keys()))
             )
         )

@@ -35,7 +35,6 @@ from . import jwt
 
 # noinspection PyProtectedMember
 import d1_gmn.app
-import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models
 
 import d1_common.types.exceptions

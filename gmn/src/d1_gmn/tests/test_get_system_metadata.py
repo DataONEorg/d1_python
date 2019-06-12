@@ -41,7 +41,7 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         def test(client):
             with pytest.raises(d1_common.types.exceptions.NotFound):
-                client.getSystemMetadata('_invalid_pid_')
+                client.getSystemMetadata("_invalid_pid_")
 
         with d1_gmn.tests.gmn_mock.disable_auth():
             test(self.client_v1)
@@ -53,7 +53,7 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with d1_gmn.tests.gmn_mock.disable_auth():
             # Prepare fully populated sysmeta
             orig_sysmeta_pyxb = self.test_files.load_xml_to_pyxb(
-                'systemMetadata_v2_0.xml'
+                "systemMetadata_v2_0.xml"
             )
             pid = d1_test.instance_generator.identifier.generate_pid()
             sciobj_bytes = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_bytes(
@@ -67,10 +67,10 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             orig_sysmeta_pyxb.obsoletedBy = None
             orig_sysmeta_pyxb.identifier = pid
             # orig_sysmeta_pyxb.replica = None
-            orig_sysmeta_pyxb.submitter = 'public'
+            orig_sysmeta_pyxb.submitter = "public"
             orig_sysmeta_pyxb.serialVersion = 1
-            orig_sysmeta_pyxb.originMemberNode = 'urn:node:mnDevGMN'
-            orig_sysmeta_pyxb.authoritativeMemberNode = 'urn:node:mnDevGMN'
+            orig_sysmeta_pyxb.originMemberNode = "urn:node:mnDevGMN"
+            orig_sysmeta_pyxb.authoritativeMemberNode = "urn:node:mnDevGMN"
             orig_sysmeta_pyxb.archived = False
             # Create
             with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
@@ -91,7 +91,6 @@ class TestGetSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             d1_common.system_metadata.normalize_in_place(
                 recv_sysmeta_pyxb, reset_timestamps=True
             )
-            # self.kdiff_pyxb(orig_sysmeta_pyxb, recv_sysmeta_pyxb)
             assert d1_common.system_metadata.are_equivalent_pyxb(
-                orig_sysmeta_pyxb, recv_sysmeta_pyxb
+                orig_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_filename=True,
             )

@@ -42,11 +42,11 @@ import d1_common.resource_map
 # The identifier (PID) of the DataONE Data Package (Resource Map) to download
 # and display. Data packages have Format ID
 # http://www.openarchives.org/ore/terms.
-SCIENCE_OBJECT_PID = 'dakoop_test-PKG'
+SCIENCE_OBJECT_PID = "dakoop_test-PKG"
 
 # BaseURL for the Member Node on which the science object resides. If the script
 # is run on the same server as the Member Node, this can be localhost.
-MN_BASE_URL = 'https://mn-demo-6.test.dataone.org/knb/d1/mn'
+MN_BASE_URL = "https://mn-demo-6.test.dataone.org/knb/d1/mn"
 # MN_BASE_URL = 'https://localhost/mn'
 
 # Paths to the certificate and key to use when retrieving the object. This is
@@ -61,34 +61,34 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     logging.basicConfig()
-    logging.getLogger('').setLevel(logging.DEBUG)
+    logging.getLogger("").setLevel(logging.DEBUG)
 
     # Create a Member Node client that can be used for running commands against
     # a specific Member Node.
@@ -107,32 +107,32 @@ def main():
 
     # Use the resource map parser to parse the resource map. Then display it.
 
-    print('\nResource Map PID:')
+    print("\nResource Map PID:")
     print(resource_map_parser.get_resource_map_pid())
 
-    print('\nTriples:')
+    print("\nTriples:")
 
     for s, p, o in resource_map_parser.get_all_triples():
-        print('subject:   ' + s)
-        print('predicate: ' + p)
-        print('object:    ' + o)
+        print("subject:   " + s)
+        print("predicate: " + p)
+        print("object:    " + o)
         print()
 
-    print('\nAll PIDs in aggregation: ')
+    print("\nAll PIDs in aggregation: ")
 
     for pid in resource_map_parser.get_aggregated_pids():
-        print('PID: ' + pid)
+        print("PID: " + pid)
 
-    print('\nScience Metadata PIDs in aggregation: ')
+    print("\nScience Metadata PIDs in aggregation: ")
 
     for pid in resource_map_parser.get_aggregated_science_metadata_pids():
-        print('PID: ' + pid)
+        print("PID: " + pid)
 
-    print('\nScience Data PIDs in aggregation: ')
+    print("\nScience Data PIDs in aggregation: ")
 
     for pid in resource_map_parser.get_aggregated_science_data_pids():
-        print('PID: ' + pid)
+        print("PID: " + pid)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

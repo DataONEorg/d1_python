@@ -50,135 +50,135 @@ import d1_client.mnclient
 
 # BaseURL for the Member Node to be tested. If the script is run on the same
 # server as the Member Node, this can be localhost.
-SRC_BASE_URL = 'http://localhost'
-DST_BASE_URL = 'http://localhost'
+SRC_BASE_URL = "http://localhost"
+DST_BASE_URL = "http://localhost"
 
 # The Base URL to RepTest. The MNs being tested call back to this location. If
 # RepTest runs on the same machine as the MN being tested, this can be set to
 # localhost. If so, make sure that the port is set to a different port than the
 # one used by the MN. Only HTTP is currently supported.
-REPTEST_BASE_URL = 'http://localhost:8181'
+REPTEST_BASE_URL = "http://localhost:8181"
 
 # Time to wait for MN calls, in seconds.
 TIMEOUT = 60
 
-TEST_CN_NODE_ID = 'urn:node:RepTestCN'
-TEST_MN_NODE_ID = 'urn:node:RepTestMN'
+TEST_CN_NODE_ID = "urn:node:RepTestCN"
+TEST_MN_NODE_ID = "urn:node:RepTestMN"
 
 
 def main():
     logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger('main')
+    logger = logging.getLogger("main")
 
     parser = optparse.OptionParser()
 
     # Base URLs
 
     parser.add_option(
-        '--reptest-base-url',
-        action='store',
-        type='string',
+        "--reptest-base-url",
+        action="store",
+        type="string",
         default=REPTEST_BASE_URL,
-        help='Set the Base URL for the Replication Tester',
+        help="Set the Base URL for the Replication Tester",
     )
 
     parser.add_option(
-        '--src-base-url',
-        action='store',
-        type='string',
+        "--src-base-url",
+        action="store",
+        type="string",
         default=SRC_BASE_URL,
-        help='Base URL of the source MN to test',
+        help="Base URL of the source MN to test",
     )
 
     parser.add_option(
-        '--dst-base-url',
-        action='store',
-        type='string',
+        "--dst-base-url",
+        action="store",
+        type="string",
         default=DST_BASE_URL,
-        help='Base URL of the destination MN to test',
+        help="Base URL of the destination MN to test",
     )
 
     # Source and destination certificates
 
     parser.add_option(
-        '--cert-get-replica',
-        action='store',
-        type='string',
-        help='Certificate to use when calling MNRead.getReplica()',
+        "--cert-get-replica",
+        action="store",
+        type="string",
+        help="Certificate to use when calling MNRead.getReplica()",
     )
 
     parser.add_option(
-        '--cert-get-replica-key',
-        action='store',
-        type='string',
-        help='Certificate key to use when calling MNRead.getReplica()',
+        "--cert-get-replica-key",
+        action="store",
+        type="string",
+        help="Certificate key to use when calling MNRead.getReplica()",
     )
 
     parser.add_option(
-        '--cert-replicate',
-        action='store',
-        type='string',
-        help='Certificate to use when calling MNReplication.replicate()',
+        "--cert-replicate",
+        action="store",
+        type="string",
+        help="Certificate to use when calling MNReplication.replicate()",
     )
 
     parser.add_option(
-        '--cert-replicate-key',
-        action='store',
-        type='string',
-        help='Certificate key to use when calling MNReplication.replicate()',
+        "--cert-replicate-key",
+        action="store",
+        type="string",
+        help="Certificate key to use when calling MNReplication.replicate()",
     )
 
     # Adjust RepTest behavior.
 
     parser.add_option(
-        '--timeout',
-        dest='timeout_sec',
-        action='store',
-        type='float',
+        "--timeout",
+        dest="timeout_sec",
+        action="store",
+        type="float",
         default=TIMEOUT,
-        help='Amount of time to wait for expected calls from MNs, in seconds',
+        help="Amount of time to wait for expected calls from MNs, in seconds",
     )
 
-    parser.add_option('--only-src', action='store_true', help='Test only the source MN')
+    parser.add_option("--only-src", action="store_true", help="Test only the source MN")
 
     parser.add_option(
-        '--only-dst', action='store_true', help='Test only the destination MN'
+        "--only-dst", action="store_true", help="Test only the destination MN"
     )
 
     parser.add_option(
-        '--server-mode',
-        action='store_true',
-        help='Do not run any tests. Just serve the supported CN and MN APIs',
+        "--server-mode",
+        action="store_true",
+        help="Do not run any tests. Just serve the supported CN and MN APIs",
     )
 
-    parser.add_option('--debug', action='store_true')
+    parser.add_option("--debug", action="store_true")
 
     (options, args) = parser.parse_args()
 
     # Known identifiers.
 
     if options.only_src and options.only_dst:
-        logging.error('--only-src and --only-dst are mutually exclusive')
+        logging.error("--only-src and --only-dst are mutually exclusive")
         parser.print_help()
         sys.exit()
 
-    logging.getLogger('').setLevel(logging.DEBUG if options.debug else logging.INFO)
+    logging.getLogger("").setLevel(logging.DEBUG if options.debug else logging.INFO)
 
     # A PID that is not known on the node receiving the call.
-    pid_unknown = generate_random_ascii('replication_tester_pid_unknown')
+    pid_unknown = generate_random_ascii("replication_tester_pid_unknown")
 
     # A PID that will cause RepTest.getReplica() to return a NotAuthorized exception.
-    pid_not_authorized = generate_random_ascii('replication_tester_pid_not_authorized')
+    pid_not_authorized = generate_random_ascii("replication_tester_pid_not_authorized")
 
     # A PID that will cause RepTest.getReplica() to return a valid OctetStream.
     pid_known_and_authorized = generate_random_ascii(
-        'replication_tester_pid_known_and_authorized'
+        "replication_tester_pid_known_and_authorized"
     )
 
-    src_existing_pid_approve = generate_random_ascii('src_existing_pid_approve')
-    src_existing_pid_deny = generate_random_ascii('src_existing_pid_deny')
+    src_existing_pid_approve = generate_random_ascii("src_existing_pid_approve")
+    src_existing_pid_deny = generate_random_ascii("src_existing_pid_deny")
 
-    dst_existing_pid = generate_random_ascii('dst_existing_pid')
+    dst_existing_pid = generate_random_ascii("dst_existing_pid")
 
     # Run tests
     try:
@@ -192,7 +192,7 @@ def main():
             dst_existing_pid,
         ) as tester:
             if options.server_mode:
-                logging.info('Server mode')
+                logging.info("Server mode")
                 while True:
                     time.sleep(0.1)
             else:
@@ -213,9 +213,9 @@ def main():
             if not options.only_src:
                 tester.test_dst_mn()
     except d1_test.replication_tester.replication_error.ReplicationTesterError as e:
-        logger.error('Replication testing failed: {}'.format(e))
+        logger.error("Replication testing failed: {}".format(e))
     else:
-        logging.info('All replication tests passed')
+        logging.info("All replication tests passed")
 
 
 def create_test_object_on_mn(base_url, pid):
@@ -271,23 +271,23 @@ class ReplicationTester(object):
         self._http_server.stop()
 
     def test_src_mn(self):
-        self._log_debug_header('Source MNRead.getReplica(PID_UNKNOWN)')
+        self._log_debug_header("Source MNRead.getReplica(PID_UNKNOWN)")
         self._test_getReplica_with_unknown_pid()
-        self._log_debug_header('Source MNRead.getReplica(PID_EXISTING_REJECT)')
+        self._log_debug_header("Source MNRead.getReplica(PID_EXISTING_REJECT)")
         self._test_getReplica_with_rejected_pid()
-        self._log_debug_header('Source MNRead.getReplica(PID_EXISTING_APPROVE)')
+        self._log_debug_header("Source MNRead.getReplica(PID_EXISTING_APPROVE)")
         self._test_getReplica_with_approved_pid()
         pass
 
     def test_dst_mn(self):
-        self._log_debug_header('Destination MNReplication.replicate(PID_EXISTING)')
+        self._log_debug_header("Destination MNReplication.replicate(PID_EXISTING)")
         self._test_MNReplication_replicate_with_existing_pid()
         self._log_debug_header(
-            'Destination MNReplication.replicate(PID_NOT_AUTHORIZED)'
+            "Destination MNReplication.replicate(PID_NOT_AUTHORIZED)"
         )
         self._test_MNReplication_replicate_with_unauthorized_pid()
         self._log_debug_header(
-            'Destination MNReplication.replicate(PID_KNOWN_AND_AUTHORIZED)'
+            "Destination MNReplication.replicate(PID_KNOWN_AND_AUTHORIZED)"
         )
         self._test_MNReplication_replicate_with_authorized_pid()
         pass
@@ -308,8 +308,8 @@ class ReplicationTester(object):
             d1_test.replication_tester.replication_error.ReplicationTesterError,
         ) as e:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'Source MNRead.getReplica(unknown PID): '
-                'Expected NotFound exception. Received: {}'.format(str(e))
+                "Source MNRead.getReplica(unknown PID): "
+                "Expected NotFound exception. Received: {}".format(str(e))
             )
 
     def _test_getReplica_with_rejected_pid(self):
@@ -324,11 +324,11 @@ class ReplicationTester(object):
             d1_test.replication_tester.replication_error.ReplicationTesterError,
         ) as e:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'Source MNRead.getReplica(valid PID with replication rejected): '
-                'Expected NotAuthorized exception. Received: {}'.format(e)
+                "Source MNRead.getReplica(valid PID with replication rejected): "
+                "Expected NotAuthorized exception. Received: {}".format(e)
             )
         self._assert_correct_mn_call_instant(
-            'isNodeAuthorized_rejected', self._src_existing_pid_deny, 'public'
+            "isNodeAuthorized_rejected", self._src_existing_pid_deny, "public"
         )
 
     # def generate_science_object_with_sysmeta(self, pid, rights_holder):
@@ -350,11 +350,11 @@ class ReplicationTester(object):
             self._call_src_get_replica(self._src_existing_pid_approve)
         except d1_common.types.exceptions.DataONEException as e:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'Source MNRead.getReplica(valid PID with replication approved): '
-                'Expected OctetStream. Received exception: {}'.format(e)
+                "Source MNRead.getReplica(valid PID with replication approved): "
+                "Expected OctetStream. Received exception: {}".format(e)
             )
         self._assert_correct_mn_call_instant(
-            'isNodeAuthorized_approved', self._src_existing_pid_approve, 'public'
+            "isNodeAuthorized_approved", self._src_existing_pid_approve, "public"
         )
 
     def _call_src_get_replica(self, pid):
@@ -363,7 +363,7 @@ class ReplicationTester(object):
             return mn_client.getReplica(pid).content
         except socket.error:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'Unable to connect to Source MN'
+                "Unable to connect to Source MN"
             )
 
     def _create_mn_client_for_get_replica(self):
@@ -387,12 +387,12 @@ class ReplicationTester(object):
             pass
         except d1_common.types.exceptions.DataONEException as e:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'MNReplication.replicate()(existing PID): '
-                'Expected exception IdentifierNotUnique. Received: {}'.format(e)
+                "MNReplication.replicate()(existing PID): "
+                "Expected exception IdentifierNotUnique. Received: {}".format(e)
             )
         else:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'MNReplication.replicate()(existing PID): ' 'Failed to raise exception'
+                "MNReplication.replicate()(existing PID): " "Failed to raise exception"
             )
 
     def _test_MNReplication_replicate_with_unauthorized_pid(self):
@@ -402,16 +402,16 @@ class ReplicationTester(object):
             self._call_dst_replicate(self._pid_not_authorized)
         except d1_common.types.exceptions.DataONEException as e:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'MNReplication.replicate(PID_NOT_AUTHORIZED): '
-                'Expected MN to accept replication request. Instead, received exception: {}'.format(
+                "MNReplication.replicate(PID_NOT_AUTHORIZED): "
+                "Expected MN to accept replication request. Instead, received exception: {}".format(
                     e
                 )
             )
         self._assert_correct_mn_call_with_wait(
-            'getReplica_NotAuthorized', self._pid_not_authorized
+            "getReplica_NotAuthorized", self._pid_not_authorized
         )
         self._assert_correct_mn_call_with_wait(
-            'setReplicationStatus', self._pid_not_authorized, 'failed'
+            "setReplicationStatus", self._pid_not_authorized, "failed"
         )
 
     def _test_MNReplication_replicate_with_authorized_pid(self):
@@ -422,16 +422,16 @@ class ReplicationTester(object):
             self._call_dst_replicate(self._pid_known_and_authorized)
         except d1_common.types.exceptions.DataONEException as e:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'MNReplication.replicate()(PID_KNOWN_AND_AUTHORIZED): '
-                'Expected MN to accept replication request. Instead, received exception: {}'.format(
+                "MNReplication.replicate()(PID_KNOWN_AND_AUTHORIZED): "
+                "Expected MN to accept replication request. Instead, received exception: {}".format(
                     e
                 )
             )
         self._assert_correct_mn_call_with_wait(
-            'getReplica_OctetStream', self._pid_known_and_authorized
+            "getReplica_OctetStream", self._pid_known_and_authorized
         )
         self._assert_correct_mn_call_with_wait(
-            'setReplicationStatus', self._pid_known_and_authorized, 'completed'
+            "setReplicationStatus", self._pid_known_and_authorized, "completed"
         )
 
     def _call_dst_replicate(self, pid):
@@ -445,7 +445,7 @@ class ReplicationTester(object):
             mn_client.replicate(sys_meta, TEST_MN_NODE_ID)
         except socket.error:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'Unable to connect to Destination MN'
+                "Unable to connect to Destination MN"
             )
 
     def _create_mn_client_for_replicate(self):
@@ -461,8 +461,8 @@ class ReplicationTester(object):
     #
 
     def _log_debug_header(self, msg):
-        self._log.debug('-' * 100)
-        self._log.info('Testing: {}'.format(msg))
+        self._log.debug("-" * 100)
+        self._log.info("Testing: {}".format(msg))
 
     def _assert_correct_mn_call_with_wait(self, *expected_call):
         return self._assert_correct_mn_call(True, expected_call)
@@ -472,17 +472,17 @@ class ReplicationTester(object):
 
     def _assert_correct_mn_call(self, block, expected_call):
         if block:
-            self._log.debug('Waiting for call from MN: {}'.format(expected_call))
+            self._log.debug("Waiting for call from MN: {}".format(expected_call))
         try:
             call = self._queue.get(block, self._options.timeout_sec)
         except queue.Empty:
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'MN did not make expected call: {}'.format(expected_call)
+                "MN did not make expected call: {}".format(expected_call)
             )
         else:
             if call != expected_call:
                 raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                    'MN made an unexpected call: {}.\nExpected: {}'.format(
+                    "MN made an unexpected call: {}.\nExpected: {}".format(
                         call, expected_call
                     )
                 )
@@ -496,11 +496,11 @@ class ReplicationTester(object):
     def _assert_if_invalid(self, path):
         if path is not None and not os.path.isfile(path):
             raise d1_test.replication_tester.replication_error.ReplicationTesterError(
-                'No certificate or key at path: {}'.format(path)
+                "No certificate or key at path: {}".format(path)
             )
 
 
 # ===============================================================================
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

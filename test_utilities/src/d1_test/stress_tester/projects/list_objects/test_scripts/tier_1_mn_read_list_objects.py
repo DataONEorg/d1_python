@@ -43,7 +43,7 @@ class Transaction(transaction.Transaction):
         try:
             res = client.listObjects(count=0, start=0)
         except Exception as e:
-            with open('/tmp/stress_test_error.html', 'w') as f:
+            with open("/tmp/stress_test_error.html", "w") as f:
                 f.write(str(e))
             raise
         else:
@@ -67,7 +67,7 @@ class Transaction(transaction.Transaction):
         self.check_response(response)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     t = Transaction()
     t.run()
     # import cProfile

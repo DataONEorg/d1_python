@@ -137,8 +137,8 @@ class LogRecordIterator(object):
         self._client = client
         self._start = start
         self._count = count
-        assert 'start' not in self._get_log_records_arg_dict
-        assert 'count' not in self._get_log_records_arg_dict
+        assert "start" not in self._get_log_records_arg_dict
+        assert "count" not in self._get_log_records_arg_dict
         self.total = self._get_log_records().total
 
     def __iter__(self):

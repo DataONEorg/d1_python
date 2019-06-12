@@ -34,8 +34,8 @@ def validate_jwt_and_get_subject_list(request):
         return []
     if django.conf.settings.STAND_ALONE:
         logging.info(
-            'Running in stand-alone mode. Skipping certificate download and '
-            'ignoring included JWT.'
+            "Running in stand-alone mode. Skipping certificate download and "
+            "ignoring included JWT."
         )
         return []
     return [
@@ -44,11 +44,11 @@ def validate_jwt_and_get_subject_list(request):
 
 
 def _has_jwt_header(request):
-    return 'Authorization' in request.META
+    return "Authorization" in request.META
 
 
 def _get_jwt_header(request):
-    return request.META['Authorization']
+    return request.META["Authorization"]
 
 
 def _get_cn_cert():
@@ -64,7 +64,7 @@ def _get_cn_cert():
     try:
         cert_obj = django.core.cache.cache.cn_cert_obj
         d1_common.cert.x509.log_cert_info(
-            logging.debug, 'Using cached CN cert for JWT validation', cert_obj
+            logging.debug, "Using cached CN cert for JWT validation", cert_obj
         )
         return cert_obj
     except AttributeError:
@@ -80,8 +80,8 @@ def _download_and_decode_cn_cert():
         )
     except (http.client.HTTPException, socket.error, ssl.SSLError) as e:
         logging.warning(
-            'Unable to get CN certificates from the DataONE environment. '
-            'If this server is being used for testing, see the STAND_ALONE setting. '
+            "Unable to get CN certificates from the DataONE environment. "
+            "If this server is being used for testing, see the STAND_ALONE setting. "
             'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT)
         )
         return None
@@ -89,7 +89,7 @@ def _download_and_decode_cn_cert():
         cert_obj = d1_common.cert.x509.decode_der(cert_der)
         d1_common.cert.x509.log_cert_info(
             logging.debug,
-            'CN certificate successfully retrieved from the DataONE environment. '
+            "CN certificate successfully retrieved from the DataONE environment. "
             'env="{}"'.format(django.conf.settings.DATAONE_ROOT),
             cert_obj,
         )

@@ -77,12 +77,12 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
 
         """
         self._log.debug(
-            'Solr query: {}'.format(
-                ', '.join(['{}={}'.format(k, v) for (k, v) in list(locals().items())])
+            "Solr query: {}".format(
+                ", ".join(["{}={}".format(k, v) for (k, v) in list(locals().items())])
             )
         )
         return (self.POST if do_post else self.GET)(
-            ['query', queryEngine, query_str], headers=vendorSpecific, **kwargs
+            ["query", queryEngine, query_str], headers=vendorSpecific, **kwargs
         )
 
     def query(
@@ -127,7 +127,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(['query', queryEngine], query=kwargs, headers=vendorSpecific)
+        return self.GET(["query", queryEngine], query=kwargs, headers=vendorSpecific)
 
     def getQueryEngineDescription(self, queryEngine, **kwargs):
         """See Also: getQueryEngineDescriptionResponse()
@@ -140,7 +140,7 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
 
         """
         response = self.getQueryEngineDescriptionResponse(queryEngine, **kwargs)
-        return self._read_dataone_type_response(response, 'QueryEngineDescription')
+        return self._read_dataone_type_response(response, "QueryEngineDescription")
 
     # TODO: Implement these:
     # CNRead.listQueryEngines(session) → QueryEngineList

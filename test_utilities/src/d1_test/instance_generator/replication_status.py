@@ -23,6 +23,6 @@ import d1_common.types.dataoneTypes
 
 
 def generate():
-    status_list = ['queued', 'requested', 'completed', 'failed', 'invalidated']
+    status_list = ["queued", "requested", "completed", "failed", "invalidated"]
     status_str = random.choice(status_list)
     return d1_common.types.dataoneTypes.ReplicationStatus(status_str)

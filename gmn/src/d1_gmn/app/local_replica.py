@@ -39,8 +39,8 @@ def get_total_size_of_completed_replicas():
     """Return the total number of bytes of successfully processed replicas."""
     return (
         d1_gmn.app.models.LocalReplica.objects.aggregate(
-            Sum('pid__scienceobject__size')
-        )['pid__scienceobject__size__sum']
+            Sum("pid__scienceobject__size")
+        )["pid__scienceobject__size__sum"]
         or 0
     )
 
@@ -49,8 +49,8 @@ def get_total_size_of_queued_replicas():
     """Return the total number of bytes of requested, unprocessed replicas."""
     return (
         d1_gmn.app.models.ReplicationQueue.objects.filter(
-            local_replica__info__status__status='queued'
-        ).aggregate(Sum('size'))['size__sum']
+            local_replica__info__status__status="queued"
+        ).aggregate(Sum("size"))["size__sum"]
         or 0
     )
 
@@ -69,7 +69,7 @@ def add_to_replication_queue(source_node_urn, sysmeta_pyxb):
 
     """
     replica_info_model = d1_gmn.app.models.replica_info(
-        status_str='queued', source_node_urn=source_node_urn
+        status_str="queued", source_node_urn=source_node_urn
     )
     local_replica_model = d1_gmn.app.models.local_replica(
         pid=d1_common.xml.get_req_val(sysmeta_pyxb.identifier),
@@ -84,18 +84,18 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
     if not django.conf.settings.NODE_REPLICATE:
         raise d1_common.types.exceptions.InvalidRequest(
             0,
-            'This node does not currently accept replicas. The replicate '
-            'attribute in the node element of the Node document is set to false '
-            'and MNReplication is not included in the services list in the '
-            'Node document.',
+            "This node does not currently accept replicas. The replicate "
+            "attribute in the node element of the Node document is set to false "
+            "and MNReplication is not included in the services list in the "
+            "Node document.",
         )
 
     if django.conf.settings.REPLICATION_MAXOBJECTSIZE != -1:
         if sysmeta_pyxb.size > django.conf.settings.REPLICATION_MAXOBJECTSIZE:
             raise d1_common.types.exceptions.InvalidRequest(
                 0,
-                'The object is over the size limit accepted by this node. '
-                'object_size={}, max_size={}'.format(
+                "The object is over the size limit accepted by this node. "
+                "object_size={}, max_size={}".format(
                     django.conf.settings.REPLICATION_MAXOBJECTSIZE, sysmeta_pyxb.size
                 ),
             )
@@ -105,8 +105,8 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
         if sysmeta_pyxb.size + total > django.conf.settings.REPLICATION_SPACEALLOCATED:
             raise d1_common.types.exceptions.InvalidRequest(
                 0,
-                'The total size allocated for replicas on this node would be exceeded. '
-                'replica={} bytes, used={} bytes, allocated={} bytes'.format(
+                "The total size allocated for replicas on this node would be exceeded. "
+                "replica={} bytes, used={} bytes, allocated={} bytes".format(
                     sysmeta_pyxb.size,
                     total,
                     django.conf.settings.REPLICATION_MAXOBJECTSIZE,
@@ -120,7 +120,7 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
         ):
             raise d1_common.types.exceptions.InvalidRequest(
                 0,
-                'This node does not accept replicas from originating node. '
+                "This node does not accept replicas from originating node. "
                 'originating_node="{}"'.format(
                     d1_common.xml.get_req_val(sysmeta_pyxb.originMemberNode)
                 ),
@@ -141,5 +141,5 @@ def assert_request_complies_with_replication_policy(sysmeta_pyxb):
     if django.conf.settings.REPLICATION_ALLOW_ONLY_PUBLIC:
         if not d1_common.wrap.access_policy.is_public(sysmeta_pyxb.accessPolicy):
             raise d1_common.types.exceptions.InvalidRequest(
-                0, 'This node does not accept access controlled objects'
+                0, "This node does not accept access controlled objects"
             )

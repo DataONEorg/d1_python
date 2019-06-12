@@ -49,55 +49,55 @@ import d1_common.xml
 
 import d1_client.cnclient_2_0
 
-DEFAULT_BASE_URL = 'https://cn.dataone.org/cn/'
+DEFAULT_BASE_URL = "https://cn.dataone.org/cn/"
 
 
 def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '-b',
-        '--base-url',
+        "-b",
+        "--base-url",
         default=DEFAULT_BASE_URL,
-        help='The base URL for CN that will validate the certificate',
+        help="The base URL for CN that will validate the certificate",
     )
     parser.add_argument(
-        'cert_pem_path', help='Path to the .PEM certificate file to check'
+        "cert_pem_path", help="Path to the .PEM certificate file to check"
     )
     parser.add_argument(
-        'cert_key_path',
-        help='Path to the .PEM private key file for the certificate to check',
+        "cert_key_path",
+        help="Path to the .PEM private key file for the certificate to check",
     )
 
     args = parser.parse_args()
@@ -105,10 +105,10 @@ def main():
     d1_common.util.log_setup(args.debug)
 
     if not os.path.exists(args.cert_pem_path):
-        raise ValueError('No such file: {}'.format(args.cert_pem_path))
+        raise ValueError("No such file: {}".format(args.cert_pem_path))
 
     if not os.path.exists(args.cert_key_path):
-        raise ValueError('No such file: {}'.format(args.cert_key_path))
+        raise ValueError("No such file: {}".format(args.cert_key_path))
 
     requests.packages.urllib3.disable_warnings()
 
@@ -120,7 +120,7 @@ def main():
     subject_info_pyxb = c.echoCredentials()
     subject_info_pretty_xml = d1_common.xml.serialize_to_xml_str(subject_info_pyxb)
 
-    print('CN extracted SubjectInfo:')
+    print("CN extracted SubjectInfo:")
 
     print(subject_info_pretty_xml)
 

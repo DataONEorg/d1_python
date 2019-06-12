@@ -31,175 +31,121 @@ Objects are randomly distributed between categories:
 Though object bytes are also created, they are not captured in the db fixture.
 See the README.md for more info on the fixtures.
 
-The Django init needs to occur before the django and gmn_test_case imports, so
-we're stuck with a bit of a messy import section that isort and flake8 don't
-like.
-
-isort:skip_file
-
 """
-# flake8:noqa:E402
+# The Django init needs to occur before the django and gmn_test_case imports, so we're
+# stuck with a bit of a messy import section that isort and flake8 don't like.
+# isort:skip_file
 
-import bz2
 import datetime
-import logging
-import os
-import random
 import io
+import logging
+import random
 import sys
 
 import freezegun
 import responses
 
-import django
-import django.core.management
-import django.db
-
-os.environ['DJANGO_SETTINGS_MODULE'] = 'd1_gmn.settings_test'
-django.setup()
-
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-import d1_gmn.app.sysmeta_extract
+
 
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.user_agent
+import d1_test.mock_api.django_client
 
-# Dict lookup key matching the default key in settings_test.DATABASE
-TEST_DB_KEY = 'default'
+
+import d1_client.mnclient_2_0
 
 N_OBJECTS = 1000
 N_READ_EVENTS = 2 * N_OBJECTS
 
 
+@responses.activate
 def main():
-    make_db_fixture = MakeDbFixture()
-    make_db_fixture.run()
+    d1_test.mock_api.django_client.add_callback(
+        d1_gmn.tests.gmn_test_case.MOCK_GMN_BASE_URL
+    )
+
+    db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key()
+    d1_gmn.tests.gmn_test_case.postgres_drop_if_exists(db_name)
+    d1_gmn.tests.gmn_test_case.postgres_create_blank(db_name)
+    d1_gmn.tests.gmn_test_case.django_migrate()
+    d1_gmn.tests.gmn_test_case.django_commit_and_close()
+
+    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
+        d1_gmn.tests.gmn_test_case.MOCK_GMN_BASE_URL
+    )
+
+    # We control the timestamps of newly created objects directly and use
+    # freeze_time to control the timestamps that GMN sets on updated objects
+    # and events.
+    with freezegun.freeze_time("2001-02-03") as freeze_time:
+        with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
+            create_objects(client, freeze_time)
+            create_read_events(client, freeze_time)
+
+    d1_gmn.tests.gmn_test_case.django_save_db_fixture()
 
 
-class MakeDbFixture(d1_gmn.tests.gmn_test_case.GMNTestCase):
-    def __init__(self):
-        super().setup_method(None)
-
-    @responses.activate
-    def run(self):
-        # We control the timestamps of newly created objects directly and use
-        # freeze_time to control the timestamps that GMN sets on updated objects
-        # and events.
-        with freezegun.freeze_time('2001-02-03') as freeze_time:
-            with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
-                self.clear_db()
-                self.create_objects(freeze_time)
-                self.create_read_events(freeze_time)
-                self.commit()
-                self.save_compressed_db_fixture()
-                self.save_pid_list_sample()
-
-    def clear_db(self):
-        django.core.management.call_command(
-            'flush', interactive=False, database=TEST_DB_KEY
-        )
-
-    def commit(self):
-        django.db.connections[TEST_DB_KEY].commit()
-
-    def create_objects(self, freeze_time):
-        client = self.client_v2
-        head_pid_set = set()
-        with d1_gmn.tests.gmn_mock.disable_auth():
-            for i in range(N_OBJECTS):
-                logging.info('-' * 100)
-                logging.info('Creating sciobj: {} / {}'.format(i + 1, N_OBJECTS))
-
-                freeze_time.tick(delta=datetime.timedelta(days=1))
-
-                do_chain = random.random() < 0.5
-
-                pid = d1_test.instance_generator.identifier.generate_pid('PID_GMNFXT_')
-                pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
-                    client, pid
-                )
-                sciobj_file = io.BytesIO(sciobj_bytes)
-
-                if not do_chain:
-                    client.create(pid, sciobj_file, sysmeta_pyxb)
-                else:
-                    if len(head_pid_set) < 20:
-                        client.create(pid, sciobj_file, sysmeta_pyxb)
-                        head_pid_set.add(pid)
-                    else:
-                        sysmeta_pyxb.seriesId = None
-                        old_pid = random.choice(list(head_pid_set))
-                        head_pid_set.remove(old_pid)
-                        client.update(old_pid, sciobj_file, pid, sysmeta_pyxb)
-
-    def create_read_events(self, freeze_time):
-        client = self.client_v2
-        with d1_gmn.tests.gmn_mock.disable_auth():
-            pid_list = [
-                o.identifier.value()
-                for o in client.listObjects(count=N_OBJECTS).objectInfo
-            ]
-        for i in range(N_READ_EVENTS):
-            logging.info('-' * 100)
-            logging.info('Creating read event: {} / {}'.format(i + 1, N_READ_EVENTS))
+def create_objects(client, freeze_time):
+    head_pid_set = set()
+    with d1_gmn.tests.gmn_mock.disable_auth():
+        for i in range(N_OBJECTS):
+            logging.info("-" * 100)
+            logging.info("Creating sciobj: {} / {}".format(i + 1, N_OBJECTS))
 
             freeze_time.tick(delta=datetime.timedelta(days=1))
 
-            read_subj = (
-                d1_test.instance_generator.random_data.random_regular_or_symbolic_subj()
+            do_chain = random.random() < 0.5
+
+            pid = d1_test.instance_generator.identifier.generate_pid("PID_GMNFXT_")
+            pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
+                client, pid
             )
-            with d1_gmn.tests.gmn_mock.set_auth_context(
-                active_subj_list=[read_subj],
-                trusted_subj_list=[read_subj],
-                whitelisted_subj_list=None,
-                do_disable_auth=False,
-            ):
-                client.get(
-                    random.choice(pid_list),
-                    vendorSpecific={
-                        'User-Agent': d1_test.instance_generator.user_agent.generate()
-                    },
-                )
+            sciobj_file = io.BytesIO(sciobj_bytes)
 
-    def save_compressed_db_fixture(self):
-        fixture_file_path = self.test_files.get_abs_test_file_path(
-            'json/db_fixture.json.bz2'
+            if not do_chain:
+                client.create(pid, sciobj_file, sysmeta_pyxb)
+            else:
+                if len(head_pid_set) < 20:
+                    client.create(pid, sciobj_file, sysmeta_pyxb)
+                    head_pid_set.add(pid)
+                else:
+                    sysmeta_pyxb.seriesId = None
+                    old_pid = random.choice(list(head_pid_set))
+                    head_pid_set.remove(old_pid)
+                    client.update(old_pid, sciobj_file, pid, sysmeta_pyxb)
+
+
+def create_read_events(client, freeze_time):
+    with d1_gmn.tests.gmn_mock.disable_auth():
+        pid_list = [
+            o.identifier.value() for o in client.listObjects(count=N_OBJECTS).objectInfo
+        ]
+    for i in range(N_READ_EVENTS):
+        logging.info("-" * 100)
+        logging.info("Creating read event: {} / {}".format(i + 1, N_READ_EVENTS))
+
+        freeze_time.tick(delta=datetime.timedelta(days=1))
+
+        read_subj = (
+            d1_test.instance_generator.random_data.random_regular_or_symbolic_subj()
         )
-        logging.info('Writing fixture. path="{}"'.format(fixture_file_path))
-        buf = io.StringIO()
-        django.core.management.call_command(
-            'dumpdata',
-            exclude=['auth.permission', 'contenttypes'],
-            database=TEST_DB_KEY,
-            stdout=buf,
-        )
-        with bz2.BZ2File(
-            fixture_file_path, 'w', buffering=1024 ** 2, compresslevel=9
-        ) as bz2_file:
-            bz2_file.write(buf.getvalue().encode('utf-8'))
-
-    def save_pid_list_sample(self):
-        """Get list of all PIDs in the DB fixture.
-
-        These are for use in any tests that need to know which PIDs and SIDs are
-        available in the DB.
-
-        """
-        for did in ['pid', 'sid']:
-            with open(
-                self.test_files.get_abs_test_file_path(
-                    'json/db_fixture_{}.json'.format(did)
-                ),
-                'w',
-                encoding='utf-8',
-            ) as f:
-                d1_gmn.app.sysmeta_extract.extract_values(
-                    field_list=[did], out_stream=f
-                )
+        with d1_gmn.tests.gmn_mock.set_auth_context(
+            active_subj_list=[read_subj],
+            trusted_subj_list=[read_subj],
+            whitelisted_subj_list=None,
+            do_disable_auth=False,
+        ):
+            client.get(
+                random.choice(pid_list),
+                vendorSpecific={
+                    "User-Agent": d1_test.instance_generator.user_agent.generate()
+                },
+            )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

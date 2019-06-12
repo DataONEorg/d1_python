@@ -165,7 +165,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('createFile', fileName)
+        return self.operations("createFile", fileName)
 
     def openDirectory(self, fileName, dokanFileInfo):
         """Opens a directory.
@@ -178,7 +178,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('openDirectory', fileName)
+        return self.operations("openDirectory", fileName)
 
     def createDirectory(self, fileName, dokanFileInfo):
         """Create a directory.
@@ -191,7 +191,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('createDirectory', fileName)
+        return self.operations("createDirectory", fileName)
 
     def cleanup(self, fileName, dokanFileInfo):
         """Cleanup when deleting a file or directory.
@@ -204,7 +204,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('cleanup', fileName)
+        return self.operations("cleanup", fileName)
 
     def closeFile(self, fileName, dokanFileInfo):
         """Close a file.
@@ -217,7 +217,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('closeFile', fileName)
+        return self.operations("closeFile", fileName)
 
     def readFile(
         self,
@@ -247,7 +247,7 @@ class Dokan(object):
 
         """
         try:
-            ret = self.operations('readFile', fileName, numberOfBytesToRead, offset)
+            ret = self.operations("readFile", fileName, numberOfBytesToRead, offset)
             data = ctypes.create_string_buffer(
                 ret[:numberOfBytesToRead], numberOfBytesToRead
             )
@@ -289,7 +289,7 @@ class Dokan(object):
 
         """
         return self.operations(
-            'writeFile', fileName, buffer, numberOfBytesToWrite, offset
+            "writeFile", fileName, buffer, numberOfBytesToWrite, offset
         )
 
     def flushFileBuffers(self, fileName, dokanFileInfo):
@@ -303,7 +303,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('flushFileBuffers', fileName)
+        return self.operations("flushFileBuffers", fileName)
 
     def getFileInformation(self, fileName, buffer, dokanFileInfo):
         # """
@@ -318,18 +318,18 @@ class Dokan(object):
         #:rtype: ctypes.c_int
         # """
         #    try:
-        ret = self.operations('getFileInformation', fileName)
+        ret = self.operations("getFileInformation", fileName)
         if ret is None:
             return -d1_onedrive.impl.drivers.dokan.const.ERROR_FILE_NOT_FOUND
-        create_ft = self.python_timestamp_to_win32_filetime(ret['ctime'])
-        last_access_ft = self.python_timestamp_to_win32_filetime(ret['atime'])
-        last_write_ft = self.python_timestamp_to_win32_filetime(ret['wtime'])
+        create_ft = self.python_timestamp_to_win32_filetime(ret["ctime"])
+        last_access_ft = self.python_timestamp_to_win32_filetime(ret["atime"])
+        last_write_ft = self.python_timestamp_to_win32_filetime(ret["wtime"])
         cft = ctypes.wintypes.FILETIME(create_ft[0], create_ft[1])
         laft = ctypes.wintypes.FILETIME(last_access_ft[0], last_access_ft[1])
         lwft = ctypes.wintypes.FILETIME(last_write_ft[0], last_write_ft[1])
-        size = self.pyint_to_double_dwords(ret['size'])
+        size = self.pyint_to_double_dwords(ret["size"])
         _Buffer = BY_HANDLE_FILE_INFORMATION(
-            ctypes.c_ulong(ret['attr']),  # attributes
+            ctypes.c_ulong(ret["attr"]),  # attributes
             cft,  # creation time
             laft,  # last access time
             lwft,  # last write time
@@ -362,7 +362,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('findFiles', fileName)
+        return self.operations("findFiles", fileName)
 
     def findFilesWithPattern(
         self, fileName, searchPattern, fillFindData, dokanFileInfo
@@ -382,19 +382,19 @@ class Dokan(object):
 
         """
         try:
-            ret = self.operations('findFilesWithPattern', fileName, searchPattern)
+            ret = self.operations("findFilesWithPattern", fileName, searchPattern)
             if ret is None:
                 return d1_onedrive.impl.drivers.dokan.const.DOKAN_ERROR
             for r in ret:
-                create_ft = self.python_timestamp_to_win32_filetime(r['ctime'])
-                last_access_ft = self.python_timestamp_to_win32_filetime(r['atime'])
-                last_write_ft = self.python_timestamp_to_win32_filetime(r['wtime'])
+                create_ft = self.python_timestamp_to_win32_filetime(r["ctime"])
+                last_access_ft = self.python_timestamp_to_win32_filetime(r["atime"])
+                last_write_ft = self.python_timestamp_to_win32_filetime(r["wtime"])
                 cft = ctypes.wintypes.FILETIME(create_ft[0], create_ft[1])
                 laft = ctypes.wintypes.FILETIME(last_access_ft[0], last_access_ft[1])
                 lwft = ctypes.wintypes.FILETIME(last_write_ft[0], last_write_ft[1])
-                size = self.pyint_to_double_dwords(r['size'])
+                size = self.pyint_to_double_dwords(r["size"])
                 File = ctypes.wintypes.WIN32_FIND_DATAW(
-                    ctypes.c_ulong(r['attr']),  # attributes
+                    ctypes.c_ulong(r["attr"]),  # attributes
                     cft,  # creation time
                     laft,  # last access time
                     lwft,  # last write time
@@ -402,14 +402,14 @@ class Dokan(object):
                     size[0],  # lower bits of size
                     ctypes.c_ulong(0),  # reserved for FS
                     ctypes.c_ulong(0),  # reserved for FS
-                    r['name'],  # file name
-                    '',
+                    r["name"],  # file name
+                    "",
                 )  # alternate name
                 pFile = ctypes.wintypes.PWIN32_FIND_DATAW(File)
                 fillFindData(pFile, dokanFileInfo)
             return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
         except Exception as e:
-            logging.error('%s', e)
+            logging.error("%s", e)
             return d1_onedrive.impl.drivers.dokan.const.DOKAN_ERROR
 
     def setFileAttributes(self, fileName, fileAttributes, dokanFileInfo):
@@ -425,7 +425,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('setFileAttributes', fileName)
+        return self.operations("setFileAttributes", fileName)
 
     def setFileTime(
         self, fileName, creationTime, lastAccessTime, lastWriteTime, dokanFileInfo
@@ -446,7 +446,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('setFileTime', fileName)
+        return self.operations("setFileTime", fileName)
 
     def deleteFile(self, fileName, dokanFileInfo):
         """Delete a file.
@@ -459,7 +459,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('deleteFile', fileName)
+        return self.operations("deleteFile", fileName)
 
     def deleteDirectory(self, fileName, dokanFileInfo):
         """Delete a directory.
@@ -472,7 +472,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('deleteDirectory', fileName)
+        return self.operations("deleteDirectory", fileName)
 
     def moveFile(self, existingFileName, newFileName, replaceExisiting, dokanFileInfo):
         """Move a file.
@@ -489,7 +489,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('moveFile', existingFileName, newFileName)
+        return self.operations("moveFile", existingFileName, newFileName)
 
     def setEndOfFile(self, fileName, length, dokanFileInfo):
         """Set end of file indicator.
@@ -504,7 +504,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('setEndOfFile', fileName)
+        return self.operations("setEndOfFile", fileName)
 
     def setAllocationSize(self, fileName, length, dokanFileInfo):
         """Set allocation size for a file.
@@ -519,7 +519,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('setAllocationSize', fileName)
+        return self.operations("setAllocationSize", fileName)
 
     def lockFile(self, fileName, byteOffset, length, dokanFileInfo):
         """Lock a file.
@@ -536,7 +536,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('lockFile', fileName, byteOffset, length)
+        return self.operations("lockFile", fileName, byteOffset, length)
 
     def unlockFile(self, fileName, byteOffset, length, dokanFileInfo):
         """Unlock a file.
@@ -553,7 +553,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('unlockFile', fileName, byteOffset, length)
+        return self.operations("unlockFile", fileName, byteOffset, length)
 
     def getDiskFreeSpace(
         self,
@@ -576,20 +576,20 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        ret = self.operations('getDiskFreeSpace')
+        ret = self.operations("getDiskFreeSpace")
         ctypes.memmove(
             freeBytesAvailable,
-            ctypes.byref(ctypes.c_longlong(ret['freeBytesAvailable'])),
+            ctypes.byref(ctypes.c_longlong(ret["freeBytesAvailable"])),
             ctypes.sizeof(ctypes.c_longlong),
         )
         ctypes.memmove(
             totalNumberOfBytes,
-            ctypes.byref(ctypes.c_longlong(ret['totalNumberOfBytes'])),
+            ctypes.byref(ctypes.c_longlong(ret["totalNumberOfBytes"])),
             ctypes.sizeof(ctypes.c_longlong),
         )
         ctypes.memmove(
             totalNumberOfFreeBytes,
-            ctypes.byref(ctypes.c_longlong(ret['totalNumberOfFreeBytes'])),
+            ctypes.byref(ctypes.c_longlong(ret["totalNumberOfFreeBytes"])),
             ctypes.sizeof(ctypes.c_longlong),
         )
         return d1_onedrive.impl.drivers.dokan.const.DOKAN_SUCCESS
@@ -627,13 +627,13 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        ret = self.operations('getVolumeInformation')
+        ret = self.operations("getVolumeInformation")
         # populate volume name buffer
         ctypes.memmove(
             volumeNameBuffer,
-            ret['volumeNameBuffer'],
+            ret["volumeNameBuffer"],
             min(
-                ctypes.sizeof(ctypes.c_wchar) * len(ret['volumeNameBuffer']),
+                ctypes.sizeof(ctypes.c_wchar) * len(ret["volumeNameBuffer"]),
                 volumeNameSize,
             ),
         )
@@ -643,23 +643,23 @@ class Dokan(object):
             volumeSerialNumber, ctypes.byref(serialNum), ctypes.sizeof(ctypes.c_ulong)
         )
         # populate max component length
-        maxCompLen = ctypes.c_ulong(ret['maximumComponentLength'])
+        maxCompLen = ctypes.c_ulong(ret["maximumComponentLength"])
         ctypes.memmove(
             maximumComponentLength,
             ctypes.byref(maxCompLen),
             ctypes.sizeof(ctypes.c_ulong),
         )
         # populate filesystem flags buffer
-        fsFlags = ctypes.c_ulong(ret['fileSystemFlags'])
+        fsFlags = ctypes.c_ulong(ret["fileSystemFlags"])
         ctypes.memmove(
             fileSystemFlags, ctypes.byref(fsFlags), ctypes.sizeof(ctypes.c_ulong)
         )
         # populate filesystem name
         ctypes.memmove(
             fileSystemNameBuffer,
-            ret['fileSystemNameBuffer'],
+            ret["fileSystemNameBuffer"],
             min(
-                ctypes.sizeof(ctypes.c_wchar) * len(ret['fileSystemNameBuffer']),
+                ctypes.sizeof(ctypes.c_wchar) * len(ret["fileSystemNameBuffer"]),
                 fileSystemNameSize,
             ),
         )
@@ -674,7 +674,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('unmount', dokanFileInfo)
+        return self.operations("unmount", dokanFileInfo)
 
     def getFileSecurity(
         self,
@@ -703,7 +703,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('getFileSecurity', fileName)
+        return self.operations("getFileSecurity", fileName)
 
     def setFileSecurity(
         self,
@@ -729,7 +729,7 @@ class Dokan(object):
         :rtype: ctypes.c_int
 
         """
-        return self.operations('setFileSecurity', fileName)
+        return self.operations("setFileSecurity", fileName)
 
     # https://bitbucket.org/pchambon/python-rock-solid-tools/src/021bb37fedfe/rsbackends/_utilities.py
     def pyint_to_double_dwords(cls, mylong, dwordsize=32):
@@ -752,7 +752,7 @@ class Dokan(object):
 class Operations(object):
     def __call__(self, op, *args):
         if not hasattr(self, op):
-            raise AttributeError('Invalid operation')
+            raise AttributeError("Invalid operation")
         return getattr(self, op)(*args)
 
     def createFile(self, fileName):

@@ -52,10 +52,10 @@ class ViewHandler:
 
         # Capture the list of allowed HTTP methods that is set for each API endpoint
         # in urls.py.
-        request.allowed_method_list = view_kwargs.pop('allowed_method_list')
+        request.allowed_method_list = view_kwargs.pop("allowed_method_list")
 
         # Skip view processing and return an empty response with
-        if request.method == 'OPTIONS':
+        if request.method == "OPTIONS":
             return self.create_cors_options_response(request)
 
         if request.method not in request.allowed_method_list:
@@ -82,11 +82,11 @@ class ViewHandler:
         successfully authenticated."""
         # Handle complete certificate in vendor specific extension.
         if django.conf.settings.DEBUG_GMN:
-            if 'HTTP_VENDOR_INCLUDE_CERTIFICATE' in request.META:
+            if "HTTP_VENDOR_INCLUDE_CERTIFICATE" in request.META:
                 request.META[
-                    'SSL_CLIENT_CERT'
+                    "SSL_CLIENT_CERT"
                 ] = self.pem_in_http_header_to_pem_in_string(
-                    request.META['HTTP_VENDOR_INCLUDE_CERTIFICATE']
+                    request.META["HTTP_VENDOR_INCLUDE_CERTIFICATE"]
                 )
 
         # Add subjects from any provided certificate and JWT and store them in
@@ -108,22 +108,22 @@ class ViewHandler:
                     primary_subject_str = jwt_primary_str
                 else:
                     logging.warning(
-                        'Both a certificate and a JWT were provided and the primary '
-                        'subjects differ. Using the certificate for primary subject and'
-                        'the JWT as equivalent.'
+                        "Both a certificate and a JWT were provided and the primary "
+                        "subjects differ. Using the certificate for primary subject and"
+                        "the JWT as equivalent."
                     )
 
-        logging.info('Primary active subject: {}'.format(primary_subject_str))
+        logging.info("Primary active subject: {}".format(primary_subject_str))
         logging.info(
-            'All active subjects: {}'.format(', '.join(sorted(all_subjects_set)))
+            "All active subjects: {}".format(", ".join(sorted(all_subjects_set)))
         )
 
         # Handle list of subjects in vendor specific extension:
         if django.conf.settings.DEBUG_GMN:
             # This is added to any subjects obtained from cert and/or JWT.
-            if 'HTTP_VENDOR_INCLUDE_SUBJECTS' in request.META:
+            if "HTTP_VENDOR_INCLUDE_SUBJECTS" in request.META:
                 request.all_subjects_set.update(
-                    request.META['HTTP_VENDOR_INCLUDE_SUBJECTS'].split('\t')
+                    request.META["HTTP_VENDOR_INCLUDE_SUBJECTS"].split("\t")
                 )
 
         return primary_subject_str, all_subjects_set
@@ -131,16 +131,16 @@ class ViewHandler:
     def pem_in_http_header_to_pem_in_string(self, header_str):
         header = io.StringIO(header_str)
         pem = io.StringIO()
-        pem.write('-----BEGIN CERTIFICATE-----\n')
+        pem.write("-----BEGIN CERTIFICATE-----\n")
         while True:
             pem_line = header.read(64)
             if len(pem_line) == 0:
                 break
-            pem.write(pem_line + '\n')
-        pem.write('-----END CERTIFICATE-----\n')
+            pem.write(pem_line + "\n")
+        pem.write("-----END CERTIFICATE-----\n")
         return pem.getvalue()
 
     def create_cors_options_response(self, request):
-        response = django.http.HttpResponse(b'Header response to OPTIONS request')
+        response = django.http.HttpResponse(b"Header response to OPTIONS request")
         d1_gmn.app.views.headers.add_cors(response, request)
         return response

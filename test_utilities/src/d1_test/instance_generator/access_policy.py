@@ -47,9 +47,9 @@ import d1_test.instance_generator.random_data
 
 # Map between permission labels and permissions.
 PERMISSIONS = {
-    'read': d1_common.types.dataoneTypes.Permission.read,
-    'write': d1_common.types.dataoneTypes.Permission.write,
-    'changePermission': d1_common.types.dataoneTypes.Permission.changePermission,
+    "read": d1_common.types.dataoneTypes.Permission.read,
+    "write": d1_common.types.dataoneTypes.Permission.write,
+    "changePermission": d1_common.types.dataoneTypes.Permission.changePermission,
 }
 
 
@@ -67,16 +67,16 @@ def permission_labels_to_objects(permissions):
 
 
 def permissions_to_tag_string(permissions):
-    return '_' + '_'.join(permissions) + '_'
+    return "_" + "_".join(permissions) + "_"
 
 
 def random_subject_with_permission_labels(permissions, group_chance=0.1):
     """Generate a random subject that is tagged with the provided permissions and has a
     certain chance of being tagged as group."""
-    subject_base = 'subj_{}'.format(
+    subject_base = "subj_{}".format(
         d1_test.instance_generator.random_data.random_lower_ascii()
     )
-    group = '_group' if random.random() <= group_chance else ''
+    group = "_group" if random.random() <= group_chance else ""
     tags = permissions_to_tag_string(permissions)
     return subject_base + group + tags
 

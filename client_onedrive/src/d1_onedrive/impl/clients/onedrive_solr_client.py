@@ -35,29 +35,29 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
         self._solr_endpoint = options.base_url + options.solr_query_path
         self._session = requests.Session()
         self._session.mount(
-            'http://', requests.adapters.HTTPAdapter(max_retries=max_retries)
+            "http://", requests.adapters.HTTPAdapter(max_retries=max_retries)
         )
         self._session.mount(
-            'https://', requests.adapters.HTTPAdapter(max_retries=max_retries)
+            "https://", requests.adapters.HTTPAdapter(max_retries=max_retries)
         )
         self._timeout_sec = options.solr_query_timeout_sec
         self._max_objects_for_query = options.max_objects_for_query
 
     def run_solr_query(self, query, filter_queries=None, fields=None):
         response = self._query(query, filter_queries=filter_queries, fields=fields)
-        for record in response['response']['docs']:
+        for record in response["response"]["docs"]:
             self._close_open_date_ranges(record)
             self._parse_iso8601_date_to_native_date_time(record)
-        return response['response']['docs']
+        return response["response"]["docs"]
 
     def get_solr_record(self, pid):
-        query = 'id:{}'.format(self._escape_query_term_string(pid))
+        query = "id:{}".format(self._escape_query_term_string(pid))
         response = self.run_solr_query(query)
         try:
             return response[0]
         except IndexError:
             raise d1_onedrive.impl.onedrive_exceptions.ONEDriveException(
-                'Object does not exist. pid={}'.format(pid)
+                "Object does not exist. pid={}".format(pid)
             )
 
     #
@@ -65,7 +65,7 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
     #
 
     def _parse_http_date_to_native_date_time(self, describe_resp_dict):
-        date_fields = ['date', 'date']
+        date_fields = ["date", "date"]
         for date_field in date_fields:
             if date_field in describe_resp_dict:
                 describe_resp_dict[
@@ -77,7 +77,7 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
     def _close_open_date_ranges(self, record):
         """If a date range is missing the start or end date, close it by copying the
         date from the existing value."""
-        date_ranges = (('beginDate', 'endDate'),)
+        date_ranges = (("beginDate", "endDate"),)
         for begin, end in date_ranges:
             if begin in record and end in record:
                 return
@@ -88,12 +88,12 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
 
     def _parse_iso8601_date_to_native_date_time(self, record):
         date_fields = [
-            'beginDate',
-            'endDate',
-            'datePublished',
-            'dateModified',
-            'dateUploaded',
-            'updateDate',
+            "beginDate",
+            "endDate",
+            "datePublished",
+            "dateModified",
+            "dateUploaded",
+            "updateDate",
         ]
         for date_field in date_fields:
             if date_field in record:

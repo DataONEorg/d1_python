@@ -105,19 +105,19 @@ class TestObjectFormatList(d1_test.d1_test_case.D1TestCase):
         # Property access 31 days after last refresh timestamp
         with freezegun.freeze_time("2019-05-04"):
             self.sample.assert_equals(format_info_cache.object_format_dict, "refresh")
-            assert 'format_id_96' in format_info_cache.object_format_dict
+            assert "format_id_96" in format_info_cache.object_format_dict
 
     def test_1030(self, format_info_cache):
         """get_content_type()"""
-        assert format_info_cache.get_content_type('INCITS-453-2009') == 'text/xml/b'
+        assert format_info_cache.get_content_type("INCITS-453-2009") == "text/xml/b"
 
     def test_1040(self, format_info_cache):
         """get_filename_extension()"""
-        assert format_info_cache.get_filename_extension('FGDC-STD-001.2-1999') == '.xml'
+        assert format_info_cache.get_filename_extension("FGDC-STD-001.2-1999") == ".xml"
 
     @responses.activate
     def test_1050(self, format_info_cache):
         """refresh_cache()"""
-        assert 'format_id_96' not in format_info_cache.object_format_dict
+        assert "format_id_96" not in format_info_cache.object_format_dict
         format_info_cache.refresh_cache()
-        assert 'format_id_96' in format_info_cache.object_format_dict
+        assert "format_id_96" in format_info_cache.object_format_dict

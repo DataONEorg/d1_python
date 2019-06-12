@@ -59,7 +59,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
             cn_mn_client_v1._slice_sanity_check(0, -1)
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-            cn_mn_client_v1._slice_sanity_check(10, 'invalid_int')
+            cn_mn_client_v1._slice_sanity_check(10, "invalid_int")
 
     def test_1020(self):
         """date_span_sanity_check()"""
@@ -110,7 +110,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         """ping(): Passing a trigger header triggers a DataONEException."""
         d1_test.mock_api.ping.add_callback(d1_test.d1_test_case.MOCK_CN_MN_BASE_URL)
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            cn_mn_client_v1.ping(vendorSpecific={'trigger': '404'})
+            cn_mn_client_v1.ping(vendorSpecific={"trigger": "404"})
 
     # CNRead.get()
     # MNRead.get()
@@ -120,13 +120,13 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         """CNRead.get(): Unknown PID raises NotFound."""
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_CN_MN_BASE_URL)
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            cn_mn_client_v1.get('<NotFound>pid')
+            cn_mn_client_v1.get("<NotFound>pid")
 
     @responses.activate
     def test_1080(self, cn_mn_client_v1):
         """MNRead.get(): Returns valid response on valid PID."""
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_CN_MN_BASE_URL)
-        cn_mn_client_v1.get('valid_pid')
+        cn_mn_client_v1.get("valid_pid")
 
     # CNRead.getSystemMetadata()
     # MNRead.getSystemMetadata()
@@ -137,7 +137,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.get_system_metadata.add_callback(
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )
-        sysmeta_pyxb = cn_mn_client_v1.getSystemMetadata('valid_pid')
+        sysmeta_pyxb = cn_mn_client_v1.getSystemMetadata("valid_pid")
         assert isinstance(sysmeta_pyxb, cn_mn_client_v1.pyxb_binding.SystemMetadata)
 
     @responses.activate
@@ -147,7 +147,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            cn_mn_client_v1.getSystemMetadata('<NotFound>pid')
+            cn_mn_client_v1.getSystemMetadata("<NotFound>pid")
 
     # CNRead.describe()
     # MNRead.describe()
@@ -156,11 +156,11 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     def test_1110(self, cn_mn_client_v1):
         """CNRead.describe(): GET request returns dict of D1 custom headers."""
         d1_test.mock_api.describe.add_callback(d1_test.d1_test_case.MOCK_CN_MN_BASE_URL)
-        description_dict = cn_mn_client_v1.describe('good_pid')
+        description_dict = cn_mn_client_v1.describe("good_pid")
         assert isinstance(description_dict, requests.structures.CaseInsensitiveDict)
-        assert 'Last-Modified' in description_dict
-        del description_dict['Last-Modified']
-        self.sample.assert_equals(description_dict, 'describe_returns_dict')
+        assert "Last-Modified" in description_dict
+        del description_dict["Last-Modified"]
+        self.sample.assert_equals(description_dict, "describe_returns_dict")
 
     @responses.activate
     def test_1120(self, cn_mn_client_v1):
@@ -171,7 +171,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         # DataONEException headers are detected, deserialized and raised as
         # exceptions.
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            cn_mn_client_v1.describe('<NotFound>pid')
+            cn_mn_client_v1.describe("<NotFound>pid")
 
     # CNCore.listObjects()
     # MNCore.listObjects()
@@ -203,11 +203,11 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )
         fragment_str = (
-            'fragment_' + d1_test.instance_generator.random_data.random_3_words()
+            "fragment_" + d1_test.instance_generator.random_data.random_3_words()
         )
-        identifier_pyxb = cn_mn_client_v1.generateIdentifier('UUID', fragment_str)
+        identifier_pyxb = cn_mn_client_v1.generateIdentifier("UUID", fragment_str)
         self.sample.assert_equals(
-            identifier_pyxb, 'generate_identifier', cn_mn_client_v1
+            identifier_pyxb, "generate_identifier", cn_mn_client_v1
         )
 
     @responses.activate
@@ -217,14 +217,14 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.generate_identifier.add_callback(
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )
-        scheme_str = 'scheme_' + d1_test.instance_generator.random_data.random_3_words()
+        scheme_str = "scheme_" + d1_test.instance_generator.random_data.random_3_words()
         fragment_str = (
-            'fragment_' + d1_test.instance_generator.random_data.random_3_words()
+            "fragment_" + d1_test.instance_generator.random_data.random_3_words()
         )
 
         with pytest.raises(d1_common.types.exceptions.NotFound):
             cn_mn_client_v1.generateIdentifier(
-                scheme_str, fragment_str, vendorSpecific={'trigger': '404'}
+                scheme_str, fragment_str, vendorSpecific={"trigger": "404"}
             )
 
     # CNAuthorization.isAuthorized()
@@ -236,7 +236,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.is_authorized.add_callback(
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )
-        assert cn_mn_client_v1.isAuthorized('authorized_pid', 'read')
+        assert cn_mn_client_v1.isAuthorized("authorized_pid", "read")
 
     @responses.activate
     def test_1170(self, cn_mn_client_v1):
@@ -244,7 +244,7 @@ class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
         d1_test.mock_api.is_authorized.add_callback(
             d1_test.d1_test_case.MOCK_CN_MN_BASE_URL
         )
-        assert cn_mn_client_v1.isAuthorized('authorized_pid', 'read')
+        assert cn_mn_client_v1.isAuthorized("authorized_pid", "read")
         assert not cn_mn_client_v1.isAuthorized(
-            'unauthorized_pid', 'read', vendorSpecific={'trigger': '401'}
+            "unauthorized_pid", "read", vendorSpecific={"trigger": "401"}
         )

@@ -22,7 +22,7 @@ def entrypoint0():
     import sys
 
     print(sys.argv)
-    del sys.modules['__main__']
+    del sys.modules["__main__"]
 
     entrypoint1()
 

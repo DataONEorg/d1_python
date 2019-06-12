@@ -51,7 +51,7 @@ import d1_client.objectlistiterator
 
 # Config
 
-CSV_FILE_PATH = './validation_results.csv'
+CSV_FILE_PATH = "./validation_results.csv"
 BASE_URL = None  # e.g., https://tropical.lternet.edu/knb/d1/mn/
 # Client side certificate that is trusted by the target Member Node
 CERTIFICATE_PATH = None
@@ -62,30 +62,30 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
-        '--env',
+        "--env",
         type=str,
-        default='prod',
-        help='Environment, one of {}'.format(', '.join(d1_common.env.D1_ENV_DICT)),
+        default="prod",
+        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
     )
     parser.add_argument(
-        '--cert-pub',
-        dest='cert_pem_path',
-        action='store',
-        help='Path to PEM formatted public key of certificate',
+        "--cert-pub",
+        dest="cert_pem_path",
+        action="store",
+        help="Path to PEM formatted public key of certificate",
     )
     parser.add_argument(
-        '--cert-key',
-        dest='cert_key_path',
-        action='store',
-        help='Path to PEM formatted private key of certificate',
+        "--cert-key",
+        dest="cert_key_path",
+        action="store",
+        help="Path to PEM formatted private key of certificate",
     )
     parser.add_argument(
-        '--timeout',
-        action='store',
+        "--timeout",
+        action="store",
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help='Amount of time to wait for calls to complete (seconds)',
+        help="Amount of time to wait for calls to complete (seconds)",
     )
 
     mn_client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
@@ -101,18 +101,18 @@ def main():
 class DataONENodeObjectValidator(object):
     def __init__(self, mn_client, csv_file_path):
         self._src_client = mn_client
-        self._csv_file = csv.writer(open(csv_file_path, 'wb'))
+        self._csv_file = csv.writer(open(csv_file_path, "wb"))
         self._counts = {}
 
     def __enter__(self):
         self._csv_file.writerow(
             [
-                'status',
-                'pid',
-                'sys_meta_size',
-                'sys_meta_checksum',
-                'actual_size',
-                'actual_checksum',
+                "status",
+                "pid",
+                "sys_meta_size",
+                "sys_meta_checksum",
+                "actual_size",
+                "actual_checksum",
             ]
         )
         return self
@@ -129,10 +129,10 @@ class DataONENodeObjectValidator(object):
         try:
             self._validate_pid(pid)
         except ValidationError:
-            self._inc_count('Objects failed validation')
+            self._inc_count("Objects failed validation")
         else:
-            self._inc_count('Objects passed validation')
-        self._inc_count('Objects checked')
+            self._inc_count("Objects passed validation")
+        self._inc_count("Objects checked")
 
     def _validate_pid(self, pid):
         sys_meta = self._read_sys_meta_with_correction(pid)
@@ -142,15 +142,15 @@ class DataONENodeObjectValidator(object):
         )
         errors = []
         if checksum != sys_meta.checksum.value():
-            self._inc_count('Checksum mismatches')
-            errors.append('checksum_mismatch')
+            self._inc_count("Checksum mismatches")
+            errors.append("checksum_mismatch")
         if len(sci_obj) != sys_meta.size:
-            self._inc_count('Size mismatches')
-            errors.append('size_mismatch')
+            self._inc_count("Size mismatches")
+            errors.append("size_mismatch")
         if errors:
             self._write_csv_row(
                 pid,
-                '/'.join(errors),
+                "/".join(errors),
                 sys_meta.size,
                 sys_meta.checksum.value(),
                 len(sci_obj),
@@ -160,7 +160,7 @@ class DataONENodeObjectValidator(object):
         else:
             self._write_csv_row(
                 pid,
-                'ok',
+                "ok",
                 sys_meta.size,
                 sys_meta.checksum.value(),
                 len(sci_obj),
@@ -171,22 +171,22 @@ class DataONENodeObjectValidator(object):
         try:
             return self._src_client.get(pid).read()
         except d1_common.types.exceptions.DataONEException:
-            self._inc_count('Science Object Read errors')
-            self._write_csv_row(pid, 'sci_obj_read_error')
+            self._inc_count("Science Object Read errors")
+            self._write_csv_row(pid, "sci_obj_read_error")
             raise ValidationError()
 
     def _read_sys_meta(self, pid):
         try:
             return self._src_client.getSystemMetadata(pid)
         except (d1_common.types.exceptions.NotAuthorized):
-            self._inc_count('System Metadata Not Authorized error')
-            self._write_csv_row(pid, 'sys_meta_not_authorized_error')
+            self._inc_count("System Metadata Not Authorized error")
+            self._write_csv_row(pid, "sys_meta_not_authorized_error")
             raise NotAuthorized()
         except (
             d1_common.types.exceptions.DataONEException,
             pyxb.UnrecognizedDOMRootNodeError,
         ):
-            self._inc_count('System Metadata Read errors (before correction)')
+            self._inc_count("System Metadata Read errors (before correction)")
             raise ValidationError()
 
     def _read_sys_meta_with_correction(self, pid):
@@ -196,20 +196,20 @@ class DataONENodeObjectValidator(object):
             raise ValidationError()
         except ValidationError:
             sys_meta_str = self._src_client.getSystemMetadataResponse(pid).read()
-            sys_meta_str = sys_meta_str.replace('<preferredMemberNode/>', '')
+            sys_meta_str = sys_meta_str.replace("<preferredMemberNode/>", "")
             sys_meta_str = sys_meta_str.replace(
-                '<preferredMemberNode></preferredMemberNode>', ''
+                "<preferredMemberNode></preferredMemberNode>", ""
             )
-            sys_meta_str = sys_meta_str.replace('<accessPolicy/>', '')
-            sys_meta_str = sys_meta_str.replace('<blockedMemberNode/>', '')
+            sys_meta_str = sys_meta_str.replace("<accessPolicy/>", "")
+            sys_meta_str = sys_meta_str.replace("<blockedMemberNode/>", "")
             sys_meta_str = sys_meta_str.replace(
-                '<blockedMemberNode></blockedMemberNode>', ''
+                "<blockedMemberNode></blockedMemberNode>", ""
             )
             try:
                 return d1_common.types.dataoneTypes.CreateFromDocument(sys_meta_str)
             except (d1_common.types.exceptions.DataONEException, pyxb.PyXBException):
-                self._inc_count('System Metadata Read errors (after correction)')
-                self._write_csv_row(pid, 'sys_meta_read_error')
+                self._inc_count("System Metadata Read errors (after correction)")
+                self._write_csv_row(pid, "sys_meta_read_error")
                 raise ValidationError()
 
     def _inc_count(self, name):
@@ -240,7 +240,7 @@ class DataONENodeObjectValidator(object):
 
     def _print_status(self):
         for c in sorted(self._counts):
-            print('{}: {}'.format(c, self._counts[c]))
+            print("{}: {}".format(c, self._counts[c]))
 
 
 class ValidationError(Exception):
@@ -251,5 +251,5 @@ class NotAuthorized(Exception):
     pass
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

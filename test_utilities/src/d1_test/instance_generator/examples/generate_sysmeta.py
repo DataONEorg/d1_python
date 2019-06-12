@@ -43,13 +43,13 @@ import d1_test.instance_generator.system_metadata
 # flake8: noqa: F821
 
 
-def getObjectFormatFromID(fmtid, default='application/octet-stream'):
+def getObjectFormatFromID(fmtid, default="application/octet-stream"):
     """Returns an ObjectFormat instance given a format id."""
     formatlistURL = (
-        'https://repository.dataone.org/software/cicore/trunk/d1_common_java/src/'
-        'main/resources/org/dataone/service/resources/config/v1/objectFormatList.xml'
+        "https://repository.dataone.org/software/cicore/trunk/d1_common_java/src/"
+        "main/resources/org/dataone/service/resources/config/v1/objectFormatList.xml"
     )
-    doc = urllib.request.urlopen(formatlistURL).read().decode('utf-8')
+    doc = urllib.request.urlopen(formatlistURL).read().decode("utf-8")
     formats = d1_common.types.dataoneTypes.CreateFromDocument(doc)
     for format in formats.objectFormat:
         if format.formatId == fmtid:
@@ -77,66 +77,66 @@ def processDoc(fname, options={}):
     sysm = d1_test.instance_generator.system_metadata.generate_from_file_path(
         fname, options
     )
-    root = lxml.etree.fromstring(sysm.toxml('utf-8'))
+    root = lxml.etree.fromstring(sysm.toxml("utf-8"))
     root.insert(0, comment)
     pxml = lxml.etree.tostring(
-        root, pretty_print=True, encoding='utf-8', xml_declaration=True
+        root, pretty_print=True, encoding="utf-8", xml_declaration=True
     )
     return pxml
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     parser = optparse.OptionParser()
     parser.add_option(
-        '-f',
-        '--fname',
-        action='store',
-        type='string',
-        help='File name of target object',
+        "-f",
+        "--fname",
+        action="store",
+        type="string",
+        help="File name of target object",
     )
     parser.add_option(
-        '-i',
-        '--id',
-        dest='identifier',
-        action='store',
-        type='string',
-        help='Identifier of target object',
+        "-i",
+        "--id",
+        dest="identifier",
+        action="store",
+        type="string",
+        help="Identifier of target object",
     )
     parser.add_option(
-        '-t',
-        '--format',
-        action='store',
-        type='string',
-        default='application/octet-stream',
-        help='Object format ID of target object',
+        "-t",
+        "--format",
+        action="store",
+        type="string",
+        default="application/octet-stream",
+        help="Object format ID of target object",
     )
     parser.add_option(
-        '-s',
-        '--submitter',
-        action='store',
-        type='string',
-        default='dataone_integration_test_user',
-        help='Subject of the submitter [default: %default].',
+        "-s",
+        "--submitter",
+        action="store",
+        type="string",
+        default="dataone_integration_test_user",
+        help="Subject of the submitter [default: %default].",
     )
     parser.add_option(
-        '-r',
-        '--rights',
-        dest='rightsHolder',
-        action='store',
-        type='string',
-        help='Subject of the object rights holder, defaults to submitter.',
+        "-r",
+        "--rights",
+        dest="rightsHolder",
+        action="store",
+        type="string",
+        help="Subject of the object rights holder, defaults to submitter.",
     )
     parser.add_option(
-        '-o',
-        '--origin',
-        dest='originMemberNode',
-        action='store',
-        type='string',
-        default='test_documents',
-        help='Origin member node identifier [default: %default].',
+        "-o",
+        "--origin",
+        dest="originMemberNode",
+        action="store",
+        type="string",
+        default="test_documents",
+        help="Origin member node identifier [default: %default].",
     )
     parser.add_option(
-        '-n',
+        "-n",
         "--replicas",
         dest="numberReplicas",
         type="int",
@@ -144,43 +144,43 @@ if __name__ == '__main__':
         help="Number of replicas requested.",
     )
     parser.add_option(
-        '-l',
-        '--loglevel',
-        dest='llevel',
+        "-l",
+        "--loglevel",
+        dest="llevel",
         default=20,
-        type='int',
-        help='Reporting level: 10=debug, 20=Info, 30=Warning, '
-        '40=Error, 50=Fatal [default: %default]',
+        type="int",
+        help="Reporting level: 10=debug, 20=Info, 30=Warning, "
+        "40=Error, 50=Fatal [default: %default]",
     )
     (options, args) = parser.parse_args(sys.argv)
     if options.llevel not in [10, 20, 30, 40, 50]:
         options.llevel = 20
     logging.basicConfig(level=int(options.llevel))
     if options.fname is None:
-        print('File name for object is required.')
+        print("File name for object is required.")
         parser.print_help()
         sys.exit()
     if options.identifier is None:
-        print('Identifier for object is required.')
+        print("Identifier for object is required.")
         parser.print_help()
         sys.exit()
     if not os.path.exists(options.fname):
-        print('File %s not found' % options.fname)
+        print("File %s not found" % options.fname)
         parser.print_help()
         sys.exit()
 
     oopts = {}
-    oopts['fname'] = options.fname
-    oopts['identifier'] = options.identifier
+    oopts["fname"] = options.fname
+    oopts["identifier"] = options.identifier
     objectFormat = getObjectFormatFromID(options.format)
-    oopts['formatId'] = objectFormat.formatId
-    oopts['submitter'] = options.submitter
+    oopts["formatId"] = objectFormat.formatId
+    oopts["submitter"] = options.submitter
     if options.rightsHolder is None:
-        oopts['rightsHolder'] = options.submitter
+        oopts["rightsHolder"] = options.submitter
     else:
-        oopts['rightsHolder'] = options.rightsHolder
-    oopts['originMemberNode'] = options.originMemberNode
-    oopts['authoritativeMemberNode'] = options.originMemberNode
+        oopts["rightsHolder"] = options.rightsHolder
+    oopts["originMemberNode"] = options.originMemberNode
+    oopts["authoritativeMemberNode"] = options.originMemberNode
 
     defrepl = d1_common.types.dataoneTypes.ReplicationPolicy()
     if options.numberReplicas == 0:
@@ -188,7 +188,7 @@ if __name__ == '__main__':
     else:
         defrepl.replicationAllowed = True
         defrepl.numberReplicas = options.numberReplicas
-    oopts['replicationPolicy'] = defrepl
+    oopts["replicationPolicy"] = defrepl
 
     defap = d1_common.types.dataoneTypes.AccessPolicy()
     ar = d1_common.types.dataoneTypes.AccessRule()
@@ -197,11 +197,11 @@ if __name__ == '__main__':
     defap.allow = [ar]
     ar = d1_common.types.dataoneTypes.AccessRule()
     ar.permission = [d1_common.types.dataoneTypes.Permission.write]
-    ar.subject = [oopts['submitter']]
+    ar.subject = [oopts["submitter"]]
     defap.allow.append(ar)
-    oopts['accessPolicy'] = defap
+    oopts["accessPolicy"] = defap
 
     logging.debug(str(oopts))
 
-    print(processDoc(oopts['fname'], oopts))
+    print(processDoc(oopts["fname"], oopts))
     sys.exit()

@@ -58,22 +58,22 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('path', nargs='+', help='File or directory path')
-    parser.add_argument('--include', nargs='+', help='Include glob patterns')
-    parser.add_argument('--exclude', nargs='+', help='Exclude glob patterns')
+    parser.add_argument("path", nargs="+", help="File or directory path")
+    parser.add_argument("--include", nargs="+", help="Include glob patterns")
+    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
-        '--no-recursive',
-        dest='recursive',
-        action='store_false',
-        help='Search directories recursively',
+        "--no-recursive",
+        dest="recursive",
+        action="store_false",
+        help="Search directories recursively",
     )
     parser.add_argument(
-        '--ignore-invalid', action='store_true', help='Ignore invalid paths'
+        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
-        '--pycharm', action='store_true', help='Enable PyCharm integration'
+        "--pycharm", action="store_true", help="Enable PyCharm integration"
     )
-    parser.add_argument('--debug', action='store_true', help='Debug level logging')
+    parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
     d1_common.util.log_setup(args.debug)
@@ -121,29 +121,29 @@ def trigger_pre_commit_hook(args, trigger_path):
         res_str = subprocess.check_output(
             [
                 # '--no-stash',
-                'pre-commit',
-                'run',
-                '--verbose',
-                '--files',
+                "pre-commit",
+                "run",
+                "--verbose",
+                "--files",
                 trigger_path,
             ],
             stderr=subprocess.STDOUT,
-        ).decode('utf-8')
+        ).decode("utf-8")
     except subprocess.CalledProcessError as e:
-        res_str = e.output.decode('utf-8')
+        res_str = e.output.decode("utf-8")
 
     for res_line in res_str.splitlines():
-        logging.debug('line: {}'.format(res_line))
-        m = re.search(r'\.py:(\d+):', res_line)
+        logging.debug("line: {}".format(res_line))
+        m = re.search(r"\.py:(\d+):", res_line)
         if m:
-            logging.info('Error: {}'.format(res_line))
+            logging.info("Error: {}".format(res_line))
             if args.pycharm:
                 d1_test.pycharm.open_and_set_cursor(trigger_path, m.group(1))
             while True:
-                action_str = input('Recheck: Enter, Skip file: s Enter: ')
-                if action_str == '':
+                action_str = input("Recheck: Enter, Skip file: s Enter: ")
+                if action_str == "":
                     return True
-                elif action_str == 's':
+                elif action_str == "s":
                     return False
 
     return False
@@ -156,14 +156,14 @@ def strip_path_root(root_path, full_path):
 
 def get_git_modified_files(repo):
     # 'HEAD~1..HEAD'
-    for file_path in repo.git.diff('HEAD^', name_only=True).splitlines():
+    for file_path in repo.git.diff("HEAD^", name_only=True).splitlines():
         yield file_path
 
 
 def get_git_staged_files(repo):
-    for file_path in repo.git.diff('HEAD', name_only=True).splitlines():
+    for file_path in repo.git.diff("HEAD", name_only=True).splitlines():
         yield file_path
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

@@ -36,12 +36,12 @@ class TestOptions:
 class TestRootResolver(d1_test.d1_test_case.D1TestCase):
     def setup_method(self):
         options = TestOptions()
-        options.base_url = 'https://localhost/'
-        options.object_tree_xml = './test_object_tree.xml'
+        options.base_url = "https://localhost/"
+        options.object_tree_xml = "./test_object_tree.xml"
         options.max_error_path_cache_size = 1000
         options.max_solr_query_cache_size = 1000
         options.region_tree_max_cache_items = 1000
-        with tempfile.NamedTemporaryFile(prefix='region_tree_cache') as tmp_file:
+        with tempfile.NamedTemporaryFile(prefix="region_tree_cache") as tmp_file:
             options.region_tree_cache_path = tmp_file.name
         options.ignore_special = []
         self._r = d1_onedrive.impl.resolver.root.RootResolver(

@@ -16,9 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test the bulk importer management command."""
-import responses
-
 import pytest
+import responses
 
 import d1_gmn.tests.gmn_test_case
 
@@ -29,9 +28,9 @@ import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.list_objects
 
 
-@pytest.mark.skip('Need to find if responses can be mocked for aiohttp')
+@pytest.mark.skip("Need to find if responses can be mocked for aiohttp")
 # See: https://docs.aiohttp.org/en/stable/testing.html
-@d1_test.d1_test_case.reproducible_random_decorator('TestMgmtImport')
+@d1_test.d1_test_case.reproducible_random_decorator("TestMgmtImport")
 class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, caplog):
@@ -47,13 +46,13 @@ class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
             self.call_management_command(
-                'import',
-                '--force',
-                '--clear',
-                '--debug',
-                '--max-concurrent=2',
-                '--page-size=9',
-                '--major=2',
+                "import",
+                "--force",
+                "--clear",
+                "--debug",
+                "--max-concurrent=2",
+                "--page-size=9",
+                "--major=2",
                 d1_test.d1_test_case.MOCK_REMOTE_BASE_URL,
             )
         # # The importer is multiprocessed but only log output written by the main
@@ -69,4 +68,4 @@ class TestMgmtImport(d1_gmn.tests.gmn_test_case.GMNTestCase):
         # log_str = re.sub(r'count', '[START/COUNT]', log_str)
         # log_str = re.sub(r'(?:total_run_sec=)[\d.]*', '[SEC]', log_str)
         # log_str = re.sub(r'(?:total_run_dhm=)[\ddhm"]*', '[DHM]', log_str)
-        self.sample.assert_equals(log_str, 'bulk_import_log')
+        self.sample.assert_equals(log_str, "bulk_import_log")

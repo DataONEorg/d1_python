@@ -22,38 +22,37 @@
 import d1_common.url
 
 import d1_test.d1_test_case
-import d1_test.test_files
 
 
 class TestUrl(d1_test.d1_test_case.D1TestCase):
     def test_1000(self, tricky_identifier_dict):
         """encodePathElement()"""
-        did = tricky_identifier_dict['unescaped']
-        enc_did = tricky_identifier_dict['path_escaped']
-        if did.startswith('common') or did.startswith('path'):
+        did = tricky_identifier_dict["unescaped"]
+        enc_did = tricky_identifier_dict["path_escaped"]
+        if did.startswith("common") or did.startswith("path"):
             assert enc_did == d1_common.url.encodePathElement(did)
 
     def test_1010(self, tricky_identifier_dict):
         """encodeQueryElement()"""
-        did = tricky_identifier_dict['unescaped']
-        enc_did = tricky_identifier_dict['query_escaped']
-        if did.startswith('common') or did.startswith('path'):
+        did = tricky_identifier_dict["unescaped"]
+        enc_did = tricky_identifier_dict["query_escaped"]
+        if did.startswith("common") or did.startswith("path"):
             assert enc_did == d1_common.url.encodeQueryElement(did)
 
     def test_1020(self):
         """stripElementSlashes()"""
-        assert 'element' == d1_common.url.stripElementSlashes('/element')
-        assert 'element' == d1_common.url.stripElementSlashes('//element/')
-        assert 'element' == d1_common.url.stripElementSlashes('element/')
-        assert 'ele/ment' == d1_common.url.stripElementSlashes('/ele/ment/')
-        assert 'ele//ment' == d1_common.url.stripElementSlashes('ele//ment')
-        assert '' == d1_common.url.stripElementSlashes('/')
-        assert '' == d1_common.url.stripElementSlashes('//')
+        assert "element" == d1_common.url.stripElementSlashes("/element")
+        assert "element" == d1_common.url.stripElementSlashes("//element/")
+        assert "element" == d1_common.url.stripElementSlashes("element/")
+        assert "ele/ment" == d1_common.url.stripElementSlashes("/ele/ment/")
+        assert "ele//ment" == d1_common.url.stripElementSlashes("ele//ment")
+        assert "" == d1_common.url.stripElementSlashes("/")
+        assert "" == d1_common.url.stripElementSlashes("//")
 
     def test_1030(self):
         """joinPathElements()"""
-        assert 'a/b' == d1_common.url.joinPathElements('a', 'b')
-        assert 'a/b/c' == d1_common.url.joinPathElements('a/', '/b', 'c')
+        assert "a/b" == d1_common.url.joinPathElements("a", "b")
+        assert "a/b/c" == d1_common.url.joinPathElements("a/", "/b", "c")
 
     def test_1040(self):
         """normalizeTarget()"""
@@ -68,30 +67,30 @@ class TestUrl(d1_test.d1_test_case.D1TestCase):
 
     def test_1050(self):
         """makeCNBaseURL()"""
-        assert d1_common.url.makeCNBaseURL('') == 'https://cn.dataone.org/cn'
-        assert d1_common.url.makeCNBaseURL('test.com') == 'https://test.com/cn'
-        assert d1_common.url.makeCNBaseURL('test.com/cn') == 'https://test.com/cn'
-        assert d1_common.url.makeCNBaseURL('test.com/a/cn') == 'https://test.com/a/cn'
-        assert d1_common.url.makeCNBaseURL('http://test.com') == 'http://test.com/cn'
-        assert d1_common.url.makeCNBaseURL('http://test.com/') == 'http://test.com/'
-        assert d1_common.url.makeCNBaseURL('http://test.com/cn') == 'http://test.com/cn'
+        assert d1_common.url.makeCNBaseURL("") == "https://cn.dataone.org/cn"
+        assert d1_common.url.makeCNBaseURL("test.com") == "https://test.com/cn"
+        assert d1_common.url.makeCNBaseURL("test.com/cn") == "https://test.com/cn"
+        assert d1_common.url.makeCNBaseURL("test.com/a/cn") == "https://test.com/a/cn"
+        assert d1_common.url.makeCNBaseURL("http://test.com") == "http://test.com/cn"
+        assert d1_common.url.makeCNBaseURL("http://test.com/") == "http://test.com/"
+        assert d1_common.url.makeCNBaseURL("http://test.com/cn") == "http://test.com/cn"
         assert (
-            d1_common.url.makeCNBaseURL('http://test.com/a/b/c/cn')
-            == 'http://test.com/a/b/c/cn'
+            d1_common.url.makeCNBaseURL("http://test.com/a/b/c/cn")
+            == "http://test.com/a/b/c/cn"
         )
 
     def test_1060(self):
         """makeMNBaseURL()"""
-        assert d1_common.url.makeMNBaseURL('') == 'https://localhost/mn'
-        assert d1_common.url.makeMNBaseURL('test.com') == 'https://test.com/mn'
-        assert d1_common.url.makeMNBaseURL('test.com/mn') == 'https://test.com/mn'
-        assert d1_common.url.makeMNBaseURL('test.com/a/mn') == 'https://test.com/a/mn'
-        assert d1_common.url.makeMNBaseURL('http://test.com') == 'http://test.com/mn'
-        assert d1_common.url.makeMNBaseURL('http://test.com/') == 'http://test.com/'
-        assert d1_common.url.makeMNBaseURL('http://test.com/mn') == 'http://test.com/mn'
+        assert d1_common.url.makeMNBaseURL("") == "https://localhost/mn"
+        assert d1_common.url.makeMNBaseURL("test.com") == "https://test.com/mn"
+        assert d1_common.url.makeMNBaseURL("test.com/mn") == "https://test.com/mn"
+        assert d1_common.url.makeMNBaseURL("test.com/a/mn") == "https://test.com/a/mn"
+        assert d1_common.url.makeMNBaseURL("http://test.com") == "http://test.com/mn"
+        assert d1_common.url.makeMNBaseURL("http://test.com/") == "http://test.com/"
+        assert d1_common.url.makeMNBaseURL("http://test.com/mn") == "http://test.com/mn"
         assert (
-            d1_common.url.makeMNBaseURL('http://test.com/a/b/c/mn')
-            == 'http://test.com/a/b/c/mn'
+            d1_common.url.makeMNBaseURL("http://test.com/a/b/c/mn")
+            == "http://test.com/a/b/c/mn"
         )
 
     def test_1070(self):
@@ -128,7 +127,7 @@ class TestUrl(d1_test.d1_test_case.D1TestCase):
         b = "http://www.some.host:999/a/b/c/;p3;p1;p2?k2=abc&k3=def&k1=10#frag"
         url_diff_list = d1_common.url.find_url_mismatches(a, b)
         assert url_diff_list == [
-            'Query values differ. key="k1" a_value="[\'10\', \'11\']" b_value="[\'10\']"'
+            "Query values differ. key=\"k1\" a_value=\"['10', '11']\" b_value=\"['10']\""
         ]
 
     def test_1120(self):

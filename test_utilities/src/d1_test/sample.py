@@ -23,7 +23,6 @@ import logging
 import os
 import re
 import subprocess
-import sys
 import tempfile
 import textwrap
 import traceback
@@ -41,7 +40,6 @@ import d1_common.xml
 
 import d1_test.pycharm
 import d1_test.test_files
-import d1_test.xml_normalize
 
 import d1_client.d1client
 import d1_client.util
@@ -136,14 +134,25 @@ def assert_equals(
 def path_lock(path):
     path = str(path)
     logger.debug("Waiting for lock on path: {}".format(path))
-    with posix_ipc.Semaphore(
+    sem = posix_ipc.Semaphore(
         name="/{}".format(hashlib.md5(path.encode("utf-8")).hexdigest()),
         flags=posix_ipc.O_CREAT,
         initial_value=1,
-    ):
+    )
+    # posix_ipc.Semaphore() can be used as a context manager, and ``with`` uses implicit
+    # ``try/finally`` blocks. However, as a context manager, posix_ipc.Semaphore() does
+    # not ``close()`` and ``unlink()``.
+    try:
+        sem.acquire()
         logger.debug("Acquired lock on path: {}".format(path))
         yield
+    finally:
+        sem.release()
         logger.debug("Released lock on path: {}".format(path))
+        try:
+            sem.unlink()
+        except posix_ipc.ExistentialError:
+            pass
 
 
 @contextlib.contextmanager
@@ -379,9 +388,9 @@ def _clobber_uncontrolled_volatiles(o_str):
     # The uuid module uses MAC address, etc
     o_str = re.sub(r"(?<=test_fragment_volatile_)[0-9a-fA-F]+", "[UUID]", o_str)
     # Version numbers
-    o_str = re.sub(r"(?<=DataONE-Python).?\s*\d\.\d\.\d", "[VERSION]", o_str)
-    o_str = re.sub(r"(?<=DataONE-GMN).?\s*\d\.\d\.\d", "[VERSION]", o_str)
-    o_str = re.sub(r"(?<=Python ITK).?\s*\d\.\d\.\d", "[VERSION]", o_str)
+    o_str = re.sub(r"(?<=DataONE-Python)(.*)\d\.\d\.\d", r"\1[VERSION]", o_str)
+    o_str = re.sub(r"(?<=DataONE-GMN)(.*)\d\.\d\.\d", r"\1[VERSION]", o_str)
+    o_str = re.sub(r"(?<=Python ITK)(.*)\d\.\d\.\d", r"\1[VERSION]", o_str)
     # ETA depends on how fast the computer is
     o_str = re.sub(r"\d{1,3}h\d{2}m\d{2}s", "[ETA-HMS]", o_str)
     # Disk space
@@ -437,8 +446,8 @@ def _get_sxs_diff_file(got_str, exp_path):
     assert isinstance(got_str, str)
     # Work around a bug in ``sdiff``, where it may not detect differences on the last
     # line if the string does not end with LF.
-    if not got_str.endswith('\n'):
-        got_str += '\n'
+    if not got_str.endswith("\n"):
+        got_str += "\n"
     try:
         sdiff_proc = subprocess.Popen(
             [

@@ -45,7 +45,7 @@ import d1_test.mock_api.util
 
 # Config
 N_TOTAL = 100
-OBJECT_LIST_ENDPOINT_RX = r'v([123])/object'
+OBJECT_LIST_ENDPOINT_RX = r"v([123])/object"
 
 
 def add_callback(base_url, n_total=N_TOTAL):
@@ -59,9 +59,9 @@ def add_callback(base_url, n_total=N_TOTAL):
         query_dict, client = _parse_url(request.url)
         n_start, n_count = d1_test.mock_api.util.get_page(query_dict, n_total)
         # TODO: Add support for filters: fromDate, toDate, formatId, replicaStatus
-        header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
-        from_date = query_dict.get('fromDate', None)
-        to_date = query_dict.get('toDate', None)
+        header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_XML}
+        from_date = query_dict.get("fromDate", None)
+        to_date = query_dict.get("toDate", None)
         return (
             200,
             header_dict,
@@ -82,10 +82,10 @@ def add_callback(base_url, n_total=N_TOTAL):
     responses.add_callback(
         responses.GET,
         re.compile(
-            r'^' + d1_common.url.joinPathElements(base_url, OBJECT_LIST_ENDPOINT_RX)
+            r"^" + d1_common.url.joinPathElements(base_url, OBJECT_LIST_ENDPOINT_RX)
         ),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -93,5 +93,5 @@ def _parse_url(url):
     version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
         url
     )
-    assert endpoint_str == 'object'
+    assert endpoint_str == "object"
     return query_dict, client

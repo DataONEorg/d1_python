@@ -43,11 +43,11 @@ import d1_common.date_time
 
 CLAIM_LIST = [
     # JSON key, title, is_date
-    ('iss', 'Issuer', False),
-    ('iat', 'Issued At', True),
-    ('exp', 'Expiration Time', True),
-    ('nbf', 'Not Before Time', True),
-    ('aud', 'Audience', False),
+    ("iss", "Issuer", False),
+    ("iat", "Issued At", True),
+    ("exp", "Expiration Time", True),
+    ("nbf", "Not Before Time", True),
+    ("aud", "Audience", False),
 ]
 
 
@@ -83,7 +83,7 @@ def get_subject_with_local_validation(jwt_bu64, cert_obj):
     except JwtException as e:
         return log_jwt_bu64_info(logging.error, str(e), jwt_bu64)
     try:
-        return jwt_dict['sub']
+        return jwt_dict["sub"]
     except LookupError:
         log_jwt_dict_info(logging.error, 'Missing "sub" key', jwt_dict)
 
@@ -126,7 +126,7 @@ def get_subject_without_validation(jwt_bu64):
     except JwtException as e:
         return log_jwt_bu64_info(logging.error, str(e), jwt_bu64)
     try:
-        return jwt_dict['sub']
+        return jwt_dict["sub"]
     except LookupError:
         log_jwt_dict_info(logging.error, 'Missing "sub" key', jwt_dict)
 
@@ -142,7 +142,7 @@ def get_bu64_tup(jwt_bu64):
       3-tup of Base64: Component sections of the JWT.
 
     """
-    return jwt_bu64.strip().split(b'.')
+    return jwt_bu64.strip().split(b".")
 
 
 def get_jwt_tup(jwt_bu64):
@@ -175,7 +175,7 @@ def get_jwt_bu64(jwt_tup):
         JWT, encoded using a a URL safe flavor of Base64.
 
     """
-    return b'.'.join([encode_bu64(v) for v in jwt_tup])
+    return b".".join([encode_bu64(v) for v in jwt_tup])
 
 
 def get_jwt_dict(jwt_bu64):
@@ -195,9 +195,9 @@ def get_jwt_dict(jwt_bu64):
     """
     jwt_tup = get_jwt_tup(jwt_bu64)
     try:
-        jwt_dict = json.loads(jwt_tup[0].decode('utf-8'))
-        jwt_dict.update(json.loads(jwt_tup[1].decode('utf-8')))
-        jwt_dict['_sig_sha1'] = hashlib.sha1(jwt_tup[2]).hexdigest()
+        jwt_dict = json.loads(jwt_tup[0].decode("utf-8"))
+        jwt_dict.update(json.loads(jwt_tup[1].decode("utf-8")))
+        jwt_dict["_sig_sha1"] = hashlib.sha1(jwt_tup[2]).hexdigest()
     except TypeError as e:
         raise JwtException('Decode failed. error="{}"'.format(e))
     return jwt_dict
@@ -225,7 +225,7 @@ def validate_and_decode(jwt_bu64, cert_obj):
     """
     try:
         return jwt.decode(
-            jwt_bu64.strip(), cert_obj.public_key(), algorithms=['RS256'], verify=True
+            jwt_bu64.strip(), cert_obj.public_key(), algorithms=["RS256"], verify=True
         )
     except jwt.InvalidTokenError as e:
         raise JwtException('Signature is invalid. error="{}"'.format(str(e)))
@@ -256,7 +256,7 @@ def log_jwt_dict_info(log, msg_str, jwt_dict):
     list(
         map(
             log,
-            ['{}:'.format(msg_str)] + ['  {}: {}'.format(k, v) for k, v in log_list],
+            ["{}:".format(msg_str)] + ["  {}: {}".format(k, v) for k, v in log_list],
         )
     )
 
@@ -296,7 +296,7 @@ def ts_to_str(jwt_dict):
     d = ts_to_dt(jwt_dict)
     for k, v in list(d.items()):
         if isinstance(v, datetime.datetime):
-            d[k] = v.isoformat().replace('T', ' ')
+            d[k] = v.isoformat().replace("T", " ")
     return d
 
 
@@ -333,9 +333,9 @@ def encode_bu64(b):
 
     """
     s = base64.standard_b64encode(b)
-    s = s.rstrip('=')
-    s = s.replace('+', '-')
-    s = s.replace('/', '_')
+    s = s.rstrip("=")
+    s = s.replace("+", "-")
+    s = s.replace("/", "_")
     return s
 
 
@@ -353,17 +353,17 @@ def decode_bu64(b):
 
     """
     s = b
-    s = s.replace(b'-', b'+')
-    s = s.replace(b'_', b'/')
+    s = s.replace(b"-", b"+")
+    s = s.replace(b"_", b"/")
     p = len(s) % 4
     if p == 0:
         pass
     elif p == 2:
-        s += b'=='
+        s += b"=="
     elif p == 3:
-        s += b'='
+        s += b"="
     else:
-        raise ValueError('Illegal Base64url string')
+        raise ValueError("Illegal Base64url string")
     return base64.standard_b64decode(s)
 
 

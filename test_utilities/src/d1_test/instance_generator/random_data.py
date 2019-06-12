@@ -30,8 +30,8 @@ import d1_test.instance_generator.unicode_names
 import d1_test.instance_generator.words
 
 # Generate sets of Unicode characters from UNICODE_NAMES.
-UNICODE_CHARACTERS = ''.join(d1_test.instance_generator.unicode_names.UNICODE_NAMES)
-UNICODE_CHARACTERS_NO_WHITESPACE = re.sub(r'\s', '', UNICODE_CHARACTERS)
+UNICODE_CHARACTERS = "".join(d1_test.instance_generator.unicode_names.UNICODE_NAMES)
+UNICODE_CHARACTERS_NO_WHITESPACE = re.sub(r"\s", "", UNICODE_CHARACTERS)
 
 SYMBOLIC_SUBJECT_LIST = [
     d1_common.const.SUBJECT_PUBLIC,
@@ -45,19 +45,19 @@ random.seed()
 
 
 def random_mn(min_len=1, max_len=2):
-    return 'mn_{}'.format(random_lower_ascii(min_len, max_len))
+    return "mn_{}".format(random_lower_ascii(min_len, max_len))
 
 
 def random_cn(min_len=1, max_len=1):
-    return 'cn_{}'.format(random_lower_ascii(min_len, max_len))
+    return "cn_{}".format(random_lower_ascii(min_len, max_len))
 
 
 def random_subj(min_len=1, max_len=2, fixed_len=None, group_chance=0.1):
     if fixed_len is not None:
         min_len = max_len = fixed_len
-    return 'subj_{}{}'.format(
+    return "subj_{}{}".format(
         random_lower_ascii(min_len, max_len),
-        '_group' if random.random() <= group_chance else '',
+        "_group" if random.random() <= group_chance else "",
     )
 
 
@@ -84,7 +84,7 @@ def random_symbolic_subject():
 def random_lower_ascii(min_len=2, max_len=2, fixed_len=None):
     if fixed_len is not None:
         min_len = max_len = fixed_len
-    return ''.join(
+    return "".join(
         [
             random.choice(string.ascii_lowercase)
             for _ in range(random.randint(min_len, max_len))
@@ -150,7 +150,7 @@ def random_word():
 
 def random_3_words():
     """Return 3 random words separated by a random separator."""
-    sep = random.choice('~!@#$%^&*-+;:,./')
+    sep = random.choice("~!@#$%^&*-+;:,./")
     return sep.join(random_word_unique_list(3))
 
 
@@ -193,7 +193,7 @@ def random_unicode_str(num_chars=5, max_chars=None):
       between ``num_chars`` and ``max_chars`` (including) is returned.
 
     """
-    return ''.join(
+    return "".join(
         [
             random_unicode_char()
             for _ in range(random_within_range(num_chars, max_chars))
@@ -204,10 +204,10 @@ def random_unicode_str(num_chars=5, max_chars=None):
 def random_email():
     return (
         random_lower_ascii()
-        + '@'
+        + "@"
         + random_lower_ascii()
         + random_lower_ascii()
-        + '.dataone.org'
+        + ".dataone.org"
     )
 
 

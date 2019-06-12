@@ -50,7 +50,6 @@ import xml.dom
 import xml.dom.minidom
 import xml.etree
 import xml.etree.ElementTree
-import xml.sax
 
 import pyxb
 import pyxb.namespace.utility
@@ -63,15 +62,15 @@ import d1_common.types.dataoneTypes_v2_0
 # Map common namespace prefixes to namespaces
 NS_DICT = {
     # TODO: 'v1' should map to v1_2.Namespace
-    'v1': str(d1_common.types.dataoneTypes_v1.Namespace),
-    'v1_1': str(d1_common.types.dataoneTypes_v1_1.Namespace),
-    'v1_2': str(d1_common.types.dataoneTypes_v1_2.Namespace),
-    'v2': str(d1_common.types.dataoneTypes_v2_0.Namespace),
-    'rdfs': 'http://www.w3.org/2000/01/rdf-schema#',
-    'ore': 'http://www.openarchives.org/ore/terms/',
-    'rdf': 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
-    'dcterms': 'http://purl.org/dc/terms/',
-    'cito': 'http://purl.org/spar/cito/',
+    "v1": str(d1_common.types.dataoneTypes_v1.Namespace),
+    "v1_1": str(d1_common.types.dataoneTypes_v1_1.Namespace),
+    "v1_2": str(d1_common.types.dataoneTypes_v1_2.Namespace),
+    "v2": str(d1_common.types.dataoneTypes_v2_0.Namespace),
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "ore": "http://www.openarchives.org/ore/terms/",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "cito": "http://purl.org/spar/cito/",
 }
 
 
@@ -79,15 +78,15 @@ NS_DICT = {
 NS_REVERSE_DICT = {v: k for k, v in NS_DICT.items()}
 
 BINDING_TO_VERSION_TAG_DICT = {
-    d1_common.types.dataoneTypes_v1: 'v1',
-    d1_common.types.dataoneTypes_v1_1: 'v1',
-    d1_common.types.dataoneTypes_v1_2: 'v1',
-    d1_common.types.dataoneTypes_v2_0: 'v2',
+    d1_common.types.dataoneTypes_v1: "v1",
+    d1_common.types.dataoneTypes_v1_1: "v1",
+    d1_common.types.dataoneTypes_v1_2: "v1",
+    d1_common.types.dataoneTypes_v2_0: "v2",
 }
 
 VERSION_TO_BINDING_DICT = {
-    'v1': d1_common.types.dataoneTypes_v1_2,
-    'v2': d1_common.types.dataoneTypes_v2_0,
+    "v1": d1_common.types.dataoneTypes_v1_2,
+    "v2": d1_common.types.dataoneTypes_v2_0,
     (1, 0): d1_common.types.dataoneTypes_v1,
     (1, 1): d1_common.types.dataoneTypes_v1_1,
     (1, 2): d1_common.types.dataoneTypes_v1_2,
@@ -144,7 +143,7 @@ def get_pyxb_binding_by_api_version(api_major, api_minor=0):
         return VERSION_TO_BINDING_DICT[api_major, api_minor]
     except KeyError:
         raise ValueError(
-            'Unknown DataONE API version: {}.{}'.format(api_major, api_minor)
+            "Unknown DataONE API version: {}.{}".format(api_major, api_minor)
         )
 
 
@@ -156,7 +155,7 @@ def get_version_tag(api_major):
     ``v2``.
 
     """
-    return 'v{}'.format(api_major)
+    return "v{}".format(api_major)
 
 
 def extract_version_tag_from_url(url):
@@ -170,7 +169,7 @@ def extract_version_tag_from_url(url):
       str : Valid version tags are currently ``v1`` or ``v2``.
 
     """
-    m = re.match(r'(/|^)(v\d)(/|$)', url)
+    m = re.match(r"(/|^)(v\d)(/|$)", url)
     if not m:
         return None
     return m.group(2)
@@ -355,7 +354,7 @@ def pyxb_get_type_name(obj_pyxb):
        E.g.: ``SystemMetadata``, ``LogEntry``, ``ObjectInfo``.
 
     """
-    return pyxb_get_namespace_name(obj_pyxb).split('}')[-1]
+    return pyxb_get_namespace_name(obj_pyxb).split("}")[-1]
 
 
 # noinspection PyProtectedMember
@@ -404,7 +403,7 @@ def str_is_error(xml_str):
   Returns:
     bool: **True** if XML doc is a DataONE Exception type.
   """
-    return str_to_etree(xml_str).tag == 'error'
+    return str_to_etree(xml_str).tag == "error"
 
 
 def str_is_identifier(xml_str):
@@ -418,7 +417,7 @@ def str_is_identifier(xml_str):
   """
     return (
         str_to_etree(xml_str).tag
-        == '{http://ns.dataone.org/service/types/v1}identifier'
+        == "{http://ns.dataone.org/service/types/v1}identifier"
     )
 
 
@@ -433,7 +432,7 @@ def str_is_objectList(xml_str):
   """
     return (
         str_to_etree(xml_str).tag
-        == '{http://ns.dataone.org/service/types/v1}objectList'
+        == "{http://ns.dataone.org/service/types/v1}objectList"
     )
 
 
@@ -506,7 +505,7 @@ def str_to_pyxb(xml_str):
     return d1_common.types.dataoneTypes_v1.CreateFromDocument(xml_str)
 
 
-def str_to_etree(xml_str, encoding='utf-8'):
+def str_to_etree(xml_str, encoding="utf-8"):
     """Deserialize API XML doc to an ElementTree.
 
     Args:
@@ -524,7 +523,7 @@ def str_to_etree(xml_str, encoding='utf-8'):
     return xml.etree.ElementTree.fromstring(xml_str, parser=parser)
 
 
-def pyxb_to_str(pyxb_obj, encoding='utf-8'):
+def pyxb_to_str(pyxb_obj, encoding="utf-8"):
     """Serialize PyXB object to XML doc.
 
     Args:
@@ -541,7 +540,7 @@ def pyxb_to_str(pyxb_obj, encoding='utf-8'):
     return pyxb_obj.toxml(encoding)
 
 
-def etree_to_str(etree_obj, encoding='utf-8'):
+def etree_to_str(etree_obj, encoding="utf-8"):
     """Serialize ElementTree to XML doc.
 
     Args:
@@ -558,7 +557,7 @@ def etree_to_str(etree_obj, encoding='utf-8'):
     return xml.etree.ElementTree.tostring(etree_obj, encoding)
 
 
-def etree_to_pretty_xml(etree_obj, encoding='unicode'):
+def etree_to_pretty_xml(etree_obj, encoding="unicode"):
     """Serialize ElementTree to pretty printed XML doc.
 
     Args:
@@ -574,9 +573,9 @@ def etree_to_pretty_xml(etree_obj, encoding='unicode'):
     """
     doc_xml = xml.etree.ElementTree.tostring(etree_obj, encoding)
     dom_obj = xml.dom.minidom.parseString(doc_xml)
-    pretty_xml = dom_obj.toprettyxml(indent='  ')
+    pretty_xml = dom_obj.toprettyxml(indent="  ")
     # Remove empty lines in the result caused by a bug in toprettyxml()
-    return re.sub(r'^\s*$\n', r'', pretty_xml, flags=re.MULTILINE)
+    return re.sub(r"^\s*$\n", r"", pretty_xml, flags=re.MULTILINE)
 
 
 def pyxb_to_etree(pyxb_obj):
@@ -628,7 +627,7 @@ def replace_namespace_with_prefix(tag_str, ns_reverse_dict=None):
     ns_reverse_dict = ns_reverse_dict or NS_REVERSE_DICT
     for namespace_str, prefix_str in ns_reverse_dict.items():
         tag_str = tag_str.replace(
-            '{{{}}}'.format(namespace_str), '{}:'.format(prefix_str)
+            "{{{}}}".format(namespace_str), "{}:".format(prefix_str)
         )
     return tag_str
 
@@ -645,7 +644,7 @@ def etree_replace_namespace(etree_obj, ns_str):
     """
 
     def _replace_recursive(el, n):
-        el.tag = re.sub(r'{.*\}', '{{{}}}'.format(n), el.tag)
+        el.tag = re.sub(r"{.*\}", "{{{}}}".format(n), el.tag)
         el.text = el.text.strip() if el.text else None
         el.tail = el.tail.strip() if el.tail else None
         for child_el in el:
@@ -661,15 +660,15 @@ def strip_v2_elements(etree_obj):
     that changed between v1 and v2.
 
     """
-    if etree_obj.tag == v2_0_tag('logEntry'):
+    if etree_obj.tag == v2_0_tag("logEntry"):
         strip_logEntry(etree_obj)
-    elif etree_obj.tag == v2_0_tag('log'):
+    elif etree_obj.tag == v2_0_tag("log"):
         strip_log(etree_obj)
-    elif etree_obj.tag == v2_0_tag('node'):
+    elif etree_obj.tag == v2_0_tag("node"):
         strip_node(etree_obj)
-    elif etree_obj.tag == v2_0_tag('nodeList'):
+    elif etree_obj.tag == v2_0_tag("nodeList"):
         strip_node_list(etree_obj)
-    elif etree_obj.tag == v2_0_tag('systemMetadata'):
+    elif etree_obj.tag == v2_0_tag("systemMetadata"):
         strip_system_metadata(etree_obj)
     else:
         raise ValueError('Unknown root element. tag="{}"'.format(etree_obj.tag))
@@ -682,11 +681,11 @@ def strip_system_metadata(etree_obj):
     Args:   etree_obj: ElementTree     ElementTree holding a v1 SystemMetadata.
 
     """
-    for series_id_el in etree_obj.findall('seriesId'):
+    for series_id_el in etree_obj.findall("seriesId"):
         etree_obj.remove(series_id_el)
-    for media_type_el in etree_obj.findall('mediaType'):
+    for media_type_el in etree_obj.findall("mediaType"):
         etree_obj.remove(media_type_el)
-    for file_name_el in etree_obj.findall('fileName'):
+    for file_name_el in etree_obj.findall("fileName"):
         etree_obj.remove(file_name_el)
 
 
@@ -697,7 +696,7 @@ def strip_log(etree_obj):
     Args:   etree_obj: ElementTree     ElementTree holding a v1 Log.
 
     """
-    for log_entry_el in etree_obj.findall('logEntry'):
+    for log_entry_el in etree_obj.findall("logEntry"):
         strip_logEntry(log_entry_el)
 
 
@@ -708,17 +707,17 @@ def strip_logEntry(etree_obj):
     Args:   etree_obj: ElementTree     ElementTree holding a v1 LogEntry.
 
     """
-    for event_el in etree_obj.findall('event'):
+    for event_el in etree_obj.findall("event"):
         if event_el.text not in (
-            'create',
-            'read',
-            'update',
-            'delete',
-            'replicate',
-            'synchronization_failed',
-            'replication_failed',
+            "create",
+            "read",
+            "update",
+            "delete",
+            "replicate",
+            "synchronization_failed",
+            "replication_failed",
         ):
-            event_el.text = 'create'
+            event_el.text = "create"
 
 
 def strip_node(etree_obj):
@@ -728,7 +727,7 @@ def strip_node(etree_obj):
     Args:   etree_obj: ElementTree     ElementTree holding a v1 Node.
 
     """
-    for property_el in etree_obj.findall('property'):
+    for property_el in etree_obj.findall("property"):
         etree_obj.remove(property_el)
 
 
@@ -739,7 +738,7 @@ def strip_node_list(etree_obj):
     Args:   etree_obj: ElementTree     ElementTree holding a v1 NodeList.
 
     """
-    for node_el in etree_obj.findall('node'):
+    for node_el in etree_obj.findall("node"):
         strip_node(node_el)
 
 
@@ -755,4 +754,4 @@ def v2_0_tag(element_name):
       ``{http://ns.dataone.org/service/types/v2.0}NodeList``
 
     """
-    return '{{{}}}{}'.format(NS_DICT['v2'], element_name)
+    return "{{{}}}{}".format(NS_DICT["v2"], element_name)

@@ -39,7 +39,7 @@ def get_sci_model(pid):
 
 def get_pids_for_all_locally_stored_objects():
     return d1_gmn.app.models.ScienceObject.objects.all().values_list(
-        'pid__did', flat=True
+        "pid__did", flat=True
     )
 
 
@@ -58,8 +58,8 @@ def delete_unused_subjects():
     query = query.filter(permission__isnull=True)
     query = query.filter(whitelistforcreateupdatedelete__isnull=True)
 
-    logger.debug('Deleting {} unused subjects:'.format(query.count()))
+    logger.debug("Deleting {} unused subjects:".format(query.count()))
     for s in query.all():
-        logging.debug('  {}'.format(s.subject))
+        logging.debug("  {}".format(s.subject))
 
     query.delete()

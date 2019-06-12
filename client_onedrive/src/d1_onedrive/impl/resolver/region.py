@@ -44,7 +44,7 @@ log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
 
 # GAZETTEER_HOST = '192.168.1.116'
-GAZETTEER_HOST = 'stress-1-unm.test.dataone.org'
+GAZETTEER_HOST = "stress-1-unm.test.dataone.org"
 
 README_TXT = """Region Folder
 
@@ -84,18 +84,18 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
         self._readme_txt = util.os_format(README_TXT)
 
     def get_attributes(self, object_tree_folder, path):
-        log.debug('get_attributes: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_attributes: {}".format(util.string_from_path_elements(path)))
 
         return self._get_attributes(object_tree_folder, path)
 
     def get_directory(self, object_tree_folder, path):
-        log.debug('get_directory: {}'.format(util.string_from_path_elements(path)))
+        log.debug("get_directory: {}".format(util.string_from_path_elements(path)))
 
         return self._get_directory(object_tree_folder, path)
 
     def read_file(self, object_tree_folder, path, size, offset):
         log.debug(
-            'read_file: {}, {}, {}'.format(
+            "read_file: {}, {}, {}".format(
                 util.string_from_path_elements(path), size, offset
             )
         )
@@ -107,7 +107,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
     #
 
     def _get_attributes(self, object_tree_folder, path):
-        if path == ['readme.txt']:
+        if path == ["readme.txt"]:
             return attributes.Attributes(len(self._readme_txt))
 
         merged_region_tree = self._get_merged_region_tree(object_tree_folder)
@@ -152,12 +152,12 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
         # Add readme.txt to root.
         if not path:
-            dir.append('readme.txt')
+            dir.append("readme.txt")
 
         return dir
 
     def _read_file(self, object_tree_folder, path, size, offset):
-        if path == ['readme.txt']:
+        if path == ["readme.txt"]:
             return self._readme_txt[offset : offset + size]
 
         merged_region_tree = self._get_merged_region_tree(object_tree_folder)
@@ -189,27 +189,27 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
 
     def _get_unique_dictionary_key(self, object_tree_folder):
         m = hashlib.sha1()
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             m.update(pid)
         return m.hexdigest()
 
     def _get_region_tree_for_geo_record(self, geo_record):
         try:
             c = http.client.HTTPConnection(GAZETTEER_HOST)
-            c.request('GET', '/region_tree/{}/{}/{}/{}'.format(*geo_record[1:]))
+            c.request("GET", "/region_tree/{}/{}/{}/{}".format(*geo_record[1:]))
             return json.loads(c.getresponse().read())
         except (http.client.HTTPException, socket.error):
-            return {'Reverse geocoding failed': {}}
+            return {"Reverse geocoding failed": {}}
 
     def _get_records_with_geo_bounding_box(self, object_tree_folder):
         geo_records = []
-        for pid in object_tree_folder['items']:
+        for pid in object_tree_folder["items"]:
             record = self._object_tree.get_object_record(pid)
             try:
-                w = record['westBoundCoord']
-                s = record['southBoundCoord']
-                e = record['eastBoundCoord']
-                n = record['northBoundCoord']
+                w = record["westBoundCoord"]
+                s = record["southBoundCoord"]
+                e = record["eastBoundCoord"]
+                n = record["northBoundCoord"]
             except KeyError:
                 pass
             else:
@@ -235,7 +235,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
                 self._merge_region_trees(dst_tree[k], v, pid)
 
     def _get_region_tree_item_and_unconsumed_path(
-        self, region_tree, path, parent_key=''
+        self, region_tree, path, parent_key=""
     ):
         """Return the region_tree item specified by path. An item can be a a folder
         (represented by a dictionary) or a PID (represented by None).
@@ -274,7 +274,7 @@ class Resolver(d1_onedrive.impl.resolver.resolver_base.Resolver):
                 region_tree[path[0]], path[1:], path[0]
             )
         else:
-            raise onedrive_exceptions.PathException('Invalid path')
+            raise onedrive_exceptions.PathException("Invalid path")
 
         # if path[0] in region_tree.keys():
         #  if region_tree[path[0]] is None:

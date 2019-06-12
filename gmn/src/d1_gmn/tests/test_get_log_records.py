@@ -35,12 +35,12 @@ import d1_common.xml
 import d1_test.d1_test_case
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestGetLogRecords')
-@freezegun.freeze_time('1977-05-27')
+@d1_test.d1_test_case.reproducible_random_decorator("TestGetLogRecords")
+@freezegun.freeze_time("1977-05-27")
 class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def norm_entry_id(self, log):
         for log_entry_pyxb in log.logEntry:
-            log_entry_pyxb.entryId = '1'
+            log_entry_pyxb.entryId = "1"
 
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
@@ -49,7 +49,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(start=0, count=0)
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'number_of_events', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "number_of_events", gmn_client_v1_v2)
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
@@ -57,7 +57,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(start=0, count=3)
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'front_section', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "front_section", gmn_client_v1_v2)
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
@@ -66,7 +66,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
             n_events = self.get_total_log_records(gmn_client_v1_v2)
             log = gmn_client_v1_v2.getLogRecords(start=n_events // 2, count=7)
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'middle_section', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "middle_section", gmn_client_v1_v2)
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
@@ -75,7 +75,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
             n_events = self.get_total_log_records(gmn_client_v1_v2)
             log = gmn_client_v1_v2.getLogRecords(start=n_events - 1, count=1)
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'exact_end_section', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "exact_end_section", gmn_client_v1_v2)
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
@@ -85,7 +85,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
             n_events = self.get_total_log_records(gmn_client_v1_v2)
             log = gmn_client_v1_v2.getLogRecords(start=n_events - 10, count=100)
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'count_beyond_end_section', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "count_beyond_end_section", gmn_client_v1_v2)
 
     @responses.activate
     def test_1050(self, gmn_client_v1_v2):
@@ -105,18 +105,18 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         """
         with d1_gmn.tests.gmn_mock.disable_auth():
-            log = gmn_client_v1_v2.getLogRecords(event='bogus_event')
+            log = gmn_client_v1_v2.getLogRecords(event="bogus_event")
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'event_filter_unknown', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "event_filter_unknown", gmn_client_v1_v2)
 
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
         """MNCore.getLogRecords(): event type filter: known event returns list of
         requested size with total equal to the number of events of the type."""
         with d1_gmn.tests.gmn_mock.disable_auth():
-            log = gmn_client_v1_v2.getLogRecords(event='update', count=10)
+            log = gmn_client_v1_v2.getLogRecords(event="update", count=10)
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'event_filter_update', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "event_filter_update", gmn_client_v1_v2)
 
     @responses.activate
     def test_1080(self, gmn_client_v1_v2):
@@ -140,8 +140,8 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.norm_entry_id(newest_log)
             self.norm_entry_id(oldest_log)
             self.sample.assert_equals(
-                '\n\n'.join([self.format_pyxb(v) for v in (newest_log, oldest_log)]),
-                'date_range_first_last',
+                "\n\n".join([self.format_pyxb(v) for v in (newest_log, oldest_log)]),
+                "date_range_first_last",
                 gmn_client_v1_v2,
             )
 
@@ -157,7 +157,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 count=1,
             )
             self.norm_entry_id(log)
-            self.sample.assert_equals(log, 'date_range_in_the_future', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "date_range_in_the_future", gmn_client_v1_v2)
 
     @responses.activate
     def test_1100(self, gmn_client_v1_v2):
@@ -173,37 +173,37 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 )
 
     @responses.activate
-    @freezegun.freeze_time('2388-08-28')
+    @freezegun.freeze_time("2388-08-28")
     def test_1110(self, gmn_client_v1_v2):
         """MNCore.getLogRecords(): create() of object causes a new create event to be
         added for the given PID."""
         with d1_gmn.tests.gmn_mock.disable_auth():
             n_create_events_before = self.get_total_log_records(
-                gmn_client_v1_v2, event='create'
+                gmn_client_v1_v2, event="create"
             )
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
                 gmn_client_v1_v2, now_dt=datetime.datetime(2388, 8, 28)
             )
             n_create_events_after = self.get_total_log_records(
-                gmn_client_v1_v2, event='create'
+                gmn_client_v1_v2, event="create"
             )
             assert n_create_events_after == n_create_events_before + 1
             # Verify that the most recent record now matches the object that was created
             event_pyxb = gmn_client_v1_v2.getLogRecords(start=0, count=1)
             self.sample.assert_equals(
-                '\n'.join(
+                "\n".join(
                     [
-                        'pid: {}'.format(pid),
-                        'sid: {}'.format(sid),
-                        'sysmeta: {}'.format(
+                        "pid: {}".format(pid),
+                        "sid: {}".format(sid),
+                        "sysmeta: {}".format(
                             d1_common.xml.serialize_to_xml_str(sysmeta_pyxb)
                         ),
-                        'create_event: {}'.format(
+                        "create_event: {}".format(
                             d1_common.xml.serialize_to_xml_str(event_pyxb)
                         ),
                     ]
                 ),
-                'new_create_event',
+                "new_create_event",
                 gmn_client_v1_v2,
             )
 
@@ -218,7 +218,7 @@ class TestGetLogRecords(d1_gmn.tests.gmn_test_case.GMNTestCase):
         sid = self.get_sid_with_min_chain_length()
         with d1_gmn.tests.gmn_mock.disable_auth():
             log = gmn_client_v1_v2.getLogRecords(idFilter=sid)
-            self.sample.assert_equals(log, 'id_filter_with_sid', gmn_client_v1_v2)
+            self.sample.assert_equals(log, "id_filter_with_sid", gmn_client_v1_v2)
 
     @responses.activate
     def test_1130(self, gmn_client_v1_v2):

@@ -51,7 +51,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(self.client_v2, sid=True)
         with django.test.override_settings(NODE_REPLICATE=True):
             with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-                gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
     @responses.activate
     def test_1010(self, gmn_client_v1_v2):
@@ -63,7 +63,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with django.test.override_settings(NODE_REPLICATE=False):
             with d1_gmn.tests.gmn_mock.disable_auth():
                 with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-                    gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                    gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
@@ -77,7 +77,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
         ):
             with d1_gmn.tests.gmn_mock.disable_auth():
                 with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-                    gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                    gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
@@ -87,7 +87,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
         )
         with django.test.override_settings(NODE_REPLICATE=True):
             with d1_gmn.tests.gmn_mock.disable_auth():
-                gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
@@ -97,10 +97,10 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
             with d1_gmn.tests.gmn_mock.disable_auth():
                 with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
-                    gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                    gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
     parameterize_dict = {
-        'test_1050': [dict(true_or_false=True), dict(true_or_false=False)]
+        "test_1050": [dict(true_or_false=True), dict(true_or_false=False)]
     }
 
     @responses.activate
@@ -113,12 +113,12 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
                 gmn_client_v1_v2,
                 permission_list=[
-                    ([d1_common.const.SUBJECT_PUBLIC], ['read']),
-                    (['subj2', 'subj3', 'subj4'], ['write']),
+                    ([d1_common.const.SUBJECT_PUBLIC], ["read"]),
+                    (["subj2", "subj3", "subj4"], ["write"]),
                 ],
             )
             with d1_gmn.tests.gmn_mock.disable_auth():
-                gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
     @responses.activate
     def test_1060(self, gmn_client_v1_v2):
@@ -130,12 +130,12 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.generate_sciobj_with_defaults(
                 gmn_client_v1_v2,
                 permission_list=[
-                    ([d1_common.const.SUBJECT_PUBLIC], ['read']),
-                    (['subj2', 'subj3', 'subj4'], ['write']),
+                    ([d1_common.const.SUBJECT_PUBLIC], ["read"]),
+                    (["subj2", "subj3", "subj4"], ["write"]),
                 ],
             )
             with d1_gmn.tests.gmn_mock.disable_auth():
-                gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
     @responses.activate
     def test_1070(self, gmn_client_v1_v2):
@@ -149,4 +149,4 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
             )
             with d1_gmn.tests.gmn_mock.disable_auth():
                 with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-                    gmn_client_v1_v2.replicate(sysmeta_pyxb, 'urn:node:testSourceNode')
+                    gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")

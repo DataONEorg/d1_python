@@ -31,4 +31,4 @@ from d1_common.types.generated.dataoneErrors import *
 #
 # This warning occurs because traceInformation is an xs:anyType, which can
 # hold any XML structure so noPyXB bindingcan be generated.
-logging.getLogger('pyxb.binding.basis').setLevel(logging.ERROR)
+logging.getLogger("pyxb.binding.basis").setLevel(logging.ERROR)

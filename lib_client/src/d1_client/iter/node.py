@@ -48,7 +48,7 @@ class NodeListIterator(object):
         )
         # The NodeList type does not support slicing.
         node_list_pyxb = client.listNodes()
-        self._log.debug('Retrieved {} Node documents'.format(len(node_list_pyxb.node)))
+        self._log.debug("Retrieved {} Node documents".format(len(node_list_pyxb.node)))
         for node_pyxb in sorted(
             node_list_pyxb.node, key=lambda x: x.identifier.value()
         ):

@@ -24,20 +24,22 @@ import os
 
 DEFAULT_EXCLUDE_GLOB_LIST = [
     # Dirs
-    'build/',
-    'dist/',
-    '*egg-info/',
-    'generated/',
-    '.git/',
-    'doc/',
-    '.idea/',
-    'migrations/',
-    '__pycache__/',
+    "*egg-info/",
+    ".git/",
+    ".idea/",
+    "__pycache__/",
+    ".eggs/",
+    ".pytest_cache/",
+    "build/",
+    "dist/",
+    "doc/",
+    "generated/",
+    "migrations/",
     # Files
-    '*~',
-    '*.bak',
-    '*.tmp',
-    '*.pyc',
+    "*~",
+    "*.bak",
+    "*.tmp",
+    "*.pyc",
 ]
 
 
@@ -159,15 +161,15 @@ def path_generator(
     if default_excludes:
         exclude_glob_list += DEFAULT_EXCLUDE_GLOB_LIST
 
-    logging.debug('file_iter():')
-    logging.debug('  paths: {}'.format(', '.join(path_list)))
-    logging.debug('  include: {}'.format(', '.join(include_glob_list)))
-    logging.debug('  exclude: {}'.format(', '.join(exclude_glob_list)))
-    logging.debug('  recursive: {}'.format(recursive))
-    logging.debug('  ignore_invalid: {}'.format(ignore_invalid))
-    logging.debug('  default_excludes: {}'.format(default_excludes))
-    logging.debug('  return_dir_paths: {}'.format(return_dir_paths))
-    logging.debug('')
+    logging.debug("file_iter():")
+    logging.debug("  paths: {}".format(", ".join(path_list)))
+    logging.debug("  include: {}".format(", ".join(include_glob_list)))
+    logging.debug("  exclude: {}".format(", ".join(exclude_glob_list)))
+    logging.debug("  recursive: {}".format(recursive))
+    logging.debug("  ignore_invalid: {}".format(ignore_invalid))
+    logging.debug("  default_excludes: {}".format(default_excludes))
+    logging.debug("  return_dir_paths: {}".format(return_dir_paths))
+    logging.debug("")
 
     include_file_glob_list = [
         p for p in include_glob_list if not p.endswith(os.path.sep)
@@ -214,7 +216,7 @@ def path_generator(
 
         else:
             if not ignore_invalid:
-                raise EnvironmentError(0, 'Not a valid file or dir path', path)
+                raise EnvironmentError(0, "Not a valid file or dir path", path)
 
 
 def _is_filtered(name, include_glob_list, exclude_glob_list):
@@ -249,7 +251,7 @@ def _filtered_walk(
             d
             for d in dir_list
             if not _is_filtered(
-                os.path.split(d)[1] + '/', include_dir_glob_list, exclude_dir_glob_list
+                os.path.split(d)[1] + "/", include_dir_glob_list, exclude_dir_glob_list
             )
         ]
 

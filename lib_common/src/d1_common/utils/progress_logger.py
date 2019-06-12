@@ -261,7 +261,7 @@ class ProgressLogger:
 
     def _log_active_task_types(self):
         if self._task_dict:
-            self._log_msg('Active task types: {}'.format(", ".join(self._task_dict)))
+            self._log_msg("Active task types: {}".format(", ".join(self._task_dict)))
         else:
             self._log_msg("Active task types: None")
 

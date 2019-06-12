@@ -66,8 +66,8 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
             )
 
         with d1_gmn.tests.gmn_mock.disable_auth():
-            test(gmn_client_v1_v2, 'MD5')
-            test(gmn_client_v1_v2, 'SHA-1')
+            test(gmn_client_v1_v2, "MD5")
+            test(gmn_client_v1_v2, "SHA-1")
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
@@ -76,7 +76,7 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
         with d1_gmn.tests.gmn_mock.disable_auth():
             pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(gmn_client_v1_v2)
             with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-                gmn_client_v1_v2.getChecksum(pid, 'INVALID_ALGORITHM')
+                gmn_client_v1_v2.getChecksum(pid, "INVALID_ALGORITHM")
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
@@ -84,4 +84,4 @@ class TestGetChecksum(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         with d1_gmn.tests.gmn_mock.disable_auth():
             with pytest.raises(d1_common.types.exceptions.NotFound):
-                gmn_client_v1_v2.getChecksum('INVALID_PID')
+                gmn_client_v1_v2.getChecksum("INVALID_PID")

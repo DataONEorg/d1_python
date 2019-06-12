@@ -27,8 +27,8 @@ import pprint
 
 
 def log_dump(s):
-    logging.debug('-' * 100)
-    logging.debug('{}: {}'.format(s, pprint.pformat(s)))
+    logging.debug("-" * 100)
+    logging.debug("{}: {}".format(s, pprint.pformat(s)))
 
 
 def ensure_dir_exists(path):
@@ -44,11 +44,11 @@ def string_from_path_elements(path):
 
 
 def is_root(path):
-    return path == ['', '']
+    return path == ["", ""]
 
 
 def os_format(txt):
     if platform.system() == "Windows":
-        return txt.replace('\n', '\r\n').encode('utf16')
+        return txt.replace("\n", "\r\n").encode("utf16")
     else:
-        return txt.encode('utf-8')
+        return txt.encode("utf-8")

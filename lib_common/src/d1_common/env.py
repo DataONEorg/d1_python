@@ -20,29 +20,29 @@
 import d1_common.const
 
 D1_ENV_DICT = {
-    'prod': {
-        'name': 'Production',
-        'base_url': d1_common.const.URL_DATAONE_ROOT,
-        'host': 'cn.dataone.org',
-        'solr_base': '/cn/v1/query/solr/',
+    "prod": {
+        "name": "Production",
+        "base_url": d1_common.const.URL_DATAONE_ROOT,
+        "host": "cn.dataone.org",
+        "solr_base": "/cn/v1/query/solr/",
     },
-    'stage': {
-        'name': 'Stage',
-        'base_url': 'https://cn-stage.test.dataone.org/cn',
-        'host': 'cn-stage.test.dataone.org',
-        'solr_base': '/cn/v1/query/solr/',
+    "stage": {
+        "name": "Stage",
+        "base_url": "https://cn-stage.test.dataone.org/cn",
+        "host": "cn-stage.test.dataone.org",
+        "solr_base": "/cn/v1/query/solr/",
     },
-    'sandbox': {
-        'name': 'Sandbox',
-        'base_url': 'https://cn-sandbox.test.dataone.org/cn',
-        'host': 'cn-sandbox.test.dataone.org',
-        'solr_base': '/cn/v1/query/solr/',
+    "sandbox": {
+        "name": "Sandbox",
+        "base_url": "https://cn-sandbox.test.dataone.org/cn",
+        "host": "cn-sandbox.test.dataone.org",
+        "solr_base": "/cn/v1/query/solr/",
     },
-    'dev': {
-        'name': 'Development',
-        'base_url': 'https://cn-dev.test.dataone.org/cn',
-        'host': 'cn-dev.test.dataone.org',
-        'solr_base': '/cn/v1/query/solr/',
+    "dev": {
+        "name": "Development",
+        "base_url": "https://cn-dev.test.dataone.org/cn",
+        "host": "cn-dev.test.dataone.org",
+        "solr_base": "/cn/v1/query/solr/",
     },
 }
 
@@ -55,7 +55,7 @@ def get_d1_env_keys():
 
     """
     # These must match the keys in D1_ENV_DICT.
-    return ['prod', 'stage', 'sandbox', 'dev']
+    return ["prod", "stage", "sandbox", "dev"]
 
 
 def get_d1_env(env_key):
@@ -72,5 +72,5 @@ def get_d1_env_by_base_url(cn_base_url):
     """Given the BaseURL for a CN, return the DataONE environment dict for the CN's
     environemnt."""
     for k, v in D1_ENV_DICT:
-        if v['base_url'].startswith(cn_base_url):
+        if v["base_url"].startswith(cn_base_url):
             return D1_ENV_DICT[k]

@@ -77,7 +77,7 @@ def deserialize_d1_exception(doc_xml):
 
 
 def serialize_gen(
-    obj_pyxb, encoding='utf-8', pretty=False, strip_prolog=False, xslt_url=None
+    obj_pyxb, encoding="utf-8", pretty=False, strip_prolog=False, xslt_url=None
 ):
     """Serialize PyXB object to XML.
 
@@ -104,7 +104,7 @@ def serialize_gen(
 
     """
     assert d1_common.type_conversions.is_pyxb(obj_pyxb)
-    assert encoding in (None, 'utf-8', 'UTF-8')
+    assert encoding in (None, "utf-8", "UTF-8")
     try:
         obj_dom = obj_pyxb.toDOM()
     except pyxb.ValidationError as e:
@@ -116,25 +116,25 @@ def serialize_gen(
 
     if xslt_url:
         xslt_processing_instruction = obj_dom.createProcessingInstruction(
-            'xml-stylesheet', 'type="text/xsl" href="{}"'.format(xslt_url)
+            "xml-stylesheet", 'type="text/xsl" href="{}"'.format(xslt_url)
         )
         root = obj_dom.firstChild
         obj_dom.insertBefore(xslt_processing_instruction, root)
 
     if pretty:
-        xml_str = obj_dom.toprettyxml(indent='  ', encoding=encoding)
+        xml_str = obj_dom.toprettyxml(indent="  ", encoding=encoding)
         # Remove empty lines in the result caused by a bug in toprettyxml()
         if encoding is None:
-            xml_str = re.sub(r'^\s*$\n', r'', xml_str, flags=re.MULTILINE)
+            xml_str = re.sub(r"^\s*$\n", r"", xml_str, flags=re.MULTILINE)
         else:
-            xml_str = re.sub(b'^\s*$\n', b'', xml_str, flags=re.MULTILINE)
+            xml_str = re.sub(b"^\s*$\n", b"", xml_str, flags=re.MULTILINE)
     else:
         xml_str = obj_dom.toxml(encoding)
     if strip_prolog:
         if encoding is None:
-            xml_str = re.sub(r'^<\?(.*)\?>', r'', xml_str)
+            xml_str = re.sub(r"^<\?(.*)\?>", r"", xml_str)
         else:
-            xml_str = re.sub(b'^<\?(.*)\?>', b'', xml_str)
+            xml_str = re.sub(b"^<\?(.*)\?>", b"", xml_str)
 
     return xml_str.strip()
 
@@ -165,7 +165,7 @@ def serialize_for_transport(obj_pyxb, pretty=False, strip_prolog=False, xslt_url
       ``serialize_for_display()``
 
     """
-    return serialize_gen(obj_pyxb, 'utf-8', pretty, strip_prolog, xslt_url)
+    return serialize_gen(obj_pyxb, "utf-8", pretty, strip_prolog, xslt_url)
 
 
 # TODO: Rename to serialize_for_display
@@ -207,9 +207,9 @@ def reformat_to_pretty_xml(doc_xml):
     """
     assert isinstance(doc_xml, str)
     dom_obj = xml.dom.minidom.parseString(doc_xml)
-    pretty_xml = dom_obj.toprettyxml(indent='  ')
+    pretty_xml = dom_obj.toprettyxml(indent="  ")
     # Remove empty lines in the result caused by a bug in toprettyxml()
-    return re.sub(r'^\s*$\n', r'', pretty_xml, flags=re.MULTILINE)
+    return re.sub(r"^\s*$\n", r"", pretty_xml, flags=re.MULTILINE)
 
 
 def are_equivalent_pyxb(a_pyxb, b_pyxb):
@@ -274,7 +274,7 @@ def _compare_text(a_tree, b_tree):
 
 
 def _strip_and_compare_strings(s1, s2):
-    return [s1.strip() if s1 else ''] == [s2.strip() if s2 else '']
+    return [s1.strip() if s1 else ""] == [s2.strip() if s2 else ""]
 
 
 def _get_path(tree, el):
@@ -286,7 +286,7 @@ def _get_path(tree, el):
             el = parents[el]
         except KeyError:
             break
-    return '.' + '/'.join(reversed(path[:-1]))
+    return "." + "/".join(reversed(path[:-1]))
 
 
 def _find_instance(tree, path, find_i):
@@ -319,7 +319,7 @@ def _validate_element_attr(tree, el, attr_name_expected, attr_val_expected):
             el.attrib[attr_name_expected], attr_val_expected
         ):
             raise CompareError(
-                'Attribute contains invalid value. '
+                "Attribute contains invalid value. "
                 'path="{}" attr="{}" found="{}" expected="{}"'.format(
                     _get_path(tree, el),
                     attr_name_expected,
@@ -329,7 +329,7 @@ def _validate_element_attr(tree, el, attr_name_expected, attr_val_expected):
             )
     except LookupError:
         raise CompareError(
-            'Attribute does not exist. '
+            "Attribute does not exist. "
             'path="{}" attr="{}"'.format(_get_path(tree, el), attr_name_expected)
         )
 
@@ -364,7 +364,7 @@ def are_equal_pyxb(a_pyxb, b_pyxb):
       bool: ``True`` if the PyXB objects are semantically equivalent.
 
     """
-    return are_equal_xml(a_pyxb.toxml('utf-8'), b_pyxb.toxml('utf-8'))
+    return are_equal_xml(a_pyxb.toxml("utf-8"), b_pyxb.toxml("utf-8"))
 
 
 def are_equal_elements(a_el, b_el):
@@ -434,7 +434,7 @@ def format_diff_pyxb(a_pyxb, b_pyxb):
       str : `Differ`-style delta
 
     """
-    return '\n'.join(
+    return "\n".join(
         difflib.ndiff(
             serialize_to_xml_str(a_pyxb).splitlines(),
             serialize_to_xml_str(b_pyxb).splitlines(),
@@ -453,7 +453,7 @@ def format_diff_xml(a_xml, b_xml):
       str : `Differ`-style delta
 
     """
-    return '\n'.join(
+    return "\n".join(
         difflib.ndiff(
             reformat_to_pretty_xml(a_xml).splitlines(),
             reformat_to_pretty_xml(b_xml).splitlines(),
@@ -477,7 +477,7 @@ def is_valid_utf8(o):
 
     """
     try:
-        o.decode('utf-8')
+        o.decode("utf-8")
     except (UnicodeDecodeError, AttributeError):
         return False
     else:

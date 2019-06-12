@@ -32,14 +32,12 @@ class StreamIterator(object):
     """
 
     def __init__(self, stream, chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE):
-        """
-        Args:
-            stream: Object with ``read()`` method, such as an open file.
+        """Args: stream: Object with ``read()`` method, such as an open file.
 
-            chunk_size: int
-                Max number of elements to return in each chunk. The last chunk will
-                normally be smaller. Other chunks may be smaller as well, but never
-                empty.
+        chunk_size: int     Max number of elements to return in each chunk. The last
+        chunk will     normally be smaller. Other chunks may be smaller as well, but
+        never     empty.
+
         """
         self._stream = stream
         self._chunk_size = chunk_size
@@ -48,12 +46,15 @@ class StreamIterator(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        if hasattr(self._stream, 'close'):
+        if hasattr(self._stream, "close"):
             self._stream.close()
 
     def __iter__(self):
-        """Returns: Chunks of ``read()`` on stream. E.g., ``bytes`` for a file opened in
-        binary mode and ``str`` for a UTF-8 file opened with ``encoding='UTF-8'``.
+        """Returns: Chunks of ``read()`` on stream.
+
+        E.g., ``bytes`` for a file opened in binary mode and ``str`` for a UTF-8 file
+        opened with ``encoding='UTF-8'``.
+
         """
         while True:
             chunk_str = self._stream.read(self._chunk_size)
@@ -64,11 +65,13 @@ class StreamIterator(object):
     @property
     def size(self):
         """Returns:
+
         int : The total number of bytes that will be returned by the iterator.
+
         """
-        if hasattr(self._stream, 'len'):
+        if hasattr(self._stream, "len"):
             return len(self._stream)
-        elif hasattr(self._stream, 'fileno'):
+        elif hasattr(self._stream, "fileno"):
             return os.fstat(self._stream.fileno()).st_size
         else:
             cur_pos = self._stream.tell()

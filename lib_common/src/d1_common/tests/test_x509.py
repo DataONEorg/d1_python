@@ -30,10 +30,10 @@ import d1_test.test_files
 
 class TestCert(d1_test.d1_test_case.D1TestCase):
     cert_simple_subject_info_pem = d1_test.test_files.load_cert(
-        'cert_with_simple_subject_info.pem'
+        "cert_with_simple_subject_info.pem"
     )
     cert_no_subject_info_pem = d1_test.test_files.load_cert(
-        'cert_without_subject_info.pem'
+        "cert_without_subject_info.pem"
     )
 
     def test_1000(self):
@@ -44,7 +44,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
         assert isinstance(
             cert_obj, cryptography.hazmat.backends.openssl.x509._Certificate
         )
-        self.sample.assert_equals(cert_obj, 'deserialize_pem_to_crypt_cert')
+        self.sample.assert_equals(cert_obj, "deserialize_pem_to_crypt_cert")
 
     def test_1010(self):
         """Extract primary subject from certificate and returns as DataONE compliant
@@ -53,7 +53,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
             self.cert_simple_subject_info_pem
         )
         primary_str = d1_common.cert.x509.extract_subject_from_dn(cert_obj)
-        self.sample.assert_equals(primary_str, 'extract_dn_to_d1_subject')
+        self.sample.assert_equals(primary_str, "extract_dn_to_d1_subject")
 
     def test_1020(self):
         """Extract SubjectInfo from certificate, SubjectInfo present."""
@@ -64,7 +64,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
             cert_obj
         )
         self.sample.assert_equals(
-            extracted_subject_info_xml, 'cert_simple_subject_info'
+            extracted_subject_info_xml, "cert_simple_subject_info"
         )
 
     def test_1030(self):
@@ -82,8 +82,8 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
             self.cert_simple_subject_info_pem
         )
         self.sample.assert_equals(
-            {'primary_str': primary_str, 'equivalent_set': equivalent_set},
-            'primary_and_equivalent_with_subject_info',
+            {"primary_str": primary_str, "equivalent_set": equivalent_set},
+            "primary_and_equivalent_with_subject_info",
         )
 
     def test_1050(self):
@@ -93,40 +93,40 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
             self.cert_no_subject_info_pem
         )
         self.sample.assert_equals(
-            {'primary_str': primary_str, 'equivalent_set': equivalent_set},
-            'primary_and_equivalent_without_subject_info',
+            {"primary_str": primary_str, "equivalent_set": equivalent_set},
+            "primary_and_equivalent_without_subject_info",
         )
 
-    @freezegun.freeze_time('2021-01-01')
+    @freezegun.freeze_time("2021-01-01")
     def test_1060(self, caplog):
         """log_cert_info(): Outputs expected log."""
         cert_obj = d1_common.cert.x509.deserialize_pem(
             self.cert_simple_subject_info_pem
         )
         with caplog.at_level(logging.WARNING):
-            d1_common.cert.x509.log_cert_info(logging.warning, 'test msg', cert_obj)
+            d1_common.cert.x509.log_cert_info(logging.warning, "test msg", cert_obj)
         self.sample.assert_equals(
-            d1_test.d1_test_case.get_caplog_text(caplog), 'log_cert_info_expected'
+            d1_test.d1_test_case.get_caplog_text(caplog), "log_cert_info_expected"
         )
 
     def test_1070(self):
         """get_val_list(): Retrieves expected attributes."""
 
         class O1:
-            a = '1'
-            b = '2'
-            c = '3'
+            a = "1"
+            b = "2"
+            c = "3"
 
         class O2:
             d = O1
-            e = '4'
-            f = '5'
+            e = "4"
+            f = "5"
 
         class O3:
-            g = 's1'
-            h = 'g1'
+            g = "s1"
+            h = "g1"
             i = O2
 
-        assert d1_common.cert.x509._get_val_list(O3, ['invalid_attr']) == []
-        assert d1_common.cert.x509._get_val_list(O3, ['g']) == ['s1']
-        assert d1_common.cert.x509._get_val_list(O3, ['g', 'invalid']) == []
+        assert d1_common.cert.x509._get_val_list(O3, ["invalid_attr"]) == []
+        assert d1_common.cert.x509._get_val_list(O3, ["g"]) == ["s1"]
+        assert d1_common.cert.x509._get_val_list(O3, ["g", "invalid"]) == []

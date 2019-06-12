@@ -39,7 +39,7 @@ class TesttUtil(d1_test.d1_test_case.D1TestCase):
 
         node_pyxb = mn_client_v1_v2.getCapabilities()
         with mock.patch(
-            'd1_client.mnclient.MemberNodeClient.getCapabilities',
+            "d1_client.mnclient.MemberNodeClient.getCapabilities",
             return_value=node_pyxb,
         ):
             node_api_major = int(

@@ -9,7 +9,7 @@
   "Content-Type": "application/octet-stream",
   "DataONE-Checksum": "SHA-1,6f7f17cffdff694f0b8e16362d72d9fcfd0c0909",
   "DataONE-FormatId": "audio/x-wav",
-  "DataONE-GMN": "3.4.1",
+  "DataONE-GMN": "[VERSION]",
   "DataONE-SerialVersion": "32",
   "Date": "Thu, 01 Mar 1945 00:00:00 GMT",
   "HTTP-Version": "HTTP/1.1",

@@ -50,7 +50,7 @@ import urllib.parse
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
-_hexdig = '0123456789ABCDEFabcdef'
+_hexdig = "0123456789ABCDEFabcdef"
 _hextochr = dict((a + b, chr(int(a + b, 16))) for a in _hexdig for b in _hexdig)
 
 LINUX = ["posix"]
@@ -60,7 +60,7 @@ WINDOWS = ["nt"]
 
 def unquote(s):
     """unquote('abc%20def') -> 'abc def'."""
-    res = s.split('%')
+    res = s.split("%")
     # fastpath
     if len(res) == 1:
         return s
@@ -69,23 +69,23 @@ def unquote(s):
         try:
             s += _hextochr[item[:2]] + item[2:]
         except KeyError:
-            s += '%' + item
+            s += "%" + item
         except UnicodeDecodeError:
             s += chr(int(item[:2], 16)) + item[2:]
     return s
 
 
-def quote(s, unsafe='/'):
+def quote(s, unsafe="/"):
     """Pass in a dictionary that has unsafe characters as the keys, and the percent
     encoded value as the value."""
-    res = s.replace('%', '%25')
+    res = s.replace("%", "%25")
     for c in unsafe:
-        res = res.replace(c, '%' + (hex(ord(c)).upper())[2:])
+        res = res.replace(c, "%" + (hex(ord(c)).upper())[2:])
     return res
 
 
 def posix_filename_from_identifier(identifier):
-    return urllib.parse.quote(identifier.encode('utf8'), safe='`@#~!$^&*()-=<>,.: ')
+    return urllib.parse.quote(identifier.encode("utf8"), safe="`@#~!$^&*()-=<>,.: ")
 
 
 def posix_identifier_from_filename(filename):

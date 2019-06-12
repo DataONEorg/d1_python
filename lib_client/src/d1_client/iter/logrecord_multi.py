@@ -56,6 +56,5 @@ def _page_func(client):
 def _iter_func(page_pyxb):
     return page_pyxb.logEntry
 
-# noinspection PyUnusedLocal
-def _item_proc_func(client_, item_pyxb, item_proc_arg_dict_):
+def _item_proc_func(_client, item_pyxb, _item_proc_arg_dict):
     return item_pyxb

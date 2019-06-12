@@ -51,10 +51,10 @@ class Transaction(object):
         self.d1_mn_api_call()
         latency = time.time() - start_timer
 
-        self.custom_timers['d1_mn_api_call'] = latency
+        self.custom_timers["d1_mn_api_call"] = latency
 
     def d1_mn_api_call(self):
-        raise Exception('Override to make a DataONE API call')
+        raise Exception("Override to make a DataONE API call")
 
     def create_public_client(self):
         return d1_client.mnclient.MemberNodeClient(base_url=settings.BASEURL)
@@ -86,35 +86,35 @@ class Transaction(object):
 
     def check_response(self, response):
         if response.status_code != 200:
-            with open(settings.ERROR_PATH, 'w') as f:
+            with open(settings.ERROR_PATH, "w") as f:
                 f.write(response.read())
             raise Exception(
-                'Invalid response code: {}. Error captured in {}.'.format(
+                "Invalid response code: {}. Error captured in {}.".format(
                     response.status_code, settings.ERROR_PATH
                 )
             )
 
     def capture_response_and_raise_exception(self, response, e):
-        with open(settings.ERROR_PATH, 'w') as f:
+        with open(settings.ERROR_PATH, "w") as f:
             f.write(str(e))
         raise Exception(
-            'Invalid response code: {}. Error captured in {}.'.format(
+            "Invalid response code: {}. Error captured in {}.".format(
                 response.status_code, settings.ERROR_PATH
             )
         )
 
     def get_subject_list(self):
-        return codecs.open(settings.SUBJECTS_PATH, 'r', 'utf-8').read().splitlines()
+        return codecs.open(settings.SUBJECTS_PATH, "r", "utf-8").read().splitlines()
 
     def get_public_object_list(self):
         return (
-            codecs.open(settings.PUBLIC_OBJECTS_PATH, 'r', 'utf-8').read().splitlines()
+            codecs.open(settings.PUBLIC_OBJECTS_PATH, "r", "utf-8").read().splitlines()
         )
 
     def get_private_object_list(self):
         return [
-            l.split('\t')
-            for l in codecs.open(settings.PRIVATE_OBJECTS_PATH, 'r', 'utf-8')
+            l.split("\t")
+            for l in codecs.open(settings.PRIVATE_OBJECTS_PATH, "r", "utf-8")
             .read()
             .splitlines()
         ]

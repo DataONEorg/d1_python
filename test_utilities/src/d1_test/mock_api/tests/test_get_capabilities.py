@@ -30,4 +30,4 @@ class TestMockGetCapabilities(d1_test.d1_test_case.D1TestCase):
             d1_test.d1_test_case.MOCK_MN_BASE_URL
         )
         node_pyxb = mn_client_v1_v2.getCapabilities()
-        self.sample.assert_equals(node_pyxb, 'mock_get_capabilities', mn_client_v1_v2)
+        self.sample.assert_equals(node_pyxb, "mock_get_capabilities", mn_client_v1_v2)

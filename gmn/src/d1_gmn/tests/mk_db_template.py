@@ -17,32 +17,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Hold the size and other attributes for a file or folder."""
+
 
 import logging
 
-log = logging.getLogger(__name__)
-
-# log.setLevel(logging.DEBUG)
+import d1_gmn.tests.gmn_test_case
 
 
-class Attributes(object):
-    def __init__(self, size=0, date=None, is_dir=False):
-        self._size_ = size
-        self._date_ = date
-        self._is_dir_ = is_dir
+def main():
+    logger = logging.getLogger(__name__)
+    logger.info("Creating GMN test template DB...")
 
-    def __eq__(self, other):
-        return self.__dict__ == other.__dict__
+    db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key()
+    d1_gmn.tests.gmn_test_case.postgres_drop_if_exists(db_name)
+    d1_gmn.tests.gmn_test_case.postgres_create_blank(db_name)
+    d1_gmn.tests.gmn_test_case.django_migrate()
+    d1_gmn.tests.gmn_test_case.django_load_db_fixture(
+        d1_gmn.tests.gmn_test_case.REL_DB_FIXTURE_PATH
+    )
+    d1_gmn.tests.gmn_test_case.django_dump_db_stats()
 
-    def __repr__(self):
-        return "{}({})".format(self.__class__, self.__dict__)
 
-    def size(self):
-        return self._size_
-
-    def date(self):
-        return self._date_
-
-    def is_dir(self):
-        return self._is_dir_
+if __name__ == "__main__":
+    main()

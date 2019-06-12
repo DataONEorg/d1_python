@@ -655,10 +655,7 @@ def generate_ca_cert(
     private_ip=None,
     valid_days=10 * 365,
 ):
-    """
-
-    Args:
-        hostname:
+    """Args: hostname:
 
         private_key: RSAPrivateKey, etc
 

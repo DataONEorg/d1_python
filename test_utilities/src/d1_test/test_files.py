@@ -27,17 +27,16 @@ import os
 import d1_common
 import d1_common.types
 import d1_common.types.dataoneTypes
-import d1_common.util
 import d1_common.utils.filesystem
 
 
 def get_abs_test_file_path(rel_path):
-    return os.path.join(d1_common.utils.filesystem.abs_path('./test_docs'), rel_path)
+    return os.path.join(d1_common.utils.filesystem.abs_path("./test_docs"), rel_path)
 
 
 def load_bin(rel_path):
     bin_path = get_abs_test_file_path(rel_path)
-    with open(bin_path, 'rb') as f:
+    with open(bin_path, "rb") as f:
         return f.read()
 
 
@@ -45,7 +44,7 @@ def load_utf8_to_str(rel_path):
     """Load file, decode from UTF-8 and return as str."""
     logging.debug('Loading test file. rel_path="{}"'.format(rel_path))
     utf8_path = get_abs_test_file_path(rel_path)
-    with codecs.open(utf8_path, encoding='utf-8', mode='r') as f:
+    with codecs.open(utf8_path, encoding="utf-8", mode="r") as f:
         unicode_str = f.read()
     return unicode_str
 
@@ -55,21 +54,21 @@ def load_xml_to_pyxb(filename):
 
 
 def load_xml_to_str(filename):
-    return load_utf8_to_str(os.path.join('xml', filename))
+    return load_utf8_to_str(os.path.join("xml", filename))
 
 
 def load_json(filename):
-    return json.loads(load_utf8_to_str(os.path.join('json', filename)))
+    return json.loads(load_utf8_to_str(os.path.join("json", filename)))
 
 
 def load_cert(filename):
-    return load_bin(os.path.join('cert', filename))
+    return load_bin(os.path.join("cert", filename))
 
 
 def load_jwt(filename):
-    return load_bin(os.path.join('jwt', filename))
+    return load_bin(os.path.join("jwt", filename))
 
 
-def save(obj_str, rel_path, encoding='utf-8'):
-    with open(get_abs_test_file_path(rel_path), 'w', encoding=encoding) as f:
+def save(obj_str, rel_path, encoding="utf-8"):
+    with open(get_abs_test_file_path(rel_path), "w", encoding=encoding) as f:
         return f.write(obj_str)

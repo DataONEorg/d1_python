@@ -32,9 +32,9 @@ import d1_common.types.dataoneTypes
 DEFAULT_CHUNK_SIZE = 1024 * 1024
 
 DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP = {
-    'MD5': hashlib.md5,
-    'SHA1': hashlib.sha1,
-    'SHA-1': hashlib.sha1,
+    "MD5": hashlib.md5,
+    "SHA1": hashlib.sha1,
+    "SHA-1": hashlib.sha1,
 }
 
 # Checksum PyXB object creation
@@ -214,7 +214,7 @@ def are_checksums_equal(checksum_a_pyxb, checksum_b_pyxb):
     """
     if checksum_a_pyxb.algorithm != checksum_b_pyxb.algorithm:
         raise ValueError(
-            'Cannot compare checksums calculated with different algorithms. '
+            "Cannot compare checksums calculated with different algorithms. "
             'a="{}" b="{}"'.format(checksum_a_pyxb.algorithm, checksum_b_pyxb.algorithm)
         )
     return checksum_a_pyxb.value().lower() == checksum_b_pyxb.value().lower()
@@ -296,6 +296,6 @@ def format_checksum(checksum_pyxb):
       str : Combined hexadecimal value and algorithm name.
 
     """
-    return '{}/{}'.format(
-        checksum_pyxb.algorithm.upper().replace('-', ''), checksum_pyxb.value().lower()
+    return "{}/{}".format(
+        checksum_pyxb.algorithm.upper().replace("-", ""), checksum_pyxb.value().lower()
     )

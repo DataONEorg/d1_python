@@ -21,9 +21,8 @@
 buffered in memory."""
 import logging
 
-import requests_toolbelt
-
 import pytest
+import requests_toolbelt
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
@@ -51,7 +50,7 @@ TMP_OBJECT_STORE_PATH = "/mnt/hdd"
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestSciObjStreaming")
-@pytest.mark.skip('Slow, creates large test file')
+@pytest.mark.skip("Slow, creates large test file")
 class TestSciObjStreaming(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def _create_sysmeta(self, gmn_client_v2, large_sparse_stream, pid):
         logging.debug("Generating SysMeta for sparse file...")

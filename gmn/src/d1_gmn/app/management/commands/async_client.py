@@ -27,7 +27,6 @@ import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.url
-import d1_common.utils.filesystem
 
 DEFAULT_MAX_CONCURRENT_CONNECTIONS = 100
 DEFAULT_RETRY_COUNT = 3

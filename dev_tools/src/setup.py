@@ -25,16 +25,16 @@ import setuptools
 
 def main():
     setuptools.setup(
-        name='dataone.dev',
-        version='3.4.1',
-        description='DataONE developer tools',
-        author='DataONE Project',
-        author_email='developers@dataone.org',
-        url='https://github.com/DataONEorg/d1_dev',
-        license='Apache License, Version 2.0',
+        name="dataone.dev",
+        version="3.4.2",
+        description="DataONE developer tools",
+        author="DataONE Project",
+        author_email="developers@dataone.org",
+        url="https://github.com/DataONEorg/d1_dev",
+        license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        exclude_package_data={'': ['settings.py']},
+        exclude_package_data={"": ["settings.py"]},
         install_requires=[
             # These are not yet available when bootstrapping on Travis
             #'dataone.cli == 2.3.0rc1',
@@ -47,23 +47,23 @@ def main():
             # Python doesn't have a real package manager.
             # 'idna == 2.6',
             #
-            'baron >= 0.9',
-            'pip >= 18.1',
-            'redbaron >= 0.9.2',
-            'python-xlib',
+            "baron >= 0.9",
+            "pip >= 19.1.1",
+            "redbaron >= 0.9.2",
+            "python-xlib",
         ],
-        setup_requires=['setuptools_git >= 1.1'],
+        setup_requires=["setuptools_git >= 1.1"],
         classifiers=[
-            'Development Status :: 5 - Production/Stable',
-            'Intended Audience :: Developers',
-            'Topic :: Scientific/Engineering',
-            'License :: OSI Approved :: Apache Software License',
-            'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.6',
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Developers",
+            "Topic :: Scientific/Engineering",
+            "License :: OSI Approved :: Apache Software License",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.6",
         ],
-        keywords='DataONE python',
+        keywords="DataONE python",
     )
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

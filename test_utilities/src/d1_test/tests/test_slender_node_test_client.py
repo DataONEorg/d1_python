@@ -43,7 +43,7 @@ class TestSlenderNodeTestClient(d1_test.d1_test_case.D1TestCase):
             d1_test.instance_generator.identifier.generate_sid() if sid is True else sid
         )
         option_dict = {
-            k: v for (k, v) in (('identifier', pid), ('seriesId', sid)) if v is not True
+            k: v for (k, v) in (("identifier", pid), ("seriesId", sid)) if v is not True
         }
         pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
             client, None if pid is True else pid, option_dict
@@ -67,10 +67,10 @@ class TestSlenderNodeTestClient(d1_test.d1_test_case.D1TestCase):
     def test_1020(self, sn_client):
         """create() and get() by SID."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._generate_sciobj_with_defaults(
-            sn_client, sid='test_sid'
+            sn_client, sid="test_sid"
         )
         sn_client.create(pid, io.BytesIO(sciobj_bytes), sysmeta_pyxb)
-        read_sciobj_bytes = sn_client.get('test_sid').read()
+        read_sciobj_bytes = sn_client.get("test_sid").read()
         assert read_sciobj_bytes == sciobj_bytes
 
     def test_1030(self, sn_client):
@@ -84,19 +84,19 @@ class TestSlenderNodeTestClient(d1_test.d1_test_case.D1TestCase):
             sysmeta_pyxb.identifier
         ) == d1_common.xml.get_req_val(read_sysmeta_pyxb.identifier)
         assert d1_common.xml.get_opt_val(
-            sysmeta_pyxb, 'seriesId'
-        ) == d1_common.xml.get_opt_val(read_sysmeta_pyxb, 'seriesId')
+            sysmeta_pyxb, "seriesId"
+        ) == d1_common.xml.get_opt_val(read_sysmeta_pyxb, "seriesId")
 
     def test_1040(self, sn_client):
         """create() and update(): Valid chain."""
         # create()
         old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self._generate_sciobj_with_defaults(
-            sn_client, sid='test_sid'
+            sn_client, sid="test_sid"
         )
         sn_client.create(old_pid, io.BytesIO(old_sciobj_bytes), old_sysmeta_pyxb)
         # update()
         new_pid, new_sid, new_sciobj_bytes, new_sysmeta_pyxb = self._generate_sciobj_with_defaults(
-            sn_client, sid='test_sid'
+            sn_client, sid="test_sid"
         )
         sn_client.update(
             old_pid, io.BytesIO(new_sciobj_bytes), new_pid, new_sysmeta_pyxb
@@ -109,31 +109,31 @@ class TestSlenderNodeTestClient(d1_test.d1_test_case.D1TestCase):
 
         assert old_sciobj_bytes == read_old_scimeta_bytes
         assert d1_common.xml.get_req_val(read_old_sysmeta_pyxb.identifier) == old_pid
-        assert d1_common.xml.get_opt_val(read_old_sysmeta_pyxb, 'seriesId') == old_sid
-        assert d1_common.xml.get_opt_val(read_old_sysmeta_pyxb, 'obsoletes') is None
+        assert d1_common.xml.get_opt_val(read_old_sysmeta_pyxb, "seriesId") == old_sid
+        assert d1_common.xml.get_opt_val(read_old_sysmeta_pyxb, "obsoletes") is None
         assert (
-            d1_common.xml.get_opt_val(read_old_sysmeta_pyxb, 'obsoletedBy') == new_pid
+            d1_common.xml.get_opt_val(read_old_sysmeta_pyxb, "obsoletedBy") == new_pid
         )
 
         assert new_sciobj_bytes == read_new_scimeta_bytes
         assert d1_common.xml.get_req_val(read_new_sysmeta_pyxb.identifier) == new_pid
-        assert d1_common.xml.get_opt_val(read_new_sysmeta_pyxb, 'seriesId') == new_sid
-        assert d1_common.xml.get_opt_val(read_new_sysmeta_pyxb, 'obsoletes') == old_pid
-        assert d1_common.xml.get_opt_val(read_new_sysmeta_pyxb, 'obsoletedBy') is None
+        assert d1_common.xml.get_opt_val(read_new_sysmeta_pyxb, "seriesId") == new_sid
+        assert d1_common.xml.get_opt_val(read_new_sysmeta_pyxb, "obsoletes") == old_pid
+        assert d1_common.xml.get_opt_val(read_new_sysmeta_pyxb, "obsoletedBy") is None
 
     def test_1050(self, sn_client):
         """create() and update(): Conflicting SIDs."""
         # create()
         old_pid, old_sid, old_sciobj_bytes, old_sysmeta_pyxb = self._generate_sciobj_with_defaults(
-            sn_client, sid='test_1'
+            sn_client, sid="test_1"
         )
         sn_client.create(old_pid, io.BytesIO(old_sciobj_bytes), old_sysmeta_pyxb)
         # update()
         new_pid, new_sid, new_sciobj_bytes, new_sysmeta_pyxb = self._generate_sciobj_with_defaults(
-            sn_client, sid='test_2'
+            sn_client, sid="test_2"
         )
         with pytest.raises(
-            AssertionError, match='Attempted to create chain with conflicting SIDs'
+            AssertionError, match="Attempted to create chain with conflicting SIDs"
         ):
             sn_client.update(
                 old_pid, io.BytesIO(new_sciobj_bytes), new_pid, new_sysmeta_pyxb

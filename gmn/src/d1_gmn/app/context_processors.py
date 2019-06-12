@@ -29,4 +29,4 @@ import django.conf
 
 def global_settings(request):
     """Expose some values from settings.py to templates."""
-    return {'BASE_URL': django.conf.settings.BASE_URL}
+    return {"BASE_URL": django.conf.settings.BASE_URL}

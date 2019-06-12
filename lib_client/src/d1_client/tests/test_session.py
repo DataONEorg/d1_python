@@ -39,39 +39,39 @@ import d1_client.session
 logger = logging.getLogger(__name__)
 
 
-@d1_test.d1_test_case.reproducible_random_decorator('TestSession')
-@freezegun.freeze_time('1945-01-02')
+@d1_test.d1_test_case.reproducible_random_decorator("TestSession")
+@freezegun.freeze_time("1945-01-02")
 class TestSession(d1_test.d1_test_case.D1TestCase):
     def _get_hash(self, pid):
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        response = s.GET(['object', pid])
+        response = s.GET(["object", pid])
         return hashlib.sha1(response.content).hexdigest()
 
     def _get_response(self, pid, header_dict=None):
         d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        return s.GET(['object', pid], headers=header_dict or {})
+        return s.GET(["object", pid], headers=header_dict or {})
 
     def _post(self, query_dict, header_dict, body):
         d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         s = d1_client.session.Session(
-            d1_test.d1_test_case.MOCK_MN_BASE_URL, query={'default_query': 'test'}
+            d1_test.d1_test_case.MOCK_MN_BASE_URL, query={"default_query": "test"}
         )
-        return s.POST(['post'], query=query_dict, headers=header_dict, data=body)
+        return s.POST(["post"], query=query_dict, headers=header_dict, data=body)
 
     def _post_fields(self, fields_dict):
         d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        return s.POST(['post'], fields=fields_dict)
+        return s.POST(["post"], fields=fields_dict)
 
     @responses.activate
     def test_1000(self):
         """HTTP GET is successful Mocked GET returns object bytes uniquely tied to given
         PID."""
-        a_pid = 'pid_hy7tf83453y498'
-        b_pid = 'pid_09y68gh73n60'
-        c_pid = 'pid_987i075058679589060'
+        a_pid = "pid_hy7tf83453y498"
+        b_pid = "pid_09y68gh73n60"
+        c_pid = "pid_987i075058679589060"
         a_hash = self._get_hash(a_pid)
         b_hash = self._get_hash(b_pid)
         c_hash = self._get_hash(c_pid)
@@ -90,61 +90,61 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1010(self):
         """Successful HTTP GET returns 200 OK."""
-        response = self._get_response('pid1')
+        response = self._get_response("pid1")
         assert response.status_code == 200
 
     @responses.activate
     def test_1020(self):
         """HTTP GET 404."""
-        response = self._get_response('valid_pid', header_dict={'trigger': '404'})
+        response = self._get_response("valid_pid", header_dict={"trigger": "404"})
         assert response.status_code == 404
-        self.sample.assert_equals(response.text, 'get_404')
+        self.sample.assert_equals(response.text, "get_404")
 
     @responses.activate
     def test_1030(self):
         """HTTP GET against http://some.bogus.address/ raises ConnectionError."""
-        s = d1_client.session.Session('http://some.bogus.address')
+        s = d1_client.session.Session("http://some.bogus.address")
         with d1_common.logging_context.LoggingContext(logger):
             logger.setLevel(logging.ERROR)
             with pytest.raises(requests.exceptions.ConnectionError):
-                s.GET('/')
+                s.GET("/")
 
     @responses.activate
     def test_1040(self):
         """HTTP POST is successful Roundtrip for body, headers and query params."""
-        body_bytes = b'test_body'
-        header_dict = {'ijkl': '9876', 'mnop': '5432'}
+        body_bytes = b"test_body"
+        header_dict = {"ijkl": "9876", "mnop": "5432"}
         response = self._post({}, header_dict, body_bytes)
         r_dict = response.json()
-        d1_test.sample.assert_equals(r_dict, 'post_roundtrip')
+        d1_test.sample.assert_equals(r_dict, "post_roundtrip")
 
     @responses.activate
     def test_1050(self):
         """Query params passed to Session() and individual POST are correctly
         combined."""
         d1_test.mock_api.post.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
-        body_bytes = b'test_body'
-        query_dict = {'abcd': '1234', 'efgh': '5678'}
-        header_dict = {'ijkl': '9876', 'mnop': '5432'}
+        body_bytes = b"test_body"
+        query_dict = {"abcd": "1234", "efgh": "5678"}
+        header_dict = {"ijkl": "9876", "mnop": "5432"}
         response = self._post(query_dict, header_dict, body_bytes)
         r_dict = response.json()
-        d1_test.sample.assert_equals(r_dict, 'post_roundtrip_query')
+        d1_test.sample.assert_equals(r_dict, "post_roundtrip_query")
 
     @responses.activate
     def test_1060(self):
         """Roundtrip for HTML Form fields."""
-        field_dict = {'post_data_1': '1234', 'post_data_2': '5678'}
+        field_dict = {"post_data_1": "1234", "post_data_2": "5678"}
         response = self._post_fields(field_dict)
         r_dict = response.json()
-        d1_test.sample.assert_equals(r_dict, 'post_roundtrip_form_fields')
+        d1_test.sample.assert_equals(r_dict, "post_roundtrip_form_fields")
 
     @responses.activate
     def test_1070(self):
         """cURL command line retains query parameters and headers."""
-        query_dict = {'abcd': '1234', 'efgh': '5678'}
-        header_dict = {'ijkl': '9876', 'mnop': '5432'}
+        query_dict = {"abcd": "1234", "efgh": "5678"}
+        header_dict = {"ijkl": "9876", "mnop": "5432"}
         s = d1_client.session.Session(d1_test.d1_test_case.MOCK_MN_BASE_URL)
         curl_str = s.get_curl_command_line(
-            'POST', 'http://some.bogus.address', query=query_dict, headers=header_dict
+            "POST", "http://some.bogus.address", query=query_dict, headers=header_dict
         )
-        d1_test.sample.assert_equals(curl_str, 'curl_command_line')
+        d1_test.sample.assert_equals(curl_str, "curl_command_line")

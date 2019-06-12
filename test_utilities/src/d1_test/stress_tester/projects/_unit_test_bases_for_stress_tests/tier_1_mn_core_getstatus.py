@@ -36,8 +36,8 @@ import d1_test_case
 class Test015GetStatus(d1_test_case.D1TestCase):
     def test_010_getstatus(self):
         """GetStatus() does not raise and does not return empty object."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         # The ping() call passes if it doesn't raise.
         response = client.getStatusResponse()
         response_doc = response.read()
-        assert response_doc != ''
+        assert response_doc != ""

@@ -47,7 +47,6 @@
 #   def __call__(self, request):
 #     self.next_in_chain_func(request)
 #
-#   # noinspection PyUnusedLocal
 #   def process_view(self, request, view_func, view_args, view_kwargs):
 #   # def __call__(self, request, view_func, *view_args, **view_kwargs):
 #     # This middleware layer is disabled if Django is not running in debug mode

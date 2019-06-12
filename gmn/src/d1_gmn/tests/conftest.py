@@ -20,19 +20,19 @@ import pytest
 from d1_client.mnclient_1_2 import MemberNodeClient_1_2 as mn_v1
 from d1_client.mnclient_2_0 import MemberNodeClient_2_0 as mn_v2
 
-MOCK_GMN_BASE_URL = 'http://gmn.client/node'
+MOCK_GMN_BASE_URL = "http://gmn.client/node"
 
 
-@pytest.fixture(scope='function', params=[mn_v1])
+@pytest.fixture(scope="function", params=[mn_v1])
 def gmn_client_v1(request):
     yield request.param(MOCK_GMN_BASE_URL)
 
 
-@pytest.fixture(scope='function', params=[mn_v2])
+@pytest.fixture(scope="function", params=[mn_v2])
 def gmn_client_v2(request):
     yield request.param(MOCK_GMN_BASE_URL)
 
 
-@pytest.fixture(scope='function', params=[mn_v1, mn_v2])
+@pytest.fixture(scope="function", params=[mn_v1, mn_v2])
 def gmn_client_v1_v2(request):
     yield request.param(MOCK_GMN_BASE_URL)

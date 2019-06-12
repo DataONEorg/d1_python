@@ -44,31 +44,31 @@ class TestIsAuthorized(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1000(self):
         """isAuthorized(): Returns False for unknown subject."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
-        with d1_gmn.tests.gmn_mock.set_auth_context(['unk_subj'], ['trusted_subj']):
-            assert not self.client_v2.isAuthorized(pid, 'read')
-            assert not self.client_v2.isAuthorized(pid, 'write')
-            assert not self.client_v2.isAuthorized(pid, 'changePermission')
+        with d1_gmn.tests.gmn_mock.set_auth_context(["unk_subj"], ["trusted_subj"]):
+            assert not self.client_v2.isAuthorized(pid, "read")
+            assert not self.client_v2.isAuthorized(pid, "write")
+            assert not self.client_v2.isAuthorized(pid, "changePermission")
 
     @responses.activate
     def test_1010(self):
         """isAuthorized(): Raises InvalidRequest for unknown permission."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
-            self.client_v2.isAuthorized(pid, 'unknownPermission')
+            self.client_v2.isAuthorized(pid, "unknownPermission")
 
     @responses.activate
     def test_1020(self):
         """isAuthorized(): Returns False for known subject with inadequate permission
         level."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
-        with d1_gmn.tests.gmn_mock.set_auth_context(['subj2'], ['trusted_subj']):
-            assert not self.client_v2.isAuthorized(pid, 'changePermission')
+        with d1_gmn.tests.gmn_mock.set_auth_context(["subj2"], ["trusted_subj"]):
+            assert not self.client_v2.isAuthorized(pid, "changePermission")
 
     @responses.activate
     def test_1030(self):
         """isAuthorized(): Returns True for known subject with adequate permission
         level."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self._create_default()
-        with d1_gmn.tests.gmn_mock.set_auth_context(['subj5'], ['trusted_subj']):
-            assert self.client_v2.isAuthorized(pid, 'changePermission')
-            assert self.client_v2.isAuthorized(pid, 'write')
+        with d1_gmn.tests.gmn_mock.set_auth_context(["subj5"], ["trusted_subj"]):
+            assert self.client_v2.isAuthorized(pid, "changePermission")
+            assert self.client_v2.isAuthorized(pid, "write")

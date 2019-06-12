@@ -128,8 +128,8 @@ TRUST_CLIENT_DATEUPLOADED = False
 # Ignored if DEBUG is True. Required if DEBUG is False.
 ALLOWED_HOSTS = [
     # Allow local connections
-    'localhost',
-    '127.0.0.1',
+    "localhost",
+    "127.0.0.1",
     # Add FQDN to allow external clients to access GMN
     #'my.server.name.com',
     # Add to allow external clients to access GMN by IP address
@@ -141,21 +141,21 @@ ALLOWED_HOSTS = [
 
 # The unique identifier for this node, represented as a DataONE Node URN.
 # E.g.: 'urn:node:MyMemberNode'
-NODE_IDENTIFIER = 'urn:node:MyMemberNode'
+NODE_IDENTIFIER = "urn:node:MyMemberNode"
 
 # The human readable name of this node.
 # E.g.: 'My Member Node'
-NODE_NAME = 'My Member Node'
+NODE_NAME = "My Member Node"
 
 # Description of content maintained by this node and any other free style notes.
 # E.g.: 'This DataONE Member Node is operated by My Organization. The main
 # contents are sea level measurements.'
-NODE_DESCRIPTION = 'Test Member Node'
+NODE_DESCRIPTION = "Test Member Node"
 
 # The URL at which the Node is available.
 # The version tag, e.g., /v1/ is not included in this URL.
 # E.g.: https://server.example.edu/app/d1/mn
-NODE_BASEURL = 'https://localhost/mn'
+NODE_BASEURL = "https://localhost/mn"
 
 # Enable synchronization.
 # True (default):
@@ -173,32 +173,32 @@ NODE_SYNCHRONIZE = True
 # These settings are ignored if NODE_SYNCHRONIZE is False.
 # E.g.: YEAR = '*', MONTH = '*', WEEKDAY = '?', MONTHDAY = '*', HOUR = '*',
 # MINUTE = '0/3', SECOND = '0'.
-NODE_SYNC_SCHEDULE_YEAR = '*'
-NODE_SYNC_SCHEDULE_MONTH = '*'
-NODE_SYNC_SCHEDULE_WEEKDAY = '?'
-NODE_SYNC_SCHEDULE_MONTHDAY = '*'
-NODE_SYNC_SCHEDULE_HOUR = '*'
-NODE_SYNC_SCHEDULE_MINUTE = '42'
-NODE_SYNC_SCHEDULE_SECOND = '0'
+NODE_SYNC_SCHEDULE_YEAR = "*"
+NODE_SYNC_SCHEDULE_MONTH = "*"
+NODE_SYNC_SCHEDULE_WEEKDAY = "?"
+NODE_SYNC_SCHEDULE_MONTHDAY = "*"
+NODE_SYNC_SCHEDULE_HOUR = "*"
+NODE_SYNC_SCHEDULE_MINUTE = "42"
+NODE_SYNC_SCHEDULE_SECOND = "0"
 
 # The Subject of this node. The subject is the DataONE compliant serialization
 # of the Distinguished Name (DN) of the X.509 client side certificate that has
 # been issued for this node by DataONE. The subject must match that of the
 # DN in the certificate.
 # E.g.: 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
-NODE_SUBJECT = 'CN=urn:node:MyMemberNode,DC=dataone,DC=org'
+NODE_SUBJECT = "CN=urn:node:MyMemberNode,DC=dataone,DC=org"
 
 # The contact subject is a DataONE identity that can be contacted regarding
 # issues related to this member node. The subject must match the subject as it
 # is displayed for the given identity in the DataONE Identity Manager.
 # E.g.: 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
-NODE_CONTACT_SUBJECT = 'CN=My Name,O=Google,C=US,DC=cilogon,DC=org'
+NODE_CONTACT_SUBJECT = "CN=My Name,O=Google,C=US,DC=cilogon,DC=org"
 
 # Signal the status of this node to the DataONE infrastructure.
 # E.g.:
 # 'up: This node is operating as normal.
 # 'down': This node is currently not in operation.
-NODE_STATE = 'up'
+NODE_STATE = "up"
 
 # ==============================================================================
 # Object "read" event logging
@@ -247,20 +247,20 @@ LOG_IGNORE_NODE_SUBJECT = True
 
 # Path to the client side certificate that GMN uses when initiating TLS/SSL
 # connections to Coordinating Nodes. The certificate must be in PEM format.
-CLIENT_CERT_PATH = '/var/local/dataone/certs/client/client_cert.pem'
+CLIENT_CERT_PATH = "/var/local/dataone/certs/client/client_cert.pem"
 
 # Path to the private key for the client side certificate set in
 # CLIENT_CERT_PATH. The private key must be in PEM format. This is only
 # required to be set if the certificate does not contain an embedded private
 # key. Otherwise, set it to None.
 CLIENT_CERT_PRIVATE_KEY_PATH = (
-    '/var/local/dataone/certs/client/client_key_nopassword.pem'
+    "/var/local/dataone/certs/client/client_key_nopassword.pem"
 )
 
 # Absolute Path to the root of the GMN object store. The object store is a
 # directory hierarchy in which the bytes of science objects are stored by
 # default.
-OBJECT_STORE_PATH = '/var/local/dataone/gmn_object_store'
+OBJECT_STORE_PATH = "/var/local/dataone/gmn_object_store"
 
 # Enable this node to be used as a replication target.
 # True:
@@ -345,7 +345,7 @@ DATAONE_TRUSTED_SUBJECTS = set(
 
 # When DEBUG=False and a view raises an exception, Django will send emails to
 # these addresses with the full exception information.
-ADMINS = (('My Name', 'my_address@my_email.tld'),)
+ADMINS = (("My Name", "my_address@my_email.tld"),)
 
 # Enable MNRead.listObjects() for public and regular authenticated users.
 #
@@ -427,7 +427,7 @@ REQUIRE_WHITELIST_FOR_UPDATE = True
 # Resource Maps to reference unintended objects if the referenced identifier is
 # used for an unrelated object created by another subject before the intended
 # object is created by the Resource Map subject.
-RESOURCE_MAP_CREATE = 'block'
+RESOURCE_MAP_CREATE = "block"
 
 # Validate Science Metadata objects against local XML Schema (XSD)
 # True (default):
@@ -474,7 +474,7 @@ SCIMETA_VALIDATION_MAX_SIZE = 100 * 1024 ** 2
 # - 'accept': SciMeta over Max Size is accepted but not validated. This is not
 #   recommended, as any invalid objects will later be rejected by the CN during
 #   synchronization.
-SCIMETA_VALIDATION_OVER_SIZE_ACTION = 'reject'
+SCIMETA_VALIDATION_OVER_SIZE_ACTION = "reject"
 
 # GMN implements a vendor specific extension for MNStorage.create(). Instead of
 # providing an object for GMN to manage, the object can be left empty and the
@@ -497,8 +497,8 @@ SCIMETA_VALIDATION_OVER_SIZE_ACTION = 'reject'
 # supplying the URL for the access controlled object together with an access
 # control list that lets them access the object on GMN.
 PROXY_MODE_BASIC_AUTH_ENABLED = False
-PROXY_MODE_BASIC_AUTH_USERNAME = ''
-PROXY_MODE_BASIC_AUTH_PASSWORD = ''
+PROXY_MODE_BASIC_AUTH_USERNAME = ""
+PROXY_MODE_BASIC_AUTH_PASSWORD = ""
 PROXY_MODE_STREAM_TIMEOUT = 30
 
 # As the XML documents holding the DataONE types, such as SystemMetadata, must
@@ -525,11 +525,11 @@ MAX_SLICE_ITEMS = 5000
 d1_common.util.nested_update(
     DATABASES,
     {
-        'default': {
+        "default": {
             # The database in tables required by GMN are stored. The database itself
             # is typically owned by the postgres user while the tables are owned by the
             # GMN user.
-            'NAME': 'gmn3'
+            "NAME": "gmn3"
         }
     },
 )
@@ -547,14 +547,14 @@ d1_common.util.nested_update(
 # By default, we set debug level logging when GMN is in debug mode and
 # informational level logging when GMN runs in regular mode.
 if DEBUG or DEBUG_GMN:
-    LOG_LEVEL = 'DEBUG'
+    LOG_LEVEL = "DEBUG"
 else:
-    LOG_LEVEL = 'INFO'
+    LOG_LEVEL = "INFO"
 
 d1_common.util.nested_update(
     LOGGING,
     {
-        'handlers': {'rotating_file': {'level': LOG_LEVEL}},
-        'loggers': {'': {'level': LOG_LEVEL}, 'django': {'level': LOG_LEVEL}},
+        "handlers": {"rotating_file": {"level": LOG_LEVEL}},
+        "loggers": {"": {"level": LOG_LEVEL}, "django": {"level": LOG_LEVEL}},
     },
 )

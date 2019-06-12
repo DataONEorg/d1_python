@@ -26,7 +26,6 @@ import urllib.parse
 
 import d1_common
 import d1_common.const
-import d1_common.object_format_cache
 
 import django.conf
 import django.contrib.staticfiles.templatetags.staticfiles
@@ -57,7 +56,7 @@ def coerce_put_post(request):
         # first time _load_post_and_files is called (both by wsgi.py and
         # modpython.py). If it's set, the request has to be 'reset' to redo the
         # query value parsing in POST mode.
-        if hasattr(request, '_post'):
+        if hasattr(request, "_post"):
             del request._post
             del request._files
 
@@ -66,9 +65,9 @@ def coerce_put_post(request):
             request._load_post_and_files()
             request.method = "PUT"
         except AttributeError:
-            request.META['REQUEST_METHOD'] = 'POST'
+            request.META["REQUEST_METHOD"] = "POST"
             request._load_post_and_files()
-            request.META['REQUEST_METHOD'] = 'PUT'
+            request.META["REQUEST_METHOD"] = "PUT"
 
         request.PUT = request.POST
 
@@ -81,10 +80,10 @@ def add_basic_auth_header_if_enabled(headers):
 
 def _mk_http_basic_auth_header():
     return (
-        'Authorization',
-        'Basic {}'.format(
+        "Authorization",
+        "Basic {}".format(
             base64.standard_b64encode(
-                '{}:{}'.format(
+                "{}:{}".format(
                     django.conf.settings.PROXY_MODE_BASIC_AUTH_USERNAME,
                     django.conf.settings.PROXY_MODE_BASIC_AUTH_PASSWORD,
                 )
@@ -96,21 +95,21 @@ def _mk_http_basic_auth_header():
 def dump_stack():
     frame = inspect.currentframe()
     stack_trace = traceback.format_stack(frame)
-    logger.debug(''.join(stack_trace))
+    logger.debug("".join(stack_trace))
 
 
 def is_proxy_url(url):
     url_split = urllib.parse.urlparse(url)
-    return url_split.scheme in ('http', 'https')
+    return url_split.scheme in ("http", "https")
 
 
 def create_http_echo_response(request):
     logger.warning(
-        'Echoing request (triggered by vendor extension or '
-        'django.conf.settings.DEBUG_ECHO_REQUEST=True)'
+        "Echoing request (triggered by vendor extension or "
+        "django.conf.settings.DEBUG_ECHO_REQUEST=True)"
     )
     return django.http.HttpResponse(
-        pprint.pformat({'meta': request.META, 'body': request.body}, indent=2),
+        pprint.pformat({"meta": request.META, "body": request.body}, indent=2),
         d1_common.const.CONTENT_TYPE_TEXT,
     )
 

@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """REST call handlers for DataONE Member Node APIs."""
-import contextlib
+
 import logging
 import uuid
 
@@ -44,8 +44,6 @@ import d1_gmn.app.views.util
 import d1_common.checksum
 import d1_common.const
 import d1_common.date_time
-import d1_common.iter.stream
-import d1_common.object_format_cache
 import d1_common.types.exceptions
 import d1_common.xml
 
@@ -61,16 +59,16 @@ import django.http
 
 # Forward calls for /object/{id} URLs
 def dispatch_object(request, did):
-    if request.method == 'GET':
+    if request.method == "GET":
         # MNRead.get()
         return get_object(request, did)
-    elif request.method == 'HEAD':
+    elif request.method == "HEAD":
         # MNRead.describe()
         return head_object(request, did)
-    elif request.method == 'PUT':
+    elif request.method == "PUT":
         # MNStorage.update()
         return put_object(request, did)
-    elif request.method == 'DELETE':
+    elif request.method == "DELETE":
         # MNStorage.delete()
         return delete_object(request, did)
     assert (
@@ -82,10 +80,10 @@ def dispatch_object(request, did):
 
 # Forward calls for /object URLs
 def dispatch_object_list(request):
-    if request.method == 'GET':
+    if request.method == "GET":
         # MNRead.listObjects()
         return get_object_list(request)
-    elif request.method == 'POST':
+    elif request.method == "POST":
         # MNStorage.create()
         return post_object_list(request)
     assert (
@@ -126,41 +124,41 @@ def get_log(request):
     Sorted by timestamp, id.
 
     """
-    query = d1_gmn.app.models.EventLog.objects.all().order_by('timestamp', 'id')
+    query = d1_gmn.app.models.EventLog.objects.all().order_by("timestamp", "id")
     if not d1_gmn.app.auth.is_trusted_subject(request):
         query = d1_gmn.app.db_filter.add_access_policy_filter(
-            request, query, 'sciobj__id'
+            request, query, "sciobj__id"
         )
         query = d1_gmn.app.db_filter.add_redact_annotation(request, query)
     query = d1_gmn.app.db_filter.add_datetime_filter(
-        request, query, 'timestamp', 'fromDate', 'gte'
+        request, query, "timestamp", "fromDate", "gte"
     )
     query = d1_gmn.app.db_filter.add_datetime_filter(
-        request, query, 'timestamp', 'toDate', 'lt'
+        request, query, "timestamp", "toDate", "lt"
     )
     query = d1_gmn.app.db_filter.add_string_filter(
-        request, query, 'event__event', 'event'
+        request, query, "event__event", "event"
     )
     if d1_gmn.app.views.util.is_v1_api(request):
         query = d1_gmn.app.db_filter.add_string_begins_with_filter(
-            request, query, 'sciobj__pid__did', 'pidFilter'
+            request, query, "sciobj__pid__did", "pidFilter"
         )
     elif d1_gmn.app.views.util.is_v2_api(request):
         query = d1_gmn.app.db_filter.add_sid_or_string_begins_with_filter(
-            request, query, 'sciobj__pid__did', 'idFilter'
+            request, query, "sciobj__pid__did", "idFilter"
         )
     else:
-        assert False, 'Unable to determine API version'
+        assert False, "Unable to determine API version"
     total_int = query.count()
     query, start, count = d1_gmn.app.views.slice.add_slice_filter(
         request, query, total_int
     )
     return {
-        'query': query,
-        'start': start,
-        'count': count,
-        'total': total_int,
-        'type': 'log',
+        "query": query,
+        "start": start,
+        "count": count,
+        "total": total_int,
+        "type": "log",
     }
 
 
@@ -251,7 +249,7 @@ def get_checksum(request, pid):
     # If the checksumAlgorithm argument was not provided, it defaults to
     # the system wide default checksum algorithm.
     algorithm = request.GET.get(
-        'checksumAlgorithm', d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
+        "checksumAlgorithm", d1_common.const.DEFAULT_CHECKSUM_ALGORITHM
     )
 
     if not d1_common.checksum.is_supported_algorithm(algorithm):
@@ -259,7 +257,7 @@ def get_checksum(request, pid):
             0,
             'Invalid checksum algorithm. invalid="{}", supported="{}"'.format(
                 algorithm,
-                ', '.join(
+                ", ".join(
                     list(
                         d1_common.checksum.DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP.keys()
                     )
@@ -276,7 +274,7 @@ def get_checksum(request, pid):
     # TODO: look into log type other than 'read'
     d1_gmn.app.event_log.log_read_event(pid, request)
     return django.http.HttpResponse(
-        checksum_obj.toxml('utf-8'), d1_common.const.CONTENT_TYPE_XML
+        checksum_obj.toxml("utf-8"), d1_common.const.CONTENT_TYPE_XML
     )
 
 
@@ -287,30 +285,30 @@ def get_object_list(request):
     [, identifier][, replicaStatus][, start=0][, count=1000]) → ObjectList
 
     """
-    return d1_gmn.app.views.util.query_object_list(request, 'object_list')
+    return d1_gmn.app.views.util.query_object_list(request, "object_list")
 
 
 @d1_gmn.app.views.decorators.trusted_permission
 def post_error(request):
     """MNRead.synchronizationFailed(session, message)"""
-    d1_gmn.app.views.assert_db.post_has_mime_parts(request, (('file', 'message'),))
+    d1_gmn.app.views.assert_db.post_has_mime_parts(request, (("file", "message"),))
     try:
         synchronization_failed = d1_gmn.app.views.util.deserialize(
-            request.FILES['message']
+            request.FILES["message"]
         )
     except d1_common.types.exceptions.DataONEException as e:
         # In v1, MNRead.synchronizationFailed() cannot return an InvalidRequest
         # to the CN. Can only log the issue and return a 200 OK.
         logging.error(
-            'Received notification of synchronization error from CN but was unable '
-            'to deserialize the DataONE Exception passed by the CN. '
+            "Received notification of synchronization error from CN but was unable "
+            "to deserialize the DataONE Exception passed by the CN. "
             'message="{}" error="{}"'.format(
-                d1_gmn.app.views.util.read_utf8_xml(request.FILES['message']), str(e)
+                d1_gmn.app.views.util.read_utf8_xml(request.FILES["message"]), str(e)
             )
         )
     else:
         logging.error(
-            'Received notification of synchronization error from CN:\n{}'.format(
+            "Received notification of synchronization error from CN:\n{}".format(
                 str(synchronization_failed)
             )
         )
@@ -346,7 +344,7 @@ def _assert_node_is_authorized(request, pid):
     except d1_common.types.exceptions.DataONEException as e:
         raise d1_common.types.exceptions.NotAuthorized(
             0,
-            'A CN has not authorized the target MN to create a replica of object. '
+            "A CN has not authorized the target MN to create a replica of object. "
             'target_mn="{}", pid="{}", cn_error="{}"'.format(
                 request.primary_subject_str, pid, str(e)
             ),
@@ -373,11 +371,11 @@ def put_meta(request):
         d1_gmn.app.auth.assert_create_update_delete_permission(request)
     d1_gmn.app.util.coerce_put_post(request)
     d1_gmn.app.views.assert_db.post_has_mime_parts(
-        request, (('field', 'pid'), ('file', 'sysmeta'))
+        request, (("field", "pid"), ("file", "sysmeta"))
     )
-    pid = request.POST['pid']
+    pid = request.POST["pid"]
     d1_gmn.app.auth.assert_allowed(request, d1_gmn.app.auth.WRITE_LEVEL, pid)
-    new_sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
+    new_sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES["sysmeta"])
     d1_gmn.app.views.assert_sysmeta.has_matching_modified_timestamp(new_sysmeta_pyxb)
     d1_gmn.app.views.create.set_mn_controlled_values(
         request, new_sysmeta_pyxb, is_modification=True
@@ -403,13 +401,13 @@ def put_meta(request):
 @d1_gmn.app.views.decorators.resolve_sid
 def get_is_authorized(request, pid):
     """MNAuthorization.isAuthorized(did, action) -> Boolean."""
-    if 'action' not in request.GET:
+    if "action" not in request.GET:
         raise d1_common.types.exceptions.InvalidRequest(
             0, 'Missing required parameter. required="action"'
         )
     # Convert action string to action level. Raises InvalidRequest if the
     # action string is not valid.
-    level = d1_gmn.app.auth.action_to_level(request.GET['action'])
+    level = d1_gmn.app.auth.action_to_level(request.GET["action"])
     d1_gmn.app.auth.assert_allowed(request, level, pid)
     return d1_gmn.app.views.util.http_response_with_boolean_true_type()
 
@@ -421,17 +419,17 @@ def post_refresh_system_metadata(request):
     d1_gmn.app.views.assert_db.post_has_mime_parts(
         request,
         (
-            ('field', 'pid'),
-            ('field', 'serialVersion'),
-            ('field', 'dateSysMetaLastModified'),
+            ("field", "pid"),
+            ("field", "serialVersion"),
+            ("field", "dateSysMetaLastModified"),
         ),
     )
-    d1_gmn.app.views.assert_db.is_existing_object(request.POST['pid'])
+    d1_gmn.app.views.assert_db.is_existing_object(request.POST["pid"])
     d1_gmn.app.models.sysmeta_refresh_queue(
-        request.POST['pid'],
-        request.POST['serialVersion'],
-        request.POST['dateSysMetaLastModified'],
-        'queued',
+        request.POST["pid"],
+        request.POST["serialVersion"],
+        request.POST["dateSysMetaLastModified"],
+        "queued",
     ).save()
     return d1_gmn.app.views.util.http_response_with_boolean_true_type()
 
@@ -480,10 +478,10 @@ def post_refresh_system_metadata(request):
 def post_object_list(request):
     """MNStorage.create(session, did, object, sysmeta) → Identifier."""
     d1_gmn.app.views.assert_db.post_has_mime_parts(
-        request, (('field', 'pid'), ('file', 'object'), ('file', 'sysmeta'))
+        request, (("field", "pid"), ("file", "object"), ("file", "sysmeta"))
     )
-    url_pid = request.POST['pid']
-    sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
+    url_pid = request.POST["pid"]
+    sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES["sysmeta"])
     d1_gmn.app.views.assert_sysmeta.obsoletes_not_specified(sysmeta_pyxb)
     d1_gmn.app.views.assert_sysmeta.matches_url_pid(sysmeta_pyxb, url_pid)
     d1_gmn.app.views.assert_sysmeta.is_valid_sid_for_new_standalone(sysmeta_pyxb)
@@ -501,17 +499,17 @@ def put_object(request, old_pid):
         d1_gmn.app.auth.assert_create_update_delete_permission(request)
     d1_gmn.app.util.coerce_put_post(request)
     d1_gmn.app.views.assert_db.post_has_mime_parts(
-        request, (('field', 'newPid'), ('file', 'object'), ('file', 'sysmeta'))
+        request, (("field", "newPid"), ("file", "object"), ("file", "sysmeta"))
     )
     d1_gmn.app.views.assert_db.is_valid_pid_to_be_updated(old_pid)
-    sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
-    new_pid = request.POST['newPid']
+    sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES["sysmeta"])
+    new_pid = request.POST["newPid"]
     d1_gmn.app.views.assert_sysmeta.matches_url_pid(sysmeta_pyxb, new_pid)
     d1_gmn.app.views.assert_sysmeta.obsoletes_matches_pid_if_specified(
         sysmeta_pyxb, old_pid
     )
     sysmeta_pyxb.obsoletes = old_pid
-    sid = d1_common.xml.get_opt_val(sysmeta_pyxb, 'seriesId')
+    sid = d1_common.xml.get_opt_val(sysmeta_pyxb, "seriesId")
     d1_gmn.app.views.assert_sysmeta.is_valid_sid_for_chain(old_pid, sid)
     d1_gmn.app.views.create.create_sciobj(request, sysmeta_pyxb)
     # The create event for the new object is added in create_sciobj(). The update
@@ -530,14 +528,14 @@ def put_object(request, old_pid):
 # No locking. Public access.
 def post_generate_identifier(request):
     """MNStorage.generateIdentifier(session, scheme[, fragment]) → Identifier."""
-    d1_gmn.app.views.assert_db.post_has_mime_parts(request, (('field', 'scheme'),))
-    if request.POST['scheme'] != 'UUID':
+    d1_gmn.app.views.assert_db.post_has_mime_parts(request, (("field", "scheme"),))
+    if request.POST["scheme"] != "UUID":
         raise d1_common.types.exceptions.InvalidRequest(
-            0, 'Only the UUID scheme is currently supported'
+            0, "Only the UUID scheme is currently supported"
         )
-    fragment = request.POST.get('fragment', None)
+    fragment = request.POST.get("fragment", None)
     while True:
-        pid = (fragment if fragment else '') + uuid.uuid4().hex
+        pid = (fragment if fragment else "") + uuid.uuid4().hex
         if not d1_gmn.app.models.ScienceObject.objects.filter(pid__did=pid).exists():
             return pid
 
@@ -570,15 +568,15 @@ def put_archive(request, pid):
 def post_replicate(request):
     """MNReplication.replicate(session, sysmeta, sourceNode) → boolean."""
     d1_gmn.app.views.assert_db.post_has_mime_parts(
-        request, (('field', 'sourceNode'), ('file', 'sysmeta'))
+        request, (("field", "sourceNode"), ("file", "sysmeta"))
     )
-    sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES['sysmeta'])
+    sysmeta_pyxb = d1_gmn.app.sysmeta.deserialize(request.FILES["sysmeta"])
     d1_gmn.app.local_replica.assert_request_complies_with_replication_policy(
         sysmeta_pyxb
     )
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     d1_gmn.app.views.assert_db.is_valid_pid_for_create(pid)
     d1_gmn.app.local_replica.add_to_replication_queue(
-        request.POST['sourceNode'], sysmeta_pyxb
+        request.POST["sourceNode"], sysmeta_pyxb
     )
     return d1_gmn.app.views.util.http_response_with_boolean_true_type()

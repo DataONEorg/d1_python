@@ -42,7 +42,7 @@ import d1_common.date_time
 log = logging.getLogger(__name__)
 # Set specific logging level for this module if specified.
 try:
-    log.setLevel(logging.getLevelName(getattr(logging, 'ONEDRIVE_MODULES')[__name__]))
+    log.setLevel(logging.getLevelName(getattr(logging, "ONEDRIVE_MODULES")[__name__]))
 except KeyError:
     pass
 
@@ -116,18 +116,18 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
         self.directory_cache = options.directory_cache
 
     def getFileInformation(self, fileName):
-        log.debug('getFileInformation(): fileName={}'.format(fileName))
+        log.debug("getFileInformation(): fileName={}".format(fileName))
         if self._is_os_special_file(fileName):
             return None
         attributes = self._get_attributes_through_cache(fileName)
         stat = self._stat_from_attributes(attributes)
         if fileName == "\\":
-            stat['attr'] |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DEVICE
+            stat["attr"] |= d1_onedrive.impl.drivers.dokan.const.FILE_ATTRIBUTE_DEVICE
         return stat
 
     def findFilesWithPattern(self, path, searchPattern):
         log.debug(
-            'findFilesWithPattern(): path={} searchPattern={}'.format(
+            "findFilesWithPattern(): path={} searchPattern={}".format(
                 path, searchPattern
             )
         )
@@ -148,7 +148,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
             file_path = os.path.join(path, file_name)
             attribute = self._get_attributes_through_cache(file_path)
             stat = self._stat_from_attributes(attribute)
-            stat['name'] = file_name
+            stat["name"] = file_name
             files.append(stat)
         return files
 
@@ -162,12 +162,12 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
     # science metadata
 
     def readFile(self, path, size, offset):
-        log.debug('read(): {}'.format(path))
+        log.debug("read(): {}".format(path))
         try:
             return self.root_resolver.read_file(path, size, offset)
         except d1_onedrive.impl.onedrive_exceptions.PathException:
             # raise OSError(errno.ENOENT, e) FUSE
-            raise IOError('Could not read specified file: %s', path)
+            raise IOError("Could not read specified file: %s", path)
 
         # logging.debug('%s %s %s', fileName, numberOfBytesToRead, offset)
         #
@@ -182,7 +182,7 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
         #    numberOfBytesToRead = len(xml) - offset
         #  return xml[offset:offset+numberOfBytesToRead]
 
-        raise IOError('Could not read specified file: %s', path)
+        raise IOError("Could not read specified file: %s", path)
 
     # TODO Not really sure what to do here...at the moment everything is virtual.
     # Everything is hard-coded right now just to get the idea across.  Mounting
@@ -203,10 +203,10 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
             | d1_onedrive.impl.drivers.dokan.const.FILE_CASE_PRESERVED_NAMES
         )
         return dict(
-            volumeNameBuffer='DataONE Disk',
+            volumeNameBuffer="DataONE Disk",
             maximumComponentLength=260,
             fileSystemFlags=fsFlags,
-            fileSystemNameBuffer='DataONE File System',
+            fileSystemNameBuffer="DataONE File System",
         )
 
     def _get_attributes_through_cache(self, path):
@@ -250,8 +250,8 @@ class DataONEFS(d1_onedrive.impl.drivers.dokan.dokan.Operations):
         return len(set(path.split(os.path.sep)) & self._options.ignore_special)
 
     def _raise_error_no_such_file_or_directory(self, path):
-        log.debug('Error: No such file or directory: {}'.format(path))
-        raise OSError(errno.ENOENT, '')
+        log.debug("Error: No such file or directory: {}".format(path))
+        raise OSError(errno.ENOENT, "")
 
 
 #  def _raise_error_permission_denied(self, path):

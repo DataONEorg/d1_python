@@ -41,7 +41,7 @@ class Test050Get(d1_test_case.D1TestCase):
     def validate_object(self, object_info):
         """Get object and verify retrieved information against its ObjectInfo."""
         # The ObjectInfo records were retrieved during the listObjects tests.
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         pid = object_info.identifier.value()
         # Verify checksum and checksum algorithm.
         response = client.get(context.TOKEN, pid)
@@ -56,9 +56,9 @@ class Test050Get(d1_test_case.D1TestCase):
 
     def test_010_get_object_by_invalid_pid(self):
         """404 NotFound when attempting to get non-existing object."""
-        client = test_client.TestClient(context.node['baseurl'])
+        client = test_client.TestClient(context.node["baseurl"])
         with pytest.raises(d1_common.types.exceptions.NotFound):
-            client.get(context.TOKEN, '_invalid_pid_')
+            client.get(context.TOKEN, "_invalid_pid_")
 
     def test_020_get_object_by_valid_pid(self):
         """Successful retrieval of known objects."""

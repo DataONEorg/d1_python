@@ -23,7 +23,6 @@ The mode is selectable on a per object basis
 """
 
 import io
-import os
 
 import requests
 import responses
@@ -93,7 +92,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
             d1_common.type_conversions.get_version_tag_by_pyxb_binding(
                 client.pyxb_binding
             ),
-            'object',
+            "object",
             d1_common.url.encodePathElement(pid),
         )
 
@@ -103,7 +102,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
             d1_common.type_conversions.get_version_tag_by_pyxb_binding(
                 client.pyxb_binding
             ),
-            'object',
+            "object",
             d1_common.url.encodePathElement(pid),
         )
 

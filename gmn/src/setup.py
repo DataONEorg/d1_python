@@ -24,44 +24,44 @@ import setuptools
 
 
 def main():
-    exec(open('d1_gmn/version.py').read())
+    exec(open("d1_gmn/version.py").read())
     # noinspection PyUnresolvedReferences
     setuptools.setup(
-        name='dataone.gmn',
-        version='3.4.1',
-        description='DataONE Generic Member Node (GMN)',
-        author='DataONE Project',
-        author_email='developers@dataone.org',
-        url='https://github.com/DataONEorg/d1_python',
-        license='Apache License, Version 2.0',
+        name="dataone.gmn",
+        version="3.4.2",
+        description="DataONE Generic Member Node (GMN)",
+        author="DataONE Project",
+        author_email="developers@dataone.org",
+        url="https://github.com/DataONEorg/d1_python",
+        license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        exclude_package_data={'': ['settings.py']},
+        exclude_package_data={"": ["settings.py"]},
         install_requires=[
-            'dataone.cli >= 3.4.1',
-            'dataone.common >= 3.4.1',
-            'dataone.libclient >= 3.4.1',
-            'dataone.scimeta >= 3.4.1',
+            "dataone.cli >= 3.4.2",
+            "dataone.common >= 3.4.2",
+            "dataone.libclient >= 3.4.2",
+            "dataone.scimeta >= 3.4.2",
             #
-            'django >= 2.2',
-            'iso8601 >= 0.1.12',
-            'psycopg2-binary >= 2.8',
-            'PyJWT >= 1.7.1',
-            'pyxb >= 1.2.6',
-            'requests >= 2.21.0',
+            "django >= 2.2.2",
+            "iso8601 >= 0.1.12",
+            "psycopg2-binary >= 2.8.2",
+            "PyJWT >= 1.7.1",
+            "pyxb >= 1.2.6",
+            "requests >= 2.22.0",
         ],
-        setup_requires=['setuptools_git >= 1.1'],
+        setup_requires=["setuptools_git >= 1.1"],
         classifiers=[
-            'Development Status :: 5 - Production/Stable',
-            'Intended Audience :: Developers',
-            'Topic :: Scientific/Engineering',
-            'License :: OSI Approved :: Apache Software License',
-            'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.6',
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Developers",
+            "Topic :: Scientific/Engineering",
+            "License :: OSI Approved :: Apache Software License",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.6",
         ],
-        keywords='DataONE server member-node coordinating-node',
+        keywords="DataONE server member-node coordinating-node",
     )
 
 
-if __name__ >= '__main__':
+if __name__ >= "__main__":
     sys.exit(main())

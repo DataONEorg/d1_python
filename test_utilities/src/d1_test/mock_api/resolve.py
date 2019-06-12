@@ -44,17 +44,17 @@ import d1_test.mock_api.util
 
 # Config
 N_TOTAL = 100
-RESOLVE_ENDPOINT_RX = r'v([123])/resolve/(.*)'
+RESOLVE_ENDPOINT_RX = r"v([123])/resolve/(.*)"
 
 
 def add_callback(base_url):
     responses.add_callback(
         responses.GET,
         re.compile(
-            r'^' + d1_common.url.joinPathElements(base_url, RESOLVE_ENDPOINT_RX)
+            r"^" + d1_common.url.joinPathElements(base_url, RESOLVE_ENDPOINT_RX)
         ),
         callback=_request_callback,
-        content_type='',
+        content_type="",
     )
 
 
@@ -66,11 +66,11 @@ def _request_callback(request):
         return exc_response_tup
     # Return NotFound
     pid_str, client = _parse_url(request.url)
-    if pid_str.startswith('<NotFound>'):
+    if pid_str.startswith("<NotFound>"):
         return d1_test.mock_api.d1_exception.trigger_by_status_code(request, 404)
     # Return regular response
     body_str = _generate_object_location_list(client, pid_str)
-    header_dict = {'Content-Type': d1_common.const.CONTENT_TYPE_XML}
+    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_XML}
     # We use a 303 redirect to support resolve() in browsers.
     return 303, header_dict, body_str
 
@@ -79,8 +79,8 @@ def _parse_url(url):
     version_tag, endpoint_str, param_list, query_dict, client = d1_test.mock_api.util.parse_rest_url(
         url
     )
-    assert endpoint_str == 'resolve'
-    assert len(param_list) == 1, 'resolve() accept a single parameter, the pid'
+    assert endpoint_str == "resolve"
+    assert len(param_list) == 1, "resolve() accept a single parameter, the pid"
     return param_list[0], client
 
 
@@ -89,16 +89,16 @@ def _generate_object_location_list(client, pid_str):
     objectLocationList.identifier = pid_str
 
     for i in range(3):
-        pid_str = 'resolved_pid_{}'.format(i)
+        pid_str = "resolved_pid_{}".format(i)
         objectLocation = client.pyxb_binding.ObjectLocation()
-        objectLocation.nodeIdentifier = 'urn:node:testResolve{}'.format(i)
-        objectLocation.baseURL = 'https://{}.some.base.url/mn'.format(i)
-        objectLocation.version = 'v2'
-        objectLocation.url = 'https://{}.some.base.url/mn/v2/object/{}'.format(
+        objectLocation.nodeIdentifier = "urn:node:testResolve{}".format(i)
+        objectLocation.baseURL = "https://{}.some.base.url/mn".format(i)
+        objectLocation.version = "v2"
+        objectLocation.url = "https://{}.some.base.url/mn/v2/object/{}".format(
             i, pid_str
         )
         objectLocation.preference = i
 
         objectLocationList.objectLocation.append(objectLocation)
 
-    return objectLocationList.toxml('utf-8')
+    return objectLocationList.toxml("utf-8")

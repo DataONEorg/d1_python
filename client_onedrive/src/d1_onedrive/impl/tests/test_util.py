@@ -29,28 +29,28 @@ import d1_test.d1_test_case
 class TestUtil(d1_test.d1_test_case.D1TestCase):
     def test_1000(self):
         """ensure_dir_exists()"""
-        with mock.patch('os.makedirs') as mock_makedirs:
-            d1_onedrive.impl.util.ensure_dir_exists('/abc/de/f')
-            mock_makedirs.assert_called_with('/abc/de/f')
+        with mock.patch("os.makedirs") as mock_makedirs:
+            d1_onedrive.impl.util.ensure_dir_exists("/abc/de/f")
+            mock_makedirs.assert_called_with("/abc/de/f")
 
     def test_1010(self):
         """string_from_path_elements()"""
         assert (
-            d1_onedrive.impl.util.string_from_path_elements(['abc', 'de', 'f'])
-            == 'abc/de/f'
+            d1_onedrive.impl.util.string_from_path_elements(["abc", "de", "f"])
+            == "abc/de/f"
         )
 
     def test_1020(self):
         """is_root()"""
-        assert d1_onedrive.impl.util.is_root(['', ''])
-        assert not d1_onedrive.impl.util.is_root(['a', ''])
+        assert d1_onedrive.impl.util.is_root(["", ""])
+        assert not d1_onedrive.impl.util.is_root(["a", ""])
 
     def test_1030(self):
         """os_format()"""
-        with mock.patch('platform.system', return_value='Linux'):
-            assert d1_onedrive.impl.util.os_format('a\nb\n') == b'a\nb\n'
-        with mock.patch('platform.system', return_value='Windows'):
+        with mock.patch("platform.system", return_value="Linux"):
+            assert d1_onedrive.impl.util.os_format("a\nb\n") == b"a\nb\n"
+        with mock.patch("platform.system", return_value="Windows"):
             assert (
-                d1_onedrive.impl.util.os_format('a\nb\n')
-                == b'\xff\xfea\x00\r\x00\n\x00b\x00\r\x00\n\x00'
+                d1_onedrive.impl.util.os_format("a\nb\n")
+                == b"\xff\xfea\x00\r\x00\n\x00b\x00\r\x00\n\x00"
             )
