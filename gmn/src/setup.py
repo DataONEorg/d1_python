@@ -28,7 +28,7 @@ def main():
     # noinspection PyUnresolvedReferences
     setuptools.setup(
         name="dataone.gmn",
-        version="3.4.2",
+        version='3.4.3',
         description="DataONE Generic Member Node (GMN)",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -38,10 +38,10 @@ def main():
         include_package_data=True,
         exclude_package_data={"": ["settings.py"]},
         install_requires=[
-            "dataone.cli >= 3.4.2",
-            "dataone.common >= 3.4.2",
-            "dataone.libclient >= 3.4.2",
-            "dataone.scimeta >= 3.4.2",
+            'dataone.cli >= 3.4.3',
+            'dataone.common >= 3.4.3',
+            'dataone.libclient >= 3.4.3',
+            'dataone.scimeta >= 3.4.3',
             #
             "django >= 2.2.2",
             "iso8601 >= 0.1.12",

@@ -189,7 +189,7 @@ Create template database from fixture with:
 
 The template is reused between test runs.
 
-Science object bytes are stored on disk, so they are not captured in the db fixture. If a test needs get(), getChecksum() and replica() to work, it must first create the correct file in GMN's object store or mock object store reads. The bytes are predetermined for a given test PID. See `d1_test.d1_test_case.generate_reproducible_sciobj_str()` and `d1_gmn.app.util.sciobj_file_path()`.
+Science object bytes are stored on disk, so they are not captured in the db fixture. If a test needs `get()`, `getChecksum()` and `replica()` to work, it must first create the correct file in GMN's object store or mock object store reads. The bytes are predetermined for a given test PID. See `d1_test.d1_test_case.generate_reproducible_sciobj_str()` and `d1_gmn.app.util.sciobj_file_path()`.
 
 
 ### Setting up the development environment
@@ -299,7 +299,7 @@ As updating the versions in the `setup.py` files manually is time consuming and 
 
 The `<version>` argument specifies what the version will be for the release. E.g., `"2.3.1"`. We keep the version numbers in sync between all of the packages in the d1_python git repository, so only one version string needs to be specified.
 
-The current version can be found in any of the `setup.py` files and in the `VERSION` string in `./lib_common/src/d1_common/const/.py`
+The current version can be found in any of the `setup.py` files and in the `VERSION` string in `./lib_common/src/d1_common/const.py`
 
 Run the tests, ensure that they pass and update sample files as necessary.
 
@@ -318,22 +318,24 @@ After successful build, clone a fresh copy, which will be used for building the 
 
 Building the release packages from a fresh clone is a simple way of ensuring that only tracked files are released. It is a workaround for the way setuptools works, which is basically that it vacuums up everything that looks like a Python script in anything that looks like a package, which makes it easy to publish local files by accident.
 
-Build and publish the packages:
+Create a Python venv to use for build and deploy
 
-    $ cd
-    $ rm -rf ~/d1_python_build
-    $ git clone git@github.com:DataONEorg/d1_python.git d1_python_build
-    $ cd ~/d1_python_build
-    
-    $ pyenv versions
+    $ pyenv virtualenv "x.y.z" venv_build
+
+      * Where "x.y.z" is one of the versions listed in `pyenv versions`.
       * Pick a version that is close or the same as the version of Python used for testing on Travis
+
+Build and publish the packages:
     
-    $ pyenv virtualenv x.y.z venv_build
-    $ pyenv activate venv_build
-    $ pip install --upgrade pip
-    $ pip install wheel    
-    
-    $ python ./dev_tools/src/d1_dev/setup-all.py --root . bdist_wheel upload
+    bash -c '
+      bdir=~/d1_python_build
+      rm -rf ${bdir}
+      pyenv activate venv_build
+      pip install --upgrade pip
+      pip install --upgrade wheel    
+      git clone git@github.com:DataONEorg/d1_python.git ${bdir}
+      ${bdir}/dev_tools/src/d1_dev/setup-all.py --root ${bdir} bdist_wheel upload
+    '
 
 ### Building the documentation
 

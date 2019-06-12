@@ -36,6 +36,7 @@ import d1_test.instance_generator.identifier
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestGetPackage")
+@freezegun.freeze_time('1995-01-01')
 class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v2):
@@ -94,3 +95,19 @@ class TestGetPackage(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.sample.assert_equals(
                 [o.filename for o in bagit_zip.filelist], "bagit_names"
             )
+
+    @responses.activate
+    def test_1030(self, gmn_client_v2):
+        """MNPackage.getPackage(): Returns valid headers for a ZIP archive.
+
+        getPackage() returns a .ZIP of unknown length while the underlying OAI-ORE
+        Resource Map is a .RDF object. This checks the path for generating headers
+        specifically for getPackage().
+        """
+        pid_list = self.create_multiple_objects(gmn_client_v2, 2)
+        ore_pid = self.create_resource_map(gmn_client_v2, pid_list)
+        response = self.call_d1_client(gmn_client_v2.getPackage, ore_pid)
+        assert response.headers['DataONE-FormatId'] == 'application/bagit-097'
+        assert 'zip' in response.headers['Content-Disposition'].lower()
+        assert 'Content-Length' not in response.headers
+        self.sample.assert_equals(response.headers, 'bagit_headers')

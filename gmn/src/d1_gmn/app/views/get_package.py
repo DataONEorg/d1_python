@@ -58,7 +58,7 @@ def _get_package(request, pid, package_type):
         bagit_file, content_type="application/zip"
     )
     sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)
-    d1_gmn.app.views.headers.add_sciobj_properties_headers_to_response(
+    d1_gmn.app.views.headers.add_bagit_zip_properties_headers_to_response(
         response, sciobj_model
     )
     return response
