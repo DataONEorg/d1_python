@@ -198,35 +198,83 @@ These instructions are tested on Linux Mint 18 and should also work on close der
 
 #### Install packaged dependencies
 
-  $ sudo apt update
-  $ sudo apt -fy dist-upgrade
-  $ sudo apt install -y python-setuptools libssl-dev postgresql postgresql-server-dev-all git
+    sudo bash -c '
+      apt update
+      apt -fy dist-upgrade
+      apt install -y python-setuptools libssl-dev postgresql postgresql-server-dev-all git python3-dev
+    '
 
-##### Python 3
+#### Install pyenv
 
-  $ sudo apt install -y python3-dev python3-venv
-  $ python3 -m venv venv
+In general, the system version of Python should not be touched. E.g., avoid installing packages with `sudo pip`.
 
-##### Python 2
+pyenv provides a handy way to download and build local versions of Python mostly without sudo and without modifying the system Python environment. The Python environments created and managed by pyenv are stored under `~/.pyenv` by default. pyenv automatically switches between Python environments based on the current directory.
 
-  $ sudo apt install -y python-dev python-virtualenv
+Install:
 
-##### Python 3 and Python 2
+    curl https://pyenv.run | bash
+    
+* Follow the instructions on how to activate pyenv automatically.
+* Open a new shell.
 
-  $ . ./venv/bin/activate
+#### Set up a virtual environment for d1_python
 
-Download the source from GitHub:
+This is the environment all of d1_python's packaged Python dependencies will be installed to. It provides the runtime environment for d1_python tests and utilities.
 
-    $ git clone https://github.com/DataONEorg/d1_python.git
+The `CONFIGURE_OPTS=--enable-shared` setting in the snippet is required for `mod_wsgi` to be able to run from the environment. 
 
-Add the DataONE packages to the Python path, and install their dependencies:
+    bash -c '
+        pyver=3.7.3
+        CONFIGURE_OPTS=--enable-shared pyenv install ${pyver}
+        pyenv virtualenv ${pyver} d1_python
+        pyenv activate d1_python
+        pip install --upgrade pip
+    '
 
-    cd ~/d1_python
-    sudo ./dev_tools/src/d1_dev/setup-all.py --root . develop
+Select a location for the d1_python git repository. Changed this as needed.
+
+    $ export d1path=~/dev/d1_python
+
+Download the source from GitHub and install:
+
+    bash -c '
+        git clone https://github.com/DataONEorg/d1_python.git ${d1path}
+        cd ${d1path}
+        pyenv activate d1_python
+        sudo ./dev_tools/src/d1_dev/setup-all.py --root . develop
+    '
+    
+#### Running GMN under Apache
+
+The setup above is sufficient for testing against GMN using HTTP and the Django test client, which is normally all that is required. However, if testing over HTTPS or in an environment that is closer to production is required, Apache can be set up to host GMN directly from its location in d1_python, using the d1_python virtual environment.
+
+In such a setup, the GMN source can be open in an IDE and changes made active with an `service apache2 reload`.
+
+Note that `mod_wsgi` can only run from a Python environment compiled with `--enable-shared`, as done in the venv setup above.
+
+The APT package version of `mod_wsgi` has been compiled to work with the APT package version of Python. The two must be compatible at the ABI level, and Apache can only load a single instance of `mod_wsgi`. So this uninstalls any installed `mod_wsgi` APT package before compiling a new version against the Python environment in which it will be used.
+
+
+    sudo bash -c '
+        service apache2 stop
+        apt remove libapache2-mod-wsgi*
+        apt-get update
+        apt-get install python libexpat1 apache2 apache2-utils ssl-cert apache2-dev
+        setfacl -m u:${SUDO_USER}:w /etc/apache2/mods-available/wsgi.load
+    '
+
+    bash -c '
+        pyenv activate d1_python
+        pip install mod_wsgi
+        mod_wsgi-express module-config >> /etc/apache2/mods-available/wsgi.load
+    '
+    
+    sudo bash -c '
+        a2enmod wsgi
+        service apache2 restart
+    '
 
 #### Postgres
-
-:
 
     $ sudo apt install --yes postgresql
 
@@ -237,20 +285,14 @@ Set the password of the postgres superuser account:
 
 When prompted for the password, enter a new superuser password (and remember it :-).
 
-:
-
     $ sudo -u postgres createdb -E UTF8 gmn2
     $ sudo -u postgres createuser --superuser `whoami`
 
 PyCharm (and other IntelliJ based platforms), are not able to connect to database with local (UNIX) sockets. Postgres' convenient "peer" authentication type only works over local sockets. A convenient workaround for this is to set Postgres up to trust local connections made over TCP/IP.
 
-:
-
     $ sudo editor /etc/postgresql/10/main/pg_hba.conf
 
 Add line:
-
-:
 
     host all all 127.0.0.1/32 trust
 
@@ -318,14 +360,20 @@ After successful build, clone a fresh copy, which will be used for building the 
 
 Building the release packages from a fresh clone is a simple way of ensuring that only tracked files are released. It is a workaround for the way setuptools works, which is basically that it vacuums up everything that looks like a Python script in anything that looks like a package, which makes it easy to publish local files by accident.
 
-Create a Python venv to use for build and deploy
+Create a Python venv to use for build and deploy:
 
+* The package `setup.py` scripts will run in this venv.
+* The venv can be reused indefinitly.
+    
     $ pyenv virtualenv "x.y.z" venv_build
 
-      * Where "x.y.z" is one of the versions listed in `pyenv versions`.
-      * Pick a version that is close or the same as the version of Python used for testing on Travis
+* Where "x.y.z" is one of the versions listed in `pyenv versions`.
+* Pick a version that is close or the same as the version of Python used for testing on Travis.
+
 
 Build and publish the packages:
+
+* Download current master from GitHub, create binary wheel packages and push the packages to PyPI.
     
     bash -c '
       bdir=~/d1_python_build
