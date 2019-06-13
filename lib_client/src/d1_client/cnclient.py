@@ -282,7 +282,7 @@ class CoordinatingNodeClient(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        return self.GET(["resolve", pid], headers=vendorSpecific)
+        return self.GET(["resolve", pid], headers=vendorSpecific, allow_redirects=False)
 
     def resolve(self, pid, vendorSpecific=None):
         """See Also: resolveResponse()
