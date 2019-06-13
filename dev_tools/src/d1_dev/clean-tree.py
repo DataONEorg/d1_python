@@ -26,8 +26,6 @@ TODO: Matching directories in the root directory are not deleted.
 """
 
 import argparse
-import fnmatch
-import logging
 import os
 import shutil
 import sys
@@ -41,20 +39,21 @@ JUNK_GLOB_LIST = [
     "*egg-info/",
     ".cache/",
     ".eggs",
+    ".pytest_cache/",
     "__pycache__/",
     "build/",
     "cover/",
     "dist/",
     "htmlcov/",
-    ".pytest_cache/",
     "stores/object/",
     # Files
     "*.bak",
+    "*.log",
     "*.pyc",
     "*.tmp",
-    "*.log",
     "*~",
     ".coverage",
+    ".coverage.*",
     "coverage.xml",
     "coverage_pycharm.xml",
     "pip_freeze_*.txt",
@@ -66,7 +65,6 @@ def main():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("path", nargs="+", help="File or directory path")
-    parser.add_argument("--include", nargs="+", help="Include glob patterns")
     parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
         "--no-recursive",
@@ -79,13 +77,14 @@ def main():
     )
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument("--dry-run", action="store_true", help="Simulate only")
+    parser.add_argument("--yes", dest='is_interactive', action="store_false", help="Delete without user prompts")
 
     args = parser.parse_args()
     d1_common.util.log_setup(args.debug)
 
     itr = d1_common.iter.path.path_generator(
         path_list=args.path,
-        include_glob_list=args.include,
+        include_glob_list=JUNK_GLOB_LIST,
         exclude_glob_list=args.exclude,
         recursive=args.recursive,
         ignore_invalid=args.ignore_invalid,
@@ -93,43 +92,30 @@ def main():
         return_dir_paths=True,
     )
 
-    try:
-        item_path = next(itr)
-        while True:
+    for p in itr:
+        print(p)
 
-            logging.debug('item_path="{}"'.format(item_path))
-            is_junk_bool = is_junk(item_path)
-            logging.debug('is_junk={} path="{}"'.format(is_junk_bool, item_path))
-            if is_junk_bool:
-                if os.path.isfile(item_path):
-                    logging.info("Deleting file: {}".format(item_path))
-                    if not args.dry_run:
-                        os.unlink(item_path)
-                else:
-                    logging.info("Deleting dir:  {}".format(item_path))
-                    if not args.dry_run:
-                        shutil.rmtree(item_path)
-            item_path = itr.send(is_junk_bool)
-    except KeyboardInterrupt:
-        logging.info("Interrupted")
-        raise StopIteration
-    except StopIteration:
-        sys.exit()
+        if os.path.isdir(p):
+            if args.is_interactive:
+                if not confirm('Delete directory tree?'):
+                    continue
+            if not args.dry_run:
+                shutil.rmtree(p)
+        else:
+            if args.is_interactive:
+                if not confirm("Delete file?"):
+                    continue
+            if not args.dry_run:
+                os.unlink(p)
 
 
-def is_junk(path):
-    junk_file_glob_list = [p for p in JUNK_GLOB_LIST if not p.endswith(os.path.sep)]
-    junk_dir_glob_list = [p for p in JUNK_GLOB_LIST if p.endswith(os.path.sep)]
-    if os.path.isfile(path):
-        return any(
-            fnmatch.fnmatch(os.path.split(path)[1], g) for g in junk_file_glob_list
-        )
-    elif os.path.isdir(path):
-        print(path)
-        return any(
-            fnmatch.fnmatch(os.path.split(path)[1] + "/", g) for g in junk_dir_glob_list
-        )
-    return False
+def confirm(yes_no_question_str):
+    while True:
+        reply_str = input('{} Yes/No [Enter/n]: '.format(yes_no_question_str))
+        if reply_str == '':
+            return True
+        if reply_str == 'n':
+            return False
 
 
 if __name__ == "__main__":
