@@ -92,7 +92,7 @@ class ExceptionHandler:
         return http_response
 
     def _log_dataone_exception(self, e):
-        logging.info(e.friendly_format())
+        logging.error(e.friendly_format())
 
     # Internal exception
 

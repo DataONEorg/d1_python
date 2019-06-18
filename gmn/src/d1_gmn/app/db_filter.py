@@ -45,7 +45,7 @@ import django.db.models
 
 def add_access_policy_filter(request, query, column_name):
     """Filter records that do not have ``read`` or better access for one or more of the
-    active subjects.
+    session subjects.
 
     Since ``read`` is the lowest access level that a subject can have, this method only
     has to filter on the presence of the subject.

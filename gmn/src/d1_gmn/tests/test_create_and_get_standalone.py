@@ -78,22 +78,22 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
-        """create(): Raises NotAuthorized if none of the trusted subjects are active."""
+        """create(): Raises NotAuthorized if none of the trusted subjects are in the session."""
         with pytest.raises(d1_common.types.exceptions.NotAuthorized):
             self.create_obj(
                 gmn_client_v1_v2,
-                active_subj_list=["subj1", "subj2", "subj3"],
+                session_subj_list=["subj1", "subj2", "subj3"],
                 trusted_subj_list=["subj4", "subj5"],
                 disable_auth=False,
             )
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
-        """create(): Creates the object if one or more trusted subjects are active."""
+        """create(): Creates the object if one or more trusted subjects are in the session."""
         self.create_obj(
             gmn_client_v1_v2,
-            active_subj_list=["subj1", "subj2", "active_and_trusted_subj"],
-            trusted_subj_list=["active_and_trusted_subj", "subj4"],
+            session_subj_list=["subj1", "subj2", "session_and_trusted_subj"],
+            trusted_subj_list=["session_and_trusted_subj", "subj4"],
             disable_auth=False,
         )
 
@@ -105,8 +105,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.get_obj(
             gmn_client_v1_v2,
             pid,
-            active_subj_list=["subj1", "subj2", "active_and_trusted_subj"],
-            trusted_subj_list=["active_and_trusted_subj", "subj4"],
+            session_subj_list=["subj1", "subj2", "session_and_trusted_subj"],
+            trusted_subj_list=["session_and_trusted_subj", "subj4"],
             disable_auth=False,
         )
 
@@ -123,7 +123,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.get_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=["subj1", "subj2", "shared_subj", "subj4"],
+                session_subj_list=["subj1", "subj2", "shared_subj", "subj4"],
                 trusted_subj_list=["subj5", "subj6"],
                 disable_auth=False,
             )
@@ -139,7 +139,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.get_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=[sysmeta_pyxb.submitter.value()],
+                session_subj_list=[sysmeta_pyxb.submitter.value()],
                 trusted_subj_list=None,
                 disable_auth=False,
             )
@@ -154,7 +154,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.get_obj(
             gmn_client_v1_v2,
             pid,
-            active_subj_list=[sysmeta_pyxb.rightsHolder.value()],
+            session_subj_list=[sysmeta_pyxb.rightsHolder.value()],
             trusted_subj_list=None,
             disable_auth=False,
         )
@@ -167,7 +167,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             gmn_client_v1_v2, permission_list=[(["subj5"], ["read"])]
         )
         self.get_obj(
-            gmn_client_v1_v2, pid, active_subj_list="subj5", disable_auth=False
+            gmn_client_v1_v2, pid, session_subj_list="subj5", disable_auth=False
         )
 
     @responses.activate
@@ -178,7 +178,7 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             gmn_client_v1_v2, permission_list=[(["subj5"], ["changePermission"])]
         )
         self.get_obj(
-            gmn_client_v1_v2, pid, active_subj_list="subj5", disable_auth=False
+            gmn_client_v1_v2, pid, session_subj_list="subj5", disable_auth=False
         )
 
     @responses.activate

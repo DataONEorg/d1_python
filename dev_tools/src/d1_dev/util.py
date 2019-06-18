@@ -182,7 +182,7 @@ def find_repo_root_by_path(path):
     """Given a path to an item in a git repository, find the root of the repository."""
     repo = git.Repo(path, search_parent_directories=True)
     repo_path = repo.git.rev_parse("--show-toplevel")
-    logging.info("Repository: {}".format(repo_path))
+    logging.debug("Repository: {}".format(repo_path))
     return repo_path
 
 

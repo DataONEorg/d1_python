@@ -134,7 +134,7 @@ def create_read_events(client, freeze_time):
             d1_test.instance_generator.random_data.random_regular_or_symbolic_subj()
         )
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            active_subj_list=[read_subj],
+            session_subj_list=[read_subj],
             trusted_subj_list=[read_subj],
             whitelisted_subj_list=None,
             do_disable_auth=False,

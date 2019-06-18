@@ -71,13 +71,13 @@ class ViewHandler:
         # submit lists of subjects without having to generate certificates. In other
         # scenarios, it is desirable to simulate an HTTPS interaction as closely as
         # possible by providing a complete certificate.
-        request.primary_subject_str, request.all_subjects_set = self.get_active_subject_set(
+        request.primary_subject_str, request.all_subjects_set = self.get_session_subject_set(
             request
         )
         # Returning None causes Django to continue processing by calling any
         # process_view() in other middleware classes then the view.
 
-    def get_active_subject_set(self, request):
+    def get_session_subject_set(self, request):
         """Get a set containing all subjects for which the current connection has been
         successfully authenticated."""
         # Handle complete certificate in vendor specific extension.

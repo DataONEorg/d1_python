@@ -104,7 +104,7 @@ def _get_and_assert_slice_param(url_dict, param_name, default_int):
 
 
 def _assert_valid_start(start_int, count_int, total_int):
-    """Assert that the number of objects visible to the active subject is higher than
+    """Assert that the number of objects visible to the session subject is higher than
     the requested start position for the slice.
 
     This ensures that it's possible to create a valid slice.
@@ -121,7 +121,7 @@ def _assert_valid_start(start_int, count_int, total_int):
 
 def _adjust_count_if_required(start_int, count_int, total_int):
     """Adjust requested object count down if there are not enough objects visible to the
-    active subjects to cover the requested slice start and count.
+    session subjects to cover the requested slice start and count.
 
     Preconditions: start is verified to be lower than the number of visible objects,
     making it possible to create a valid slice by adjusting count.

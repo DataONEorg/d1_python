@@ -57,8 +57,8 @@ class TestUpdateSystemMetadata(d1_gmn.tests.gmn_test_case.GMNTestCase):
             sysmeta_pyxb.accessPolicy = access_policy_pyxb
             self.client_v2.updateSystemMetadata(pid, sysmeta_pyxb)
 
-    def _get(self, pid, active_subj_list):
-        with d1_gmn.tests.gmn_mock.set_auth_context(active_subj_list, ["trusted_subj"]):
+    def _get(self, pid, session_subj_list):
+        with d1_gmn.tests.gmn_mock.set_auth_context(session_subj_list, ["trusted_subj"]):
             self.client_v2.get(pid)
 
     @responses.activate

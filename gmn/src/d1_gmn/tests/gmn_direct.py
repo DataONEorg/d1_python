@@ -141,7 +141,7 @@ def _add_query(query_dict, url_path):
 
 
 def get_object_count(version_tag):
-    """Get total number of objects for which one or more subj in ``active_subj_list``
+    """Get total number of objects for which one or more subj in ``session_subj_list``
     have read access or better."""
     url_path = d1_common.url.joinPathElements("/", version_tag, "object")
     # url_path += "?identifier={}".format(d1_common.url.encodeQueryElement(pid))

@@ -118,7 +118,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
         records."""
         self._create_test_objs(gmn_client_v1_v2)
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            active_subj_list=["glr_unk_subj"], trusted_subj_list=[]
+            session_subj_list=["glr_unk_subj"], trusted_subj_list=[]
         ):
             log = gmn_client_v1_v2.getLogRecords()
             assert self._log_entry_pids(log) == []
@@ -130,7 +130,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
         they have only 'read' access."""
         self._create_test_objs(gmn_client_v1_v2)
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            active_subj_list=["glr_subj_1"], trusted_subj_list=[]
+            session_subj_list=["glr_subj_1"], trusted_subj_list=[]
         ):
             log = gmn_client_v1_v2.getLogRecords()
             # Subject has read on objects 3, 4, and 5
@@ -152,7 +152,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
         records depending on access level."""
         self._create_test_objs(gmn_client_v1_v2)
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            active_subj_list=["glr_subj_2"], trusted_subj_list=[]
+            session_subj_list=["glr_subj_2"], trusted_subj_list=[]
         ):
             log = gmn_client_v1_v2.getLogRecords()
             # Subject has read or better on objects 3, 4, and 5
@@ -174,7 +174,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """getLogRecords() authz: RightsHolder always receives unredacted records."""
         self._create_test_objs(gmn_client_v1_v2)
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            active_subj_list=["glr_subj_rights_2"], trusted_subj_list=[]
+            session_subj_list=["glr_subj_rights_2"], trusted_subj_list=[]
         ):
             log = gmn_client_v1_v2.getLogRecords()
             # Subject is rightsholder on objects 2, 3, 4, and has "read" on object 5.
@@ -200,7 +200,7 @@ class TestGetLogRecordsAuth(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """getLogRecords() authz: Trusted subject receives all records unredacted."""
         self._create_test_objs(gmn_client_v1_v2)
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            active_subj_list=["glr_trusted"], trusted_subj_list=["glr_trusted"]
+            session_subj_list=["glr_trusted"], trusted_subj_list=["glr_trusted"]
         ):
             log = gmn_client_v1_v2.getLogRecords(count=200)
             for log_entry in log.logEntry:

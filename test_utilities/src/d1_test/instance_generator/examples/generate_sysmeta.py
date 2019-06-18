@@ -53,7 +53,7 @@ def getObjectFormatFromID(fmtid, default="application/octet-stream"):
     formats = d1_common.types.dataoneTypes.CreateFromDocument(doc)
     for format in formats.objectFormat:
         if format.formatId == fmtid:
-            logging.info("Found format for %s" % fmtid)
+            logging.debug("Found format for %s" % fmtid)
             return format
     for format in formats:
         if format.formatId == default:

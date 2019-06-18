@@ -46,7 +46,7 @@ import d1_test.instance_generator.identifier
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """update(): Raises NotAuthorized if none of the trusted subjects are active."""
+        """update(): Raises NotAuthorized if none of the trusted subjects are in the session."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             gmn_client_v1_v2, sid=True
         )
@@ -129,7 +129,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.get_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=[sysmeta_pyxb.submitter.value()],
+                session_subj_list=[sysmeta_pyxb.submitter.value()],
                 trusted_subj_list=None,
                 disable_auth=False,
             )

@@ -471,7 +471,7 @@ def django_db_setup(request, django_db_blocker):
     to be set up for each worker.
 
     """
-    logger.info("Setting up GMN test DB from template")
+    logger.debug("Setting up GMN test DB from template")
 
     template_db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key()
     unique_db_name = get_unique_db_name(request)
@@ -499,7 +499,7 @@ def get_unique_db_name(request):
 
 
 def postgres_create_from_template(new_db_name, template_db_name):
-    logger.info(
+    logger.debug(
         'Creating new db from template. new_db="{}" template_db="{}"'.format(
             new_db_name, template_db_name
         )

@@ -144,9 +144,9 @@ def trusted(request):
     if not d1_gmn.app.auth.is_trusted_subject(request):
         raise d1_common.types.exceptions.NotAuthorized(
             0,
-            'Access allowed only for trusted subjects. active_subjects="{}", '
+            'Access allowed only for trusted subjects. session_subjects="{}", '
             'trusted_subjects="{}"'.format(
-                d1_gmn.app.auth.format_active_subjects(request),
+                d1_gmn.app.auth.format_session_subjects(request),
                 d1_gmn.app.auth.get_trusted_subjects_string(),
             ),
         )
@@ -173,8 +173,8 @@ def authenticated(f):
             raise d1_common.types.exceptions.NotAuthorized(
                 0,
                 "Access allowed only for authenticated subjects. Please reconnect with "
-                'a valid DataONE session certificate. active_subjects="{}"'.format(
-                    d1_gmn.app.auth.format_active_subjects(request)
+                'a valid DataONE session certificate. session_subjects="{}"'.format(
+                    d1_gmn.app.auth.format_session_subjects(request)
                 ),
             )
         return f(request, *args, **kwargs)
@@ -192,8 +192,8 @@ def verified(f):
                 0,
                 "Access allowed only for verified accounts. Please reconnect with a "
                 "valid DataONE session certificate in which the identity of the "
-                'primary subject has been verified. active_subjects="{}"'.format(
-                    d1_gmn.app.auth.format_active_subjects(request)
+                'primary subject has been verified. session_subjects="{}"'.format(
+                    d1_gmn.app.auth.format_session_subjects(request)
                 ),
             )
         return f(request, *args, **kwargs)

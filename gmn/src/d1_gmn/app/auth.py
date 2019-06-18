@@ -108,7 +108,7 @@ def get_trusted_subjects_string():
 
 def is_trusted_subject(request):
     """Determine if calling subject is fully trusted."""
-    logging.debug("Active subjects: {}".format(", ".join(request.all_subjects_set)))
+    logging.debug("Session subjects: {}".format(", ".join(request.all_subjects_set)))
     logging.debug("Trusted subjects: {}".format(", ".join(get_trusted_subjects())))
     return not request.all_subjects_set.isdisjoint(get_trusted_subjects())
 
@@ -171,7 +171,7 @@ def is_allowed(request, level, pid):
     Returns:
       bool
         True:
-          - The active subjects include one or more subjects that:
+          - The session subjects include one or more subjects that:
           - are fully trusted DataONE infrastructure subjects, causing all rights to be
             granted regardless of requested access level and SciObj
           - OR are in the object's ACL for the requested access level. The ACL contains
@@ -180,7 +180,7 @@ def is_allowed(request, level, pid):
           - OR object is public, which always yields a match on the "public" symbolic
             subject.
           False:
-          - None of the active subjects are in the object's ACL for the requested
+          - None of the session subjects are in the object's ACL for the requested
             access level or for lower levels.
           - OR PID does not exist
           - OR access level is invalid
@@ -218,7 +218,7 @@ def assert_create_update_delete_permission(request):
         raise d1_common.types.exceptions.NotAuthorized(
             0,
             "Access allowed only for subjects with Create/Update/Delete "
-            'permission. active_subjects="{}"'.format(format_active_subjects(request)),
+            'permission. session_subjects="{}"'.format(format_session_subjects(request)),
         )
 
 
@@ -239,14 +239,14 @@ def assert_allowed(request, level, pid):
     if not is_allowed(request, level, pid):
         raise d1_common.types.exceptions.NotAuthorized(
             0,
-            'Operation is denied. level="{}", pid="{}", active_subjects="{}"'.format(
-                level_to_action(level), pid, format_active_subjects(request)
+            'Operation is denied. level="{}", pid="{}", session_subjects="{}"'.format(
+                level_to_action(level), pid, format_session_subjects(request)
             ),
         )
 
 
-def format_active_subjects(request):
-    """Create a string listing active subjects for this connection, suitable for
+def format_session_subjects(request):
+    """Create a string listing session subjects for this connection, suitable for
     appending to authentication error messages."""
     decorated_subject_list = [request.primary_subject_str + " (primary)"]
     for subject in request.all_subjects_set:

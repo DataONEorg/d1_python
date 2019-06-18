@@ -54,7 +54,6 @@ class Command(django.core.management.base.BaseCommand):
 
     def handle(self, *args, **opt):
         d1_gmn.app.management.commands.util.util.log_setup(opt["debug"])
-        logging.info("test")
         logging.info("Running management command: {}".format(__name__))
         d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
             __name__

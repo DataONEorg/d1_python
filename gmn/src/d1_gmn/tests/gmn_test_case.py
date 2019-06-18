@@ -501,22 +501,22 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         subjects, set disable_auth=False.
 
         Args:
-          Optional args: active_subj_list, trusted_subj_list, disable_auth
+          Optional args: session_subj_list, trusted_subj_list, disable_auth
           All other args are sent to the api function
 
         """
         # TODO: Handling the args manually like this was necessary to get the
         # signature I wanted, but it may be done better with
         # functools.partial(func[,*args][, **keywords]).
-        active_subj_list = arg_dict.pop("active_subj_list", True)
+        session_subj_list = arg_dict.pop("session_subj_list", True)
         trusted_subj_list = arg_dict.pop("trusted_subj_list", True)
         whitelisted_subj_list = arg_dict.pop("whitelisted_subj_list", True)
         disable_auth = arg_dict.pop("disable_auth", True)
 
         with d1_gmn.tests.gmn_mock.set_auth_context(
-            ["active_subj_1", "active_subj_2", "active_subj_3"]
-            if active_subj_list is True
-            else active_subj_list,
+            ["session_subj_1", "session_subj_2", "session_subj_3"]
+            if session_subj_list is True
+            else session_subj_list,
             ["trusted_subj_1", "trusted_subj_2"]
             if trusted_subj_list is True
             else trusted_subj_list,
@@ -546,7 +546,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         submitter=True,
         rights_holder=True,
         permission_list=True,
-        active_subj_list=True,
+        session_subj_list=True,
         trusted_subj_list=True,
         disable_auth=True,
         vendor_dict=None,
@@ -575,7 +575,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 io.BytesIO(sciobj_bytes),
                 sysmeta_pyxb,
                 vendor_dict,
-                active_subj_list=active_subj_list,
+                session_subj_list=session_subj_list,
                 trusted_subj_list=trusted_subj_list,
                 disable_auth=disable_auth,
             )
@@ -591,7 +591,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         submitter=True,
         rights_holder=True,
         permission_list=True,
-        active_subj_list=True,
+        session_subj_list=True,
         trusted_subj_list=True,
         disable_auth=True,
         vendor_dict=None,
@@ -613,7 +613,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 pid,
                 sysmeta_pyxb,
                 vendor_dict,
-                active_subj_list=active_subj_list,
+                session_subj_list=session_subj_list,
                 trusted_subj_list=trusted_subj_list,
                 disable_auth=disable_auth,
             )
@@ -624,7 +624,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         self,
         client,
         did,
-        active_subj_list=True,
+        session_subj_list=True,
         trusted_subj_list=True,
         disable_auth=True,
         vendor_dict=None,
@@ -638,7 +638,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
             client.get,
             did,
             vendor_dict,
-            active_subj_list=active_subj_list,
+            session_subj_list=session_subj_list,
             trusted_subj_list=trusted_subj_list,
             disable_auth=disable_auth,
         ).content
@@ -646,7 +646,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
             client.getSystemMetadata,
             did,
             vendor_dict,
-            active_subj_list=active_subj_list,
+            session_subj_list=session_subj_list,
             trusted_subj_list=trusted_subj_list,
             disable_auth=disable_auth,
         )
@@ -660,7 +660,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         self,
         client,
         sysmeta_pyxb,
-        active_subj_list=True,
+        session_subj_list=True,
         trusted_subj_list=True,
         disable_auth=True,
         vendor_dict=None,
@@ -688,7 +688,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
                 io.BytesIO(send_sciobj_bytes),
                 send_sysmeta_pyxb,
                 vendor_dict,
-                active_subj_list=active_subj_list,
+                session_subj_list=session_subj_list,
                 trusted_subj_list=trusted_subj_list,
                 disable_auth=disable_auth,
             )

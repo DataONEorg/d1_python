@@ -319,7 +319,7 @@ def main():
 
     # Generate test certs.
     for subject in subjects:
-        logger.info(subject)
+        logger.debug(subject)
 
         # Create private key.
         # crypto.TYPE_DSA does not work with digest='SHA1'

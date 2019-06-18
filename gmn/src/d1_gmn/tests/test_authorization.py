@@ -44,8 +44,8 @@ class TestAuthorization(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """
         return self.create_obj(self.client_v2, sid=True)
 
-    def _get(self, pid, active_subj_list):
-        with d1_gmn.tests.gmn_mock.set_auth_context(active_subj_list, ["trusted_subj"]):
+    def _get(self, pid, session_subj_list):
+        with d1_gmn.tests.gmn_mock.set_auth_context(session_subj_list, ["trusted_subj"]):
             self.client_v2.get(pid)
 
     @responses.activate
