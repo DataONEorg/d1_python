@@ -130,6 +130,12 @@ class Session(object):
         )[:4]
         self._api_major = 1
         self._api_minor = 0
+        # Validation
+        for cert_path in (cert_pem_path, cert_key_path):
+            if cert_path is not None and not os.path.isfile(cert_path):
+                raise ValueError(
+                    "Invalid certificate file path: {}".format(cert_pem_path)
+                )
         # Adapter
         self._max_retries = kwargs_dict.pop("retries", DEFAULT_NUMBER_OF_RETRIES)
         # Option to suppress TLS/SSL verification warnings
