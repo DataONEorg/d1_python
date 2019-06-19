@@ -77,7 +77,12 @@ def main():
     )
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument("--dry-run", action="store_true", help="Simulate only")
-    parser.add_argument("--yes", dest='is_interactive', action="store_false", help="Delete without user prompts")
+    parser.add_argument(
+        "--yes",
+        dest="is_interactive",
+        action="store_false",
+        help="Delete without user prompts",
+    )
 
     args = parser.parse_args()
     d1_common.util.log_setup(args.debug)
@@ -97,7 +102,7 @@ def main():
 
         if os.path.isdir(p):
             if args.is_interactive:
-                if not confirm('Delete directory tree?'):
+                if not confirm("Delete directory tree?"):
                     continue
             if not args.dry_run:
                 shutil.rmtree(p)
@@ -111,10 +116,10 @@ def main():
 
 def confirm(yes_no_question_str):
     while True:
-        reply_str = input('{} Yes/No [Enter/n]: '.format(yes_no_question_str))
-        if reply_str == '':
+        reply_str = input("{} Yes/No [Enter/n]: ".format(yes_no_question_str))
+        if reply_str == "":
             return True
-        if reply_str == 'n':
+        if reply_str == "n":
             return False
 
 

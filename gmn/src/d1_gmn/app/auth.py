@@ -218,7 +218,9 @@ def assert_create_update_delete_permission(request):
         raise d1_common.types.exceptions.NotAuthorized(
             0,
             "Access allowed only for subjects with Create/Update/Delete "
-            'permission. session_subjects="{}"'.format(format_session_subjects(request)),
+            'permission. session_subjects="{}"'.format(
+                format_session_subjects(request)
+            ),
         )
 
 
