@@ -21,13 +21,15 @@ object bytes to another web server (proxy mode).
 The mode is selectable on a per object basis
 
 """
+import base64
+import json
+import re
 
-import io
-
+import freezegun
+import pytest
 import requests
 import responses
-
-import pytest
+import urllib3.response
 
 import d1_gmn.app.sciobj_store
 import d1_gmn.tests.gmn_mock
@@ -39,14 +41,19 @@ import d1_common.url
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
+import d1_test.mock_api.catch_all
 import d1_test.mock_api.get
 
+import django.test
 
+AUTH_USERNAME = "Auth user name 123"
+AUTH_PASSWORD = "!@#%$45 343&^$% asfdAFSD"
+
+
+@d1_test.d1_test_case.reproducible_random_decorator("TestProxyMode")
+@freezegun.freeze_time("1999-09-09")
 class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
-    def setup_method(self, method):
-        super().setup_method(method)
-        d1_test.mock_api.get.add_callback(d1_test.d1_test_case.MOCK_REMOTE_BASE_URL)
-
+    @responses.activate
     def create_and_check_proxy_obj(self, client, do_redirect, use_invalid_url=False):
         """Create a sciobj that wraps object bytes stored on a 3rd party server. We use
         Responses to simulate the 3rd party server.
@@ -55,36 +62,31 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         GMN is able to follow redirects when establishing the proxy stream.
 
         """
-        with d1_gmn.tests.gmn_mock.disable_auth():
-            # Create
-            pid = d1_test.instance_generator.identifier.generate_pid()
-            if do_redirect:
-                pid = d1_test.mock_api.get.decorate_pid_for_redirect(pid)
 
-            if not use_invalid_url:
-                proxy_url = self.get_remote_sciobj_url(pid, client)
-            else:
-                proxy_url = self.get_invalid_sciobj_url(pid, client)
+        # Use the catch_all echo to simulate a remote 3rd party server that holds
+        # objects to be proxied.
+        d1_test.mock_api.catch_all.add_callback(
+            d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
+        )
 
-            pid, sid, send_sciobj_bytes, send_sysmeta_pyxb = self.generate_sciobj_with_defaults(
-                client, pid
-            )
-            with d1_gmn.tests.gmn_mock.disable_sysmeta_sanity_checks():
-                self.call_d1_client(
-                    client.create,
-                    pid,
-                    io.BytesIO(send_sciobj_bytes),
-                    send_sysmeta_pyxb,
-                    vendorSpecific=self.vendor_proxy_mode(proxy_url),
-                )
-            # Check
-            # Object was not stored locally
-            assert not d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid)
+        # Create a proxied object.
+        pid = d1_test.instance_generator.identifier.generate_pid()
 
-            received_sciobj_bytes = self.call_d1_client(
-                client.get, pid, vendorSpecific=self.vendor_proxy_mode(proxy_url)
-            ).content
-            assert send_sciobj_bytes == received_sciobj_bytes
+        if not use_invalid_url:
+            proxy_url = self.get_remote_sciobj_url(pid, client)
+        else:
+            proxy_url = self.get_invalid_sciobj_url(pid, client)
+
+        pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
+            client, pid, sid=True, vendor_dict=self.vendor_proxy_mode(proxy_url)
+        )
+
+        # Check that object was not stored locally
+        assert not d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid)
+
+        # Retrieve the proxied object and return echo dict.
+        response = self.call_d1_client(client.get, pid)
+        return json.loads(response.text)
 
     def get_remote_sciobj_url(self, pid, client):
         return d1_common.url.joinPathElements(
@@ -110,27 +112,14 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         sciobj_url = self.get_remote_sciobj_url(pid)
         return requests.get(sciobj_url).content
 
-    @responses.activate
-    def test_1000(self):
-        """create(): Proxy mode: Create and retrieve proxied object."""
-        self.create_and_check_proxy_obj(self.client_v1, do_redirect=False)
+    def test_1000(self, gmn_client_v1_v2):
+        """create(): Proxy mode: Create and retrieve proxied object, no redirect."""
+        self.create_and_check_proxy_obj(gmn_client_v1_v2, do_redirect=False)
 
-    @responses.activate
-    def test_1010(self):
-        """create(): Proxy mode: Create and retrieve proxied object."""
-        self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
-
-    @responses.activate
-    def test_1020(self):
+    def test_1020(self, gmn_client_v1_v2):
         """create(): Proxy mode: Create and retrieve proxied object with redirect."""
-        self.create_and_check_proxy_obj(self.client_v1, do_redirect=True)
+        self.create_and_check_proxy_obj(gmn_client_v1_v2, do_redirect=True)
 
-    @responses.activate
-    def test_1030(self):
-        """create(): Proxy mode: Create and retrieve proxied object with redirect."""
-        self.create_and_check_proxy_obj(self.client_v2, do_redirect=True)
-
-    @responses.activate
     def test_1040(self):
         """create(): Proxy mode: Passing invalid url raises InvalidRequest."""
         with pytest.raises(d1_common.types.exceptions.InvalidRequest):
@@ -140,3 +129,37 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 # do_redirect=False,
                 use_invalid_url=True,
             )
+
+    @django.test.override_settings(
+        PROXY_MODE_BASIC_AUTH_ENABLED=False,
+        PROXY_MODE_BASIC_AUTH_USERNAME=AUTH_USERNAME,
+        PROXY_MODE_BASIC_AUTH_PASSWORD=AUTH_PASSWORD,
+        PROXY_MODE_STREAM_TIMEOUT=30,
+    )
+    def test_1050(self):
+        """get(): Authentication headers: Not passed to remote server when
+        AUTH_ENABLED=False."""
+        echo_dict = self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
+        assert "Authorization" not in echo_dict["header_dict"]
+        self.sample.assert_equals(echo_dict, "auth_headers_disabled")
+
+    @django.test.override_settings(
+        PROXY_MODE_BASIC_AUTH_ENABLED=True,
+        PROXY_MODE_BASIC_AUTH_USERNAME=AUTH_USERNAME,
+        PROXY_MODE_BASIC_AUTH_PASSWORD=AUTH_PASSWORD,
+        PROXY_MODE_STREAM_TIMEOUT=30,
+    )
+    def test_1060(self):
+        """get(): Authentication headers: Passed to remote server when
+        AUTH_ENABLED=True."""
+        echo_dict = self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
+        assert "Authorization" in echo_dict["header_dict"]
+        m = re.match(r"Basic (.*)", echo_dict["header_dict"]["Authorization"])
+        auth_username, auth_password = (
+            base64.standard_b64decode(m.group(1).encode("utf-8"))
+            .decode("utf-8")
+            .split(":")
+        )
+        assert auth_username == AUTH_USERNAME
+        assert auth_password == AUTH_PASSWORD
+        self.sample.assert_equals(echo_dict, "auth_headers_enabled")
