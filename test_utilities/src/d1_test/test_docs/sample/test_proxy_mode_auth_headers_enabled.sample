@@ -1,0 +1,17 @@
+{
+  "body_base64": null,
+  "endpoint_str": "object",
+  "header_dict": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Authorization": "Basic QXV0aCB1c2VyIG5hbWUgMTIzOiFAIyUkNDUgMzQzJl4kJSBhc2ZkQUZTRA==",
+    "Connection": "keep-alive",
+    "User-Agent": "DataONE-Python/[VERSION] +http://dataone.org/"
+  },
+  "param_list": [
+    "PID_lsdlhqcrsdjq"
+  ],
+  "pyxb_namespace": "http://ns.dataone.org/service/types/v2.0",
+  "query_dict": {},
+  "version_tag": "v2"
+}
