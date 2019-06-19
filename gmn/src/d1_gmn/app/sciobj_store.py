@@ -30,7 +30,7 @@ import hashlib
 import os
 import re
 
-import contextlib2
+import contextlib
 
 import d1_gmn
 
@@ -68,7 +68,7 @@ RELATIVE_PATH_MAGIC_HOST_STR = "gmn-object-store"
 #     )
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def open_sciobj_file_by_pid_ctx(pid, write=False):
     """Open the file containing the Science Object bytes of ``pid`` in the default
     location within the tree of the local SciObj store.
@@ -85,7 +85,7 @@ def open_sciobj_file_by_pid_ctx(pid, write=False):
         yield sciobj_file
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def open_sciobj_file_by_path_ctx(abs_path, write=False):
     """Open the file containing the Science Object bytes at the custom location
     ``abs_path`` in the local filesystem.

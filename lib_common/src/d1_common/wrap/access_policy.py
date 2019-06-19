@@ -206,7 +206,7 @@ import logging
 import pprint
 import sys
 
-import contextlib2
+import contextlib
 
 import d1_common.const
 import d1_common.types.dataoneTypes
@@ -216,7 +216,7 @@ import d1_common.xml
 ORDERED_PERM_LIST = ["read", "write", "changePermission"]
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def wrap(access_pyxb, read_only=False):
     """Work with the AccessPolicy in a SystemMetadata PyXB object.
 
@@ -237,7 +237,7 @@ def wrap(access_pyxb, read_only=False):
         w.get_normalized_pyxb()
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def wrap_sysmeta_pyxb(sysmeta_pyxb, read_only=False):
     """Work with the AccessPolicy in a SystemMetadata PyXB object.
 

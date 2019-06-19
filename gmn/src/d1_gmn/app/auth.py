@@ -29,7 +29,6 @@ import d1_gmn.app.node_registry
 
 import d1_common.cert.subjects
 import d1_common.types.exceptions
-import d1_common.wrap.access_policy
 
 import django.conf
 import django.core.cache
@@ -121,9 +120,7 @@ def is_client_side_cert_subject(request):
 
 def _get_client_side_certificate_subject():
     """Return the DN from the client side certificate as a D1 subject if a client side
-    cert has been configured.
-
-    Else return None.
+    cert has been configured. Else return None.
 
     """
     subject = django.core.cache.cache.get("client_side_certificate_subject")

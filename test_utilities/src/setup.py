@@ -37,7 +37,6 @@ def main():
         install_requires=[
             'dataone.libclient >= 3.4.4',
             #
-            "contextlib2 >= 0.5.5",
             "coverage >= 5.0a5",
             "coveralls >= 1.8.0",
             "decorator >= 4.4.0",

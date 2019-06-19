@@ -1,5 +1,4 @@
 #!/usr/bin/env python# This work was created by participants in the DataONE project, and is
-#
 #   Copyright 2009-2019 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

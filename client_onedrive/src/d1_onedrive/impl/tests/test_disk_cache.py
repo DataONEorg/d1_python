@@ -26,7 +26,7 @@ import shutil
 import tempfile
 import time
 
-import contextlib2
+import contextlib
 import pytest
 
 import d1_onedrive.impl.disk_cache
@@ -36,7 +36,7 @@ import d1_test.d1_test_case
 log = logging.getLogger(__name__)
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def dc(max_items=3):
     tmp_dir_path = tempfile.mkdtemp(prefix="test_disk_cache")
     try:

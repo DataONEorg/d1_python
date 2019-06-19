@@ -14,7 +14,7 @@ This avoids dependencies on PyPI, which may result in a more secure deployment.
   python3-certifi \
   python3-cffi \
   python3-chardet \
-  python3-contextlib2 \
+  python3-contextlib \
   python3-cryptography \
   python3-django \
   python3-idna \

@@ -38,7 +38,6 @@ def main():
         packages=setuptools.find_packages(),
         include_package_data=True,
         install_requires=[
-            "contextlib2 >= 0.5.5",
             "cryptography >= 2.7",
             "iso8601 >= 0.1.12",
             "PyJWT >= 1.7.1",

@@ -27,7 +27,7 @@ import functools
 import logging
 import os
 
-import contextlib2
+import contextlib
 import mock
 import pytest
 import requests
@@ -67,7 +67,7 @@ logger = logging.getLogger(__name__)
 # Session and trusted subjects
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def session_subjects_context(session_subject_set):
     """Override list of session subjects that GMN detects for authentication.
 
@@ -85,7 +85,7 @@ def session_subjects_context(session_subject_set):
         yield
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def trusted_subjects_context(trusted_subject_set):
     """Override list of trusted subjects that GMN detects for authentication."""
     logger.debug("ContextManager: trusted_subjects()")
@@ -98,7 +98,7 @@ def trusted_subjects_context(trusted_subject_set):
         yield
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def whitelisted_subjects_context(whitelisted_subject_iter):
     """Override list of whitelists subjects that GMN detects as having access to create,
     update and delete APIs."""
@@ -135,7 +135,7 @@ def set_auth_decorator(func):
     return wrapper
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def set_auth_context(
     session_subj_list=None,
     trusted_subj_list=None,
@@ -153,7 +153,7 @@ def set_auth_context(
                     yield
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def isolated_whitelisted_subj():
     """Create a unique subject and override GMN auth so that the subject appears as
     single session and whitelisted, but not trusted, in API calls."""
@@ -169,7 +169,7 @@ def isolated_whitelisted_subj():
         yield isolated_subj
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def set_auth_context_with_defaults(
     session_subj_list=True,
     trusted_subj_list=True,
@@ -208,7 +208,7 @@ def set_auth_context_with_defaults(
 # disable_auth
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def disable_auth():
     """Context manager that makes GMN think that all calls are issued by a fully trusted
     subject, "trusted_subj".
@@ -245,13 +245,13 @@ def no_client_trust_decorator(func):
     return wrapper
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def disable_sysmeta_sanity_checks():
     with mock.patch("d1_gmn.app.views.assert_sysmeta.sanity"):
         yield
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def disable_management_command_logging():
     """Prevent management commands from setting up logging, which cause duplicated log
     messages when the commands are launched multiple times."""
@@ -259,7 +259,7 @@ def disable_management_command_logging():
         yield
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def disable_management_command_concurrent_instance_check():
     """Allow concurrent instances of the same management command."""
     with mock.patch(
@@ -268,7 +268,7 @@ def disable_management_command_concurrent_instance_check():
         yield
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def disable_sciobj_store_write():
     """Prevent SciObj bytes from being stored in the SciObj store on disk."""
     logging.debug("ContextManager: disable_sciobj_store_write()")

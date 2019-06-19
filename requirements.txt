@@ -16,7 +16,6 @@ bibtexparser==1.1.0
 certifi==2019.3.9
 cffi==1.12.3
 chardet==3.0.4
-contextlib2==0.5.5
 coverage==5.0a5
 coveralls==1.8.0
 cryptography==2.7

@@ -79,14 +79,14 @@ Notes:
 
 import xml.etree.ElementTree
 
-import contextlib2
+import contextlib
 import iso8601
 
 import d1_common.date_time
 import d1_common.xml
 
 
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def wrap(xml_str):
     """Simple processing of XML."""
     w = SimpleXMLWrapper(xml_str)

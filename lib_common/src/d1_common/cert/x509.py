@@ -25,7 +25,7 @@ import socket
 import ssl
 import urllib.parse
 
-import contextlib2
+import contextlib
 import cryptography
 import cryptography.hazmat
 import cryptography.hazmat.backends
@@ -468,7 +468,7 @@ def decode_der(cert_der):
 
 
 # noinspection PyProtectedMember
-@contextlib2.contextmanager
+@contextlib.contextmanager
 def disable_cert_validation():
     """Context manager to temporarily disable certificate validation in the standard SSL
     library.
