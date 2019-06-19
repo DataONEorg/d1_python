@@ -17,30 +17,28 @@
 # limitations under the License.
 """General utilities."""
 
-import base64
 import inspect
 import logging
 import pprint
 import traceback
-import urllib.parse
 
 import d1_common
 import d1_common.const
 
-import django.conf
 import django.contrib.staticfiles.templatetags.staticfiles
 import django.http
 
 logger = logging.getLogger(__name__)
 
 
-# This is from django-piston/piston/utils.py
 # noinspection PyProtectedMember
 def coerce_put_post(request):
     """Django doesn't particularly understand REST. In case we send data over PUT,
     Django won't actually look at the data and load it. We need to twist its arm here.
 
     The try/except abomination here is due to a bug in mod_python. This should fix it.
+
+    From django-piston/piston/utils.py
 
     """
     if request.method == "PUT":
@@ -72,35 +70,10 @@ def coerce_put_post(request):
         request.PUT = request.POST
 
 
-# noinspection PyProtectedMember
-def add_basic_auth_header_if_enabled(headers):
-    if django.conf.settings.PROXY_MODE_BASIC_AUTH_ENABLED:
-        headers.update((_mk_http_basic_auth_header(),))
-
-
-def _mk_http_basic_auth_header():
-    return (
-        "Authorization",
-        "Basic {}".format(
-            base64.standard_b64encode(
-                "{}:{}".format(
-                    django.conf.settings.PROXY_MODE_BASIC_AUTH_USERNAME,
-                    django.conf.settings.PROXY_MODE_BASIC_AUTH_PASSWORD,
-                )
-            )
-        ),
-    )
-
-
 def dump_stack():
     frame = inspect.currentframe()
     stack_trace = traceback.format_stack(frame)
     logger.debug("".join(stack_trace))
-
-
-def is_proxy_url(url):
-    url_split = urllib.parse.urlparse(url)
-    return url_split.scheme in ("http", "https")
 
 
 def create_http_echo_response(request):

@@ -20,8 +20,6 @@
 import logging
 import uuid
 
-import requests
-
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
 import d1_gmn.app.delete
@@ -30,6 +28,7 @@ import d1_gmn.app.local_replica
 import d1_gmn.app.models
 import d1_gmn.app.node
 import d1_gmn.app.object_format_cache
+import d1_gmn.app.proxy
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 import d1_gmn.app.util
