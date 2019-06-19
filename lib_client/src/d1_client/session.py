@@ -161,6 +161,12 @@ class Session(object):
         if self._default_request_arg_dict["verify"] is True:
             if os.path.isfile(UBUNTU_CA_BUNDLE_PATH):
                 self._default_request_arg_dict["verify"] = UBUNTU_CA_BUNDLE_PATH
+        # JSON Web Token (JWT)
+        jwt_token = kwargs_dict.pop("jwt_token", None)
+        if jwt_token is not None:
+            self._default_request_arg_dict["headers"][
+                "Authorization"
+            ] = "Bearer {}".format(jwt_token)
         # Default headers
         self._default_request_arg_dict["headers"].update(kwargs_dict.pop("headers", {}))
         self._default_request_arg_dict.update(kwargs_dict)
@@ -171,15 +177,8 @@ class Session(object):
                 cert_pem_path,
                 cert_key_path if cert_key_path is not None else cert_pem_path,
             )
-        # JSON Web Token (JWT)
-        jwt_token = kwargs_dict.pop("jwt_token", None)
-        if jwt_token is not None:
-            self._default_request_arg_dict["Authorization"] = "Bearer {}".format(
-                jwt_token
-            )
         # Override randomly generated MMP boundary string.
         self._mmp_boundary_str = kwargs_dict.pop("mmp_boundary", None)
-
         self._session = self._create_requests_session()
 
     @property
