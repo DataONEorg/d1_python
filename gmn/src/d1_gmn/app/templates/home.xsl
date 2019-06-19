@@ -183,7 +183,7 @@
   <!-- Insert logo while falling back to GMN logo if fetch from url fails -->
   <xsl:template name="insert_logo">
     <xsl:param name="url"/>
-      <img class="logo" src="{ $url }" onerror="this.src='{ $gmn_logo_url }'" alt="logo"/>
+      <img class="logo" src="{ $url }" alt="logo"/>
   </xsl:template>
 
 </xsl:stylesheet>

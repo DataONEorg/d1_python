@@ -187,6 +187,12 @@ urlpatterns = [
         kwargs={"allowed_method_list": ["GET"]},
         name="home_xslt",
     ),
+    django.conf.urls.url(
+        r"^templates/clipboard/(.+)/?$",
+        d1_gmn.app.views.internal.clipboard,
+        kwargs={"allowed_method_list": ["GET"]},
+        name="clipboard",
+    ),
     #
     # GMN vendor specific extensions
     #

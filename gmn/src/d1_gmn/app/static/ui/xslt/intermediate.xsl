@@ -103,7 +103,8 @@
         <xsl:with-param name="button_abs_url"
                         select="concat($env_root_url, 'v2/resolve')"/>
         <xsl:with-param name="button_2_text" select="'S'"/>
-        <xsl:with-param name="button_2_abs_url" select="concat($base_url, 'v2/meta')"/>
+        <xsl:with-param name="button_2_abs_url"
+                        select="concat($base_url, 'v2/meta')"/>
       </xsl:call-template>
     </xsl:element>
   </xsl:template>
@@ -155,7 +156,8 @@
         <xsl:call-template name="add_href_and_text">
           <xsl:with-param name="abs_url"
                           select="concat($search_root_url, 'profile')"/>
-          <xsl:with-param name="rel_url" select="substring-after(substring-after(.,':'),':')"/>
+          <xsl:with-param name="rel_url"
+                          select="substring-after(substring-after(.,':'),':')"/>
           <xsl:with-param name="text" select="."/>
           <xsl:with-param name="noencode" select="'y'"/>
         </xsl:call-template>
@@ -176,15 +178,6 @@
         </xsl:call-template>
       </a>
     </xsl:element>
-    <!--<xsl:element name="{ name() }">-->
-      <!--<a>-->
-        <!--<xsl:call-template name="add_href_and_text">-->
-          <!--<xsl:with-param name="abs_url" select="'/'"/>-->
-          <!--<xsl:with-param name="rel_url" select="."/>-->
-        <!--</xsl:call-template>-->
-      <!--</a>-->
-    <!--</xsl:element>-->
-    <!--<xsl:apply-templates select="." mode="format_short_text"/>-->
   </xsl:template>
 
   <!-- dateTime, value -->
@@ -261,6 +254,15 @@
           <xsl:call-template name="add_href_and_text">
             <xsl:with-param name="abs_url" select="$abs_url"/>
             <xsl:with-param name="rel_url" select="$rel_url"/>
+          </xsl:call-template>
+        </a>
+      </div>
+      <div>
+        <a class="round-button { $link_classes }" target="_blank">
+          <xsl:call-template name="add_href_and_text">
+            <xsl:with-param name="abs_url" select="'/templates/clipboard'"/>
+            <xsl:with-param name="rel_url" select="$rel_url"/>
+            <xsl:with-param name="text" select="'C'"/>
           </xsl:call-template>
         </a>
       </div>

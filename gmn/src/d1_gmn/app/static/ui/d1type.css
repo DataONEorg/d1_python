@@ -5,11 +5,14 @@
 
 body {
   font-family: "Lucida Console", Monaco, monospace;
-  font-size: 12px;
+  font-size: .9em;
+  white-space: nowrap;
+  text-align: center;
+  padding: 0;
+  margin: 0;
 }
 
 .container {
-  text-align: center;
   margin: 2em;
 }
 
@@ -57,16 +60,18 @@ body {
 }
 
 .mn-logo {
-  max-width: 18em;
-  max-height: 18em;
+  max-width: 16em;
+  max-height: 16em;
 }
 
 .d1-logo {
+  text-align: center;
   height: 2.0em;
 }
 
 .gmn-logo {
-  height: 1.5em;
+  text-align: center;
+  height: 2.0em;
 }
 
 /* Allow image size to be set by div block context */
@@ -78,7 +83,6 @@ body {
 .mn-name {
   font-size: 2em;
   font-weight: bold;
-  text-align: left;
 }
 
 /* Left and right panels */
@@ -111,22 +115,12 @@ body {
 }
 
 .copyright {
-  /*display: inline-block;*/
-  /*align-content: center;*/
   padding-top: 2em;
-  font-size: small;
+  font-size: .8em;
   color: gray;
-  text-align: center;
-  /*background-color: red;*/
 }
 
 #d1-type {
-  font-family: monospace;
-  white-space: nowrap;
-  text-align: center;
-
-  padding: 0;
-  margin: 0;
 }
 
 .grid-outer {
@@ -135,8 +129,6 @@ body {
 
 .grid-inner {
   display: grid;
-  text-align: left;
-
   grid-auto-rows: max-content;
   grid-auto-columns: max-content;
   grid-gap: 0.1em 2em;
@@ -159,7 +151,6 @@ body {
   border-bottom-style: solid;
   border-bottom-color: gray;
 
-  /*margin-top: 1em;*/
   margin-right: -2em;
   margin-left: -2em;
   margin-bottom: 1.5em;
@@ -180,16 +171,19 @@ body {
 }
 
 .nav-outer {
-  text-align: center;
+  text-align: left;
   margin-top: 2em;
 }
 
 .nav-outer > a {
+  text-align: center;
 }
 
 .round-button, .nav-button {
   display: inline-block;
-
+  font-family: "helvetica", sans-serif;
+  font-size: 0.7em;
+  font-weight: bold;
   background: none;
   border-radius: 2em / 2em;
   color: #505050;
@@ -199,7 +193,6 @@ body {
   text-align: center;
   text-decoration: none;
   margin: 0 0.25em;
-  font-size: 0.8em;
 }
 
 .nav-button {
@@ -207,6 +200,10 @@ body {
   font-weight: bold;
   margin: 0.25em 0;
   font-size: 1.1em;
+}
+
+.center-button {
+  display: inline-block;
 }
 
 .round-button-disabled {
@@ -276,4 +273,20 @@ generally makes more sense.
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* clipboard.xhtml */
+
+.copy-identifier-row {
+  display: flex;
+  align-items: center;
+  margin: 3em 2em;
+}
+
+.copy-identifier {
+  white-space: nowrap;
+  text-align: center;
+  margin: 0 2em;
+  font-size: 1.5em;
+  font-weight: bold;
 }

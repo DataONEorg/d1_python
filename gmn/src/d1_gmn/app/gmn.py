@@ -23,7 +23,6 @@ settings.INSTALLED_APPS. This app must be set to load before the main GMN app by
 it above the main app in settings.INSTALLED_APPS.
 
 """
-
 import collections
 import functools
 import logging
@@ -32,7 +31,12 @@ import os
 import random
 import string
 
+import requests
+
 import d1_gmn.app.sciobj_store
+import d1_gmn.app.util
+
+import d1_common.url
 
 import django.apps
 import django.conf
@@ -69,10 +73,12 @@ class Startup(django.apps.AppConfig):
 
         self._warn_unsafe_for_prod()
         self._check_resource_map_create()
+
         if not d1_gmn.app.sciobj_store.is_existing_store():
             self._create_sciobj_store_root()
 
         self._add_xslt_mimetype()
+        self._set_mn_logo()
 
     def _assert_is_type(self, setting_name, valid_type):
         v = self._get_setting(setting_name)
@@ -233,13 +239,35 @@ class Startup(django.apps.AppConfig):
             )
 
     def _add_xslt_mimetype(self):
-        """Register the mimetype for .xsl files in order for Django to serve static.
+        """Register the mimetype for .xsl files in order for Django to serve static
 
-        .xsl files with the correct mimetype
+        xsl files with the correct mimetype
 
         """
         # 'application/xslt+xml'
         mimetypes.add_type("text/xsl", ".xsl")
+
+    def _set_mn_logo(self):
+        """Determine which logo to display in the GUI.
+
+        MN logos are stored under NODE_LOGO_ROOT, named after the NodeId. If not in
+        standalone mode, check for logo and use if found. Fall back to the GMN logo.
+
+        """
+        if not django.conf.settings.STAND_ALONE:
+            logo_url = (
+                d1_common.url.joinPathElements(
+                    django.conf.settings.NODE_LOGO_ROOT,
+                    django.conf.settings.NODE_IDENTIFIER.split(":")[-1],
+                )
+                + ".png"
+            )
+            if requests.head(logo_url).status_code == 200:
+                django.conf.settings.NODE_LOGO_URL = logo_url
+        if django.conf.settings.NODE_LOGO_URL is None:
+            django.conf.settings.NODE_LOGO_URL = d1_gmn.app.util.get_static_path(
+                "images/gmn_logo.png"
+            )
 
     def _get_setting(self, setting_dotted_name, default=None):
         """Return the value of a potentially nested dict setting.

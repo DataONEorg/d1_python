@@ -27,7 +27,6 @@ function open_slice(new_start) {
   window.location.href = get_next_slice_url(new_start);
 }
 
-
 // Run when document is ready
 $(function () {
   // Add tooltip for truncated text
@@ -42,6 +41,11 @@ $(function () {
       $(this).attr('title', '');
   });
 
+  // Add tooltip for Copy buttons
+  $('.round-button:contains(C)').each(function () {
+      $(this).attr('title', 'Copy');
+  });
+
   // Add tooltip for Resolve buttons
   $('.round-button:contains(R)').each(function () {
       $(this).attr('title', 'Resolve on CN');
@@ -52,3 +56,11 @@ $(function () {
       $(this).attr('title', 'View System Metadata');
   });
 });
+
+
+function copy_to_clipboard() {
+  let el = document.getElementById("identifier");
+  el.select();
+  document.execCommand('copy');
+  window.close()
+}

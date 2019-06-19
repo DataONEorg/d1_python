@@ -70,6 +70,12 @@ def home_xslt(request):
     )
 
 
+def clipboard(request, did):
+    return django.shortcuts.render_to_response(
+        "clipboard.xhtml", {"did": did}, content_type=d1_common.const.CONTENT_TYPE_XHTML
+    )
+
+
 def error_404(request, exception):
     """Handle 404s outside of the valid API URL endpoints Note: Cannot raise NotFound()
     here, as this method is not covered by the GMN middleware handler that catches
@@ -133,11 +139,7 @@ def get_context_dict():
         "sciobjStorageSpaceFree": get_obj_store_free_space_bytes(),
         "sciobjCountByFormat": get_object_count_by_format(),
         "description": django.conf.settings.NODE_DESCRIPTION,
-        "mnLogoUrl": d1_common.url.joinPathElements(
-            django.conf.settings.NODE_LOGO_ROOT,
-            django.conf.settings.NODE_IDENTIFIER.split(":")[-1],
-        )
-        + ".png",
+        "mnLogoUrl": django.conf.settings.NODE_LOGO_URL,
     }
 
 
