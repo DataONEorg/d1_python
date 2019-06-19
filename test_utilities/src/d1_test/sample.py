@@ -27,11 +27,13 @@ import tempfile
 import textwrap
 import traceback
 
+import cryptography.x509
 import posix_ipc
 import requests.structures
 import requests_toolbelt.utils.dump
 
 import d1_common
+import d1_common.cert.x509
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.util
@@ -151,6 +153,7 @@ def path_lock(path):
         logger.debug("Released lock on path: {}".format(path))
         try:
             sem.unlink()
+            sem.close()
         except posix_ipc.ExistentialError:
             pass
 

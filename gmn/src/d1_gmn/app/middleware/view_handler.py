@@ -113,10 +113,8 @@ class ViewHandler:
                         "the JWT as equivalent."
                     )
 
-        logging.info("Primary active subject: {}".format(primary_subject_str))
-        logging.info(
-            "All active subjects: {}".format(", ".join(sorted(all_subjects_set)))
-        )
+        logging.info("Session subjects: {}".format(", ".join(sorted(all_subjects_set))))
+        logging.debug("Primary session subject: {}".format(primary_subject_str))
 
         # Handle list of subjects in vendor specific extension:
         if django.conf.settings.DEBUG_GMN:

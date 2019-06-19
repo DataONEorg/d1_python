@@ -40,7 +40,7 @@ DataONE does not specify how Member Nodes should control access to the APIs that
   detailCode: 0
   description:
     Access allowed only for subjects with Create/Update/Delete permission.
-    Active subjects:
+    Session subjects:
       authenticatedUser (equivalent),
       public (equivalent),
       CN=First Last,O=Google,C=US,DC=cilogon,DC=org (primary)

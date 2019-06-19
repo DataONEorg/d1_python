@@ -57,6 +57,8 @@ import django.http
 
 
 # Forward calls for /object/{id} URLs
+
+
 def dispatch_object(request, did):
     if request.method == "GET":
         # MNRead.get()
@@ -194,23 +196,10 @@ def get_object(request, pid):
 
 
 def _get_sciobj_iter(sciobj):
-    if d1_gmn.app.util.is_proxy_url(sciobj.url):
-        return _get_sciobj_iter_remote(sciobj.url)
+    if d1_gmn.app.proxy.is_proxy_url(sciobj.url):
+        return d1_gmn.app.proxy.get_sciobj_iter_remote(sciobj.url)
     else:
         return d1_gmn.app.sciobj_store.get_sciobj_iter_by_url(sciobj.url)
-
-
-def _get_sciobj_iter_remote(url):
-    try:
-        response = requests.get(
-            url, stream=True, timeout=django.conf.settings.PROXY_MODE_STREAM_TIMEOUT
-        )
-    except requests.RequestException as e:
-        raise d1_common.types.exceptions.ServiceFailure(
-            0, 'Unable to open proxied object for streaming. error="{}"'.format(str(e))
-        )
-    else:
-        return response.iter_content(chunk_size=django.conf.settings.NUM_CHUNK_BYTES)
 
 
 @d1_gmn.app.views.decorators.decode_did

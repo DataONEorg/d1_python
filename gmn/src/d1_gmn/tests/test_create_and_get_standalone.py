@@ -22,10 +22,9 @@ import datetime
 import logging
 
 import freezegun
+import pytest
 import pyxb
 import responses
-
-import pytest
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
@@ -78,7 +77,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1030(self, gmn_client_v1_v2):
-        """create(): Raises NotAuthorized if none of the trusted subjects are in the session."""
+        """create(): Raises NotAuthorized if none of the trusted subjects are in the
+        session."""
         with pytest.raises(d1_common.types.exceptions.NotAuthorized):
             self.create_obj(
                 gmn_client_v1_v2,
@@ -89,7 +89,8 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1040(self, gmn_client_v1_v2):
-        """create(): Creates the object if one or more trusted subjects are in the session."""
+        """create(): Creates the object if one or more trusted subjects are in the
+        session."""
         self.create_obj(
             gmn_client_v1_v2,
             session_subj_list=["subj1", "subj2", "session_and_trusted_subj"],
@@ -220,7 +221,10 @@ class TestCreateAndGetStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
             )
             recv_sciobj_bytes, recv_sysmeta_pyxb = self.get_obj(gmn_client_v1_v2, pid)
             assert d1_common.system_metadata.are_equivalent_pyxb(
-                send_sysmeta_pyxb, recv_sysmeta_pyxb, ignore_timestamps=True, ignore_filename=True
+                send_sysmeta_pyxb,
+                recv_sysmeta_pyxb,
+                ignore_timestamps=True,
+                ignore_filename=True,
             )
             assert pid == unicode_pid
             assert recv_sysmeta_pyxb.identifier.value() == unicode_pid

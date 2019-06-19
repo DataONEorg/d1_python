@@ -20,9 +20,8 @@
 import logging
 import random
 
-import responses
-
 import pytest
+import responses
 
 import d1_gmn.app.did
 import d1_gmn.app.model_util

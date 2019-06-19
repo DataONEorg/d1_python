@@ -114,10 +114,10 @@ class Session(object):
         :type charset: str
 
         :param mmp_boundary:
-            By default, boundary strings used in Mime Multipart (MMP) documents are automatically
-            generated as required. If provided, this string will be used instead. This is typically required for creating reproducible test results and may be required by non-compliant MMP parsers. It is
-            also required for tests that pass MMP to the Responses library, as it checks for a hardcoded
-            boundary of
+            By default, boundary strings used in Mime Multipart (MMP) documents are
+            automatically generated as required. If provided, this string will be used
+            instead. This is typically required for creating reproducible test results
+            and may be required by non-compliant MMP parsers.
         :type mmp_boundary: str
 
         :returns: None

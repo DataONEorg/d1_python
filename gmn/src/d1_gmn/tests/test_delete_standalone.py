@@ -22,9 +22,8 @@ obsoletedBy are unset). For v2, the objects may or may not have a SID
 
 """
 
-import responses
-
 import pytest
+import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
@@ -65,3 +64,6 @@ class TestDeleteStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1020(self, gmn_client_v2):
         """MNStorage.delete(): Standalone object with SID."""
         self._assert_delete(gmn_client_v2, sid=True)
+
+    def test_1030(self, gmn_client_v2):
+        """MNStorage.delete(): Replica."""

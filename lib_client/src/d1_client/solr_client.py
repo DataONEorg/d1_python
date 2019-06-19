@@ -63,14 +63,15 @@ Example:
   pprint.pprint(search_result)
 
 """
-
 import datetime
 import logging
 import pprint
 import random
-from xml.sax.saxutils import quoteattr
+import xml.sax.saxutils
 
 import requests.structures
+
+import d1_common.const
 
 import d1_client.baseclient_1_2
 
@@ -122,42 +123,50 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
     Example:
 
-    solr_client = SolrClient('https://cn.dataone.org/cn')
+    To connect to DataONE's production environment:
+
+        solr_client = SolrClient()
+
+    - To connect to a non-production environment, pass the baseURL for the environment. E.g.:
+
+        solr_client = SolrClient('https://cn-stage.test.dataone.org/cn')
 
     For the supported keyword args, see:
 
-    d1_client.session.Session()
+        d1_client.session.Session()
 
     - Most methods take a **query_dict as a parameter. It allows passing any number of
       query parameters that will be sent to Solr.
 
     Pass the query parameters as regular keyword arguments. E.g.:
 
-    solr_client.search(q='id:abc*', fq='id:def*')
+        solr_client.search(q='id:abc*', fq='id:def*')
 
     To pass multiple query parameters of the same type, pass a list. E.g., to
     pass multiple filter query (fq) parameters:
 
-    solr_client.search(q='id:abc*', fq=['id:def*', 'id:ghi'])
+        solr_client.search(q='id:abc*', fq=['id:def*', 'id:ghi'])
 
     - Do not encode the query parameters before passing them to the methods.
 
-    For more information about DataONE's Solr index, see:
+    - For more information about DataONE's Solr index, see:
 
     https://releases.dataone.org/online/api-documentation-v2.0/design/SearchMetadata.html
 
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, base_url=d1_common.const.URL_DATAONE_ROOT, *args, **kwargs):
         self._log = logging.getLogger(__name__)
+        self._base_url = base_url
         header_dict = requests.structures.CaseInsensitiveDict(kwargs.pop("headers", {}))
         header_dict.setdefault(
             "Content-Type", "application/x-www-form-urlencoded; charset=utf-8"
         )
         self._query_engine = kwargs.pop("query_engine", "solr")
-        d1_client.baseclient_1_2.DataONEBaseClient_1_2.__init__(
-            self, headers=header_dict, *args, **kwargs
-        )
+        super().__init__(base_url, headers=header_dict, *args, **kwargs)
+        # d1_client.baseclient_1_2.DataONEBaseClient_1_2.__init__(
+        #     self,
+        # )
 
     def __str__(self):
         return 'SolrClient(base_url="{}")'.format(self._base_url)
@@ -407,7 +416,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     # Private
 
     def _escape_xml_entity(self, s):
-        return quoteattr(s).encode("utf-8")
+        return xml.sax.saxutils.quoteattr(s).encode("utf-8")
 
     def _coerce_type(self, field_type, value):
         """Returns unicode(value) after trying to coerce it into the Solr field type.

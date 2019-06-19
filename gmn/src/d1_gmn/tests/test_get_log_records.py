@@ -20,9 +20,8 @@
 import datetime
 
 import freezegun
-import responses
-
 import pytest
+import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case

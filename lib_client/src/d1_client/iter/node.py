@@ -27,27 +27,15 @@ apis/Types.html#Types.Node
 
 import logging
 
-import d1_client.cnclient_2_0
-
-API_MAJOR = 2
-
 
 class NodeListIterator(object):
-    def __init__(
-        self, base_url, api_major=API_MAJOR, client_arg_dict=None, listNodes_dict=None
-    ):
+    def __init__(self, cn_client):
+        self._cn_client = cn_client
         self._log = logging.getLogger(__name__)
-        self._base_url = base_url
-        self._api_major = api_major
-        self._client_arg_dict = client_arg_dict or {}
-        self._listNodes_dict = listNodes_dict
 
     def __iter__(self):
-        client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-            self._base_url, **self._client_arg_dict
-        )
         # The NodeList type does not support slicing.
-        node_list_pyxb = client.listNodes()
+        node_list_pyxb = self._cn_client.listNodes()
         self._log.debug("Retrieved {} Node documents".format(len(node_list_pyxb.node)))
         for node_pyxb in sorted(
             node_list_pyxb.node, key=lambda x: x.identifier.value()

@@ -21,7 +21,6 @@
 import logging
 
 import freezegun
-
 import pytest
 
 import d1_common.cert.jwt

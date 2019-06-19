@@ -29,9 +29,8 @@ import os
 
 import contextlib2
 import mock
-import requests
-
 import pytest
+import requests
 
 import d1_gmn.tests
 
@@ -73,8 +72,8 @@ def session_subjects_context(session_subject_set):
     """Override list of session subjects that GMN detects for authentication.
 
     the Session subjects is a list of DataONE subject strings for which the currently
-    connected client is authenticated. Normally, the session subject list is derived from
-    certificates and tokens passed by the client.
+    connected client is authenticated. Normally, the session subject list is derived
+    from certificates and tokens passed by the client.
 
     """
     expanded_set = d1_test.d1_test_case.D1TestCase.expand_subjects(session_subject_set)

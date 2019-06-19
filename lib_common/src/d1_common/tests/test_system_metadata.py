@@ -18,9 +18,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pyxb
-
 import pytest
+import pyxb
 
 import d1_common.system_metadata
 
@@ -47,7 +46,9 @@ class TestSystemMetadata(d1_test.d1_test_case.D1TestCase):
 
     def test_1020(self):
         """are_equivalent() Returns True for duplicated sysmeta."""
-        assert d1_common.system_metadata.are_equivalent_pyxb(self.sm_pyxb, self.sm_pyxb, ignore_filename=True)
+        assert d1_common.system_metadata.are_equivalent_pyxb(
+            self.sm_pyxb, self.sm_pyxb, ignore_filename=True
+        )
 
     def test_1030(self):
         """are_equivalent() Returns True for sysmeta where elements that can occur in

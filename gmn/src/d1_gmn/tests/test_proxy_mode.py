@@ -29,10 +29,8 @@ import freezegun
 import pytest
 import requests
 import responses
-import urllib3.response
 
 import d1_gmn.app.sciobj_store
-import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
 import d1_common.type_conversions
@@ -42,7 +40,6 @@ import d1_common.url
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 import d1_test.mock_api.catch_all
-import d1_test.mock_api.get
 
 import django.test
 

@@ -295,8 +295,6 @@ import warnings
 
 import rdflib
 
-import pytest
-
 import d1_common.resource_map
 
 import d1_test.d1_test_case

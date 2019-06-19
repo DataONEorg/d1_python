@@ -66,7 +66,7 @@ def dict_config_fixture(request):
 
 
 class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
-    def test_1010(self, dict_config_fixture):
+    def test_1000(self, dict_config_fixture):
         """nested_update(): Update existing values."""
         # dict_config_fixture = copy.deepcopy(TEST_DICT)
 
@@ -81,7 +81,7 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
         # self.sample.gui_sxs_diff(TEST_DICT, dict_config_fixture)
         self.sample.assert_equals(dict_config_fixture, "nested_update_existing")
 
-    def test_1020(self, dict_config_fixture):
+    def test_1010(self, dict_config_fixture):
         """nested_update(): Add new keys in existing tree."""
         d1_common.util.nested_update(
             dict_config_fixture,
@@ -106,7 +106,7 @@ class TestCommonUtil(d1_test.d1_test_case.D1TestCase):
         # self.sample.gui_sxs_diff(TEST_DICT, dict_config_fixture)
         self.sample.assert_equals(dict_config_fixture, "nested_update_new")
 
-    def test_1030(self, dict_config_fixture):
+    def test_1020(self, dict_config_fixture):
         """nested_update(): Combined."""
         d1_common.util.nested_update(
             dict_config_fixture,

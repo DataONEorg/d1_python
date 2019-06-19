@@ -23,11 +23,12 @@ import io
 import sys
 import uuid
 
+import pytest
+
 import d1_cli.impl.exceptions
 import d1_cli.impl.format_ids
 import d1_cli.impl.nodes
 import d1_cli.impl.session
-import pytest
 
 import d1_common.const
 

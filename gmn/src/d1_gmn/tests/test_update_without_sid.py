@@ -28,9 +28,8 @@ import io
 import time
 
 import freezegun
-import responses
-
 import pytest
+import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
@@ -46,7 +45,8 @@ import d1_test.instance_generator.identifier
 class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     def test_1000(self, gmn_client_v1_v2):
-        """update(): Raises NotAuthorized if none of the trusted subjects are in the session."""
+        """update(): Raises NotAuthorized if none of the trusted subjects are in the
+        session."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             gmn_client_v1_v2, sid=True
         )
@@ -54,7 +54,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.update_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=["subj1", "subj2", "subj3"],
+                session_subj_list=["subj1", "subj2", "subj3"],
                 trusted_subj_list=["subj4", "subj5"],
                 disable_auth=False,
             )
@@ -67,14 +67,15 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2):
-        """update(): updates the object if one or more trusted subjects are active."""
+        """update(): updates the object if one or more trusted subjects are in the
+        session."""
         pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
             gmn_client_v1_v2, sid=True
         )
         self.update_obj(
             gmn_client_v1_v2,
             pid,
-            active_subj_list=["subj1", "subj2", "subj3"],
+            session_subj_list=["subj1", "subj2", "subj3"],
             trusted_subj_list=["subj2", "subj5"],
             disable_auth=False,
         )
@@ -91,8 +92,8 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
         self.get_obj(
             gmn_client_v1_v2,
             pid,
-            active_subj_list=["subj1", "subj2", "active_and_trusted_subj"],
-            trusted_subj_list=["active_and_trusted_subj", "subj4"],
+            session_subj_list=["subj1", "subj2", "session_and_trusted_subj"],
+            trusted_subj_list=["session_and_trusted_subj", "subj4"],
             disable_auth=False,
         )
 
@@ -110,7 +111,7 @@ class TestUpdateWithoutSid(d1_gmn.tests.gmn_test_case.GMNTestCase):
             self.get_obj(
                 gmn_client_v1_v2,
                 pid,
-                active_subj_list=["subj1", "subj2", "shared_subj", "subj4"],
+                session_subj_list=["subj1", "subj2", "shared_subj", "subj4"],
                 trusted_subj_list=["subj5", "subj6"],
                 disable_auth=False,
             )

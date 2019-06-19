@@ -26,11 +26,11 @@ import tempfile
 
 import freezegun
 import mock
+import pytest
 import responses
 
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
-import pytest
 
 import d1_common.date_time
 import d1_common.system_metadata

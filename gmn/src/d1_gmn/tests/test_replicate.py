@@ -24,9 +24,8 @@ replication.
 
 """
 
-import responses
-
 import pytest
+import responses
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
@@ -99,6 +98,7 @@ class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 with pytest.raises(d1_common.types.exceptions.IdentifierNotUnique):
                     gmn_client_v1_v2.replicate(sysmeta_pyxb, "urn:node:testSourceNode")
 
+    # TODO: Move to @pytest.mark.parametrize()
     parameterize_dict = {
         "test_1050": [dict(true_or_false=True), dict(true_or_false=False)]
     }

@@ -27,9 +27,9 @@ import tempfile
 import time
 
 import contextlib2
+import pytest
 
 import d1_onedrive.impl.disk_cache
-import pytest
 
 import d1_test.d1_test_case
 

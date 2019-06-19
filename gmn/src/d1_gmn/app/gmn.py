@@ -240,7 +240,6 @@ class Startup(django.apps.AppConfig):
 
     def _add_xslt_mimetype(self):
         """Register the mimetype for .xsl files in order for Django to serve static
-
         xsl files with the correct mimetype
 
         """

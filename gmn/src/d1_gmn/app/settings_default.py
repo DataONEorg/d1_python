@@ -61,6 +61,8 @@ NODE_LOGO_ROOT = (
     "https://raw.githubusercontent.com/"
     "DataONEorg/member-node-info/master/production/graphics/web/"
 )
+# Set on startup
+NODE_LOGO_URL = None
 NODE_SYNC_SCHEDULE_YEAR = "*"
 NODE_SYNC_SCHEDULE_MONTH = "*"
 NODE_SYNC_SCHEDULE_WEEKDAY = "?"

@@ -18,9 +18,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 import datetime
+import multiprocessing
+import random
+import time
+
+import pytest
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
+import d1_test.sample
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestSample")
@@ -72,3 +78,33 @@ class TestSample(d1_test.d1_test_case.D1TestCase):
         """bytes which are valid UTF-8."""
         b = d1_test.instance_generator.random_data.random_unicode_str(1000)
         self.sample.assert_equals(b, "bytes_utf8")
+
+    @pytest.mark.parametrize("unique_path_count", [1, 10, 100])
+    def test_1040(self, unique_path_count):
+        """path_lock context manager."""
+        worker_count = 100
+        loop_count = 10
+        lock_duration_min_sec = 0.0
+        lock_duration_max_sec = 0.1
+
+        path_list = [
+            d1_test.instance_generator.random_data.random_lower_ascii(10, 20)
+            for _ in range(unique_path_count)
+        ]
+
+        pool = multiprocessing.Pool(processes=worker_count)
+
+        for _ in range(loop_count):
+            random.shuffle(path_list)
+            for path in path_list:
+                pool.apply_async(
+                    lock_path, args=(path, lock_duration_min_sec, lock_duration_max_sec)
+                )
+
+        pool.close()
+        pool.join()
+
+
+def lock_path(path, lock_duration_min_sec, lock_duration_max_sec):
+    with d1_test.sample.path_lock(path):
+        time.sleep(random.uniform(lock_duration_min_sec, lock_duration_max_sec))

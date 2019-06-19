@@ -63,7 +63,7 @@ def _mk_http_basic_auth_header():
                 "{}:{}".format(
                     django.conf.settings.PROXY_MODE_BASIC_AUTH_USERNAME,
                     django.conf.settings.PROXY_MODE_BASIC_AUTH_PASSWORD,
-                ).encode('utf-8')
-            ).decode('utf-8')
+                ).encode("utf-8")
+            ).decode("utf-8")
         )
     }

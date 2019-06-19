@@ -790,38 +790,45 @@ def log_cert_info(logger, msg_str, cert_obj):
         map(
             logger,
             ["{}:".format(msg_str)]
-            + [
-                "  {}".format(v)
-                for v in [
-                    "Subject: {}".format(
-                        _get_val_str(cert_obj, ["subject", "value"], reverse=True)
-                    ),
-                    "Issuer: {}".format(
-                        _get_val_str(cert_obj, ["issuer", "value"], reverse=True)
-                    ),
-                    "Not Valid Before: {}".format(
-                        cert_obj.not_valid_before.isoformat()
-                    ),
-                    "Not Valid After: {}".format(cert_obj.not_valid_after.isoformat()),
-                    "Subject Alt Names: {}".format(
-                        _get_ext_val_str(
-                            cert_obj, "SUBJECT_ALTERNATIVE_NAME", ["value", "value"]
-                        )
-                    ),
-                    "CRL Distribution Points: {}".format(
-                        _get_ext_val_str(
-                            cert_obj,
-                            "CRL_DISTRIBUTION_POINTS",
-                            ["value", "full_name", "value", "value"],
-                        )
-                    ),
-                    "Authority Access Location: {}".format(
-                        extract_issuer_ca_cert_url(cert_obj) or "<not found>"
-                    ),
-                ]
-            ],
+            + ["  {}: {}".format(k, v) for k, v in get_cert_info_list(cert_obj)],
         )
     )
+
+
+# noinspection PyProtectedMember
+def get_cert_info_list(cert_obj):
+    """Get a list of certificate values.
+
+    Args:
+      cert_obj: cryptography.Certificate
+        Certificate containing values to retrieve.
+
+    Returns:
+      list of tup: Certificate value name, value
+
+    """
+    return [
+        ("Subject", _get_val_str(cert_obj, ["subject", "value"], reverse=True)),
+        ("Issuer", _get_val_str(cert_obj, ["issuer", "value"], reverse=True)),
+        ("Not Valid Before", cert_obj.not_valid_before.isoformat()),
+        ("Not Valid After", cert_obj.not_valid_after.isoformat()),
+        (
+            "Subject Alt Names",
+            _get_ext_val_str(cert_obj, "SUBJECT_ALTERNATIVE_NAME", ["value", "value"]),
+        ),
+        (
+            "CRL Distribution Points",
+            _get_ext_val_str(
+                cert_obj,
+                "CRL_DISTRIBUTION_POINTS",
+                ["value", "full_name", "value", "value"],
+            ),
+        ),
+        (
+            "Authority Access Location",
+            extract_issuer_ca_cert_url(cert_obj) or "<not found>",
+        ),
+    ]
 
 
 def get_extension_by_name(cert_obj, extension_name):

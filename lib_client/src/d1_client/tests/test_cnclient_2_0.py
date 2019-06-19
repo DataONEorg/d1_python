@@ -22,7 +22,6 @@ import io
 
 import freezegun
 import OpenSSL
-
 import pytest
 
 import d1_common

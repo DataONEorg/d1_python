@@ -34,7 +34,6 @@ import d1_gmn.app.models
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
-import d1_common.url
 
 import django
 import django.conf

@@ -177,12 +177,12 @@ def delete_import(r, unused_dot_list):
 
 
 def print_list(log_func, head_str, dot_list):
+    if not dot_list:
+        return
     log_func("")
     log_func("{}:".format(head_str))
     for v in dot_list:
         log_func("  {}".format(".".join(v)))
-    if not dot_list:
-        log_func("  None")
 
 
 def get_import_list(r):
