@@ -249,6 +249,13 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
         #
         # Special cases are ordered before general cases
         #
+        if isinstance(o_, cryptography.x509.Certificate):
+            return (
+                ".json",
+                d1_common.util.serialize_to_normalized_pretty_json(
+                    d1_common.cert.x509.get_cert_info_list(o_)
+                ),
+            )
         # DOT Language (digraph str from ResourceMap)
         with ignore_exceptions():
             if "digraph" in o_:
