@@ -22,6 +22,11 @@
 The certificate can be used for issuing certificates and sign CSRs that are locally
 trusted.
 
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
+
+- Use the d1_common.cert.x509 module to create a local self-signed CA certificate
+
 """
 import argparse
 import logging
@@ -35,6 +40,7 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
+    parser.add_argument("common_name", action="store", help="E.g., localCA")
     parser.add_argument(
         "ca_path", action="store", help="Save path for PEM formatted CA certificate"
     )
@@ -44,12 +50,13 @@ def main():
     except CACreateError as e:
         print("Error: {}".format((str(e))))
     except KeyboardInterrupt:
-        print("Exit")
+        print("Interrupted")
 
 
 def create_ca(args):
     ca_private_key = d1_common.cert.x509.generate_private_key()
-    ca_cert = d1_common.cert.x509.generate_ca_cert("dataone.org", ca_private_key)
+    ca_name = d1_common.cert.x509.create_simple_dn(args.common_name)
+    ca_cert = d1_common.cert.x509.generate_ca_cert(ca_name, ca_private_key)
 
     ca_pw_bytes = d1_common.cert.x509.input_key_passphrase("CA private key")
 

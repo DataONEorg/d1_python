@@ -18,7 +18,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Generate a Certificate Signing Request (CSR) for a Member Node Client Side
-Certificate, suitable for submitting to DataONE."""
+Certificate, suitable for submitting to DataONE.
+
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
+
+- Use the d1_common.cert.x509 module to create a local Certificate Signing Request
+(CSR).
+
+"""
 import argparse
 import logging
 import os
@@ -32,6 +40,9 @@ def main():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument(
+        "node_urn", action="store", help="Node URN. E.g., 'urn:node:XYZ'"
+    )
+    parser.add_argument(
         "csr_path", action="store", help="Save path for PEM formatted CSR"
     )
     args = parser.parse_args()
@@ -40,15 +51,13 @@ def main():
     except CSRCreateError as e:
         print("Error: {}".format((str(e))))
     except KeyboardInterrupt:
-        print("Exit")
+        print("Interrupted")
 
 
 def create_csr(args):
     csr_private_key_bytes = d1_common.cert.x509.generate_private_key()
     csr_cert = d1_common.cert.x509.generate_csr(
-        csr_private_key_bytes,
-        d1_common.cert.x509.create_csr_subject(),
-        ["my.membernode.org"],
+        csr_private_key_bytes, d1_common.cert.x509.create_mn_dn(args.node_urn)
     )
 
     pem_path = (

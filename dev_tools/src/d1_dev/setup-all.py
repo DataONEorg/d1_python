@@ -46,7 +46,7 @@ PKG_PATH_LIST = [
     "client_onedrive",
     "gmn",
     "test_utilities",
-    "d1_util",
+    "utilities",
     # 'csw',
 ]
 

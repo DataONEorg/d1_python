@@ -35,11 +35,17 @@ def main():
         packages=setuptools.find_packages(),
         include_package_data=True,
         install_requires=[
-            # These are not yet available when bootstrapping on Travis
             'dataone.common >= 3.4.4',
             'dataone.libclient >= 3.4.4',
         ],
         setup_requires=["setuptools_git >= 1.1"],
+        entry_points={
+            'console_scripts': [
+                'cert-create-ca = d1_util.cert_create_ca:main',
+                'cert-create-csr = d1_util.cert_create_csr:main',
+                'cert-sign-csr = d1_util.cert_sign_csr:main',
+            ]
+        },
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",

@@ -17,10 +17,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Sign a Certificate Signing Request (CSR)."""
+"""Sign a Certificate Signing Request (CSR).
+
+This is an example on how to use the DataONE Client and Common libraries for Python. It
+shows how to:
+
+- Use the d1_common.cert.x509 module to sign a Certificate Signing Request (CSR) using a
+local CA.
+
+"""
 import argparse
 import logging
 import os
+
+
+
 
 import d1_common.cert.x509
 
@@ -43,7 +54,7 @@ def main():
     except CSRSignError as e:
         print("Error: {}".format((str(e))))
     except KeyboardInterrupt:
-        print("Exit")
+        print("Interrupted")
 
 
 def sign_csr(args):
@@ -56,8 +67,10 @@ def sign_csr(args):
     ca_pw_bytes = d1_common.cert.x509.input_key_passphrase("CA private key")
     ca_private_key = d1_common.cert.x509.load_private_key(args.ca_key_path, ca_pw_bytes)
 
+    ca_cert = d1_common.cert.x509.deserialize_pem_file(args.ca_path)
+
     signed_cert = d1_common.cert.x509.generate_cert(
-        ca_issuer=d1_common.cert.x509.create_ca_subject(),
+        ca_issuer=ca_cert.issuer,
         ca_key=ca_private_key,
         csr_subject=csr_cert.subject,
         csr_pub_key=csr_cert.public_key(),
