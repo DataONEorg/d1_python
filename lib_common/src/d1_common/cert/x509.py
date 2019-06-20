@@ -139,14 +139,37 @@ def extract_subject_from_dn(cert_obj):
     )
 
 
-def create_d1_dn_subject(common_name_str):
-    """Create the DN Subject for certificate that will be used in a DataONE environment.
+def create_mn_dn(node_urn):
+    """Create a certificate DN suitable for use in Member Node client side certificates
+    issued by DataONE, and thus in Certificate Signing Requests (CSR). The DN will be on
+    the form:
+
+        DC=org, DC=dataone, CN=urn:node:<ID>
+
+    where <ID> typically is a short acronym for the name of the organization responsible
+    for the Member Node.
 
     The DN is formatted into a DataONE subject, which is used in authentication,
     authorization and event tracking.
 
     Args:
-        common_name_str: str
+        node_urn: str
+            Node URN. E.g.,
+                Production certificate: ``urn:node:XYZ``.
+                Test certificate ``urn:node:mnTestXYZ``.
+
+    Returns:
+        cryptography.x509.Name
+    """
+    return create_simple_dn(node_urn, domain_componet_list=['org', 'dataone'])
+
+def create_simple_dn(common_name_str, domain_componet_list=None, fqdn_list=None):
+    """Create a simple certificate DN suitable for use in testing and for generating self signed CA and other certificate.
+
+        DC=local, DC=dataone, CN=<common name>
+
+    Args:
+        common_name_str: The Common Name to use for the certificate.
             DataONE uses simple DNs without physical location information, so only the
             ``common_name_str`` (``CommonName``) needs to be specified.
 
@@ -159,108 +182,78 @@ def create_d1_dn_subject(common_name_str):
             For a locally trusted client side certificate, something like
             ``localClient`` may be used.
 
+        domain_componet_list: list
+            Optionally set custom domain components.
+
+        fqdn_list: list of str
+            List of Fully Qualified Domain Names (FQDN) and/or IP addresses for which
+            this certificate will provide authentication.
+
+            E.g.: ['my.membernode.org', '1.2.3.4']
+
+            This is mainly useful for creating a self signed server side certificate or
+            a CSR that will be submitted to a trusted CA, such as Verisign, for signing.
+
+    Returns:
+        cryptography.x509.Name
     """
-    return cryptography.x509.Name(
-        [
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.COUNTRY_NAME, "US"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.STATE_OR_PROVINCE_NAME, "California"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.LOCALITY_NAME, "San Francisco"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.ORGANIZATION_NAME, "Root CA"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.COMMON_NAME, "ca.ca.com"
-            ),
-        ]
+    domain_componet_list = domain_componet_list or ['local', 'dataone']
+    attr_list = []
+    for dc_str in domain_componet_list:
+        attr_list.append(
+        cryptography.x509.NameAttribute(
+            cryptography.x509.oid.NameOID.DOMAIN_COMPONENT, dc_str
+        ))
+    attr_list.append(
+        cryptography.x509.NameAttribute(
+            cryptography.x509.oid.NameOID.COMMON_NAME, common_name_str
+        )
     )
+    return cryptography.x509.Name(attr_list)
 
-
-def create_ca_subject():
-    return cryptography.x509.Name(
-        [
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.COUNTRY_NAME, "US"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.STATE_OR_PROVINCE_NAME, "California"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.LOCALITY_NAME, "San Francisco"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.ORGANIZATION_NAME, "Root CA"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.COMMON_NAME, "ca.ca.com"
-            ),
-        ]
-    )
-
-
-def create_csr_subject():
-    return cryptography.x509.Name(
-        [
-            # Provide various details about who we are.
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.COUNTRY_NAME, "US"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.STATE_OR_PROVINCE_NAME, "California"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.LOCALITY_NAME, "San Francisco"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.ORGANIZATION_NAME, "CSR Requester"
-            ),
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.COMMON_NAME, "csr.csr.com"
-            ),
-        ]
-    )
 
 
 # CSR
 
 
-def generate_csr(private_key_bytes, subject_name, fqdn_list):
+def generate_csr(private_key_bytes, dn, fqdn_list=None):
     """Generate a Certificate Signing Request (CSR).
 
     Args:
         private_key_bytes: bytes
             Private key with which the CSR will be signed.
 
-        subject_name: str
-            Certificate Subject Name
+        dn: cryptography.x509.Name
+            The dn can be built by passing a list of cryptography.x509.NameAttribute to
+            cryptography.x509.Name.
 
-        fqdn_list:
+            Simple DNs can be created with the ``create_dn*`` functions in this module.
+
+        fqdn_list: list of str
             List of Fully Qualified Domain Names (FQDN) and/or IP addresses for which
             this certificate will provide authentication.
 
             E.g.: ['my.membernode.org', '1.2.3.4']
 
+            This is mainly useful for creating a self signed server side certificate or
+            a CSR that will be submitted to a trusted CA, such as Verisign, for signing.
+
+    Returns:
+        cryptography.x509.CertificateSigningRequest
     """
-    return (
-        cryptography.x509.CertificateSigningRequestBuilder()
-        .subject_name(subject_name)
-        .add_extension(
+    csr = cryptography.x509.CertificateSigningRequestBuilder(subject_name=dn)
+    if fqdn_list:
+        csr.add_extension(
             extension=cryptography.x509.SubjectAlternativeName(
                 [cryptography.x509.DNSName(v) for v in fqdn_list]
             ),
             critical=False,
         )
-        .sign(
+    return csr.sign(
             private_key=private_key_bytes,
             algorithm=cryptography.hazmat.primitives.hashes.SHA256(),
             backend=cryptography.hazmat.backends.default_backend(),
         )
-    )
 
 
 # PEM
@@ -648,14 +641,19 @@ def serialize_cert_to_der(cert_obj):
 
 
 def generate_ca_cert(
-    hostname,
+    dn,
     private_key,
     fqdn_str=None,
     public_ip=None,
     private_ip=None,
     valid_days=10 * 365,
 ):
-    """Args: hostname:
+    """Args:
+
+        dn: cryptography.x509.Name
+            A cryptography.x509.Name holding a sequence of cryptography.x509.NameAttribute objects.
+
+            See the create_dn* functions.
 
         private_key: RSAPrivateKey, etc
 
@@ -669,14 +667,6 @@ def generate_ca_cert(
     Returns:
 
     """
-    name = cryptography.x509.Name(
-        [
-            cryptography.x509.NameAttribute(
-                cryptography.x509.oid.NameOID.COMMON_NAME, hostname
-            )
-        ]
-    )
-
     # best practice seem to be to include the hostname in the SAN, which *SHOULD*
     # mean COMMON_NAME is ignored.
     # allow addressing by IP, for when you don't have real DNS (common in most
@@ -685,7 +675,6 @@ def generate_ca_cert(
     # cryptography.x509.DNSName(private_ip),
 
     alt_name_list = [
-        cryptography.x509.DNSName(hostname),
         cryptography.x509.DNSName("localhost"),
     ]
 
@@ -711,8 +700,8 @@ def generate_ca_cert(
     now = datetime.datetime.utcnow()
     return (
         cryptography.x509.CertificateBuilder()
-        .subject_name(name)
-        .issuer_name(name)
+        .subject_name(dn)
+        .issuer_name(dn)
         .public_key(private_key.public_key())
         .serial_number(cryptography.x509.random_serial_number())
         .not_valid_before(now)

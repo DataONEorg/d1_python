@@ -71,7 +71,9 @@ class Startup(django.apps.AppConfig):
         self._assert_is_type("SCIMETA_VALIDATION_MAX_SIZE", int)
         self._assert_is_in("SCIMETA_VALIDATION_OVER_SIZE_ACTION", ("reject", "accept"))
 
-        self._warn_unsafe_for_prod()
+        if django.conf.settings.UNSAFE_SETTING_WARNINGS:
+            self._warn_unsafe_for_prod()
+
         self._check_resource_map_create()
 
         if not d1_gmn.app.sciobj_store.is_existing_store():

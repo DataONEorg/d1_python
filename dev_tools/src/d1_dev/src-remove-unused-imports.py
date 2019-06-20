@@ -106,7 +106,6 @@ def get_specified_file_path_list(args):
 
 # noinspection PyBroadException
 def remove_unused_imports(args, format_path):
-    logger.info("")
     logger.info(format_path)
 
     try:
@@ -183,6 +182,7 @@ def print_list(log_func, head_str, dot_list):
     log_func("{}:".format(head_str))
     for v in dot_list:
         log_func("  {}".format(".".join(v)))
+    log_func("")
 
 
 def get_import_list(r):
