@@ -36,7 +36,6 @@ def main():
         license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        exclude_package_data={"": ["settings.py"]},
         install_requires=[
             'dataone.cli >= 3.4.4',
             'dataone.common >= 3.4.4',
@@ -57,7 +56,7 @@ def main():
             "Topic :: Scientific/Engineering",
             "License :: OSI Approved :: Apache Software License",
             "Programming Language :: Python :: 3",
-            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
         ],
         keywords="DataONE server member-node coordinating-node",
     )
