@@ -17,7 +17,8 @@ branch = True
 
 omit =
   # All dot files and dirs
-  */.*
+  # Adding the .* filter triggers "Coverage.py warning: No data was collected"
+  #*/.*
 
   # All underscore files and dirs
   */_*
@@ -26,7 +27,7 @@ omit =
   */conftest.py
   */settings*.py
   */setup.py
-  */test.py
+  */test*.py
 
   # Dirs
   */build/*

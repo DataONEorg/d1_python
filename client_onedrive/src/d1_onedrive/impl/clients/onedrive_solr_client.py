@@ -22,6 +22,7 @@
 import logging
 
 import requests
+import requests.adapters
 
 import d1_onedrive.impl.onedrive_exceptions
 
@@ -35,10 +36,10 @@ class OneDriveSolrClient(d1_client.solr_client.SolrClient):
         self._solr_endpoint = options.base_url + options.solr_query_path
         self._session = requests.Session()
         self._session.mount(
-            "http://", requests.adapters.HTTPAdapter(try_count=try_count)
+            "http://", requests.adapters.HTTPAdapter(max_retries=try_count)
         )
         self._session.mount(
-            "https://", requests.adapters.HTTPAdapter(try_count=try_count)
+            "https://", requests.adapters.HTTPAdapter(max_retries=try_count)
         )
         self._timeout_sec = options.solr_query_timeout_sec
         self._max_objects_for_query = options.max_objects_for_query

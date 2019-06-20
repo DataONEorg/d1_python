@@ -103,7 +103,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 gmn_client_v1_v2,
                 d1_test.instance_generator.identifier.generate_pid("PID_SCIMETA_"),
                 "http://datadryad.org/profile/v3.1",
-                self.test_files.load_xml_to_str("scimeta_isotc211_1.xml"),
+                self.test_files.load_xml_to_str('isotc211/nsidc.xml'),
             )
 
     @responses.activate

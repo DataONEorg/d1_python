@@ -96,9 +96,8 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
                 "cert/cert_with_equivalents_invalid_serialization.pem"
             ),
         )
-        with pytest.raises(OpenSSL.SSL.Error) as exc_info:
+        with pytest.raises(OpenSSL.SSL.Error):
             live_client.echoCredentials()
-        assert "SSL_CTX_use_PrivateKey_file" in str(exc_info)
 
     # CNDiagnostic.echoSystemMetadata(session, sysmeta) → SystemMetadata
 

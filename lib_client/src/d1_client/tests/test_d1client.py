@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 
+import io
+
+import freezegun
+import responses
+
+import pytest
+
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
@@ -17,17 +24,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import io
-
-import pytest
-import responses
+import d1_common.types.exceptions
 
 import d1_test.d1_test_case
-import d1_test.mock_api.get_capabilities
 import d1_test.mock_api.create
+import d1_test.mock_api.get_capabilities
 
 import d1_client.d1client
-import freezegun
 
 
 @freezegun.freeze_time("1988-05-01")
@@ -46,16 +49,20 @@ class TestDataONEClient(d1_test.d1_test_case.D1TestCase):
             ),
         )
         sciobj_stream = io.BytesIO(b"test")
-        sysmeta_pyxb = client.create_sysmeta("pid", "format_id", sciobj_stream)
+        sysmeta_pyxb = client.create_sysmeta(
+            "pid", "eml://ecoinformatics.org/eml-2.0.0", sciobj_stream
+        )
         self.sample.assert_equals(sysmeta_pyxb, "create_sysmeta")
 
     @responses.activate
     def test_1015(self):
         """create_sciobj(): Assert on unknown formatId"""
         client = d1_client.d1client.DataONEClient()
-        with pytest.raises(AssertionError, match="Unknown formatId"):
+        with pytest.raises(
+            d1_common.types.exceptions.InvalidSystemMetadata, match="Unknown formatId"
+        ):
             sciobj_stream = io.BytesIO(b"test")
-            client.create_sciobj("pid", "format_id", sciobj_stream)
+            client.create_sciobj("pid", "unknown_format_id", sciobj_stream)
 
     @responses.activate
     def test_1020(self):

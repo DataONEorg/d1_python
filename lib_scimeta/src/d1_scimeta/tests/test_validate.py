@@ -26,8 +26,7 @@ import pytest
 import d1_test.d1_test_case
 
 
-# @pytest.mark.skip("")
-class TestSciMeta(d1_test.d1_test_case.D1TestCase):
+class TestSciMetaValidate(d1_test.d1_test_case.D1TestCase):
     @pytest.mark.parametrize(
         "missing_invalid_format_id",
         ["http://www.icpsr.umich.edu/DDI", "unknown_format_id"],
@@ -35,7 +34,7 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     def test_1000(self, missing_invalid_format_id):
         """SciMeta.assert_valid(): Missing schema raises SciMetaError with
         expected message."""
-        xml_str = self.test_files.load_bin("xml/scimeta_isotc211_1.xml")
+        xml_str = self.test_files.load_bin("xml/isotc211/ieda.xml")
         with pytest.raises(
             d1_scimeta.util.SciMetaError, match="Invalid formatId"
         ):
@@ -97,12 +96,12 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     )
     def test_1080(self, format_id):
         """SciMeta.assert_valid(): ISO/TC 211 does not validate as other formatId."""
-        xml_str = self.test_files.load_bin("xml/scimeta_isotc211_1.xml")
+        xml_str = self.test_files.load_bin("xml/isotc211/noaa_ncei.xml")
         with pytest.raises(d1_scimeta.util.SciMetaError, match="XML document does not validate"):
             d1_scimeta.validate.assert_valid(format_id, xml_str)
 
     @pytest.mark.parametrize(
-        "xml_doc", ["boilerplate.xml", "ieda.xml", "noa_ncei.xml", "nsidc.xml"]
+        "xml_doc", ["boilerplate.xml", "ieda.xml", "noaa_ncei.xml", "nsidc.xml"]
     )
     def test_1090(self, xml_doc):
         """SciMeta.assert_valid(): Valid ISO/TC 211"""
