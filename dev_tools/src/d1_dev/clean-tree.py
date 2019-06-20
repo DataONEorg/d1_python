@@ -34,11 +34,10 @@ import d1_common.iter.path
 import d1_common.util
 
 # Files and directories to delete
-JUNK_GLOB_LIST = [
-    # Dirs
+JUNK_GLOB_DIR_LIST = [
     "*egg-info/",
     ".cache/",
-    ".eggs",
+    ".eggs/",
     ".pytest_cache/",
     "__pycache__/",
     "build/",
@@ -46,7 +45,9 @@ JUNK_GLOB_LIST = [
     "dist/",
     "htmlcov/",
     "stores/object/",
-    # Files
+]
+
+JUNK_GLOB_FILE_LIST = [
     "*.bak",
     "*.log",
     "*.pyc",
@@ -65,7 +66,6 @@ def main():
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     parser.add_argument("path", nargs="+", help="File or directory path")
-    parser.add_argument("--exclude", nargs="+", help="Exclude glob patterns")
     parser.add_argument(
         "--no-recursive",
         dest="recursive",
@@ -89,12 +89,13 @@ def main():
 
     itr = d1_common.iter.path.path_generator(
         path_list=args.path,
-        include_glob_list=JUNK_GLOB_LIST,
-        exclude_glob_list=args.exclude,
+        include_glob_list=JUNK_GLOB_FILE_LIST,
+        exclude_glob_list=JUNK_GLOB_DIR_LIST,
         recursive=args.recursive,
         ignore_invalid=args.ignore_invalid,
         default_excludes=False,
-        return_dir_paths=True,
+        return_entered_dir_paths=False,
+        return_skipped_dir_paths=True,
     )
 
     for p in itr:

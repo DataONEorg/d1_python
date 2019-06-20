@@ -50,7 +50,8 @@ def path_generator(
     recursive=True,
     ignore_invalid=False,
     default_excludes=True,
-    return_dir_paths=False,
+    return_entered_dir_paths=False,
+    return_skipped_dir_paths=False,
 ):
     """# language=rst.
 
@@ -105,10 +106,20 @@ def path_generator(
           include dirs such as .git and backup files, such as files appended with "~".
         - **False**: No files or dirs are excluded by default.
 
-      return_dir_paths: bool
+      return_entered_dir_paths: bool
 
         - **False**: Only file paths are returned.
         - **True**: Directory paths are also returned.
+
+      return_skipped_dir_paths: bool
+
+        - **False**: Paths of skipped dirs are not returned.
+        - **True**: Paths of skipped dirs are returned.
+
+        The iterator never descends into excluded dirs, and by default, does not return
+        the paths of excluded dirs. However, the client may need to get the paths of
+        dirs that were excluded instead of dirs that were included. E.g., when looking
+        for dirs to delete.
 
     Returns:
       File path iterator
@@ -120,7 +131,7 @@ def path_generator(
       the client to determine if directories should be iterated by, for instance, which
       files are present in the directory. This can be used in conjunction with the
       include and exclude glob lists. Note that, in order to receive directory paths
-      that can be skipped, ``return_dir_paths`` must be set to True.
+      that can be skipped, ``return_entered_dir_paths`` must be set to True.
 
       The regular ``for...in`` syntax does not support sending the "skip" flag back to
       the iterator. Instead, use a pattern like:
@@ -129,7 +140,7 @@ def path_generator(
 
       ::
 
-        itr = file_iterator.file_iter(..., return_dir_paths=True)
+        itr = file_iterator.file_iter(..., return_entered_dir_paths=True)
         try:
           path = itr.next()
           while True:
@@ -168,7 +179,8 @@ def path_generator(
     logging.debug("  recursive: {}".format(recursive))
     logging.debug("  ignore_invalid: {}".format(ignore_invalid))
     logging.debug("  default_excludes: {}".format(default_excludes))
-    logging.debug("  return_dir_paths: {}".format(return_dir_paths))
+    logging.debug("  return_entered_dir_paths: {}".format(return_entered_dir_paths))
+    logging.debug("  return_skipped_dir_paths: {}".format(return_skipped_dir_paths))
     logging.debug("")
 
     include_file_glob_list = [
@@ -199,7 +211,8 @@ def path_generator(
                 exclude_dir_glob_list,
                 include_file_glob_list,
                 exclude_file_glob_list,
-                return_dir_paths,
+                return_entered_dir_paths,
+                return_skipped_dir_paths,
                 recursive,
             )
             # else:
@@ -219,22 +232,14 @@ def path_generator(
                 raise EnvironmentError(0, "Not a valid file or dir path", path)
 
 
-def _is_filtered(name, include_glob_list, exclude_glob_list):
-    return (
-        include_glob_list
-        and not any(fnmatch.fnmatch(name, g) for g in include_glob_list)
-        or exclude_glob_list
-        and any(fnmatch.fnmatch(name, g) for g in exclude_glob_list)
-    )
-
-
 def _filtered_walk(
     root_dir_path,
     include_dir_glob_list,
     exclude_dir_glob_list,
     include_file_glob_list,
     exclude_file_glob_list,
-    return_dir_paths,
+    return_entered_dir_paths,
+    return_skipped_dir_paths,
     recursive,
 ):
     skip_dir_path_list = []
@@ -244,24 +249,28 @@ def _filtered_walk(
             return
 
         if any(dir_path.startswith(d) for d in skip_dir_path_list):
-            logging.debug('Skipped dir branch. branch="{}"'.format(dir_path))
+            logging.debug('Skipped dir branch: {}'.format(dir_path))
             continue
 
-        dir_list[:] = [
-            d
-            for d in dir_list
+        enter_dir_list = []
+        for dir_name in dir_list:
             if not _is_filtered(
-                os.path.split(d)[1] + "/", include_dir_glob_list, exclude_dir_glob_list
-            )
-        ]
+                os.path.split(dir_name)[1] + "/", include_dir_glob_list, exclude_dir_glob_list
+            ):
+                enter_dir_list.append(dir_name)
+            else:
+                if return_skipped_dir_paths:
+                    yield os.path.join(dir_path, dir_name)
 
-        if return_dir_paths:
+        dir_list[:] = enter_dir_list
+
+        if return_entered_dir_paths:
             for dir_name in dir_list:
                 this_dir_path = os.path.join(dir_path, dir_name)
                 skip_dir = yield this_dir_path
                 if skip_dir:
                     logging.debug(
-                        'Client requested branch. branch="{}"'.format(this_dir_path)
+                        'Client requested skip of branch: {}'.format(this_dir_path)
                     )
                     skip_dir_path_list.append(this_dir_path)
 
@@ -270,3 +279,12 @@ def _filtered_walk(
                 file_name, include_file_glob_list, exclude_file_glob_list
             ):
                 yield os.path.join(dir_path, file_name)
+
+
+def _is_filtered(name, include_glob_list, exclude_glob_list):
+    return (
+        include_glob_list
+        and not any(fnmatch.fnmatch(name, g) for g in include_glob_list)
+        or exclude_glob_list
+        and any(fnmatch.fnmatch(name, g) for g in exclude_glob_list)
+    )

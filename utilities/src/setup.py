@@ -36,7 +36,6 @@ def main():
         include_package_data=True,
         install_requires=[
             # These are not yet available when bootstrapping on Travis
-            'dataone.cli >= 3.4.4',
             'dataone.common >= 3.4.4',
             'dataone.libclient >= 3.4.4',
         ],
@@ -44,7 +43,6 @@ def main():
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
-            "Topic :: Scientific/Engineering",
             "License :: OSI Approved :: Apache Software License",
             "Programming Language :: Python :: 3",
             "Programming Language :: Python :: 3.7",

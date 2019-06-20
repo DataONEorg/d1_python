@@ -101,7 +101,7 @@ def get_specified_file_path_list(args):
             recursive=args.recursive,
             ignore_invalid=args.ignore_invalid,
             default_excludes=False,
-            return_dir_paths=True,
+            return_entered_dir_paths=True,
         )
     ]
     return specified_file_path_list

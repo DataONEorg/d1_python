@@ -90,7 +90,7 @@ def tree_path(request):
         yield tmp_dir_path
 
 
-@pytest.mark.parametrize("return_dir_paths", [True, False])
+@pytest.mark.parametrize("return_entered_dir_paths", [True, False])
 @pytest.mark.parametrize("recursive", [True, False])
 class TestFileIterator(d1_test.d1_test_case.D1TestCase):
     # /dir11
@@ -139,7 +139,7 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         found_path_list = self._normalize(
             d1_common.iter.path.path_generator(tmp_path_list, **param_dict), test_path
         )
-        postfix_str += "_incdirs" if param_dict["return_dir_paths"] else ""
+        postfix_str += "_incdirs" if param_dict["return_entered_dir_paths"] else ""
         postfix_str += "_recursive" if param_dict["recursive"] else ""
         self.sample.assert_equals(found_path_list, postfix_str)
 
@@ -151,33 +151,33 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         """Trim the /tmp/*/ section and sort for reproducibility."""
         return sorted([v[len(test_path) :] for v in itr])
 
-    def test_1000(self, tree_path, return_dir_paths, recursive):
+    def test_1000(self, tree_path, return_entered_dir_paths, recursive):
         """file_iter(): Empty dir."""
         self._check(
             tree_path,
             "empty",
             "dir13",
-            return_dir_paths=return_dir_paths,
+            return_entered_dir_paths=return_entered_dir_paths,
             recursive=recursive,
         )
 
-    def test_1010(self, tree_path, return_dir_paths, recursive):
+    def test_1010(self, tree_path, return_entered_dir_paths, recursive):
         """file_iter(): Dir with dir and file."""
         self._check(
             tree_path,
             "dir_file",
             "dir15",
-            return_dir_paths=return_dir_paths,
+            return_entered_dir_paths=return_entered_dir_paths,
             recursive=recursive,
         )
 
-    def test_1020(self, tree_path, return_dir_paths, recursive):
+    def test_1020(self, tree_path, return_entered_dir_paths, recursive):
         """file_iter(): Root of deeply nested."""
         self._check(
             tree_path,
             "dir_root_nested",
             "dir11",
-            return_dir_paths=return_dir_paths,
+            return_entered_dir_paths=return_entered_dir_paths,
             recursive=recursive,
         )
 
@@ -191,14 +191,14 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         ],
     )
     def test_1030(
-        self, tree_path, return_dir_paths, recursive, sample_postfix, exclude_glob_list
+        self, tree_path, return_entered_dir_paths, recursive, sample_postfix, exclude_glob_list
     ):
         """file_iter(): Root of deeply nested."""
         self._check(
             tree_path,
             "dir_root_exclude_{}".format(sample_postfix),
             "dir11",
-            return_dir_paths=return_dir_paths,
+            return_entered_dir_paths=return_entered_dir_paths,
             recursive=recursive,
             exclude_glob_list=exclude_glob_list,
         )

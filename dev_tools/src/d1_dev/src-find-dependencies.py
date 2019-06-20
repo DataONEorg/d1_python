@@ -89,7 +89,7 @@ def find_pkg_names(args):
         recursive=args.recursive,
         ignore_invalid=args.ignore_invalid,
         default_excludes=False,
-        return_dir_paths=True,
+        return_entered_dir_paths=True,
     ):
         dep_set.update(find_deps_in_source(module_path))
     return sorted(get_external_deps(dep_set))
