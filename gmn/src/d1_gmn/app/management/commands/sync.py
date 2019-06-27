@@ -49,7 +49,7 @@ synced just as if it was discovered by the regular poll based sync.
 import asyncio
 import logging
 
-import d1_gmn.app.management.commands.async_client
+import d1_client.aio.async_client
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.standard_args
 import d1_gmn.app.management.commands.util.util
@@ -105,7 +105,7 @@ class Command(django.core.management.base.BaseCommand):
             self.progress_logger.completed()
 
     async def _handle(self):
-        client = d1_gmn.app.management.commands.async_client.AsyncDataONEClient(
+        client = d1_client.aio.async_client.AsyncDataONEClient(
             self.options["baseurl"],
             self.options["timeout"],
             django.conf.settings.CLIENT_CERT_PATH,

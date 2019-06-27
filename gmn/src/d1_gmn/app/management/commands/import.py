@@ -34,7 +34,7 @@ import os
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
-import d1_gmn.app.management.commands.async_client
+import d1_client.aio.async_client
 import d1_gmn.app.management.commands.util.standard_args
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.util
@@ -543,7 +543,7 @@ class Command(django.core.management.base.BaseCommand):
 
     @contextlib.asynccontextmanager
     async def create_async_client(self):
-        async with d1_gmn.app.management.commands.async_client.AsyncDataONEClient(
+        async with d1_client.aio.async_client.AsyncDataONEClient(
             self.options["baseurl"]
         ) as async_client:
             yield async_client

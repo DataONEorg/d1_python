@@ -20,7 +20,7 @@ import asyncio
 import logging
 
 import d1_gmn.app.did
-import d1_gmn.app.management.commands.async_client
+import d1_client.aio.async_client
 import d1_gmn.app.management.commands.objectlist_async
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.standard_args
@@ -68,7 +68,7 @@ class Command(django.core.management.base.BaseCommand):
             self.progress_logger.completed()
 
     async def _handle(self):
-        client = d1_gmn.app.management.commands.async_client.AsyncDataONEClient(
+        client = d1_client.aio.async_client.AsyncDataONEClient(
             base_url=self.options["baseurl"],
             timeout_sec=self.options["timeout"],
             cert_pub_path=self.options["cert_pem_path"],
