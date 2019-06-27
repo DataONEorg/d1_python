@@ -157,7 +157,7 @@ class DataONEBaseClient(d1_client.session.Session):
 
     """
 
-    def __init__(self, base_url, *args, **kwargs):
+    def __init__(self, base_url=d1_common.const.URL_DATAONE_ROOT, *args, **kwargs):
         """Create a DataONEBaseClient. See Session for parameters.
 
         :param api_major: Major version of the DataONE API

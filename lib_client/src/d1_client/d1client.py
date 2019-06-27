@@ -24,6 +24,7 @@ class provides a more abstract interface that can be used for interacting with a
 DataONE node regardless of type and version.
 
 """
+import d1_common.const
 import d1_common.type_conversions
 
 import d1_client.cnclient
@@ -36,7 +37,7 @@ class DataONEClient(object):
     pass
 
 
-def get_api_major_by_base_url(base_url, *client_arg_list, **client_arg_dict):
+def get_api_major_by_base_url(base_url=d1_common.const.URL_DATAONE_ROOT, *client_arg_list, **client_arg_dict):
     """Read the Node document from a node and return an int containing the latest D1 API
     version supported by the node.
 

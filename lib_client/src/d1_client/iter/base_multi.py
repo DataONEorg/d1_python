@@ -21,6 +21,8 @@ import logging
 import multiprocessing
 import time
 
+import d1_common.const
+
 import d1_common.types.exceptions
 
 import d1_client.mnclient_1_2
@@ -203,7 +205,8 @@ def _get_page(
     logger.debug("Completed page")
 
 
-def create_client(base_url, api_major, client_arg_dict):
+def create_client(base_url=d1_common.const.URL_DATAONE_ROOT, api_major=2, client_arg_dict=None):
+    client_arg_dict = client_arg_dict or {}
     if api_major in (1, "1", "v1"):
         return d1_client.mnclient_1_2.MemberNodeClient_1_2(base_url, **client_arg_dict)
     else:

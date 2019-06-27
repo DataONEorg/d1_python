@@ -25,6 +25,8 @@ See additional notes in SysMeta iter docstring.
 
 import logging
 
+import d1_common.const
+
 import d1_client.iter.base_multi
 
 logger = logging.getLogger(__name__)
@@ -34,7 +36,7 @@ logger = logging.getLogger(__name__)
 class ObjectListIteratorMulti(d1_client.iter.base_multi.MultiprocessedIteratorBase):
     def __init__(
         self,
-        base_url,
+        base_url=d1_common.const.URL_DATAONE_ROOT,
         page_size=d1_client.iter.base_multi.PAGE_SIZE,
         max_workers=d1_client.iter.base_multi.MAX_WORKERS,
         max_result_queue_size=d1_client.iter.base_multi.MAX_RESULT_QUEUE_SIZE,
