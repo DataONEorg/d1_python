@@ -151,7 +151,7 @@ class MemberNodeObjectDownloader(object):
                 logging.exception("listObjects() failed with exception:")
                 raise
             else:
-                logging.info(
+                logging.debug(
                     "Retrieved page: {}/{}".format(
                         current_start / LIST_OBJECTS_PAGE_SIZE + 1,
                         object_list.total / LIST_OBJECTS_PAGE_SIZE,

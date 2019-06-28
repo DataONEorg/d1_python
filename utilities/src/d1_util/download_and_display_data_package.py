@@ -30,62 +30,15 @@ Operation:
 - Configure the script in the Config section below
 
 """
-import argparse
+
 import logging
 import sys
 
-import d1_common.env
+
 import d1_common.resource_map
 
 # Config
-
-# The identifier (PID) of the DataONE Data Package (Resource Map) to download
-# and display. Data packages have Format ID
-# http://www.openarchives.org/ore/terms.
-SCIENCE_OBJECT_PID = "dakoop_test-PKG"
-
-# BaseURL for the Member Node on which the science object resides. If the script
-# is run on the same server as the Member Node, this can be localhost.
-MN_BASE_URL = "https://mn-demo-6.test.dataone.org/knb/d1/mn"
-# MN_BASE_URL = 'https://localhost/mn'
-
-# Paths to the certificate and key to use when retrieving the object. This is
-# required if the object is not publicly accessible. If the certificate has the
-# key embedded, the _KEY setting should be set to None. If the objects have
-# public access, these can both be set to None.
-CERTIFICATE_FOR_CREATE = None
-CERTIFICATE_FOR_CREATE_KEY = None
-
-
 def main():
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument("--debug", action="store_true", help="Debug level logging")
-    parser.add_argument(
-        "--env",
-        type=str,
-        default="prod",
-        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
-    )
-    parser.add_argument(
-        "--cert-pub",
-        dest="cert_pem_path",
-        action="store",
-        help="Path to PEM formatted public key of certificate",
-    )
-    parser.add_argument(
-        "--cert-key",
-        dest="cert_key_path",
-        action="store",
-        help="Path to PEM formatted private key of certificate",
-    )
-    parser.add_argument(
-        "--timeout",
-        action="store",
-        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help="Amount of time to wait for calls to complete (seconds)",
-    )
 
     logging.basicConfig()
     logging.getLogger("").setLevel(logging.DEBUG)
