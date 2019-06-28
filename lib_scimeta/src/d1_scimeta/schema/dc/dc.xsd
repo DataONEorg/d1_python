@@ -1,9 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns="http://purl.org/dc/elements/1.1/"
-           targetNamespace="http://purl.org/dc/elements/1.1/"
-           elementFormDefault="qualified"
-           attributeFormDefault="unqualified">
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://purl.org/dc/elements/1.1/" targetNamespace="http://purl.org/dc/elements/1.1/" elementFormDefault="qualified" attributeFormDefault="unqualified">
 
   <xs:annotation>
     <xs:documentation xml:lang="en">
@@ -38,8 +34,7 @@
   </xs:annotation>
 
 
-  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-             schemaLocation="http://www.w3.org/2001/03/xml.xsd">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../_cache/http_www.w3.org_2001_03__xml.xsd">
   </xs:import>
 
   <xs:complexType name="SimpleLiteral">

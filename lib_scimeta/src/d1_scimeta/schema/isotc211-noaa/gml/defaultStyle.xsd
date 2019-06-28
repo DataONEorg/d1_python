@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<schema targetNamespace="http://www.opengis.net/gml/3.2" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:smil20="http://www.w3.org/2001/SMIL20/" elementFormDefault="qualified" version="3.2.1 2010-01-28">
+<?xml version='1.0' encoding='utf-8'?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gml="http://www.opengis.net/gml/3.2" xmlns:smil20="http://www.w3.org/2001/SMIL20/" targetNamespace="http://www.opengis.net/gml/3.2" elementFormDefault="qualified" version="3.2.1 2010-01-28">
 	<annotation>
 		<appinfo source="urn:x-ogc:specification:gml:schema-xsd:gml:3.2.1">defaultStyle.xsd</appinfo>
 		<documentation>
@@ -12,7 +12,7 @@
        includes and imports
 	============================================================== -->
 	<include schemaLocation="measures.xsd"/>
-	<import namespace="http://www.w3.org/2001/SMIL20/" schemaLocation="http://schemas.opengis.net/gml/3.1.1/smil/smil20.xsd"/>
+	<import namespace="http://www.w3.org/2001/SMIL20/" schemaLocation="../../_cache/http_schemas.opengis.net_gml_3.1.1_smil__smil20.xsd"/>
 	<!-- ==============================================================
       the Style property
 	============================================================== -->

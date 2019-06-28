@@ -1,11 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:dc="http://purl.org/dc/elements/1.1/"
-           xmlns:dcmitype="http://purl.org/dc/dcmitype/"
-           targetNamespace="http://purl.org/dc/terms/"
-           xmlns="http://purl.org/dc/terms/"
-           elementFormDefault="qualified"
-           attributeFormDefault="unqualified">
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns="http://purl.org/dc/terms/" targetNamespace="http://purl.org/dc/terms/" elementFormDefault="qualified" attributeFormDefault="unqualified">
 
   <xs:annotation>
     <xs:documentation xml:lang="en">
@@ -62,15 +56,12 @@
   </xs:annotation>
 
 
-  <xs:import namespace="http://www.w3.org/XML/1998/namespace"
-             schemaLocation="http://www.w3.org/2001/03/xml.xsd">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../_cache/http_www.w3.org_2001_03__xml.xsd">
   </xs:import>
 
-   <xs:import namespace="http://purl.org/dc/elements/1.1/"
-              schemaLocation="dc.xsd"/>
+   <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="dc.xsd"/>
 
-   <xs:import namespace="http://purl.org/dc/dcmitype/"
-              schemaLocation="dcmitype.xsd"/>
+   <xs:import namespace="http://purl.org/dc/dcmitype/" schemaLocation="dcmitype.xsd"/>
 
    <xs:element name="title" substitutionGroup="dc:title"/>
    <xs:element name="creator" substitutionGroup="dc:creator"/>
@@ -360,7 +351,7 @@
 
   <xs:sequence>
     <xs:choice minOccurs="0" maxOccurs="unbounded">
-	<xs:element ref="dc:any" />
+	<xs:element ref="dc:any"/>
     </xs:choice>
   </xs:sequence>
   </xs:group>	

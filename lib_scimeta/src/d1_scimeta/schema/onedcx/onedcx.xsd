@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <!--
 
 DataOne Dublin Core Extended Schema v1.0
@@ -37,14 +37,9 @@ It is strongly encouraged that one 'title', 'abstract', at least one 'creator',
 	in the search index and search engine views.
 
 -->
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	targetNamespace="http://ns.dataone.org/metadata/schema/onedcx/v1.0"
- 	xmlns="http://ns.dataone.org/metadata/schema/onedcx/v1.0"
-  	xmlns:dcterms="http://purl.org/dc/terms/" 
-  	elementFormDefault="qualified" 
-  	attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://ns.dataone.org/metadata/schema/onedcx/v1.0" xmlns:dcterms="http://purl.org/dc/terms/" targetNamespace="http://ns.dataone.org/metadata/schema/onedcx/v1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
 
-	<xs:import namespace="http://purl.org/dc/terms/" schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"/>
+	<xs:import namespace="http://purl.org/dc/terms/" schemaLocation="../_cache/http_dublincore.org_schemas_xmls_qdc_2008_02_11__dcterms.xsd"/>
 	<!--
 Root element declarations:
 -->
