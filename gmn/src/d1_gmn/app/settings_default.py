@@ -192,8 +192,8 @@ LOG_LEVEL = "DEBUG" if DEBUG or DEBUG_GMN else "INFO"
 # Write log files to /var/local/dataone/logs if the directory exists. Else,
 # write to the root of the d1_gmn package directory.
 LOG_FILE_PATH = (
-    "/var/local/dataone/logs/gmn.log"
-    if os.path.isdir("/var/local/dataone/logs")
+    "/var/local/dataone/gmn.log"
+    if os.path.isdir("/var/local/dataone")
     else d1_common.utils.filesystem.abs_path("../gmn.log")
 )
 
