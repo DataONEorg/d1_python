@@ -18,20 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """Basic Solr client.
 
 Based on: http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/
@@ -117,6 +103,41 @@ RESERVED_CHAR_LIST = [
 ]
 
 
+class Param:
+    """Solr Query Parameter"""
+    def __init__(self, field, param):
+        self._field = field
+        self._param = param
+
+    def __str__(self):
+        return "{}:{}".format(
+            self._prepare_query_term(self._field),
+            self._prepare_query_term(self._param),
+        )
+
+    def __repr__(self):
+        return "Param({})".format(str(self))
+
+    def _prepare_query_term(self, term):
+        """Prepare a query term for inclusion in a query.
+        """
+        add_star = term.endswith('*')
+        term.rstrip('*')
+        term = self._escape_query_term(term)
+        if add_star:
+            return term + "*"
+        return term
+
+    def _escape_query_term(self, term):
+        """Escape a query term for inclusion in a query.
+
+        """
+        term = term.replace("\\", "\\\\")
+        for c in RESERVED_CHAR_LIST:
+            term = term.replace(c, r"\{}".format(c))
+        return term
+
+
 class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
     """Extend DataONEBaseClient_1_2 with functions for querying Solr indexes hosted on
     CNs and MNs.
@@ -140,14 +161,15 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
     Pass the query parameters as regular keyword arguments. E.g.:
 
-        solr_client.search(q='id:abc*', fq='id:def*')
+        solr_client.search(q=Param('id', 'abc*'), fq=Param('id', 'def*'))
 
     To pass multiple query parameters of the same type, pass a list. E.g., to
     pass multiple filter query (fq) parameters:
 
-        solr_client.search(q='id:abc*', fq=['id:def*', 'id:ghi'])
-
-    - Do not encode the query parameters before passing them to the methods.
+        solr_client.search(
+            q=Param('id', 'abc*'),
+            fq=[Param('id', 'def*'), Param('id', 'ghi')]
+        )
 
     - For more information about DataONE's Solr index, see:
 
@@ -164,12 +186,12 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         )
         self._query_engine = kwargs.pop("query_engine", "solr")
         super().__init__(base_url, headers=header_dict, *args, **kwargs)
-        # d1_client.baseclient_1_2.DataONEBaseClient_1_2.__init__(
-        #     self,
-        # )
 
     def __str__(self):
         return 'SolrClient(base_url="{}")'.format(self._base_url)
+
+    def __repr__(self):
+        return str(self)
 
     # GET queries
 
@@ -525,6 +547,10 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         param_dict.setdefault("wt", "json")
         param_dict.setdefault("q", "*.*")
         param_dict.setdefault("fl", "*")
+        for q, param in param_dict.items():
+            if isinstance(param, Param):
+                param_dict[q] = str(param)
+
         return self.query("solr", "", do_post=do_post, query=param_dict)
 
     # Building queries
