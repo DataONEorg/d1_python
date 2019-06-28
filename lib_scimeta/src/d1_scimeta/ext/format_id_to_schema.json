@@ -1,0 +1,21 @@
+{
+  "datacite-3.0": "datacite-3.0",
+  "datacite-3.1": "datacite-3.1",
+  "http://datacite.org/schema/kernel-3.0": "dc",
+  "http://datacite.org/schema/kernel-3.1": "dc",
+  "http://datadryad.org/profile/v3.1": "dryad",
+  "http://purl.org/dryad/terms/": "dryad",
+  "http://rs.tdwg.org/dwc/xsd/simpledarwincore/": "dwc",
+  "eml://ecoinformatics.org/eml-2.0.0": "eml-2.0.0",
+  "eml://ecoinformatics.org/eml-2.0.1": "eml-2.0.1",
+  "eml://ecoinformatics.org/eml-2.1.0": "eml-2.1.0",
+  "eml://ecoinformatics.org/eml-2.1.1": "eml-2.1.1",
+  "FGDC-STD-001-1998": "fgdc-bdp",
+  "FGDC-STD-001.1-1999": "fgdc-std-001-1998",
+  "http://www.isotc211.org/2005/gmd": "isotc211",
+  "http://www.isotc211.org/2005/gmd-noaa": "isotc211-noaa",
+  "http://www.isotc211.org/2005/gmd-pangaea": "isotc211-pangaea",
+  "http://www.openarchives.org/OAI/2.0/oai_dc/": "oai_dc",
+  "http://ns.dataone.org/metadata/schema/onedcx/v1.0": "onedcx",
+  "http://purl.org/ornl/schema/mercury/terms/v1.0": "ornl"
+}
