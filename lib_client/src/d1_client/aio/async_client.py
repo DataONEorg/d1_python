@@ -35,7 +35,7 @@ DEFAULT_RETRY_COUNT = 3
 class AsyncDataONEClient:
     def __init__(
         self,
-        base_url,
+        base_url=d1_common.const.URL_DATAONE_ROOT,
         timeout_sec=None,
         cert_pub_path=None,
         cert_key_path=None,
