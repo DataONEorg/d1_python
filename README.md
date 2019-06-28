@@ -127,7 +127,7 @@ I have found the following aliases handy for running the tests. If using the `ba
 
 * Run tests in parallel using all available CPU cores, and create a coverage report. This greatly speeds up test execution but cannot be used with the PyCharm integration and interactive sample updates. 
 
-      alias pn='pytest -n auto --cov=. --cov-report=term --cov-report=xml'
+      alias pn='pytest -n auto --cov-report=term --cov-report=xml'
 
 pytest searches for and runs all tests below the current directory, so starting pytest directly or via one of the aliases from the d1_python directory will run all tests.
 
