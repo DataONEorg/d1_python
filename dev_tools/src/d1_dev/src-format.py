@@ -70,6 +70,7 @@ def main():
     )
     parser.add_argument(
         "--include-untracked",
+        "-u",
         action="store_true",
         help="Also process files not tracked by git",
     )
@@ -152,6 +153,9 @@ def format_single(_args, format_path):
 
 def run_cmd(*cmd_list):
     print("Running command: {}".format(" ".join(cmd_list)))
+    py_bin_dir_path = os.path.split(sys.executable)[0]
+    cmd_list = list(cmd_list)
+    cmd_list[0] = os.path.join(py_bin_dir_path, cmd_list[0])
     try:
         subprocess.check_call(cmd_list)
     except subprocess.CalledProcessError as e:
