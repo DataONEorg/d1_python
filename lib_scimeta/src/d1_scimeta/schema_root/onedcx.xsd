@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://ns.dataone.org/metadata/schema/onedcx/v1.0" schemaLocation="../schema/onedcx/onedcx.xsd"/>
+</xs:schema>

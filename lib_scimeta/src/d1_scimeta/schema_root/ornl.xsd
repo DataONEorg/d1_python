@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://purl.org/ornl/schema/mercury/terms/v1.0" schemaLocation="../schema/ornl/ornl-mercury-v1.0.xsd"/>
+</xs:schema>

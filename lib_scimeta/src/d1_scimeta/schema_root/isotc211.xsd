@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://www.isotc211.org/2005/gco" schemaLocation="../schema/isotc211/gco/gco.xsd"/>
+  <xs:import namespace="http://www.isotc211.org/2005/gmd" schemaLocation="../schema/isotc211/gmd/gmd.xsd"/>
+  <xs:import namespace="http://www.isotc211.org/2005/gmi" schemaLocation="../schema/isotc211/gmi/gmi.xsd"/>
+  <xs:import namespace="http://www.isotc211.org/2005/gmx" schemaLocation="../schema/isotc211/gmx/gmx.xsd"/>
+  <xs:import namespace="http://www.isotc211.org/2005/gsr" schemaLocation="../schema/isotc211/gsr/gsr.xsd"/>
+  <xs:import namespace="http://www.isotc211.org/2005/gss" schemaLocation="../schema/isotc211/gss/gss.xsd"/>
+  <xs:import namespace="http://www.isotc211.org/2005/gts" schemaLocation="../schema/isotc211/gts/gts.xsd"/>
+  <xs:import namespace="http://www.isotc211.org/2005/srv" schemaLocation="../schema/isotc211/srv/srv.xsd"/>
+  <xs:import namespace="http://www.opengis.net/gml" schemaLocation="../schema/isotc211/gml311/gml.xsd"/>
+  <xs:import namespace="http://www.w3.org/1999/xlink" schemaLocation="../schema/isotc211/xlink/xlinks.xsd"/>
+</xs:schema>

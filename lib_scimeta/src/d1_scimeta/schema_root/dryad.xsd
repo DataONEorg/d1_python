@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://purl.org/dryad/schema/dryad-bibo/v3.1"
+             schemaLocation="../schema/dryad/dryad-bibo.xsd"/>
+
+<!--  <xs:import namespace="http://purl.org/dc/terms/"-->
+<!--             schemaLocation="../schema/dc/dcterms.xsd"/>-->
+
+  <!--  Imports tdwg_basetypes.xsd, tdwg_dwctypes.xsd-->
+  <xs:import namespace="http://rs.tdwg.org/dwc/terms/"
+             schemaLocation="../schema/dwc/tdwg_dwcterms.xsd"/>
+
+
+  <xs:import namespace="http://purl.org/dryad/schema/terms/v3.1"
+             schemaLocation="../schema/dryad/dryad.xsd"/>
+
+</xs:schema>
+

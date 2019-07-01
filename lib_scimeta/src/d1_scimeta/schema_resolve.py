@@ -17,9 +17,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Determine which schema files will be required when validating a given XML doc.
+"""Determine which schema locations will be accessed when validating a given XML doc.
 
-This intended for troubleshooting of validation issues.
+Recursively follows `xs:include` and `xs:import` `schemaLocation` and issue warnings if
+XSD docs are missing, invalid or require network access.
+
+Intended for troubleshooting of validation issues.
 
 """
 import argparse
@@ -27,7 +30,8 @@ import logging
 
 import requests
 
-import d1_scimeta.xml_schema
+import d1_scimeta.util
+import d1_scimeta.util
 
 import d1_client.command_line
 
@@ -51,8 +55,8 @@ def main():
 
     d1_client.command_line.log_setup(is_debug=args.debug)
 
-    xml_tree = d1_scimeta.xml_schema.parse_xml_file(args.xml_path)
-    schema_branch_path = d1_scimeta.xml_schema.get_schema_branch_path(args.format_id)
+    xml_tree = d1_scimeta.util.load_xml_file_to_tree(args.xml_path)
+    schema_branch_path = d1_scimeta.util.get_abs_schema_branch_path(args.format_id)
 
     _log("Checking schema resolve for XML doc")
     _log("path: {}".format(args.xml_path), extra_indent=True)
@@ -61,7 +65,7 @@ def main():
 
     xsd_path_tup = tuple(
         v[1]
-        for v in d1_scimeta.xml_schema.gen_abs_root_xsd_path_tup(args.format_id, xml_tree)
+        for v in d1_scimeta.util.gen_abs_root_xsd_path_tup(args.format_id, xml_tree)
     )
 
     _log("XSD directly referenced by XML doc:", extra_line=True)
@@ -76,7 +80,9 @@ def main():
         _log(xsd_uri, extra_indent=True)
 
 
-def resolve_schemas(xsd_uri_tup, schema_branch_path, visited_xsd_uri_set=None, indent=1):
+def resolve_schemas(
+    xsd_uri_tup, schema_branch_path, visited_xsd_uri_set=None, indent=1
+):
     def ilog(*args, **kwargs):
         _log(*args, **kwargs, indent=indent)
 
@@ -92,7 +98,7 @@ def resolve_schemas(xsd_uri_tup, schema_branch_path, visited_xsd_uri_set=None, i
         visited_xsd_uri_set.add(xsd_uri)
 
         try:
-            if d1_scimeta.xml_schema.is_url(xsd_uri):
+            if d1_scimeta.util.is_url(xsd_uri):
                 ilog(
                     "XSD is not local. May cause network connections and delays during validation",
                     log.warning,
@@ -105,40 +111,44 @@ def resolve_schemas(xsd_uri_tup, schema_branch_path, visited_xsd_uri_set=None, i
             ilog("Error: {}".format(str(e)), log_=log.error)
             continue
 
-
-        schema_loc_tup = d1_scimeta.xml_schema.get_xs_include_xs_import_schema_location_tup(
-                xml_tree
-            )
+        schema_loc_tup = d1_scimeta.util.get_xs_include_xs_import_schema_location_tup(
+            xml_tree
+        )
 
         if not schema_loc_tup:
-            ilog('No xs:include or xs:import elements found')
+            ilog("No xs:include or xs:import elements found")
             continue
 
-        ilog('Found xs:include and/or xs:import elements with schemaLocation:', extra_line=True)
+        ilog(
+            "Found xs:include and/or xs:import elements with schemaLocation:",
+            extra_line=True,
+        )
         for schema_loc in schema_loc_tup:
             ilog(schema_loc, extra_indent=True)
 
         abs_xsd_uri_tup = tuple(
-            d1_scimeta.xml_schema.gen_abs_uri(xsd_uri, uri)
-            for uri in d1_scimeta.xml_schema.get_xs_include_xs_import_schema_location_tup(
+            d1_scimeta.util.gen_abs_uri(xsd_uri, uri)
+            for uri in d1_scimeta.util.get_xs_include_xs_import_schema_location_tup(
                 xml_tree
             )
         )
 
-        ilog('schemaLocation converted to absolute:', extra_line=True)
+        ilog("schemaLocation converted to absolute:", extra_line=True)
         for abs_schema_loc in abs_xsd_uri_tup:
             ilog(abs_schema_loc, extra_indent=True)
 
-        ilog('Resolving:', extra_line=True)
-        resolve_schemas(abs_xsd_uri_tup, schema_branch_path, visited_xsd_uri_set, indent + 1)
+        ilog("Resolving:", extra_line=True)
+        resolve_schemas(
+            abs_xsd_uri_tup, schema_branch_path, visited_xsd_uri_set, indent + 1
+        )
 
     return visited_xsd_uri_set
 
 
 def load_schema(xsd_uri):
     try:
-        return d1_scimeta.xml_schema.parse_xml_file(xsd_uri)
-    except d1_scimeta.xml_schema.SciMetaValidationError as e:
+        return d1_scimeta.util.load_xml_file_to_tree(xsd_uri)
+    except d1_scimeta.util.SciMetaError as e:
         raise ResolveError("Unable to load XML file: {}".format(str(e)))
 
 
@@ -147,8 +157,8 @@ def download_schema(xsd_url):
     if response.status_code != 200:
         raise ResolveError("Download error: {}".format(response.status_code))
     try:
-        return d1_scimeta.xml_schema.parse_xml_bytes(response.content)
-    except d1_scimeta.xml_schema.SciMetaValidationError as e:
+        return d1_scimeta.util.parse_xml_bytes(response.content)
+    except d1_scimeta.util.SciMetaError as e:
         raise ResolveError(
             "Invalid XML at schemaLocation: {}: {}".format(xsd_url, str(e))
         )
@@ -156,8 +166,9 @@ def download_schema(xsd_url):
 
 def _log(msg, indent=0, log_=log.info, extra_indent=False, extra_line=False):
     if extra_line:
-        log_('')
+        log_("")
     log_("{}{}".format("  " * (indent + (1 if extra_indent else 0)), msg))
+
 
 class ResolveError(Exception):
     pass

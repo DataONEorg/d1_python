@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="" schemaLocation="../schema/dwc/tdwg_basetypes.xsd"/>
+  <xs:import namespace="http://rs.tdwg.org/dwc/dwctype/" schemaLocation="../schema/dwc/tdwg_dwctypes.xsd"/>
+  <xs:import namespace="http://rs.tdwg.org/dwc/terms/" schemaLocation="../schema/dwc/tdwg_dwcterms.xsd"/>
+</xs:schema>

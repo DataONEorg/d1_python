@@ -59,17 +59,15 @@ import subprocess
 
 import requests
 
-import d1_scimeta.xml_schema
+import d1_scimeta.util
+import d1_scimeta.util
 
-import d1_common.iter.path
-import d1_common.type_conversions
-import d1_common.url
-import d1_common.util
+
 import d1_common.utils.filesystem
-import d1_common.xml
+
 
 import d1_test.pycharm
-import d1_test.sample
+
 
 import d1_client.command_line
 
@@ -81,18 +79,15 @@ def main():
     add_log_file()
 
     d1_common.utils.filesystem.create_missing_directories_for_dir(
-        d1_scimeta.xml_schema.SCHEMA_ROOT_PATH
+        d1_scimeta.util.SCHEMA_ROOT_PATH
     )
 
-    cache_dir_path = os.path.join(d1_scimeta.xml_schema.SCHEMA_ROOT_PATH, "_cache")
+    cache_dir_path = os.path.join(d1_scimeta.util.SCHEMA_ROOT_PATH, "_cache")
     d1_common.utils.filesystem.create_missing_directories_for_dir(cache_dir_path)
 
-    schema_branch_path_list = d1_scimeta.xml_schema.gen_schema_branch_path_list(
-        d1_scimeta.xml_schema.SCHEMA_ROOT_PATH
-    )
-
-    for branch_path in schema_branch_path_list:
-        xsd_path_list = d1_scimeta.xml_schema.gen_xsd_path_list(branch_path)
+    for format_id in d1_scimeta.util.get_supported_format_id_list():
+        branch_path = d1_scimeta.util.get_abs_schema_branch_path(format_id)
+        xsd_path_list = d1_scimeta.util.gen_abs_xsd_path_list(branch_path)
         rewrite_all_xsd(branch_path, xsd_path_list, cache_dir_path)
 
     cache_rewrite(cache_dir_path)
@@ -126,7 +121,7 @@ def cache_rewrite(cache_dir_path):
     done_xsd_path_set = set()
     while True:
         xsd_path_set = (
-            set(d1_scimeta.xml_schema.gen_xsd_path_list(cache_dir_path))
+            set(d1_scimeta.util.gen_abs_xsd_path_list(cache_dir_path))
             - done_xsd_path_set
         )
         files_modified = cache_rewrite_all_xsd(cache_dir_path, sorted(xsd_path_set))
@@ -151,8 +146,8 @@ def cache_rewrite_single_xsd(cache_dir_path, xsd_path):
     # create_from_original(xsd_path)
 
     try:
-        xsd_tree = d1_scimeta.xml_schema.parse_xml_file(xsd_path)
-    except d1_scimeta.xml_schema.SciMetaValidationError:
+        xsd_tree = d1_scimeta.util.load_xml_file_to_tree(xsd_path)
+    except d1_scimeta.util.SciMetaError:
         return False
 
     if not has_http_schema_locations(xsd_tree):
@@ -164,7 +159,7 @@ def cache_rewrite_single_xsd(cache_dir_path, xsd_path):
     files_modified = False
 
     for loc_el in xsd_tree.xpath(
-        "//xs:include|xs:import", namespaces=d1_scimeta.xml_schema.NS_MAP
+        "//xs:include|xs:import", namespaces=d1_scimeta.util.NS_MAP
     ):
         try:
             files_modified |= cache_rewrite_uri(cache_dir_path, xsd_path, loc_el)
@@ -173,7 +168,7 @@ def cache_rewrite_single_xsd(cache_dir_path, xsd_path):
 
     if files_modified:
         create_original(xsd_path)
-        d1_scimeta.xml_schema.save_tree_to_file(xsd_tree, xsd_path)
+        d1_scimeta.util.save_tree_to_file(xsd_tree, xsd_path)
         # show_diff(get_original_path(xsd_path), xsd_path)
 
     return files_modified
@@ -182,7 +177,7 @@ def cache_rewrite_single_xsd(cache_dir_path, xsd_path):
 def cache_rewrite_uri(cache_dir_path, xsd_path, loc_el):
     uri = loc_el.attrib["schemaLocation"]
 
-    if not d1_scimeta.xml_schema.is_url(uri):
+    if not d1_scimeta.util.is_url(uri):
         return False
 
     cache_rewrite_to_cache(cache_dir_path, xsd_path, loc_el, uri)
@@ -195,9 +190,9 @@ def cache_rewrite_to_cache(cache_dir_path, xsd_path, loc_el, download_url):
     rel_to_abs_include_import(download_url, child_xsd_tree)
     xsd_name = gen_cache_name(download_url)
     cache_path = os.path.join(cache_dir_path, xsd_name)
-    d1_scimeta.xml_schema.save_tree_to_file(child_xsd_tree, cache_path)
+    d1_scimeta.util.save_tree_to_file(child_xsd_tree, cache_path)
     log.info("Wrote XSD to: {}".format(cache_path))
-    rel_path = d1_scimeta.xml_schema.get_rel_path(xsd_path, cache_path)
+    rel_path = d1_scimeta.util.get_rel_path(xsd_path, cache_path)
     loc_el.attrib["schemaLocation"] = rel_path
     log.info("Rewrite ok: {} -> {}".format(download_url, rel_path))
 
@@ -227,10 +222,10 @@ def rewrite_all_xsd(branch_path, xsd_path_list, cache_dir_path):
     log.info("#" * 100)
     log.info(branch_path)
 
-    xsd_name_dict = d1_scimeta.xml_schema.gen_xsd_name_dict(branch_path, xsd_path_list)
+    xsd_name_dict = d1_scimeta.util.gen_xsd_name_dict(branch_path, xsd_path_list)
 
-    d1_scimeta.xml_schema.dump(xsd_path_list, "xsd_path_list")
-    d1_scimeta.xml_schema.dump(xsd_name_dict, "xsd_name_list")
+    d1_scimeta.util.dump(xsd_path_list, "xsd_path_list")
+    d1_scimeta.util.dump(xsd_name_dict, "xsd_name_list")
 
     files_modified = False
 
@@ -238,20 +233,6 @@ def rewrite_all_xsd(branch_path, xsd_path_list, cache_dir_path):
         files_modified |= rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path)
 
     return files_modified
-
-
-# def gen_cache_xsd_name_dict(xsd_path_list):
-#     """Generate a dict of mappings from default XSD filenames to their locations in the
-#     cache."""
-#     xsd_name_dict = {}
-#     for xsd_path in xsd_path_list:
-#         xsd_name = xsd_path.split("___")[1]
-#         # xsd_name = os.path.split(xsd_path)[1]
-#         # xsd_name = d1_common.url.decodePathElement(
-#         #     os.path.split(xsd_path)[1]
-#         # )
-#         xsd_name_dict[xsd_name] = xsd_path
-#     return xsd_name_dict
 
 
 def rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path):
@@ -274,8 +255,8 @@ def rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path):
     create_from_original(xsd_path)
 
     try:
-        xsd_tree = d1_scimeta.xml_schema.parse_xml_file(xsd_path)
-    except d1_scimeta.xml_schema.SciMetaValidationError:
+        xsd_tree = d1_scimeta.util.load_xml_file_to_tree(xsd_path)
+    except d1_scimeta.util.SciMetaError:
         return False
 
     if not has_http_schema_locations(xsd_tree):
@@ -287,7 +268,7 @@ def rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path):
     files_modified = False
 
     for loc_el in xsd_tree.xpath(
-        "//xs:include|xs:import", namespaces=d1_scimeta.xml_schema.NS_MAP
+        "//xs:include|xs:import", namespaces=d1_scimeta.util.NS_MAP
     ):
         try:
             files_modified |= rewrite_uri(
@@ -298,7 +279,7 @@ def rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path):
 
     if files_modified:
         create_original(xsd_path)
-        d1_scimeta.xml_schema.save_tree_to_file(xsd_tree, xsd_path)
+        d1_scimeta.util.save_tree_to_file(xsd_tree, xsd_path)
         # show_diff(get_original_path(xsd_path), xsd_path)
 
     return files_modified
@@ -316,23 +297,27 @@ def rewrite_uri(xsd_path, loc_el, xsd_name_dict, cache_dir_path):
         loc_el: Element
             xs:include or xs:import element holding a `schemaLocation` URI.
 
+        xsd_name_dict:
+
+        cache_dir_path:
+
     Returns:
         True if the `schemaLocation` was rewritten.
 
     """
     uri = loc_el.attrib["schemaLocation"]
 
-    if not d1_scimeta.xml_schema.is_url(uri):
+    if not d1_scimeta.util.is_url(uri):
         return False
 
     # uri = os.path.join(xsd_path, uri)
 
     try:
-        abs_trans_path = d1_scimeta.xml_schema.get_xsd_path(xsd_name_dict, uri)
-        rel_trans_path = d1_scimeta.xml_schema.get_rel_path(xsd_path, abs_trans_path)
+        abs_trans_path = d1_scimeta.util.get_xsd_path(xsd_name_dict, uri)
+        rel_trans_path = d1_scimeta.util.get_rel_path(xsd_path, abs_trans_path)
         loc_el.attrib["schemaLocation"] = rel_trans_path
         log.info("Rewrite ok: {} -> {}".format(uri, rel_trans_path))
-    except d1_scimeta.xml_schema.SciMetaValidationError:
+    except d1_scimeta.util.SciMetaError:
         # An XSD with the required name was not found. Download it to cache.
         rewrite_to_cache(xsd_path, loc_el, uri, cache_dir_path)
 
@@ -364,19 +349,19 @@ def rewrite_to_cache(xsd_path, loc_el, download_url, cache_dir_path):
     else:
         child_xsd_tree = download_xsd(download_url)
         rel_to_abs_include_import(download_url, child_xsd_tree)
-        d1_scimeta.xml_schema.save_tree_to_file(child_xsd_tree, cache_path)
+        d1_scimeta.util.save_tree_to_file(child_xsd_tree, cache_path)
         log.info("Downloaded XSD: {} -> {}".format(download_url, cache_path))
 
-    rel_path = d1_scimeta.xml_schema.get_rel_path(xsd_path, cache_path)
+    rel_path = d1_scimeta.util.get_rel_path(xsd_path, cache_path)
     loc_el.attrib["schemaLocation"] = rel_path
     log.info("Rewrite ok: {} -> {}".format(download_url, rel_path))
 
 
 def rel_to_abs_include_import(download_url, xsd_tree):
     for loc_el in xsd_tree.xpath(
-        "//xs:include|xs:import", namespaces=d1_scimeta.xml_schema.NS_MAP
+        "//xs:include|xs:import", namespaces=d1_scimeta.util.NS_MAP
     ):
-        loc_el.attrib["schemaLocation"] = d1_scimeta.xml_schema.gen_abs_uri(
+        loc_el.attrib["schemaLocation"] = d1_scimeta.util.gen_abs_uri(
             download_url, loc_el.attrib["schemaLocation"]
         )
 
@@ -392,40 +377,28 @@ def download_xsd(url):
         raise SchemaRewriteError(
             'Download error. url="{}" code={}'.format(url, response.status_code)
         )
-    return d1_scimeta.xml_schema.parse_xml_bytes(response.content)
+    return d1_scimeta.util.parse_xml_bytes(response.content)
 
 
 def gen_cache_name(uri):
     """Generate a local filename for an XSD that will be saved in the cache.
-
-    The name will contain the string, "___" where the filename can be split in order to
-    get the original XSD filename.
-
     """
     path, file_name = os.path.split(uri)
     name_str = "{}__{}".format(path, file_name)
     return re.sub(r"[^a-z0-9_\-.]+", "_", name_str.lower())
-    # return d1_common.url.encodePathElement(uri)
 
 
 def has_http_schema_locations(xsd_tree):
     """Return True if there is at least one `schemaLocation` in the doc which contains a
     http or https URI."""
-    for uri in xsd_tree.xpath(
-        "//*/@schemaLocation", namespaces=d1_scimeta.xml_schema.NS_MAP
-    ):
-        if d1_scimeta.xml_schema.is_url(uri):
+    for uri in xsd_tree.xpath("//*/@schemaLocation", namespaces=d1_scimeta.util.NS_MAP):
+        if d1_scimeta.util.is_url(uri):
             return True
     return False
 
 
 def gen_original_path(xml_path):
     """Generate the path to the original version of the XML doc at xml_path."""
-    # dir_path, file_name = os.path.split(xml_path)
-    # base_name, ext_name = os.path.splitext(file_name)
-    # orig_name = "{}.{}{}".format(base_name, "original", ext_name)
-    # orig_path = os.path.join(dir_path, orig_name)
-    # return orig_path
     return xml_path + ".ORIGINAL"
 
 

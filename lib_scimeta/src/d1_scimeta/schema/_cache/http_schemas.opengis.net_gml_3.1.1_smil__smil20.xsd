@@ -28,11 +28,11 @@ Author: Aaron Michael Cohen (Intel)
 Revision: 2001/07/31
 -->
 <schema xmlns="http://www.w3.org/2001/XMLSchema" xmlns:smil20="http://www.w3.org/2001/SMIL20/" xmlns:smil20lang="http://www.w3.org/2001/SMIL20/Language" targetNamespace="http://www.w3.org/2001/SMIL20/" elementFormDefault="qualified">
-	<import namespace="http://www.w3.org/2001/SMIL20/Language" schemaLocation="http_schemas.opengis.net_gml_3.1.1_smil__smil20-language.xsd"/>
+	<import namespace="http://www.w3.org/2001/SMIL20/Language" schemaLocation="http://schemas.opengis.net/gml/3.1.1/smil/smil20-language.xsd"/>
 	<!-- ============================================================= 
 	struct.xsd
 	============================================================== -->
-	<import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http_www.w3.org_2001__xml.xsd"/>
+	<import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/xml.xsd"/>
 	<attributeGroup name="structureModuleAttrs">
 		<attribute name="id" type="ID" use="optional"/>
 		<attribute name="class" type="string" use="optional"/>

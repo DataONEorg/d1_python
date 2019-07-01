@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://purl.org/dc/dcmitype/" schemaLocation="../schema/dc/dcmitype.xsd"/>
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="../schema/dc/dc.xsd"/>
+  <xs:import namespace="http://purl.org/dc/terms/" schemaLocation="../schema/dc/dcterms.xsd"/>
+</xs:schema>

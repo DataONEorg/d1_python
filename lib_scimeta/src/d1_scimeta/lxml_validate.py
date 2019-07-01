@@ -4,7 +4,8 @@ import argparse
 import logging
 import sys
 
-import d1_scimeta.xml_schema
+import d1_scimeta.util
+import d1_scimeta.validate
 
 import d1_client.command_line
 
@@ -30,12 +31,12 @@ def main():
     d1_client.command_line.log_setup(is_debug=args.debug)
 
     if args.formats:
-        d1_scimeta.xml_schema.get_supported_format_id_list()
+        d1_scimeta.util.get_supported_format_id_list()
         return 0
 
     try:
-        d1_scimeta.xml_schema.validate(args.format_id, args.xml_path)
-    except d1_scimeta.xml_schema.SciMetaValidationError as e:
+        d1_scimeta.validate.assert_valid(args.format_id, args.xml_path)
+    except d1_scimeta.util.SciMetaError as e:
         for line in str(e).splitlines():
             log.error(line)
         return 1

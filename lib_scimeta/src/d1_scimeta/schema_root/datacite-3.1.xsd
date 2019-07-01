@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/include/datacite-contributorType-v3.1.xsd"/>
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/include/datacite-dateType-v3.xsd"/>
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/include/datacite-descriptionType-v3.xsd"/>
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/include/datacite-relatedIdentifierType-v3.1.xsd"/>
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/include/datacite-relationType-v3.1.xsd"/>
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/include/datacite-resourceType-v3.xsd"/>
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/include/datacite-titleType-v3.xsd"/>
+  <xs:import namespace="http://datacite.org/schema/kernel-3" schemaLocation="../schema/datacite-3.1/metadata.xsd"/>
+</xs:schema>

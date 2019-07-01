@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="../schema/oai_dc/simpledc20021212.xsd"/>
+  <xs:import namespace="http://www.openarchives.org/OAI/2.0/oai_dc/" schemaLocation="../schema/oai_dc/oai_dc.xsd"/>
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../schema/oai_dc/xml.xsd"/>
+</xs:schema>

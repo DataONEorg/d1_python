@@ -1,12 +1,5 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema 
-    version="2013-10-22"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://rs.tdwg.org/dwc/terms/"
-    xmlns:dcterms="http://purl.org/dc/terms/"
-    xmlns:dcelem="http://purl.org/dc/elements/1.1/"
-    xmlns:dwctype="http://rs.tdwg.org/dwc/dwctype/"
-    xmlns:dwc="http://rs.tdwg.org/dwc/terms/">
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcelem="http://purl.org/dc/elements/1.1/" xmlns:dwctype="http://rs.tdwg.org/dwc/dwctype/" xmlns:dwc="http://rs.tdwg.org/dwc/terms/" version="2013-10-22" targetNamespace="http://rs.tdwg.org/dwc/terms/">
     <xs:annotation>
         <xs:documentation xml:lang="en">
             The Generic Darwin Core schema defining all property terms as global elements.
@@ -25,9 +18,9 @@
     </xs:annotation>
     <!-- tdwg_basetypes.xsd defines custom data types such as dateTimeISO to allow dates or the forms YYYY and YYYY-MM. -->
     <xs:include schemaLocation="tdwg_basetypes.xsd"/>
-    <xs:import namespace="http://purl.org/dc/terms/" schemaLocation="http://dublincore.org/schemas/xmls/qdc/2008/02/11/dcterms.xsd"/>
-    <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="http://dublincore.org/schemas/xmls/qdc/dc.xsd"/>
-    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="http://www.w3.org/2001/03/xml.xsd"/>
+    <xs:import namespace="http://purl.org/dc/terms/" schemaLocation="../_cache/http_dublincore.org_schemas_xmls_qdc_2008_02_11__dcterms.xsd"/>
+    <xs:import namespace="http://purl.org/dc/elements/1.1/" schemaLocation="../_cache/http_dublincore.org_schemas_xmls_qdc__dc.xsd"/>
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" schemaLocation="../_cache/http_www.w3.org_2001_03__xml.xsd"/>
     <xs:import namespace="http://rs.tdwg.org/dwc/dwctype/" schemaLocation="tdwg_dwctypes.xsd"/>
     
     <!-- ANY DWC TERM -->

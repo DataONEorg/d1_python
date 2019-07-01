@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='utf-8'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="eml://ecoinformatics.org/access-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-access.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/attribute-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-attribute.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/constraint-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-constraint.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/coverage-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-coverage.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/dataTable-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-dataTable.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/dataset-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-dataset.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/documentation-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-documentation.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/eml-2.1.1" schemaLocation="../schema/eml-2.1.1/eml.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/entity-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-entity.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/literature-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-literature.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/methods-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-methods.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/party-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-party.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/physical-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-physical.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/project-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-project.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/protocol-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-protocol.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/resource-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-resource.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/software-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-software.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/spatialRaster-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-spatialRaster.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/spatialReference-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-spatialReference.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/spatialVector-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-spatialVector.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/storedProcedure-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-storedProcedure.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/text-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-text.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/units-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-unitTypeDefinitions.xsd"/>
+  <xs:import namespace="eml://ecoinformatics.org/view-2.1.1" schemaLocation="../schema/eml-2.1.1/eml-view.xsd"/>
+  <xs:import namespace="http://www.xml-cml.org/schema/stmml-1.1" schemaLocation="../schema/eml-2.1.1/stmml.xsd"/>
+</xs:schema>
