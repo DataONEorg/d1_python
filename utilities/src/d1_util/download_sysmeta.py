@@ -29,8 +29,6 @@ shows how to:
 import logging
 import sys
 
-import d1_common.system_metadata
-import d1_common.utils.filesystem
 import d1_common.xml
 
 import d1_client.cnclient_2_0

@@ -32,7 +32,7 @@ import time
 import fuse
 
 import d1_onedrive.impl
-# App
+
 import d1_onedrive.impl.onedrive_exceptions
 
 import d1_common.date_time

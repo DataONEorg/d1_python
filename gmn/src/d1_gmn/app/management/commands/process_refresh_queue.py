@@ -27,6 +27,7 @@ import argparse
 import logging
 
 import d1_gmn.app.event_log
+
 # noinspection PyProtectedMember
 import d1_gmn.app.management.commands.util.util
 import d1_gmn.app.models

@@ -105,14 +105,14 @@ RESERVED_CHAR_LIST = [
 
 class Param:
     """Solr Query Parameter"""
+
     def __init__(self, field, param):
         self._field = field
         self._param = param
 
     def __str__(self):
         return "{}:{}".format(
-            self._prepare_query_term(self._field),
-            self._prepare_query_term(self._param),
+            self._prepare_query_term(self._field), self._prepare_query_term(self._param)
         )
 
     def __repr__(self):
@@ -121,8 +121,8 @@ class Param:
     def _prepare_query_term(self, term):
         """Prepare a query term for inclusion in a query.
         """
-        add_star = term.endswith('*')
-        term.rstrip('*')
+        add_star = term.endswith("*")
+        term.rstrip("*")
         term = self._escape_query_term(term)
         if add_star:
             return term + "*"

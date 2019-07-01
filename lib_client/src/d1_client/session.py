@@ -42,7 +42,13 @@ UBUNTU_CA_BUNDLE_PATH = "/etc/ssl/certs/ca-certificates.crt"
 
 
 class Session(object):
-    def __init__(self, base_url=d1_common.const.URL_DATAONE_ROOT, cert_pem_path=None, cert_key_path=None, **kwargs_dict):
+    def __init__(
+        self,
+        base_url=d1_common.const.URL_DATAONE_ROOT,
+        cert_pem_path=None,
+        cert_key_path=None,
+        **kwargs_dict
+    ):
         """The Session improves performance by keeping connection related state and
         allowing it to be reused in multiple API calls to a DataONE Coordinating Node or
         Member Node. This includes:

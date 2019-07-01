@@ -243,10 +243,7 @@ def log_setup(is_debug):
             "version": 1,
             "disable_existing_loggers": False,
             "formatters": {
-                "verbose": {
-                    "format": "%(levelname)-8s %(message)s",
-                    "datefmt": None,
-                }
+                "verbose": {"format": "%(levelname)-8s %(message)s", "datefmt": None}
             },
             "handlers": {
                 "console": {

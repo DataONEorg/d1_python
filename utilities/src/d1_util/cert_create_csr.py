@@ -28,14 +28,13 @@ shows how to:
 
 """
 import argparse
-import logging
 import os
 
 import d1_common.cert.x509
+import d1_common.util
 
 
 def main():
-    logging.basicConfig(level=logging.WARN)
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
@@ -46,6 +45,7 @@ def main():
         "csr_path", action="store", help="Save path for PEM formatted CSR"
     )
     args = parser.parse_args()
+    d1_common.util.log_setup(is_debug=args.debug)
     try:
         create_csr(args)
     except CSRCreateError as e:

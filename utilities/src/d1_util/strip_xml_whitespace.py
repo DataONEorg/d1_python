@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Strip whitespace that might interfere with XSD schema validation
+"""Strip whitespace that might interfere with XSD schema validation.
 
 Overall formatting is maintained. Note that pretty printing the doc is likely to add
 the stripped whitespace back in.
@@ -27,13 +27,12 @@ shows how to:
 
 - Deserialize, process and serialize XML docs.
 - Apply an XSLT stransform which strips potentially problematic whitespace.
-- Download a Science Object from a MN or CN.
 
 """
 import argparse
 import logging
 
-import d1_scimeta.xml_schema
+import d1_scimeta.util
 
 import d1_client.command_line
 
@@ -51,11 +50,11 @@ def main():
 
     d1_client.command_line.log_setup(is_debug=args.debug)
 
-    xml_tree = d1_scimeta.xml_schema.parse_xml_file(args.xml_path)
+    xml_tree = d1_scimeta.util.load_xml_file_to_tree(args.xml_path)
 
-    stripped_xml_tree = d1_scimeta.xml_schema.strip_whitespace(xml_tree)
-    d1_scimeta.xml_schema.dump_pretty_tree(stripped_xml_tree)
-    d1_scimeta.xml_schema.save_tree_to_file(stripped_xml_tree, args.xml_path)
+    stripped_xml_tree = d1_scimeta.util.strip_whitespace(xml_tree)
+    d1_scimeta.util.dump_pretty_tree(stripped_xml_tree)
+    d1_scimeta.util.save_tree_to_file(stripped_xml_tree, args.xml_path)
 
 
 def _log(msg, indent=0, log_=log.info, extra_indent=False, extra_line=False):

@@ -21,11 +21,13 @@
 import io
 import logging
 
+import requests
+
 import d1_common.const
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.util
-import d1_common.utils.filesystem
+
 import d1_common.xml
 
 import d1_client.session
@@ -515,27 +517,23 @@ class DataONEBaseClient(d1_client.session.Session):
         response = self.getResponse(pid, stream, vendorSpecific)
         return self._read_stream_response(response)
 
-    def get_and_save(
-        self, pid, sciobj_stream, create_missing_dirs=False, vendorSpecific=None
-    ):
-        """Like MNRead.get(), but also retrieve the object bytes and store them in a
-        stream. This method does not have the potential issue with excessive memory
-        usage that get() with ``stream``=False has.
+    def get_and_save(self, pid, sciobj_stream, vendorSpecific=None):
+        """Like MNRead.get(), but also retrieve the object bytes and write them to the
+        provided stream. This method does not have the potential issue with excessive
+        memory usage that get() with ``stream``=False has.
 
         Also see MNRead.get().
 
         """
         response = self.get(pid, stream=True, vendorSpecific=vendorSpecific)
         try:
-            if create_missing_dirs:
-                d1_common.utils.filesystem.create_missing_directories_for_file(
-                    sciobj_stream
-                )
             for chunk_str in response.iter_content(
                 chunk_size=d1_common.const.DEFAULT_CHUNK_SIZE
             ):
                 if chunk_str:
                     sciobj_stream.write(chunk_str)
+        except requests.RequestException as e:
+            raise d1_common.types.exceptions.ServiceFailure(str(e))
         finally:
             response.close()
         return response

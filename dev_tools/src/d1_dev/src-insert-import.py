@@ -18,6 +18,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Add a new import line after the last module level import.
+
+Use as external tool for quickly adding import statements from PyCharm.
+
+An odd flaw in PyCharm is that it appears not to understand dotted name imports
+("import x.y.z"). It doesn't detect unused dotted name imports and it can't generate
+such imports.
+
+As a workaround, this script can be assigned to a shortcut in PyCharm. It inserts an
+import statement for whatever is currently selected in the editor.
+
+Add the script as a new external tool:
+
+Tools > External Tools
+
+Program: /home/dahl/.pyenv/versions/d1_python_3.7.2/bin/python
+Arguments: ./dev_tools/src/d1_dev/src-insert-import.py "$FilePath$" "$SelectedText$"
+Working directory: $ContentRoot$
+
+Then assign a shortcut to the new external tool using the regular Keymap
+configuration.
+
+"""
 
 import argparse
 import logging
@@ -34,29 +57,6 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    """Add a new import line after the last module level import.
-
-    Use as external tool for quickly adding import statements from PyCharm.
-
-    An odd flaw in PyCharm is that it appears not to understand dotted name imports
-    ("import x.y.z"). It doesn't detect unused dotted name imports and it can't generate
-    such imports.
-
-    As a workaround, this script can be assigned to a shortcut in PyCharm. It inserts an
-    import statement for whatever is currently selected in the editor.
-
-    Add the script as a new external tool:
-
-    Tools > External Tools
-
-    Program: /home/dahl/.pyenv/versions/d1_python_3.7.2/bin/python
-    Arguments: ./dev_tools/src/d1_dev/src-insert-import.py "$FilePath$" "$SelectedText$"
-    Working directory: $ContentRoot$
-
-    Then assign a shortcut to the new external tool using the regular Keymap
-    configuration.
-
-    """
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )

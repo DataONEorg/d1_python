@@ -36,7 +36,7 @@ DEFAULT_MN_BASEURL = "".join(
 URL_DATAONE_SEARCH = "https://search.dataone.org"
 
 # Version of the DataONE Python stack
-VERSION = '3.4.4'
+VERSION = "3.4.4"
 
 # Default number of items in a single page of a multi-page result set
 DEFAULT_SLICE_SIZE = 100

@@ -91,7 +91,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Call returned failure but did not raise exception"
             )
-        print('Registered successfully')
+        print("Registered successfully")
 
     def _update(self, node_pyxb):
         d1_gmn.app.management.commands.util.util.abort_if_stand_alone_instance()
@@ -103,7 +103,7 @@ class Command(django.core.management.base.BaseCommand):
             raise django.core.management.base.CommandError(
                 "Call returned failure but did not raise exception"
             )
-        print('Updated successfully')
+        print("Updated successfully")
 
     def _create_client(self):
         client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(

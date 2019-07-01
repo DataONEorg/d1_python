@@ -191,7 +191,12 @@ class TestFileIterator(d1_test.d1_test_case.D1TestCase):
         ],
     )
     def test_1030(
-        self, tree_path, return_entered_dir_paths, recursive, sample_postfix, exclude_glob_list
+        self,
+        tree_path,
+        return_entered_dir_paths,
+        recursive,
+        sample_postfix,
+        exclude_glob_list,
     ):
         """file_iter(): Root of deeply nested."""
         self._check(

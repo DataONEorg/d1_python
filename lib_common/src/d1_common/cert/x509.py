@@ -161,9 +161,10 @@ def create_mn_dn(node_urn):
     Returns:
         cryptography.x509.Name
     """
-    return create_simple_dn(node_urn, domain_componet_list=['org', 'dataone'])
+    return create_simple_dn(node_urn, domain_componet_list=["org", "dataone"])
 
-def create_simple_dn(common_name_str, domain_componet_list=None, fqdn_list=None):
+
+def create_simple_dn(common_name_str, domain_componet_list=None):
     """Create a simple certificate DN suitable for use in testing and for generating self signed CA and other certificate.
 
         DC=local, DC=dataone, CN=<common name>
@@ -197,20 +198,20 @@ def create_simple_dn(common_name_str, domain_componet_list=None, fqdn_list=None)
     Returns:
         cryptography.x509.Name
     """
-    domain_componet_list = domain_componet_list or ['local', 'dataone']
+    domain_componet_list = domain_componet_list or ["local", "dataone"]
     attr_list = []
     for dc_str in domain_componet_list:
         attr_list.append(
-        cryptography.x509.NameAttribute(
-            cryptography.x509.oid.NameOID.DOMAIN_COMPONENT, dc_str
-        ))
+            cryptography.x509.NameAttribute(
+                cryptography.x509.oid.NameOID.DOMAIN_COMPONENT, dc_str
+            )
+        )
     attr_list.append(
         cryptography.x509.NameAttribute(
             cryptography.x509.oid.NameOID.COMMON_NAME, common_name_str
         )
     )
     return cryptography.x509.Name(attr_list)
-
 
 
 # CSR
@@ -250,10 +251,10 @@ def generate_csr(private_key_bytes, dn, fqdn_list=None):
             critical=False,
         )
     return csr.sign(
-            private_key=private_key_bytes,
-            algorithm=cryptography.hazmat.primitives.hashes.SHA256(),
-            backend=cryptography.hazmat.backends.default_backend(),
-        )
+        private_key=private_key_bytes,
+        algorithm=cryptography.hazmat.primitives.hashes.SHA256(),
+        backend=cryptography.hazmat.backends.default_backend(),
+    )
 
 
 # PEM
@@ -641,12 +642,7 @@ def serialize_cert_to_der(cert_obj):
 
 
 def generate_ca_cert(
-    dn,
-    private_key,
-    fqdn_str=None,
-    public_ip=None,
-    private_ip=None,
-    valid_days=10 * 365,
+    dn, private_key, fqdn_str=None, public_ip=None, private_ip=None, valid_days=10 * 365
 ):
     """Args:
 
@@ -674,9 +670,7 @@ def generate_ca_cert(
     # openssl wants DNSnames for ips
     # cryptography.x509.DNSName(private_ip),
 
-    alt_name_list = [
-        cryptography.x509.DNSName("localhost"),
-    ]
+    alt_name_list = [cryptography.x509.DNSName("localhost")]
 
     if fqdn_str:
         alt_name_list.append(cryptography.x509.DNSName(fqdn_str))

@@ -18,6 +18,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Remove unused imports.
+
+Unsafe!
+
+Only tested on d1_python, which uses simple absolute imports on the form, "import
+a.b.c".
+
+"""
+
 
 import argparse
 import logging
@@ -35,12 +44,6 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    """Remove unused imports Unsafe!
-
-    Only tested on our codebase, which uses simple absolute imports on the form, "import
-    a.b.c".
-
-    """
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )

@@ -73,7 +73,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1020(self, gmn_client_v1_v2):
         """MNStorage.create(SciMeta): onedcx does not validate as EML."""
         with pytest.raises(
-            d1_common.types.exceptions.InvalidRequest, match="validation failed"
+            d1_common.types.exceptions.InvalidRequest, match="XML document does not validate"
         ):
             self._create_and_check_scimeta(
                 gmn_client_v1_v2,
@@ -97,7 +97,7 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1040(self, gmn_client_v1_v2):
         """MNStorage.create(SciMeta): ISO/TC 211 does not validate as Dryad."""
         with pytest.raises(
-            d1_common.types.exceptions.InvalidRequest, match="validation failed"
+            d1_common.types.exceptions.InvalidRequest, match="XML document does not validate"
         ):
             self._create_and_check_scimeta(
                 gmn_client_v1_v2,

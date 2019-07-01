@@ -24,7 +24,7 @@ import pytest
 
 import d1_test.d1_test_case
 
-
+@pytest.mark.skip('')
 class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     @pytest.mark.parametrize(
         "missing_invalid_format_id",

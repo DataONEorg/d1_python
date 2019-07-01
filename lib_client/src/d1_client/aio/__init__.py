@@ -2,7 +2,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2019 DataONE
+#   Copyright 2009-2017 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,24 +15,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Combine all PyXB bindings required for handling DataONE types up to and including
-v1.1."""
+"""asyncio based utilities.
 
+Although this directory is not a package, this __init__.py file is required for pytest
+to be able to reach test directories below this directory.
+
+"""
+
+# Suppress log messages instead of raising exception if the program using the library
+# does not configure the logging system.
 import logging
 
-# noinspection PyUnresolvedReferences
-from d1_common.types.generated.dataoneTypes_v1 import *
-
-# noinspection PyUnresolvedReferences
-from d1_common.types.generated.dataoneTypes_v1_1 import *
-
-# flake8: noqa: F403
-
-# Suppress PyXB warnings, such as the following:
-#
-# WARNING:pyxb.binding.basis:Unable to convert DOM node value at
-# <unknown>[1:209] to binding
-#
-# This warning occurs because traceInformation is an xs:anyType, which can
-# hold any XML structure so noPyXB bindingcan be generated.
-logging.getLogger("pyxb.binding.basis").setLevel(logging.ERROR)
+logging.getLogger(__name__).addHandler(logging.NullHandler())

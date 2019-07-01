@@ -35,6 +35,7 @@ import os
 import d1_onedrive.impl.resolver.flat_space
 import d1_onedrive.impl.resolver.object_tree_resolver
 import d1_onedrive.impl.resolver.resolver_base
+
 # D1
 from d1_onedrive.impl import attributes
 from d1_onedrive.impl import directory

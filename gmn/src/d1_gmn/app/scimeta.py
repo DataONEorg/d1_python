@@ -16,7 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utilities for Science Metadata."""
-import d1_scimeta.xml_schema
+import d1_scimeta.util
+import d1_scimeta.validate
 
 import d1_gmn.app.sciobj_store
 
@@ -58,8 +59,8 @@ def assert_valid(sysmeta_pyxb, pid):
 
     with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_ctx(pid) as sciobj_file:
         try:
-            d1_scimeta.xml_schema.validate(sysmeta_pyxb.formatId, sciobj_file.read())
-        except d1_scimeta.xml_schema.SciMetaValidationError as e:
+            d1_scimeta.validate.assert_valid(sysmeta_pyxb.formatId, sciobj_file.read())
+        except d1_scimeta.util.SciMetaError as e:
             raise d1_common.types.exceptions.InvalidRequest(0, str(e))
 
 
@@ -68,7 +69,7 @@ def _is_validation_enabled():
 
 
 def _is_installed_scimeta_format_id(sysmeta_pyxb):
-    return d1_scimeta.xml_schema.is_installed_scimeta_format_id(sysmeta_pyxb.formatId)
+    return d1_scimeta.util.is_installed_scimeta_format_id(sysmeta_pyxb.formatId)
 
 
 def _is_above_size_limit(sysmeta_pyxb):

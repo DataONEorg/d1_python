@@ -41,9 +41,7 @@ https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html
 
 import sys
 
-import d1_common.const
-import d1_common.env
-import d1_common.util
+
 import d1_common.xml
 
 import d1_test.instance_generator.system_metadata
@@ -56,41 +54,13 @@ import d1_client.command_line
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument("--debug", action="store_true", help="Debug level logging")
-    parser.add_argument(
-        "--env",
-        type=str,
-        default="prod",
-        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
-    )
-    parser.add_argument(
-        "--cert-pub",
-        dest="cert_pem_path",
-        action="store",
-        help="Path to PEM formatted public key of certificate",
-    )
-    parser.add_argument(
-        "--cert-key",
-        dest="cert_key_path",
-        action="store",
-        help="Path to PEM formatted private key of certificate",
-    )
-    parser.add_argument(
-        "--timeout",
-        action="store",
-        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help="Amount of time to wait for calls to complete (seconds)",
-    )
-
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
+    parser = d1_client.command_line.get_standard_arg_parser(__doc__)
     parser.add_argument("path", help="Path to science metadata file")
-    parser.add_argument("--debug", action="store_true", help="Debug level logging")
-
+    parser.add_argument(
+        "--format",
+        default=DEFAULT_FORMAT_ID,
+        help="Set the formatId of the submitted Science Metadata",
+    )
     args = parser.parse_args()
     d1_client.command_line.log_setup(args)
 
@@ -114,12 +84,8 @@ def main():
         },
     )
 
-    with open(args.path, "rb") as f:
-        sciobj_bytes = f.read()
-
-    response = cn_client.echoIndexedObject(
-        "solr", sysmeta_pyxb, io.BytesIO(sciobj_bytes)
-    )
+    with open(args.path, "rb") as scimeta_file:
+        response = client.echoIndexedObject("solr", sysmeta_pyxb, scimeta_file)
 
     print(d1_common.xml.reformat_to_pretty_xml(response.text))
 

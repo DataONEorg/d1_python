@@ -126,8 +126,9 @@ class EventCounter(object):
 
     """
 
-    def __init__(self):
+    def __init__(self, logger_=logging):
         self._event_dict = {}
+        self._log = logger_
 
     @property
     def event_dict(self):
@@ -171,7 +172,7 @@ class EventCounter(object):
             Optional argument to increase the count for the event by more than 1.
 
         """
-        logger.info(
+        self._log.info(
             " - ".join(map(str, [v for v in (event_str, msg_str, inc_int) if v]))
         )
         self.count(event_str, inc_int or 1)
@@ -184,11 +185,11 @@ class EventCounter(object):
 
         """
         if self._event_dict:
-            logger.info("Events:")
+            self._log.info("Events:")
             for event_str, count_int in sorted(self._event_dict.items()):
-                logger.info("  {}: {}".format(event_str, count_int))
+                self._log.info("  {}: {}".format(event_str, count_int))
         else:
-            logger.info("No Events")
+            self._log.info("No Events")
 
 
 # ===============================================================================

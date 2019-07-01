@@ -124,7 +124,7 @@ def abs_path(rel_path):
         Path relative to the location of the module file from which this function is called.
 
     Returns:
-        str : Absolute path to the location specified by ``rel_path``.
+        str: Absolute path to the location specified by ``rel_path``.
 
     """
     # noinspection PyProtectedMember

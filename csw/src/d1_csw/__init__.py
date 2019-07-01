@@ -23,4 +23,5 @@
 # Suppress log messages instead of raising exception if the program using the library
 # does not configure the logging system.
 import logging
+
 logging.getLogger(__name__).addHandler(logging.NullHandler())

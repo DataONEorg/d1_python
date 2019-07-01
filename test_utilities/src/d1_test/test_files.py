@@ -57,6 +57,10 @@ def load_xml_to_str(filename):
     return load_utf8_to_str(os.path.join("xml", filename))
 
 
+def load_xml_to_bytes(filename):
+    return load_bin(os.path.join("xml", filename))
+
+
 def load_json(filename):
     return json.loads(load_utf8_to_str(os.path.join("json", filename)))
 

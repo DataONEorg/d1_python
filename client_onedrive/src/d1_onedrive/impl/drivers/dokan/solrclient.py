@@ -1,8 +1,10 @@
+#!/usr/bin/env python
+
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2017 DataONE
+#   Copyright 2009-2019 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,36 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Licensed to the Apache Software Foundation (ASF) under one or more
-# contributor license agreements.  See the NOTICE file distributed with
-# this work for additional information regarding copyright ownership.
-# The ASF licenses this file to You under the Apache License, Version 2.0
-# (the "License"); you may not use this file except in compliance with
-# the License.  You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
-# $Id: solrclient.py 251 2009-12-02 16:38:01Z DaveV $
-# A simple Solr client for python.
-# This is prototype level code and subject to change.
-#
-# quick examples on use:
-#
-# from solr import *
-# c = SolrConnection(host='localhost:8983', persistent=True)
-# c.add(id='500',name='python test doc')
-# c.delete('123')
-# c.commit()
-# print c.search(q='id:[* TO *]', wt='python', rows='10',indent='on')
-# data = c.search(q='id:500', wt='python')
-# print 'first match=', eval(data)['response']['docs'][0]
-
 """This client code is built from: http://svn.apache.org/viewvc/lucene/solr/tag
 s/release-1.2.0/client/python/solr.py.
 
@@ -54,6 +26,7 @@ though has been modified in many respects.
 """
 
 import codecs
+
 # ===============================================================================
 import datetime
 import http.client

@@ -76,9 +76,9 @@ def validate_tree(format_id, xml_tree):
     _assert_valid(format_id, xml_tree)
 
 
-def validate_bytes(format_id, xml_bytes):
+def validate_bytes(format_id, xml_bytes, xml_path=None):
     log.debug("Validating XML bytes")
-    _assert_valid(format_id, d1_scimeta.util.parse_xml_bytes(xml_bytes))
+    _assert_valid(format_id, d1_scimeta.util.parse_xml_bytes(xml_bytes, xml_path))
 
 
 def validate_path(format_id, xml_path):

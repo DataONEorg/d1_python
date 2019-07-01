@@ -27,7 +27,7 @@ import logging
 
 import d1_onedrive.impl.resolver.d1_object
 import d1_onedrive.impl.resolver.resolver_base
-# App
+
 from d1_onedrive.impl import attributes
 from d1_onedrive.impl import util
 

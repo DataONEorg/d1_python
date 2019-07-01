@@ -24,8 +24,10 @@ started with the --pycharm switch. Otherwise it is ignored.
 When active, the test framework will:
 
     - Automatically open files where errors occur and move the cursor to the line of
-      the error - Show syntax highlighted diffs for scripts and data files using
-      PyCharm's powerful diff viewer
+      the error
+
+    - Show syntax highlighted diffs for scripts and data files using PyCharm's powerful
+      diff viewer
 
 """
 import logging

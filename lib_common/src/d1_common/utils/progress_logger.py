@@ -97,11 +97,8 @@ class ProgressLogger:
                 Optional logger to which the progress log entries are written. A new
                 logger is created if not provided.
 
-            level:
+            log_level:
                 The level of severity to set for the progress log entries.
-
-            event_counter:
-                Optional EventCounter to use for recording events
 
             log_interval_sec:
                 Minimal time between writing log entries. Log entries may be written
@@ -192,7 +189,7 @@ class ProgressLogger:
             self._task_dict[task_type_str]["task_idx"] += 1
         self._log_progress_if_interval_elapsed()
 
-    def event(self, event_name):
+    def event(self, event_name, count_int=1):
         """Register an event that occurred during processing of a task of the given
         type.
 
@@ -202,7 +199,7 @@ class ProgressLogger:
 
         """
         self._event_dict.setdefault(event_name, 0)
-        self._event_dict[event_name] += 1
+        self._event_dict[event_name] += count_int
         self._log_progress_if_interval_elapsed()
 
     def completed(self):
@@ -243,7 +240,7 @@ class ProgressLogger:
                 task_type_str,
                 task_idx,
                 total_task_count,
-                task_idx / float(total_task_count) * 100,
+                (task_idx / float(total_task_count) * 100 if total_task_count else 0),
                 eta_str,
             )
         )

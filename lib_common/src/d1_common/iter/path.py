@@ -22,6 +22,11 @@ import fnmatch
 import logging
 import os
 
+
+log = logging.getLogger(__name__)
+log.setLevel(logging.INFO)
+
+
 DEFAULT_EXCLUDE_GLOB_LIST = [
     # Dirs
     "*egg-info/",
@@ -172,16 +177,16 @@ def path_generator(
     if default_excludes:
         exclude_glob_list += DEFAULT_EXCLUDE_GLOB_LIST
 
-    logging.debug("file_iter():")
-    logging.debug("  paths: {}".format(", ".join(path_list)))
-    logging.debug("  include: {}".format(", ".join(include_glob_list)))
-    logging.debug("  exclude: {}".format(", ".join(exclude_glob_list)))
-    logging.debug("  recursive: {}".format(recursive))
-    logging.debug("  ignore_invalid: {}".format(ignore_invalid))
-    logging.debug("  default_excludes: {}".format(default_excludes))
-    logging.debug("  return_entered_dir_paths: {}".format(return_entered_dir_paths))
-    logging.debug("  return_skipped_dir_paths: {}".format(return_skipped_dir_paths))
-    logging.debug("")
+    log.debug("file_iter():")
+    log.debug("  paths: {}".format(", ".join(path_list)))
+    log.debug("  include: {}".format(", ".join(include_glob_list)))
+    log.debug("  exclude: {}".format(", ".join(exclude_glob_list)))
+    log.debug("  recursive: {}".format(recursive))
+    log.debug("  ignore_invalid: {}".format(ignore_invalid))
+    log.debug("  default_excludes: {}".format(default_excludes))
+    log.debug("  return_entered_dir_paths: {}".format(return_entered_dir_paths))
+    log.debug("  return_skipped_dir_paths: {}".format(return_skipped_dir_paths))
+    log.debug("")
 
     include_file_glob_list = [
         p for p in include_glob_list if not p.endswith(os.path.sep)
@@ -249,13 +254,15 @@ def _filtered_walk(
             return
 
         if any(dir_path.startswith(d) for d in skip_dir_path_list):
-            logging.debug('Skipped dir branch: {}'.format(dir_path))
+            log.debug("Skipped dir branch: {}".format(dir_path))
             continue
 
         enter_dir_list = []
         for dir_name in dir_list:
             if not _is_filtered(
-                os.path.split(dir_name)[1] + "/", include_dir_glob_list, exclude_dir_glob_list
+                os.path.split(dir_name)[1] + "/",
+                include_dir_glob_list,
+                exclude_dir_glob_list,
             ):
                 enter_dir_list.append(dir_name)
             else:
@@ -269,8 +276,8 @@ def _filtered_walk(
                 this_dir_path = os.path.join(dir_path, dir_name)
                 skip_dir = yield this_dir_path
                 if skip_dir:
-                    logging.debug(
-                        'Client requested skip of branch: {}'.format(this_dir_path)
+                    log.debug(
+                        "Client requested skip of branch: {}".format(this_dir_path)
                     )
                     skip_dir_path_list.append(this_dir_path)
 
