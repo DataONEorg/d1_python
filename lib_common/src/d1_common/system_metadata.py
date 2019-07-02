@@ -91,9 +91,12 @@ Examples:
 
 import datetime
 import logging
+import os
 
+import d1_common.checksum
 import d1_common.date_time
 import d1_common.type_conversions
+import d1_common.types.dataoneTypes
 import d1_common.wrap.access_policy
 import d1_common.xml
 
@@ -305,3 +308,155 @@ def update_elements(dst_pyxb, src_pyxb, el_list):
         )
     for el_str in el_list:
         setattr(dst_pyxb, el_str, getattr(src_pyxb, el_str, None))
+
+
+def generate_system_metadata_pyxb(
+    pid,
+    format_id,
+    sciobj_stream,
+    submitter_str,
+    rights_holder_str,
+    authoritative_mn_urn,
+    # SeriesID and obsolescence
+    sid=None,
+    obsoletes_pid=None,
+    obsoleted_by_pid=None,
+    is_archived=False,
+    #
+    serial_version=1,
+    uploaded_datetime=None,
+    modified_datetime=None,
+    file_name=None,
+    origin_mn_urn=None,
+    # Access Policy
+    is_private=False,
+    access_list=None,
+    # Media Type
+    media_name=None,
+    media_property_list=None,
+    # Replication Policy
+    is_replication_allowed=False,
+    prefered_mn_list=None,
+    blocked_mn_list=None,
+    #
+    pyxb_binding=None,
+):
+    """Generate a System Metadata PyXB object
+
+    Args:
+        pid:
+        format_id:
+        sciobj_stream:
+        submitter_str:
+        rights_holder_str:
+        authoritative_mn_urn:
+        pyxb_binding:
+        sid:
+        obsoletes_pid:
+        obsoleted_by_pid:
+        is_archived:
+        serial_version:
+        uploaded_datetime:
+        modified_datetime:
+        file_name:
+        origin_mn_urn:
+        access_list:
+        is_private:
+        media_name:
+        media_property_list:
+        is_replication_allowed:
+        prefered_mn_list:
+        blocked_mn_list:
+
+    Returns:
+        systemMetadata PyXB object
+
+    """
+    pyxb_binding = pyxb_binding or d1_common.types.dataoneTypes
+    sysmeta_pyxb = pyxb_binding.systemMetadata()
+
+    sysmeta_pyxb.identifier = pid
+    sysmeta_pyxb.seriesId = sid
+    sysmeta_pyxb.formatId = format_id
+
+    sysmeta_pyxb.checksum, sysmeta_pyxb.size = gen_checksum_and_size(sciobj_stream)
+
+    sysmeta_pyxb.submitter = submitter_str
+    sysmeta_pyxb.rightsHolder = rights_holder_str
+
+    sysmeta_pyxb.authoritativeMemberNode = authoritative_mn_urn
+    sysmeta_pyxb.originMemberNode = origin_mn_urn or authoritative_mn_urn
+
+    sysmeta_pyxb.obsoletes = obsoletes_pid
+    sysmeta_pyxb.obsoletedBy = obsoleted_by_pid
+
+    sysmeta_pyxb.archived = is_archived
+    sysmeta_pyxb.serialVersion = serial_version
+
+    sysmeta_pyxb.dateUploaded = uploaded_datetime or d1_common.date_time.utc_now()
+    sysmeta_pyxb.dateSysMetadataModified = (
+        modified_datetime or sysmeta_pyxb.dateUploaded
+    )
+
+    sysmeta_pyxb.fileName = file_name
+    sysmeta_pyxb.replica = None
+
+    gen_access_policy(pyxb_binding, sysmeta_pyxb, is_private, access_list)
+
+    sysmeta_pyxb.replicationPolicy = gen_replication_policy(
+        pyxb_binding, prefered_mn_list, blocked_mn_list, is_replication_allowed
+    )
+
+    if media_name or media_property_list:
+        sysmeta_pyxb.mediaType = gen_media_type(
+            pyxb_binding, media_name, media_property_list
+        )
+
+    return sysmeta_pyxb
+
+
+def gen_checksum_and_size(sciobj_stream):
+    sciobj_stream.seek(0)
+    checksum_pyxb = d1_common.checksum.create_checksum_object_from_stream(sciobj_stream)
+    sciobj_stream.seek(0, os.SEEK_END)
+    sciobj_size = sciobj_stream.tell()
+    sciobj_stream.seek(0)
+    return checksum_pyxb, sciobj_size
+
+
+def gen_access_policy(pyxb_binding, sysmeta_pyxb, is_private, access_list):
+    with d1_common.wrap.access_policy.wrap_sysmeta_pyxb(
+        sysmeta_pyxb, pyxb_binding
+    ) as ap:
+        if not is_private:
+            ap.add_public_read()
+        if access_list is not None:
+            for subj_str, perm_str in access_list:
+                ap.add_perm(subj_str, perm_str)
+        ap.update()
+
+
+def gen_replication_policy(
+    pyxb_binding,
+    prefered_mn_list=None,
+    blocked_mn_list=None,
+    is_replication_allowed=False,
+):
+    rp_pyxb = pyxb_binding.replicationPolicy()
+    rp_pyxb.preferredMemberNode = prefered_mn_list
+    rp_pyxb.blockedMemberNode = blocked_mn_list
+    rp_pyxb.replicationAllowed = is_replication_allowed
+    rp_pyxb.numberReplicas = 3 if is_replication_allowed else 0
+    return rp_pyxb
+
+
+def gen_media_type(pyxb_binding, media_name, media_property_list=None):
+    assert (
+        media_name is not None
+    ), "When a media_property_list is set, the media_name must also be set"
+    media_type_pyxb = pyxb_binding.MediaType(name=media_name)
+    for name_str, value_str in media_property_list or []:
+        media_type_pyxb.property_.append(
+            pyxb_binding.MediaTypeProperty(value_str, name=name_str)
+        )
+    return media_type_pyxb

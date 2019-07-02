@@ -217,7 +217,7 @@ ORDERED_PERM_LIST = ["read", "write", "changePermission"]
 
 
 @contextlib.contextmanager
-def wrap(access_pyxb, read_only=False):
+def wrap(access_pyxb, pyxb_binding=None, read_only=False):
     """Work with the AccessPolicy in a SystemMetadata PyXB object.
 
     Args:
@@ -231,14 +231,14 @@ def wrap(access_pyxb, read_only=False):
     context manager. Instead, use the generated context manager wrappers.
 
     """
-    w = AccessPolicyWrapper(access_pyxb)
+    w = AccessPolicyWrapper(access_pyxb, pyxb_binding)
     yield w
     if not read_only:
         w.get_normalized_pyxb()
 
 
 @contextlib.contextmanager
-def wrap_sysmeta_pyxb(sysmeta_pyxb, read_only=False):
+def wrap_sysmeta_pyxb(sysmeta_pyxb, pyxb_binding=None, read_only=False):
     """Work with the AccessPolicy in a SystemMetadata PyXB object.
 
     Args:
@@ -260,7 +260,7 @@ def wrap_sysmeta_pyxb(sysmeta_pyxb, read_only=False):
     from the SystemMetadata.
 
     """
-    w = AccessPolicyWrapper(sysmeta_pyxb.accessPolicy)
+    w = AccessPolicyWrapper(sysmeta_pyxb.accessPolicy, pyxb_binding)
     yield w
     if not read_only:
         sysmeta_pyxb.accessPolicy = w.get_normalized_pyxb()
@@ -278,15 +278,20 @@ class AccessPolicyWrapper(object):
 
     """
 
-    def __init__(self, access_pyxb):
+    def __init__(self, access_pyxb, pyxb_binding=None):
         self._access_pyxb = access_pyxb
-        self._perm_dict = self._perm_dict_from_pyxb(access_pyxb)
+        self._pyxb_binding = pyxb_binding or d1_common.types.dataoneTypes
+        if access_pyxb is not None:
+            self._perm_dict = self._perm_dict_from_pyxb(access_pyxb)
+        else:
+            self.clear()
         self._orig_perm_dict = self._perm_dict.copy()
 
     def update(self):
         """Update the wrapped AccessPolicy PyXB object with normalized and minimal rules
         representing current state."""
-        self._access_pyxb.allow = self.get_normalized_pyxb().allow
+        # self._access_pyxb.allow = self.get_normalized_pyxb().allow
+        self._access_pyxb = self.get_normalized_pyxb()
 
     # Examine current state
 
@@ -557,9 +562,9 @@ class AccessPolicyWrapper(object):
         # Using accessPolicy() instead of AccessPolicy() and accessRule() instead of
         # AccessRule() gives PyXB the type information required for using this as a
         # root element.
-        access_pyxb = d1_common.types.dataoneTypes.accessPolicy()
+        access_pyxb = self._pyxb_binding.accessPolicy()
         for perm_str, subj_list in norm_perm_list:
-            rule_pyxb = d1_common.types.dataoneTypes.accessRule()
+            rule_pyxb = self._pyxb_binding.accessRule()
             rule_pyxb.permission.append(perm_str)
             for subj_str in subj_list:
                 rule_pyxb.subject.append(subj_str)

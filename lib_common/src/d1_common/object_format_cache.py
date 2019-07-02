@@ -91,14 +91,14 @@ class Singleton(object):
 class ObjectFormatListCache(Singleton):
     def __init__(
         self,
-        cn_cn_base_url=d1_common.const.URL_DATAONE_ROOT,
+        cn_base_url=d1_common.const.URL_DATAONE_ROOT,
         object_format_cache_path=DEFAULT_OBJECT_FORMAT_CACHE_PATH,
         cache_refresh_period=DEFAULT_CACHE_REFRESH_PERIOD,
         lock_file_path=DEFAULT_LOCK_FILE_PATH,
     ):
         """
         Args:
-            cn_cn_base_url : str: 
+            cn_base_url : str:
                 BaseURL for a CN in the DataONE Environment being targeted.
 
                 This can usually be left at the production root, even if running in
@@ -126,7 +126,7 @@ class ObjectFormatListCache(Singleton):
                 ``object_format_cache_path`` must point to an existing file.
         """
         self._logger = logging.getLogger(__name__)
-        self._cn_base_url = cn_cn_base_url
+        self._cn_base_url = cn_base_url
         self._object_format_cache_path = object_format_cache_path
         self._cache_refresh_period = cache_refresh_period
         self._lock_file_path = lock_file_path
@@ -160,6 +160,9 @@ class ObjectFormatListCache(Singleton):
 
         """
         self._refresh_cache()
+
+    def is_valid_format_id(self, format_id):
+        return format_id in self.object_format_dict
 
     #
     # Private.
