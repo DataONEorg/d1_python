@@ -30,6 +30,7 @@ Usage:
 
 """
 import logging
+import os
 
 import lxml.etree
 
@@ -86,32 +87,34 @@ def validate_path(format_id, xml_path):
     _assert_valid(format_id, d1_scimeta.util.load_xml_file_to_tree(xml_path))
 
 
+def apply_xerces_adaption_schema_transform(root_xsd_path, xml_tree):
+    xslt_path = os.path.splitext(root_xsd_path)[0] + ".xslt"
+    if os.path.exists(xslt_path):
+        return d1_scimeta.util.apply_xslt_transform(xml_tree, xslt_path)
+    return xml_tree
+
+
 def _assert_valid(format_id, xml_tree):
     root_xsd_path = d1_scimeta.util.get_abs_root_xsd_path(format_id)
     xsd_tree = d1_scimeta.util.load_xml_file_to_tree(root_xsd_path)
     stripped_xml_tree = d1_scimeta.util.strip_whitespace(xml_tree)
-    _assert_valid_tree(xsd_tree, stripped_xml_tree)
+    adapted_tree = apply_xerces_adaption_schema_transform(
+        root_xsd_path, stripped_xml_tree
+    )
+    # d1_scimeta.util.dump_pretty_tree(adapted_tree, 'Final tree to be validated')
+    _assert_valid_tree(xsd_tree, adapted_tree)
 
 
 def _assert_valid_tree(xsd_tree, xml_tree):
-    validator = create_validator(xsd_tree)
+    try:
+        validator = d1_scimeta.util.create_lxml_obj(xsd_tree, lxml.etree.XMLSchema)
+    except d1_scimeta.util.SciMetaError as e:
+        raise d1_scimeta.util.SciMetaError('Unable to create lxml schema validator: {}'.format(str(e)))
     try:
         validator.assertValid(xml_tree)
     except lxml.etree.DocumentInvalid as e:
         raise d1_scimeta.util.SciMetaError(
             "XML document does not validate. {}".format(
-                d1_scimeta.util.get_error_log_as_str(e)
-            )
-        )
-
-
-def create_validator(xsd_tree):
-    """Create a schema validator."""
-    try:
-        return lxml.etree.XMLSchema(xsd_tree)
-    except lxml.etree.XMLSchemaParseError as e:
-        raise d1_scimeta.util.SciMetaError(
-            "Validation not performed: Unable to create schema required for validation. {}".format(
                 d1_scimeta.util.get_error_log_as_str(e)
             )
         )

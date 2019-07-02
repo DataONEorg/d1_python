@@ -86,9 +86,7 @@ def main():
     d1_common.utils.filesystem.create_missing_directories_for_dir(cache_dir_path)
 
     for format_id in d1_scimeta.util.get_supported_format_id_list():
-        branch_path = d1_scimeta.util.get_abs_schema_branch_path(format_id)
-        xsd_path_list = d1_scimeta.util.gen_abs_xsd_path_list(branch_path)
-        rewrite_all_xsd(branch_path, xsd_path_list, cache_dir_path)
+        prepare_schema_for_format_id(format_id, cache_dir_path)
 
     cache_rewrite(cache_dir_path)
 
@@ -200,28 +198,13 @@ def cache_rewrite_to_cache(cache_dir_path, xsd_path, loc_el, download_url):
 # DataONE Science Metadata schema set rewrite
 
 
-def rewrite_all_xsd(branch_path, xsd_path_list, cache_dir_path):
-    """Rewrite `xs:include` and `xs:import` HTTP `schemaLocation` strings to reference
-    local files.
-
-    Args:
-        branch_path: str
-            Abs path to directory under which all schema files belong to the same
-            `formatId`.
-
-        xsd_path_list: list
-            List of absolute paths to the .XSD files to process under `branch_path`.
-
-        cache_dir_path: str
-            Abs path to existing directory in which to save downloaded XSD files.
-
-    Returns:
-        True if one or more files were modified
-
+def prepare_schema_for_format_id(format_id, cache_dir_path):
+    """Prepare all XSD files for a given format_id.
     """
     log.info("#" * 100)
-    log.info(branch_path)
 
+    branch_path = d1_scimeta.util.get_abs_schema_branch_path(format_id)
+    xsd_path_list = d1_scimeta.util.gen_abs_xsd_path_list(branch_path)
     xsd_name_dict = d1_scimeta.util.gen_xsd_name_dict(branch_path, xsd_path_list)
 
     log.info("Schema branch: {}".format(branch_path))
@@ -229,7 +212,7 @@ def rewrite_all_xsd(branch_path, xsd_path_list, cache_dir_path):
     # d1_scimeta.util.dump(xsd_path_list, "xsd_path_list")
     # d1_scimeta.util.dump(xsd_name_dict, "xsd_name_list")
 
-    files_modified = False
+    schema_is_modified = False
 
     for xsd_path in xsd_path_list:
         schema_is_modified |= prepare_single_xsd(
@@ -265,10 +248,17 @@ def prepare_single_xsd(format_id, xsd_name_dict, xsd_path, cache_dir_path):
     return xsd_is_modified
 
 
-    return files_modified
+def load_xsd_file(xsd_path):
+    create_from_original(xsd_path)
+    return d1_scimeta.util.load_xml_file_to_tree(xsd_path)
 
 
-def rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path):
+def save_xsd_file(xsd_path, xsd_tree):
+    create_original(xsd_path)
+    d1_scimeta.util.save_tree_to_file(xsd_tree, xsd_path)
+
+
+def rewrite_single_xsd(xsd_path, xsd_tree, xsd_name_dict, cache_dir_path):
     """Modifify `schemaLocation` URIs in xs:include and xs:import elements to relative
     paths pointing to local files instead of to the web in a single XSD file.
 
@@ -285,19 +275,6 @@ def rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path):
 
     """
 
-    create_from_original(xsd_path)
-
-    try:
-        xsd_tree = d1_scimeta.util.load_xml_file_to_tree(xsd_path)
-    except d1_scimeta.util.SciMetaError:
-        return False
-
-    if not has_http_schema_locations(xsd_tree):
-        return False
-
-    log.info("-" * 100)
-    log.info(xsd_path)
-
     files_modified = False
 
     for loc_el in xsd_tree.xpath(
@@ -310,14 +287,7 @@ def rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path):
         except SchemaRewriteError as e:
             log.error("Unable to rewrite: {}".format(e))
 
-    if files_modified:
-        create_original(xsd_path)
-        d1_scimeta.util.save_tree_to_file(xsd_tree, xsd_path)
-        # show_diff(get_original_path(xsd_path), xsd_path)
-
     return files_modified
-
-    # input('Enter')
 
 
 def rewrite_uri(xsd_path, loc_el, xsd_name_dict, cache_dir_path):
@@ -410,7 +380,7 @@ def download_xsd(url):
         raise SchemaRewriteError(
             'Download error. url="{}" code={}'.format(url, response.status_code)
         )
-    return d1_scimeta.util.parse_xml_bytes(response.content)
+    return d1_scimeta.util.parse_xml_bytes(response.content, url)
 
 
 def gen_cache_name(uri):

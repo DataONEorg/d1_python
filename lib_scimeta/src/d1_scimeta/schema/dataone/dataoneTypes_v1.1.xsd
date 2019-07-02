@@ -1,5 +1,10 @@
-<?xml version='1.0' encoding='utf-8'?>
-<xs:schema xmlns:d1="http://ns.dataone.org/service/types/v1" xmlns:d1_v1.1="http://ns.dataone.org/service/types/v1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://ns.dataone.org/service/types/v1.1" version="1.1.0" elementFormDefault="unqualified" attributeFormDefault="unqualified">
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema  targetNamespace="http://ns.dataone.org/service/types/v1.1"
+	xmlns:d1="http://ns.dataone.org/service/types/v1"
+    xmlns:d1_v1.1="http://ns.dataone.org/service/types/v1.1"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    version="1.1.0"
+    elementFormDefault="unqualified" attributeFormDefault="unqualified">
 
 <!-- 
 $HeadURL: https://repository.dataone.org/software/cicore/branches/D1_SCHEMA_v1.1/dataoneTypes.xsd $
@@ -59,7 +64,8 @@ Formatting:
 
   <!-- NOTE THAT ALL SERIALIZEABLE ROOT ELEMENTS FOR MESSAGES SHOULD BE OF A
        COMPLEX TYPE -->
-    <xs:import namespace="http://ns.dataone.org/service/types/v1" schemaLocation="../_cache/http_ns.dataone.org_service_types__v1"/>
+    <xs:import namespace="http://ns.dataone.org/service/types/v1" 
+        schemaLocation="http://ns.dataone.org/service/types/v1" />
 
 
   <!-- QueryEngineDescription -->
@@ -77,13 +83,13 @@ Formatting:
       </xs:element>
       <xs:element name="querySchemaVersion" type="xs:string" minOccurs="0" maxOccurs="1">
         <xs:annotation>
-          <xs:documentation>Version of the schema in use by the query engine, e.g. "1.0.1"</xs:documentation>
+          <xs:documentation>Version of the schema in use by the query engine, e.g. &quot;1.0.1&quot;</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="name" type="xs:string" minOccurs="1" maxOccurs="1">
         <xs:annotation>
           <xs:documentation>The full, human readable name of the query engine. For example: 
-            "Apache SOLR"</xs:documentation>
+            &quot;Apache SOLR&quot;</xs:documentation>
         </xs:annotation>
       </xs:element>
       <xs:element name="additionalInfo" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded">
@@ -111,7 +117,8 @@ Formatting:
         CNRead.getQueryEngineDescription and CNRead.query REST API endpoints.</xs:documentation>
     </xs:annotation>
     <xs:sequence>
-      <xs:element name="queryEngine" type="d1:NonEmptyString" minOccurs="0" maxOccurs="unbounded">
+      <xs:element name ="queryEngine" type="d1:NonEmptyString" 
+        minOccurs="0" maxOccurs="unbounded">
         <xs:annotation>
           <xs:documentation>The name of a queryEngine. This value will be used as a path element in 
             REST API calls and so should not contain characters that will need to be escaped.</xs:documentation>
@@ -123,7 +130,7 @@ Formatting:
   <!-- QueryField -->
   <xs:complexType name="QueryField">
     <xs:annotation>
-      <xs:documentation/>
+      <xs:documentation></xs:documentation>
     </xs:annotation>
     <xs:sequence>
       <xs:element name="name" type="d1:NonEmptyString" minOccurs="1" maxOccurs="1">
@@ -184,6 +191,7 @@ Formatting:
        type defined here.
   -->
 
-  <xs:element name="queryEngineList" type="d1_v1.1:QueryEngineList"/>
-  <xs:element name="queryEngineDescription" type="d1_v1.1:QueryEngineDescription"/>
+  <xs:element name="queryEngineList" type="d1_v1.1:QueryEngineList" />
+  <xs:element name="queryEngineDescription" type="d1_v1.1:QueryEngineDescription"></xs:element>
 </xs:schema>
+

@@ -15,20 +15,19 @@ import d1_common.iter.path
 import d1_common.util
 import d1_common.utils.filesystem
 
-
 # Paths
 
 SCHEMA_ROOT_PATH = d1_common.utils.filesystem.abs_path("./schema")
 EXT_ROOT_PATH = d1_common.utils.filesystem.abs_path("./ext")
 XSD_ROOT_DIR_PATH = d1_common.utils.filesystem.abs_path("./schema_root")
-
 FORMAT_ID_TO_SCHEMA_JSON_PATH = os.path.join(EXT_ROOT_PATH, "format_id_to_schema.json")
 STRIP_WHITESPACE_XSLT_PATH = os.path.join(EXT_ROOT_PATH, "strip_whitespace.xslt")
-
-# Ext
+REMOVE_EMPTY_ELEMENTS_XSLT_PATH = os.path.join(
+    EXT_ROOT_PATH, "remove_empty_elements.xslt"
+)
 
 FORMAT_ID_TO_SCHEMA_DICT = d1_common.util.load_json(FORMAT_ID_TO_SCHEMA_JSON_PATH)
-STRIP_WHITESPACE_XSLT_TRANSFORM_FUNC = None
+XSLT_TRANSFORM_DICT = {}
 
 # Constants
 
@@ -207,13 +206,13 @@ def is_installed_scimeta_format_id(format_id):
 def gen_abs_xsd_path_list(branch_path):
     """Generate a list of abs paths to XSD files under `branch_path`.
 
-    Excludes `*.ORIGINAL` files, which are inferred from their `.xsd` conterparts.
+    Excludes `*.ORIGINAL.*` files, which are inferred from their `.xsd` conterparts.
 
     """
     return [
         p
         for p in d1_common.iter.path.path_generator(
-            [branch_path], exclude_glob_list=["*.ORIGINAL"]
+            [branch_path], exclude_glob_list=["*.ORIGINAL.*"]
         )
         if is_valid_xsd_file(p)
     ]
@@ -359,7 +358,7 @@ def get_xsd_path(xsd_name_dict, uri):
 
 
 #
-# Parse, format, load, save
+# Parse, serialize, load, save
 #
 
 
@@ -377,10 +376,10 @@ def parse_xml_bytes(xml_bytes, xml_path):
         return lxml.etree.parse(
             io.BytesIO(xml_bytes), parser=xml_parser, base_url=xml_path
         )
-    except (lxml.etree.ParseError, lxml.etree.XMLSyntaxError) as e:
-        raise d1_scimeta.util.SciMetaError(
+    except lxml.etree.LxmlError as e:
+        raise SciMetaError(
             "Invalid XML (not well formed). {}".format(
-                str(e), d1_scimeta.util.get_error_log_as_str(xml_parser)
+                str(e), get_error_log_as_str(xml_parser)
             )
         )
 
@@ -422,7 +421,7 @@ def get_error_log_as_str(lxml_obj):
         return "Errors and warnings:\n{}".format(
             "\n".join(
                 tuple(
-                    "  Line {}: {}".format(e.line, e.message)
+                    "  {}: Line {}: {}".format(e.filename, e.line, e.message)
                     for e in lxml_obj.error_log
                 )
             )
@@ -449,16 +448,14 @@ def save_bytes_to_file(xml_path, xml_bytes):
         f.write(xml_bytes)
 
 
-#
-# Misc
-#
-
-
-def dump_pretty_tree(xml_tree, msg_str="XML Tree"):
-    log.debug("{}: ".format(msg_str))
-    tree_str = pretty_format_tree(xml_tree).decode("utf-8")
-    for tree_line in tree_str.splitlines():
-        log.debug("  {}".format(tree_line))
+def dump_pretty_tree(xml_tree, msg_str="XML Tree", logger=log.debug):
+    logger("{}: ".format(msg_str))
+    tree_str = pretty_format_tree(xml_tree)
+    if not tree_str:
+        logger("  <tree is empty>")
+    else:
+        for i, tree_line in enumerate(tree_str.decode("utf-8").splitlines()):
+            logger("{:>4} {}".format(i + 1, tree_line))
 
 
 def dump(o, msg_str="Object dump"):
@@ -509,6 +506,11 @@ def is_url(s):
     return bool(urllib.parse.urlparse(s).scheme)
 
 
+#
+# XSLT
+#
+
+
 def strip_whitespace(xml_tree):
     """Strip whitespace that might interfere with validation from XSD while maintaining
     overall formatting.
@@ -530,13 +532,68 @@ def strip_whitespace(xml_tree):
         stripped xml_tree
 
     """
-    global STRIP_WHITESPACE_XSLT_TRANSFORM_FUNC
-    if STRIP_WHITESPACE_XSLT_TRANSFORM_FUNC is None:
-        STRIP_WHITESPACE_XSLT_TRANSFORM_FUNC = lxml.etree.XSLT(
-            load_xml_file_to_tree(STRIP_WHITESPACE_XSLT_PATH)
+    return apply_xslt_transform(xml_tree, STRIP_WHITESPACE_XSLT_PATH)
+
+
+def remove_empty_elements(xml_tree):
+    """Remove empty elements that might interfere with validation from XSD while maintaining
+    overall formatting.
+
+    Args:
+        xml_tree:
+
+    Returns:
+        stripped xml_tree
+
+    """
+    return apply_xslt_transform(xml_tree, REMOVE_EMPTY_ELEMENTS_XSLT_PATH)
+
+
+def apply_xslt_transform(xml_tree, xslt_path):
+    abs_xslt_path = d1_common.utils.filesystem.abs_path(xslt_path)
+    if abs_xslt_path not in XSLT_TRANSFORM_DICT:
+        try:
+            XSLT_TRANSFORM_DICT[abs_xslt_path] = create_lxml_obj(
+                load_xml_file_to_tree(abs_xslt_path), lxml.etree.XSLT
+            )
+        except SciMetaError as e:
+            raise SciMetaError(
+                'Unable to create XSLT processor: {}: {}'.format(xslt_path, str(e))
+            )
+
+    try:
+        transformed_tree = XSLT_TRANSFORM_DICT[abs_xslt_path](xml_tree)
+    except lxml.etree.XSLTError as e:
+        raise SciMetaError(
+            "Unable to apply XSLT processor from file: {}: {}".format(
+                abs_xslt_path, get_error_log_as_str(e)
+            )
         )
-    stripped_xml_tree = STRIP_WHITESPACE_XSLT_TRANSFORM_FUNC(xml_tree)
-    return stripped_xml_tree
+    if XSLT_TRANSFORM_DICT[abs_xslt_path].error_log:
+        log.warning(get_error_log_as_str(transformed_tree))
+    return transformed_tree
+
+
+def create_lxml_obj(xml_tree, lxml_obj_class):
+    """Create an object from an lxml class that takes a tree as parameter.
+
+    Args:
+        xml_tree: etree
+
+        lxml_obj_class: lxml object
+
+            lxml.etree.XMLSchema
+            lxml.etree.XSLT
+    """
+    try:
+        lxml_obj = lxml_obj_class(xml_tree)
+    except lxml.etree.LxmlError as e:
+        raise SciMetaError(
+                get_error_log_as_str(e)
+        )
+    if lxml_obj.error_log:
+        log.warning(get_error_log_as_str(lxml_obj))
+    return lxml_obj
 
 
 class SciMetaError(Exception):

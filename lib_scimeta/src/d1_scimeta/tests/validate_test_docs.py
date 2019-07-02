@@ -30,32 +30,9 @@ def main():
     progress_logger = d1_common.utils.progress_logger.ProgressLogger(logger=log)
 
     for format_id in d1_scimeta.util.get_supported_format_id_list():
+        if format_id in ("FGDC-STD-001-1998", "FGDC-STD-001.1-1999"):
+            continue
         validate_format_id(format_id, progress_logger)
-
-    # "datacite-3.0": "datacite-3.0",
-    # "datacite-3.1": "datacite-3.1",
-    # "http://datacite.org/schema/kernel-3.0": "dc",
-    # "http://datacite.org/schema/kernel-3.1": "dc",
-    # "http://datadryad.org/profile/v3.1": "dryad",
-    # "http://purl.org/dryad/terms/": "dryad",
-    # "http://rs.tdwg.org/dwc/xsd/simpledarwincore/": "dwc",
-    # "eml://ecoinformatics.org/eml-2.0.0": "eml-2.0.0",
-    # "eml://ecoinformatics.org/eml-2.0.1": "eml-2.0.1",
-    # "eml://ecoinformatics.org/eml-2.1.0": "eml-2.1.0",
-    # "eml://ecoinformatics.org/eml-2.1.1": "eml-2.1.1",
-    # "FGDC-STD-001-1998": "fgdc-bdp",
-    # "FGDC-STD-001.1-1999": "fgdc-std-001-1998",
-    # "http://www.isotc211.org/2005/gmd": "isotc211",
-    # "http://www.isotc211.org/2005/gmd-noaa": "isotc211-noaa",
-    # "http://www.isotc211.org/2005/gmd-pangaea": "isotc211-pangaea",
-    # "http://www.openarchives.org/OAI/2.0/oai_dc/": "oai_dc",
-    # "http://ns.dataone.org/metadata/schema/onedcx/v1.0": "onedcx",
-    # "http://purl.org/ornl/schema/mercury/terms/v1.0": "ornl"
-
-    # validate_format_id("http://www.isotc211.org/2005/gmd-noaa", progress_logger)
-    # validate_format_id("http://www.isotc211.org/2005/gmd-pangaea", progress_logger)
-
-    # validate_format_id("FGDC-STD-001-1998", progress_logger)
 
     progress_logger.completed()
 
@@ -98,7 +75,7 @@ def validate_xml(format_id, test_xml_path, progress_logger):
             log.info("FAILED")
             log.info(str(e))
             log.info("<" * 100)
-
+            exit()
             # log.info('>'*100)
             # log.info('xmllint:')
             # subprocess.call(['xmllint', '--schema', root_xsd_path, test_xml_path])

@@ -1,14 +1,4 @@
 <?xml version='1.0' encoding='utf-8'?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect01.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect02.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect03.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect04.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect05.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect06.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect07.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect08.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect09.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998-sect10.xsd"/>
-  <xs:import namespace="" schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998.xsd"/>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" >
+  <xs:include schemaLocation="../schema/fgdc-std-001-1998/fgdc-std-001-1998.xsd"/>
 </xs:schema>
