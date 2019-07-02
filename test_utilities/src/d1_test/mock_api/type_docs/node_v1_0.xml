@@ -1,7 +1,7 @@
 <v1:node replicate="false" synchronize="true" type="cn" state="up" xmlns:v1="http://ns.dataone.org/service/types/v1">
-  <identifier>string</identifier>
-  <name>string</name>
-  <description>string</description>
+  <identifier>urn:node:NODEID</identifier>
+  <name>Name of Node</name>
+  <description>Description of node.</description>
   <baseURL>http://www.any.org/ventos/verrantque</baseURL>
   <!--Optional:-->
   <services>
@@ -33,14 +33,19 @@
     <!--Optional:-->
     <spaceAllocated>11</spaceAllocated>
     <!--Zero or more repetitions:-->
-    <allowedNode>string</allowedNode>
+    <allowedNode>urn:node:A</allowedNode>
+    <allowedNode>urn:node:B</allowedNode>
+    <allowedNode>urn:node:C</allowedNode>
     <!--Zero or more repetitions:-->
-    <allowedObjectFormat>string</allowedObjectFormat>
+    <allowedObjectFormat>http://www.isotc211.org/2005/gmd</allowedObjectFormat>
+    <allowedObjectFormat>eml://ecoinformatics.org/eml-2.1.1</allowedObjectFormat>
   </nodeReplicationPolicy>
   <!--Optional:-->
   <ping success="false" lastSuccess="2002-06-24T09:46:32-06:00"/>
   <!--Zero or more repetitions:-->
-  <subject>string</subject>
+  <subject>subjectStringA</subject>
+  <subject>subjectStringB</subject>
   <!--1 or more repetitions:-->
-  <contactSubject>string</contactSubject>
+  <contactSubject>contactSubjectA</contactSubject>
+  <contactSubject>contactSubjectB</contactSubject>
 </v1:node>
