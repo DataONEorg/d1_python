@@ -131,10 +131,7 @@ def generate_random(client, option_dict=None, normalize=True):
 
 
 def lazy_get(d, key, func, *args, **kwargs):
-    """dict.get(k, f()) will evaluate b() even if s exists.
-
-    This is a workaround
-
+    """dict.get(k, f()) will evaluate b() even if s exists. This is a workaround.
     """
     try:
         return d[key]
