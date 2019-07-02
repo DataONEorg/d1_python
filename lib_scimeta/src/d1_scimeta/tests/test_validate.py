@@ -17,6 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import os
 
 import d1_scimeta.validate
 import d1_scimeta.util
@@ -24,7 +25,8 @@ import pytest
 
 import d1_test.d1_test_case
 
-@pytest.mark.skip('')
+
+# @pytest.mark.skip("")
 class TestSciMeta(d1_test.d1_test_case.D1TestCase):
     @pytest.mark.parametrize(
         "missing_invalid_format_id",
@@ -35,7 +37,7 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
         expected message."""
         xml_str = self.test_files.load_bin("xml/scimeta_isotc211_1.xml")
         with pytest.raises(
-            d1_scimeta.util.SciMetaError, match="Validation not supported for formatId"
+            d1_scimeta.util.SciMetaError, match="Invalid formatId"
         ):
             d1_scimeta.validate.assert_valid(missing_invalid_format_id, xml_str)
 
@@ -43,7 +45,7 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
         """SciMeta.assert_valid(): onedcx does not validate as EML."""
         xml_str = self.test_files.load_bin("xml/scimeta_dc_1.xml")
         format_id = "eml://ecoinformatics.org/eml-2.1.1"
-        with pytest.raises(d1_scimeta.util.SciMetaError, match="invalid for formatId"):
+        with pytest.raises(d1_scimeta.util.SciMetaError, match="XML document does not validate"):
             d1_scimeta.validate.assert_valid(format_id, xml_str)
 
     def test_1030(self):
@@ -82,27 +84,27 @@ class TestSciMeta(d1_test.d1_test_case.D1TestCase):
             "eml://ecoinformatics.org/eml-2.0.1",
             "eml://ecoinformatics.org/eml-2.1.0",
             "eml://ecoinformatics.org/eml-2.1.1",
-            "FGDC-STD-001-1998",
-            "FGDC-STD-001.1-1999",
+            # "FGDC-STD-001-1998",
+            # "FGDC-STD-001.1-1999",
             "http://datacite.org/schema/kernel-3.0",
             "http://datacite.org/schema/kernel-3.1",
             "http://datadryad.org/profile/v3.1",
             "http://ns.dataone.org/metadata/schema/onedcx/v1.0",
             "http://purl.org/dryad/terms/",
             "http://purl.org/ornl/schema/mercury/terms/v1.0",
-            "http://rs.tdwg.org/dwc/xsd/simpledarwincore/",
+            # "http://rs.tdwg.org/dwc/xsd/simpledarwincore/",
         ],
     )
     def test_1080(self, format_id):
         """SciMeta.assert_valid(): ISO/TC 211 does not validate as other formatId."""
         xml_str = self.test_files.load_bin("xml/scimeta_isotc211_1.xml")
-        with pytest.raises(d1_scimeta.util.SciMetaError, match="invalid for formatId"):
+        with pytest.raises(d1_scimeta.util.SciMetaError, match="XML document does not validate"):
             d1_scimeta.validate.assert_valid(format_id, xml_str)
 
     @pytest.mark.parametrize(
-        "xml_doc", ["iso_boilerplate.xml", "scimeta_isotc211_1.xml"]
+        "xml_doc", ["boilerplate.xml", "ieda.xml", "noa_ncei.xml", "nsidc.xml"]
     )
     def test_1090(self, xml_doc):
         """SciMeta.assert_valid(): Valid ISO/TC 211"""
-        xml_str = self.test_files.load_xml_to_bytes(xml_doc)
-        # d1_scimeta.validate.assert_valid('http://www.isotc211.org/2005/gmd', xml_str)
+        xml_str = self.test_files.load_xml_to_bytes(os.path.join('isotc211', xml_doc))
+        d1_scimeta.validate.assert_valid('http://www.isotc211.org/2005/gmd', xml_str)

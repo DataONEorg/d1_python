@@ -224,13 +224,46 @@ def rewrite_all_xsd(branch_path, xsd_path_list, cache_dir_path):
 
     xsd_name_dict = d1_scimeta.util.gen_xsd_name_dict(branch_path, xsd_path_list)
 
-    d1_scimeta.util.dump(xsd_path_list, "xsd_path_list")
-    d1_scimeta.util.dump(xsd_name_dict, "xsd_name_list")
+    log.info("Schema branch: {}".format(branch_path))
+    log.info("Number of XSD: {}".format(len(xsd_path_list)))
+    # d1_scimeta.util.dump(xsd_path_list, "xsd_path_list")
+    # d1_scimeta.util.dump(xsd_name_dict, "xsd_name_list")
 
     files_modified = False
 
     for xsd_path in xsd_path_list:
-        files_modified |= rewrite_single_xsd(xsd_path, xsd_name_dict, cache_dir_path)
+        schema_is_modified |= prepare_single_xsd(
+            format_id, xsd_name_dict, xsd_path, cache_dir_path
+        )
+
+    return schema_is_modified
+
+
+def prepare_single_xsd(format_id, xsd_name_dict, xsd_path, cache_dir_path):
+    log.info("-" * 100)
+    log.info("XSD: {}".format(xsd_path))
+
+    xsd_tree = load_xsd_file(xsd_path)
+
+    xsd_is_modified = False
+
+    xslt_path = gen_schema_transform_xslt_path(format_id, xsd_path)
+    if xslt_path:
+        log.info("Applying XSLT: {}".format(xslt_path))
+        xsd_tree = d1_scimeta.util.apply_xslt_transform(xsd_tree, xslt_path)
+        xsd_is_modified = True
+
+    if has_http_schema_locations(xsd_tree):
+        xsd_is_modified |= rewrite_single_xsd(
+            xsd_path, xsd_tree, xsd_name_dict, cache_dir_path
+        )
+
+    if xsd_is_modified:
+        save_xsd_file(xsd_path, xsd_tree)
+        # show_diff(get_original_path(xsd_path), xsd_path)
+
+    return xsd_is_modified
+
 
     return files_modified
 
@@ -399,7 +432,7 @@ def has_http_schema_locations(xsd_tree):
 
 def gen_original_path(xml_path):
     """Generate the path to the original version of the XML doc at xml_path."""
-    return xml_path + ".ORIGINAL"
+    return "{}.ORIGINAL{}".format(*os.path.splitext(xml_path))
 
 
 def create_from_original(xsd_path):
@@ -419,6 +452,18 @@ def create_original(xsd_path):
     original_path = gen_original_path(xsd_path)
     if not os.path.exists(original_path):
         shutil.copy(xsd_path, original_path)
+
+
+def gen_schema_transform_xslt_path(format_id, xsd_path):
+    """Get the path to any XSLT file that needs to be applied to this XSD file. If no
+    XSLT file has been provided, return None."""
+    orig_base, orig_ext = os.path.splitext(
+        d1_scimeta.util.get_abs_root_xsd_path(format_id)
+    )
+    xsd_base_name = os.path.splitext(os.path.split(xsd_path)[1])[0]
+    xslt_path = "{}.{}.xslt".format(orig_base, xsd_base_name)
+    log.info("Checking for XSLT at: {}".format(xslt_path))
+    return xslt_path if os.path.isfile(xslt_path) else None
 
 
 def show_diff(original_path, rewritten_path):
