@@ -1,8 +1,8 @@
 <?xml version="1.0" ?>
 <ns1:node replicate="false" state="up" synchronize="true" type="cn" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <identifier>string</identifier>
-  <name>string</name>
-  <description>string</description>
+  <identifier>urn:node:NODEID</identifier>
+  <name>Name of Node</name>
+  <description>Description of node.</description>
   <baseURL>http://www.any.org/ventos/verrantque</baseURL>
   <services>
     <service available="true" name="MNCore" version="v1"/>
@@ -28,11 +28,17 @@
   <nodeReplicationPolicy>
     <maxObjectSize>11</maxObjectSize>
     <spaceAllocated>11</spaceAllocated>
-    <allowedNode>string</allowedNode>
-    <allowedObjectFormat>string</allowedObjectFormat>
+    <allowedNode>urn:node:A</allowedNode>
+    <allowedNode>urn:node:B</allowedNode>
+    <allowedNode>urn:node:C</allowedNode>
+    <allowedObjectFormat>http://www.isotc211.org/2005/gmd</allowedObjectFormat>
+    <allowedObjectFormat>eml://ecoinformatics.org/eml-2.1.1</allowedObjectFormat>
   </nodeReplicationPolicy>
   <ping lastSuccess="2002-06-24T15:46:32Z" success="false"/>
-  <subject>string</subject>
-  <contactSubject>string</contactSubject>
-  <property key="string" type="string">string</property>
+  <subject>subjectStringA</subject>
+  <subject>subjectStringB</subject>
+  <contactSubject>contactSubjectA</contactSubject>
+  <contactSubject>contactSubjectB</contactSubject>
+  <property key="prop1" type="type1">val1</property>
+  <property key="prop2" type="type2">val2</property>
 </ns1:node>

@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>1</serialVersion>
+  <identifier>pid</identifier>
+  <formatId>format_id</formatId>
+  <size>4</size>
+  <checksum algorithm="SHA-1">02083f4579e08a612425c0c1a17ee47add783b94</checksum>
+  <submitter>submitter</submitter>
+  <rightsHolder>rights_holder</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>public</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="3" replicationAllowed="true">
+    <preferredMemberNode>pref_mn1</preferredMemberNode>
+    <preferredMemberNode>pref_mn2</preferredMemberNode>
+    <preferredMemberNode>pref_mn3</preferredMemberNode>
+    <blockedMemberNode>block_mn1</blockedMemberNode>
+    <blockedMemberNode>block_mn2</blockedMemberNode>
+    <blockedMemberNode>block_mn3</blockedMemberNode>
+  </replicationPolicy>
+  <archived>false</archived>
+  <dateUploaded>2000-01-01T00:00:00Z</dateUploaded>
+  <dateSysMetadataModified>2000-01-01T00:00:00Z</dateSysMetadataModified>
+  <originMemberNode>aurn:mn:urn</originMemberNode>
+  <authoritativeMemberNode>aurn:mn:urn</authoritativeMemberNode>
+</ns1:systemMetadata>

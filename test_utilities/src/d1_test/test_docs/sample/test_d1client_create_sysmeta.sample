@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>1</serialVersion>
+  <identifier>pid</identifier>
+  <formatId>eml://ecoinformatics.org/eml-2.0.0</formatId>
+  <size>4</size>
+  <checksum algorithm="SHA-1">a94a8fe5ccb19ba61c4c0873d391e987982fbbd3</checksum>
+  <submitter>CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org</submitter>
+  <rightsHolder>CN=Roger Dahl A1779,O=Google,C=US,DC=cilogon,DC=org</rightsHolder>
+  <accessPolicy>
+    <allow>
+      <subject>public</subject>
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false"/>
+  <archived>false</archived>
+  <dateUploaded>1988-05-01T00:00:00Z</dateUploaded>
+  <dateSysMetadataModified>1988-05-01T00:00:00Z</dateSysMetadataModified>
+  <originMemberNode>urn:node:NODEID</originMemberNode>
+  <authoritativeMemberNode>urn:node:NODEID</authoritativeMemberNode>
+</ns1:systemMetadata>
