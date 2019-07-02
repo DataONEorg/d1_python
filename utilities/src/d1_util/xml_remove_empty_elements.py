@@ -17,17 +17,16 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Strip whitespace that might interfere with XSD schema validation.
+"""Remove empty elements from XML that might interfere with XSD schema validation.
 
-Overall formatting is maintained. Note that pretty printing the doc is likely to add
-the stripped whitespace back in.
+Overall formatting is maintained.
 
 This is an example on how to use the DataONE Science Metadata library for Python. It
 shows how to:
 
 - Deserialize, process and serialize XML docs.
-- Apply an XSLT stransform which strips potentially problematic whitespace.
-
+- Apply an XSLT stransform which removes empty elements from XML.
+- Display or save the resulting XML doc.
 """
 import argparse
 import logging
@@ -43,8 +42,9 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument("xml_path", help="Path to XML file to check")
+    parser.add_argument("xml_path", help="Path to XML file to process")
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
+    parser.add_argument("--update", action="store_true", help="Update the XML file")
 
     args = parser.parse_args()
 
@@ -52,9 +52,11 @@ def main():
 
     xml_tree = d1_scimeta.util.load_xml_file_to_tree(args.xml_path)
 
-    stripped_xml_tree = d1_scimeta.util.strip_whitespace(xml_tree)
-    d1_scimeta.util.dump_pretty_tree(stripped_xml_tree)
-    d1_scimeta.util.save_tree_to_file(stripped_xml_tree, args.xml_path)
+    no_empty_elements_xml_tree = d1_scimeta.util.remove_empty_elements(xml_tree)
+    d1_scimeta.util.dump_pretty_tree(no_empty_elements_xml_tree, 'Result of XSLT processing',
+                                     log.info)
+    if args.update:
+        d1_scimeta.util.save_tree_to_file(no_empty_elements_xml_tree, args.xml_path)
 
 
 def _log(msg, indent=0, log_=log.info, extra_indent=False, extra_line=False):
