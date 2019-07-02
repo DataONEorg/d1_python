@@ -27,6 +27,7 @@ import requests.adapters
 import requests_toolbelt
 import requests_toolbelt.utils.dump
 
+import d1_common.cert.subjects
 import d1_common.const
 import d1_common.url
 import d1_common.util
@@ -131,6 +132,7 @@ class Session(object):
         """
         self._log = logging.getLogger(__name__)
         self._base_url = base_url
+        self._cert_subj_tup = None
         self._scheme, self._host, self._port, self._path = urllib.parse.urlparse(
             base_url
         )[:4]
@@ -190,6 +192,41 @@ class Session(object):
     @property
     def base_url(self):
         return self._base_url
+
+    @property
+    def auth_subj_tup(self):
+        """This property contains the DataONE subjects for which connections created by
+        the client may be authenticated on the remote node.
+
+        Returns:
+            2-tuple: primary subject string, equivalent identities set
+
+            - If a certificate was passed when the client was created:
+
+                - primary subject string: Extracted from the certificate DN
+                - equivalent identities set: group memberships and inferred symbolic
+                  subjects extracted from the SubjectInfo (if present.)
+                - All returned subjects are DataONE compliant serializations.
+                - A copy of the primary subject is always included in the set of equivalent
+                  identities.
+
+            - If a certificate was not passed when the client was created:
+
+                Both primary subject string and equivalent identities set contain the
+                    The DataONE public symbolic subject
+        """
+        if self._cert_subj_tup is None:
+            if "cert" in self._default_request_arg_dict:
+                with open(self._default_request_arg_dict["cert"][0], "rb") as f:
+                    self._cert_subj_tup = d1_common.cert.subjects.extract_subjects(
+                        f.read()
+                    )
+            else:
+                self._cert_subj_tup = (
+                    d1_common.const.SUBJECT_PUBLIC,
+                    {d1_common.const.SUBJECT_PUBLIC},
+                )
+        return self._cert_subj_tup
 
     def GET(self, rest_path_list, **kwargs):
         """Send a GET request. See requests.sessions.request for optional parameters.

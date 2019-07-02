@@ -17,9 +17,58 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import io
+
+import pytest
+import responses
 
 import d1_test.d1_test_case
+import d1_test.mock_api.get_capabilities
+import d1_test.mock_api.create
+
+import d1_client.d1client
+import freezegun
 
 
+@freezegun.freeze_time("1988-05-01")
 class TestDataONEClient(d1_test.d1_test_case.D1TestCase):
-    pass
+    @responses.activate
+    def test_1010(self):
+        """create_sysmeta()"""
+        d1_test.mock_api.get_capabilities.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
+        d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        client = d1_client.d1client.DataONEClient(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL,
+            cert_pem_path=self.test_files.get_abs_test_file_path(
+                "cert/cert_with_simple_subject_info.pem"
+            ),
+        )
+        sciobj_stream = io.BytesIO(b"test")
+        sysmeta_pyxb = client.create_sysmeta("pid", "format_id", sciobj_stream)
+        self.sample.assert_equals(sysmeta_pyxb, "create_sysmeta")
+
+    @responses.activate
+    def test_1015(self):
+        """create_sciobj(): Assert on unknown formatId"""
+        client = d1_client.d1client.DataONEClient()
+        with pytest.raises(AssertionError, match="Unknown formatId"):
+            sciobj_stream = io.BytesIO(b"test")
+            client.create_sciobj("pid", "format_id", sciobj_stream)
+
+    @responses.activate
+    def test_1020(self):
+        """create_sciobj(): Unknown formatId"""
+        d1_test.mock_api.get_capabilities.add_callback(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL
+        )
+        d1_test.mock_api.create.add_callback(d1_test.d1_test_case.MOCK_MN_BASE_URL)
+        client = d1_client.d1client.DataONEClient(
+            d1_test.d1_test_case.MOCK_MN_BASE_URL,
+            cert_pem_path=self.test_files.get_abs_test_file_path(
+                "cert/cert_with_simple_subject_info.pem"
+            ),
+        )
+        sciobj_stream = io.BytesIO(b"test")
+        client.create_sciobj("pid", "eml://ecoinformatics.org/eml-2.0.0", sciobj_stream)

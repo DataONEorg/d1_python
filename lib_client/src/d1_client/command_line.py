@@ -197,7 +197,7 @@ def get_standard_arg_parser(
         help="Set debug level logging in D1Client",
     )
     if add_base_url:
-        group.add_argument("base_url", help="Member Node BaseURL")
+        group.add_argument("d1client__base_url", help="Member Node BaseURL")
 
     parser.add_argument_group("Command")
 

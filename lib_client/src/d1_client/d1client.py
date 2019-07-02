@@ -17,24 +17,127 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Perform high level operations against the DataONE infrastructure.
+import io
+import logging
+import pathlib
 
-The other Client classes are specific to CN or MN and to architecture version. This
-class provides a more abstract interface that can be used for interacting with any
-DataONE node regardless of type and version.
-
-"""
 import d1_common.const
+import d1_common.object_format_cache
+import d1_common.system_metadata
 import d1_common.type_conversions
+import d1_common.types.exceptions
+
 
 import d1_client.cnclient
+import d1_client.cnclient_2_0
 import d1_client.mnclient
 import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
 
 
-class DataONEClient(object):
-    pass
+BASE_URL_TO_NODE_ID_DICT = {}
+
+
+class DataONEClient(
+    d1_client.mnclient_2_0.MemberNodeClient_2_0,
+    d1_client.cnclient_2_0.CoordinatingNodeClient_2_0,
+):
+    """Perform high level operations against the DataONE infrastructure.
+
+    The other Client classes are specific to CN or MN and to architecture version. This
+    class provides a more abstract interface that can be used for interacting with any
+    DataONE node regardless of type and version.
+
+    """
+
+    def __init__(self, *args, **kwargs):
+        """See baseclient.DataONEBaseClient for args."""
+        super().__init__(*args, **kwargs)
+        self._log = logging.getLogger(__name__)
+        self.object_format_cache = d1_common.object_format_cache.ObjectFormatListCache()
+
+    def create_sciobj(
+        self, pid, format_id, sciobj, vendor_specific_dict=None, **sysmeta_dict
+    ):
+        """Create a Science Object on a Memeber Node.
+
+        Wrapper for MNStorage.create() that includes semi-automatic generation of System
+        Metadata.
+
+        Args:
+            pid: str
+                Persistent Identifier.
+
+            format_id: str
+                formatId of the Science Object.
+
+            sciobj: str, bytes or file-like stream
+                str: Path to file
+                bytes: Bytes
+                file-like stream: lxml.etree of XML doc to validate
+
+            vendor_specific_dict: dict
+                Pass additional, vendor specific parameters.
+
+            **sysmeta_dict: dict
+
+                Parameters to customize the System Metadata.
+
+                See also:
+                    d1_common.system_metadata.generate_system_metadata_pyxb()
+        """
+        sciobj_stream = self._resolve_to_stream(sciobj)
+        return self.create(
+            pid,
+            sciobj_stream,
+            self.create_sysmeta(pid, format_id, sciobj_stream, **sysmeta_dict),
+            vendor_specific_dict,
+        )
+
+    def _resolve_to_stream(self, sciobj):
+        """
+        Args:
+            sciobj: str, bytes or file-like stream
+                str: Path to file
+                bytes: Bytes
+                file-like stream: lxml.etree of XML doc to validate
+
+        Returns:
+            stream
+
+        """
+        if isinstance(sciobj, io.IOBase):
+            return sciobj
+        elif isinstance(sciobj, bytes):
+            return io.BytesIO(sciobj)
+        elif isinstance(sciobj, pathlib.Path):
+            return sciobj.open("rb")
+        else:
+            raise ValueError("Unable to create stream")
+
+    def create_sysmeta(self, pid, format_id, sciobj_stream, **sysmeta_dict):
+        if not self.object_format_cache.is_valid_format_id(format_id):
+            raise d1_common.types.exceptions.InvalidSystemMetadata(
+                0, "Unknown formatId: {}".format(format_id)
+            )
+        primary_str, equivalent_set = self.auth_subj_tup
+        node_id = self.get_node_id()
+        return d1_common.system_metadata.generate_system_metadata_pyxb(
+            pid,
+            format_id,
+            sciobj_stream,
+            primary_str,
+            primary_str,
+            node_id,
+            **sysmeta_dict
+        )
+
+    def get_node_id(self):
+        if self.base_url not in BASE_URL_TO_NODE_ID_DICT:
+            BASE_URL_TO_NODE_ID_DICT[
+                self.base_url
+            ] = self.getCapabilities().identifier.value()
+        return BASE_URL_TO_NODE_ID_DICT[self.base_url]
 
 
 def get_api_major_by_base_url(
