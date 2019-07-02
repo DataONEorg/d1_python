@@ -17,18 +17,15 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """Create Science Object on Member Node.
 
 This is an example on how to use the DataONE Client and Common libraries for Python. It
 shows how to:
 
 - Upload a local file to a Member Node as a Science Object
-- Generate the system metadata for a local file
-- Generate an access policy for public access
 
 Operation:
-
-- Configure the script in the Config section below
 
 - The first time the script is run, a message indicating that the object was
   successfully created should be displayed, and the object should become available on
@@ -41,145 +38,60 @@ Operation:
 - Any other errors will also be returned as DataONE exceptions.
 
 """
-import argparse
-import hashlib
-import io
+
+import logging
+import pathlib
 import sys
+
+import d1_scimeta.util
 
 import d1_common.const
 import d1_common.date_time
 import d1_common.env
 import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
+import d1_common.xml
 
-import d1_client.mnclient_2_0
+import d1_client.command_line
+import d1_client.d1client
 
-# Config
-
-# The path to the file that will be uploaded as a Science Object.
-SCIENCE_OBJECT_FILE_PATH = "./my_test_object.bin"
-
-# The identifier (PID) to use for the Science Object.
-SCIENCE_OBJECT_PID = "dataone_test_object_pid"
-
-# The formatId to use for the Science Object. It should be the ID of an Object
-# Format that is registered in the DataONE Object Format Vocabulary. The valid
-# IDs can be retrieved from https://cn.dataone.org/cn/v1/formats.
-SYSMETA_FORMATID = "application/octet-stream"
-
-# The DataONE subject to set as the rights holder of the created objects. The
-# rights holder must be a subject that is registered with DataONE. Subjects are
-# created in the DataONE identity manager at https://cn.dataone.org/cn/portal.
-#
-# By default, only the rights holder has access to the object, so access to the
-# uploaded object may be lost if the rights holder subject is set to a
-# non-existing subject or to a subject that is not prepared to handle the
-# object.
-SYSMETA_RIGHTSHOLDER = "CN=First Last,O=Google,C=US,DC=cilogon,DC=org"
-
-# BaseURL for the Member Node. If the script is run on the same server as the
-# Member Node, this can be localhost.
-MN_BASE_URL = "https://dataone-test.researchworkspace.com/mn"
-# MN_BASE_URL = 'https://localhost/mn'
-# MN_BASE_URL = 'https://d1_gmn.test.dataone.org/mn'
-
-# Paths to the certificate and key to use when creating the object. If the
-# certificate has the key embedded, the _KEY setting should be set to None. The
-# Member Node must trust the certificate and allow access to MNStorage.create()
-# for the certificate subject. If the target Member Node is a DataONE Generic
-# Member Node (GMN) instance, see the "Using GMN" section in the documentation
-# for GMN for information on how to create and use certificates. The information
-# there may be relevant for other types of Member Nodes as well.
-CERTIFICATE_FOR_CREATE = "urn_node_mnTestRW/urn_node_mnTestRW.crt"
-CERTIFICATE_FOR_CREATE_KEY = "urn_node_mnTestRW/private/urn_node_mnTestRW.key"
+log = logging.getLogger(__name__)
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument("--debug", action="store_true", help="Debug level logging")
-    parser.add_argument(
-        "--env",
-        type=str,
-        default="prod",
-        help="Environment, one of {}".format(", ".join(d1_common.env.D1_ENV_DICT)),
-    )
-    parser.add_argument(
-        "--cert-pub",
-        dest="cert_pem_path",
-        action="store",
-        help="Path to PEM formatted public key of certificate",
-    )
-    parser.add_argument(
-        "--cert-key",
-        dest="cert_key_path",
-        action="store",
-        help="Path to PEM formatted private key of certificate",
-    )
-    parser.add_argument(
-        "--timeout",
-        action="store",
-        default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
-        help="Amount of time to wait for calls to complete (seconds)",
+    parser = d1_client.command_line.get_standard_arg_parser(__doc__, add_base_url=True)
+    parser.add_argument("--formats", action="store_true", help="List valid formatIds")
+    # parser.add_argument(
+    #     "node_id", help="URN of target node (e.g.: urn:node:ABC)"
+    # )
+    parser.add_argument("pid", help="Persistent Identifiers for Science Object")
+    parser.add_argument("format_id", help="formatId for Science Object")
+    parser.add_argument("path", help="Path to Science Object file")
+    args = parser.parse_args()
+    d1_client.command_line.log_setup(args)
+
+    if args.formats:
+        d1_scimeta.util.get_supported_format_id_list()
+        return 0
+
+    client = d1_client.d1client.DataONEClient(
+        **d1_client.command_line.args_adapter(args)
     )
 
-    # Create a Member Node client that can be used for running commands against a
-    # specific Member Node.
-    client = d1_client.mnclient_2_0.MemberNodeClient_2_0(
-        MN_BASE_URL,
-        cert_pem_path=CERTIFICATE_FOR_CREATE,
-        cert_key_path=CERTIFICATE_FOR_CREATE_KEY,
-    )
-    # Get the bytes for the Science Object.
-    science_object = open(SCIENCE_OBJECT_FILE_PATH, "rb").read()
+    if client.auth_subj_tup[0] == d1_common.const.SUBJECT_PUBLIC:
+        log.error(
+            "Must provide a certificate in order to gain access to create objects on MN"
+        )
+        return 1
 
-    # Create the System Metadata for the object that is to be uploaded. The System
-    # Metadata contains information about the object, such as its format, access control
-    # list and size.
-    sys_meta = generate_system_metadata_for_science_object(science_object)
+    try:
+        client.create_sciobj(args.pid, args.format_id, pathlib.Path(args.path))
+    except d1_common.types.exceptions.DataONEException as e:
+        log.error("Create failed. Error: {}".format(str(e)))
+        return 1
 
-    # Create the object on the Member Node. The create() call takes an open file-like
-    # object for the Science Object. Since we already have the data in a bytes object,
-    # we use BytesIO. Another way would be to open the file again, with "f =
-    # open(filename, 'rb')", and then pass "f". The BytesIO method may be more efficient
-    # if the file fits in memory, as it already had to be read from disk once, for the
-    # MD5 checksum calculation.
-    client.create(SCIENCE_OBJECT_PID, io.BytesIO(science_object), sys_meta)
-
-    print("Object created successfully")
-
-
-def generate_system_metadata_for_science_object(science_object):
-    pid = SCIENCE_OBJECT_PID
-    size = len(science_object)
-    md5 = hashlib.md5(science_object).hexdigest()
-    now = d1_common.date_time.utc_now()
-    sys_meta = generate_sysmeta(pid, size, md5, now)
-    return sys_meta
-
-
-def generate_sysmeta(pid, size, md5, now):
-    sysmeta_pyxb = d1_common.types.dataoneTypes.systemMetadata()
-    sysmeta_pyxb.identifier = pid
-    sysmeta_pyxb.formatId = SYSMETA_FORMATID
-    sysmeta_pyxb.size = size
-    sysmeta_pyxb.rightsHolder = SYSMETA_RIGHTSHOLDER
-    sysmeta_pyxb.checksum = d1_common.types.dataoneTypes.checksum(md5)
-    sysmeta_pyxb.checksum.algorithm = "MD5"
-    sysmeta_pyxb.dateUploaded = now
-    sysmeta_pyxb.dateSysMetadataModified = now
-    sysmeta_pyxb.accessPolicy = generate_public_access_policy()
-    return sysmeta_pyxb
-
-
-def generate_public_access_policy():
-    access_policy_pyxb = d1_common.types.dataoneTypes.accessPolicy()
-    access_rule_pyxb = d1_common.types.dataoneTypes.AccessRule()
-    access_rule_pyxb.subject.append(d1_common.const.SUBJECT_PUBLIC)
-    permission_pyxb = d1_common.types.dataoneTypes.Permission("read")
-    access_rule_pyxb.permission.append(permission_pyxb)
-    access_policy_pyxb.append(access_rule_pyxb)
-    return access_policy_pyxb
+    log.error("Create successful")
+    return 0
 
 
 if __name__ == "__main__":
