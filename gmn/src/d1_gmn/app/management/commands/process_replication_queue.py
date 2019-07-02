@@ -183,7 +183,7 @@ class ReplicationQueueProcessor(object):
             base_url=django.conf.settings.DATAONE_ROOT,
             cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
             cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
-            retries=1,
+            try-count=1,
         )
 
     def _get_system_metadata(self, queue_model):
@@ -199,7 +199,7 @@ class ReplicationQueueProcessor(object):
             base_url=source_node_base_url,
             cert_pem_path=django.conf.settings.CLIENT_CERT_PATH,
             cert_key_path=django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
-            retries=1,
+            try-count=1,
         )
         return self._open_sciobj_bytestream_on_member_node(
             mn_client, queue_model.local_replica.pid.did

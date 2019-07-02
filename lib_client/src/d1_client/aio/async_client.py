@@ -41,18 +41,21 @@ class AsyncDataONEClient:
         cert_key_path=None,
         disable_server_cert_validation=False,
         max_concurrent_connections=DEFAULT_MAX_CONCURRENT_CONNECTIONS,
-        retry_count=DEFAULT_RETRY_COUNT,
+        try_count=DEFAULT_RETRY_COUNT,
+        verify_tls=False,
+        user_agent=None,
+        charset=None,
     ):
         """Args:
 
         base_url: timeout_sec: cert_pub_path: cert_key_path:
         disable_server_cert_validation: max_concurrent_connections: Limit on concurrent
-        outgoing connections enforced internally by aiohttp. retry_count:
+        outgoing connections enforced internally by aiohttp. try_count:
 
         """
         self._logger = logging.getLogger(__name__)
         self._base_url = base_url
-        self._retry_count = retry_count
+        self._try_count = try_count
 
         if not disable_server_cert_validation:
             ssl_ctx = ssl.create_default_context()  # cafile=
@@ -235,7 +238,7 @@ class AsyncDataONEClient:
 
         self._logger.debug("Request: {}".format(request_arg_dict))
 
-        for i in range(self._retry_count):
+        for i in range(self._try_count):
             try:
                 response = await self._session.request(**request_arg_dict)
             except aiohttp.ClientError as e:
@@ -251,7 +254,7 @@ class AsyncDataONEClient:
                 self.dump_headers(response.headers)
                 return response
 
-        self._logger.error("Giving up after {} tries".format(self._retry_count))
+        self._logger.error("Giving up after {} tries".format(self._try_count))
         raise final_exception
 
     def _prep_url(self, url_element_list):

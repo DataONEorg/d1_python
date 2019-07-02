@@ -61,7 +61,7 @@ def add_arguments(parser, doc_str, add_base_url=True):
         help="Timeout for DataONE API calls to the source MN",
     )
     parser.add_argument(
-        "--retries",
+        "--try-count",
         type=int,
         action="store",
         default=DEFAULT_RETRY_COUNT,

@@ -89,10 +89,10 @@ class Session(object):
           seconds.
         :type timeout_sec: float, int, None
 
-        :param retries: Set number of times to try a request before failing. If not
+        :param try_count: Set number of times to try a request before failing. If not
           set, retries are still performed, using the default number of retries. To
           disable retries, set to 1.
-        :type retries: int
+        :type try_count: int
 
         :param headers: headers that will be included with all connections.
         :type headers: dictionary
@@ -145,7 +145,7 @@ class Session(object):
                     "Invalid certificate file path: {}".format(cert_pem_path)
                 )
         # Adapter
-        self._max_retries = kwargs_dict.pop("retries", DEFAULT_NUMBER_OF_RETRIES)
+        self._try_count = kwargs_dict.pop("try_count", DEFAULT_NUMBER_OF_RETRIES)
         # Option to suppress TLS/SSL verification warnings
         suppress_verify_warnings = kwargs_dict.pop(
             "suppress_verify_warnings", DEFAULT_SUPPRESS_VERIFY_WARNINGS
@@ -331,7 +331,7 @@ class Session(object):
 
     def _create_requests_session(self):
         session = requests.Session()
-        adapter = requests.adapters.HTTPAdapter(max_retries=self._max_retries)
+        adapter = requests.adapters.HTTPAdapter(max_retries=self._try_count)
         session.mount("http://", adapter)
         session.mount("https://", adapter)
         return session

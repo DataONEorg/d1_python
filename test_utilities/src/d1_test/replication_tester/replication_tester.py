@@ -222,7 +222,7 @@ def create_test_object_on_mn(base_url, pid):
     sys_meta, sci_obj = d1_test.replication_tester.test_object_generator.generate_science_object_with_sysmeta(
         pid
     )
-    mn_client = d1_client.mnclient.MemberNodeClient(base_url, retries=1)
+    mn_client = d1_client.mnclient.MemberNodeClient(base_url, try_count=1)
     # , cert_pem_path=self._options.cert_get_replica, cert_key_path=self._options.cert_get_replica_key
     mn_client.create(pid, io.StringIO(sci_obj), sys_meta)
 
@@ -371,7 +371,7 @@ class ReplicationTester(object):
             self._options.src_base_url,
             cert_pem_path=self._options.cert_get_replica,
             cert_key_path=self._options.cert_get_replica_key,
-            retries=1,
+            try_count=1,
         )
 
     #
@@ -453,7 +453,7 @@ class ReplicationTester(object):
             self._options.dst_base_url,
             cert_pem_path=self._options.cert_replicate,
             cert_key_path=self._options.cert_replicate_key,
-            retries=1,
+            try_count=1,
         )
 
     #

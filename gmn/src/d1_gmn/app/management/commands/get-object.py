@@ -74,7 +74,7 @@ class Command(django.core.management.base.BaseCommand):
             disable_server_cert_validation=self.options[
                 "disable_server_cert_validation"
             ],
-            retry_count=self.options["retries"],
+            try_count=self.options["try_count"],
         )
 
         event_log_iterator = d1_gmn.app.management.commands.objectlist_async.ObjectListIteratorAsync(

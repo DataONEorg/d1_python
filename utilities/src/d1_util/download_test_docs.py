@@ -25,10 +25,20 @@ PAGE_COUNT = 1
 
 
 async def main():
-    d1_client.command_line.log_setup(is_debug=False)
+    parser = d1_client.command_line.get_standard_arg_parser(__doc__)
+    parser.add_argument(
+        "--page-count", default=DEFAULT_PAGE_COUNT, help="Number of bulk downloads to perform"
+    )
+    parser.add_argument(
+        "out_path",
+        help="Path to dir in which to save the downloaded files"
+    )
+    args = parser.parse_args()
+    d1_client.command_line.log_setup(args.debug)
 
     logging.getLogger("d1_client.aio.async_client").setLevel(logging.ERROR)
     logging.getLogger("d1_scimeta.util").setLevel(logging.ERROR)
+    logging.getLogger("d1_client.solr_client").setLevel(logging.ERROR)
 
     solr_client = d1_client.solr_client.SolrClient()
     client = d1_client.aio.async_client.AsyncDataONEClient()

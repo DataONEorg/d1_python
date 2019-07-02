@@ -148,8 +148,8 @@ def get_standard_arg_parser(
         help="Timeout for API calls to the remote node",
     )
     group.add_argument(
-        "--tries",
-        dest="d1client__retries",
+        "--try-count",
+        dest="d1client__try_count",
         type=int,
         default=3,
         metavar="num",
@@ -234,14 +234,14 @@ def args_adapter(args):
     return arg_dict
 
 
-def log_setup(is_debug):
+def log_setup(is_debug, disable_existing_loggers=False):
     """Set up a log format that is suitable for writing to the console by command line
     tools."""
     level = logging.DEBUG if is_debug else logging.INFO
     logging.config.dictConfig(
         {
             "version": 1,
-            "disable_existing_loggers": False,
+            "disable_existing_loggers": disable_existing_loggers,
             "formatters": {
                 "verbose": {"format": "%(levelname)-8s %(message)s", "datefmt": None}
             },
