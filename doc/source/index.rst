@@ -14,6 +14,13 @@ Utilities (for end users)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
+DataONE Command Line Utilities and Examples
+```````````````````````````````````````````
+
+.. include:: ./utilities/overview.rst
+
+\
+
 DataONE ONEDrive
 ````````````````
 
@@ -52,6 +59,13 @@ DataONE Client Library for Python
 `````````````````````````````````
 
 .. include:: ./client/overview.rst
+
+\
+
+DataONE Science Metadata Validator for Python
+`````````````````````````````````````````````
+
+.. include:: ./scimeta/overview.rst
 
 \
 

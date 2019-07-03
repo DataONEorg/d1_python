@@ -49,6 +49,8 @@ def main():
             "baron >= 0.9",
             "pip >= 19.1.1",
             "redbaron >= 0.9.2",
+            'sphinx'
+            'sphinx-better-theme',
             "python-xlib",
             'black',
             'isort'
