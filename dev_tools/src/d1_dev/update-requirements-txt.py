@@ -13,7 +13,7 @@ REQUIREMENTS_FILENAME = "requirements.txt"
 
 # Modules in my dev environment that are not required by the stack
 
-MODULE_FILTER_REGEX_LIST = {
+PACKAGE_EXCLUDE_REGEX_LIST = {
     "beautifulsoup",
     "black",
     "bs4",
@@ -54,7 +54,7 @@ def get_reqs():
 
 
 def is_filtered_package(project_name):
-    for filter_rx in MODULE_FILTER_REGEX_LIST:
+    for filter_rx in PACKAGE_EXCLUDE_REGEX_LIST:
         if re.match(filter_rx, project_name, re.IGNORECASE):
             print("Filtered: {}".format(project_name, filter_rx))
             return True

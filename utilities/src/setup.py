@@ -27,7 +27,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.util",
-        version="3.4.4",
+        version='3.4.5',
         description="DataONE Utilities and Examples",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -35,7 +35,7 @@ def main():
         license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        install_requires=["dataone.common >= 3.4.4", "dataone.libclient >= 3.4.4"],
+        install_requires=['dataone.common >= 3.4.5', 'dataone.libclient >= 3.4.5'],
         setup_requires=["setuptools_git >= 1.1"],
         entry_points={"console_scripts": gen_console_scripts()},
         classifiers=[
