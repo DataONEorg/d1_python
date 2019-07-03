@@ -1,4 +1,4 @@
-The :doc:`/client/index` works together with the :doc:`/common/index`
+The :doc:`/d1_client/index` works together with the :doc:`/d1_common/index`
 to provide functionality commonly needed by client software that connects to DataONE nodes.
 
 The main functionality provided by this library is a complete set of wrappers for all DataONE API methods. There are many details related to interacting with the DataONE API, such as creating MIME multipart messages, encoding parameters into URLs and handling Unicode. The wrappers hide these details, allowing the developer to communicate with nodes by calling native Python methods which take and return native Python objects.

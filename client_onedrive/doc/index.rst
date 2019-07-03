@@ -16,6 +16,7 @@ Contents:
   architecture
   mockups/index
   windows_setup
+  api/modules
   /glossary
 
 

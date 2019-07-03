@@ -1,3 +1,4 @@
+
 DataONE Command Line Interface (CLI)
 ====================================
 
@@ -15,6 +16,7 @@ Contents:
   reference
   implementation
   ref_options
+  api/modules
   /glossary
 
 

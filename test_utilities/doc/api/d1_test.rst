@@ -14,6 +14,7 @@ Subpackages
    d1_test.instance_generator
    d1_test.mock_api
    d1_test.replication_tester
+   d1_test.tests
    d1_test.utilities
 
 Submodules

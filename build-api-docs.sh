@@ -35,6 +35,20 @@ sphinx-apidoc ${apidoc_args} -o ./doc/source/client/api/  ./lib_client/src/d1_cl
 sphinx-apidoc ${apidoc_args} -o ./doc/source/scimeta/api/ ./lib_scimeta/src/d1_scimeta/ ${exclude_list}
 sphinx-apidoc ${apidoc_args} -o ./doc/source/test/api/    ./test_utilities/src/d1_test/ ${exclude_list}
 
+
+        'client_cli',
+        'client_onedrive',
+        'csw',
+        'dev_tools',
+        'gmn',
+        'lib_client',
+        'lib_common',
+        'lib_scimeta',
+        'test_utilities',
+        'utilities',
+
+
+
 make -C ./doc -j8 html
 
 git add ./lib_common/doc/api

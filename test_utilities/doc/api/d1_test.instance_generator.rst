@@ -6,6 +6,13 @@ d1\_test.instance\_generator package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+   d1_test.instance_generator.tests
+
 Submodules
 ----------
 

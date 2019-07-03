@@ -9,29 +9,27 @@ For Member Node partners, DataONE provides a Member Node (MN) implemented in Pyt
 
 Lastly, DataONE provides various tools intended for end users, also implemented in Python. These include ONEDrive and the DataONE Command Line Client.
 
-
 Utilities (for end users)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
-
 
 DataONE Command Line Utilities and Examples
 ```````````````````````````````````````````
 
-.. include:: ./utilities/overview.rst
+.. include:: ./d1_util/overview.rst
 
 \
 
 DataONE ONEDrive
 ````````````````
 
-.. include:: ./onedrive/overview.rst
+.. include:: ./d1_onedrive/overview.rst
 
 \
 
 DataONE Command Line Interface
 ``````````````````````````````
 
-.. include:: ./cli/overview.rst
+.. include:: ./d1_cli/overview.rst
 
 \
 
@@ -41,7 +39,7 @@ Member Node (for Member Node partners)
 Generic Member Node (GMN)
 `````````````````````````
 
-.. include:: ./gmn/overview.rst
+.. include:: ./d1_gmn/overview.rst
 
 \
 
@@ -51,28 +49,42 @@ Python Libraries (for software developers)
 DataONE Common Library for Python
 `````````````````````````````````
 
-.. include:: ./common/overview.rst
+.. include:: ./d1_common/overview.rst
 
 \
 
 DataONE Client Library for Python
 `````````````````````````````````
 
-.. include:: ./client/overview.rst
+.. include:: ./d1_client/overview.rst
 
 \
 
 DataONE Science Metadata Validator for Python
 `````````````````````````````````````````````
 
-.. include:: ./scimeta/overview.rst
+.. include:: ./d1_scimeta/overview.rst
 
 \
 
 DataONE Test Utilities
 ``````````````````````
 
-.. include:: ./test/overview.rst
+.. include:: ./d1_test/overview.rst
+
+\
+
+DataONE Dev Tools
+`````````````````
+
+.. include:: ./d1_dev/overview.rst
+
+\
+
+DataONE CSW Harvester
+`````````````````````
+
+.. include:: ./d1_csw/overview.rst
 
 \
 
@@ -82,9 +94,13 @@ Contents
 .. toctree::
   :maxdepth: 2
 
-  onedrive/index
-  cli/index
-  gmn/index
-  common/index
-  client/index
-  test/index
+  d1_util/index
+  d1_onedrive/index
+  d1_cli/index
+  d1_gmn/index
+  d1_common/index
+  d1_client/index
+  d1_scimeta/index
+  d1_test/index
+  d1_dev/index
+  d1_csw/index

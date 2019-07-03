@@ -143,9 +143,18 @@ def autodoc_skip_member(app, what, name, obj, skip, options):
 
 
 def setup(app):
-    sys.path.insert(0, os.path.abspath("../../lib_common/src/"))
-    sys.path.insert(0, os.path.abspath("../../lib_client/src/"))
-    sys.path.insert(0, os.path.abspath("../../test_utilities/src/"))
-    sys.path.insert(0, os.path.abspath("../../dev_tools/src/"))
+    for pkg_root in (
+        'client_cli',
+        'client_onedrive',
+        'csw',
+        'dev_tools',
+        'gmn',
+        'lib_client',
+        'lib_common',
+        'lib_scimeta',
+        'test_utilities',
+        'utilities',
+    ):
+        sys.path.insert(0, os.path.abspath(f"../../{pkg_root}/src/"))
 
     app.connect("autodoc-skip-member", autodoc_skip_member)

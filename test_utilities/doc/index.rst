@@ -9,10 +9,11 @@ Contents:
   :maxdepth: 2
 
   setup
-  api/modules
   instance_generator/index
   stress_tester/index
   utilities/index
+  api/modules
+  /glossary
 
 
 Indices and tables

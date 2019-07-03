@@ -6,6 +6,13 @@ d1\_test.mock\_api package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+
+   d1_test.mock_api.tests
+
 Submodules
 ----------
 

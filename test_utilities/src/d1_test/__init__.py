@@ -19,18 +19,18 @@
 # limitations under the License.
 """DataONE Test Utilities.
 
-The :doc:`/test/index` package contains various utilities for testing DataONE
+The :doc:`/d1_test/index` package contains various utilities for testing DataONE
 infrastructure components and clients. These include:
 
-:doc:`Instance Generator </test/instance_generator/index>`: Used for creating
+:doc:`Instance Generator </d1_test/instance_generator/index>`: Used for creating
 randomized System Metadata documents
 
-:doc:`Stress Tester </test/stress_tester/index>`: Used for stress testing of Member
+:doc:`Stress Tester </d1_test/stress_tester/index>`: Used for stress testing of Member
 Node implementations. The stress_tester creates a configurable number of concurrent
 connections to a Member Node and populates the MN with randomly generated objects while
 running queries and object retrievals.
 
-:doc:`Utilities </test/utilities/index>`: Misc test utilities.
+:doc:`Utilities </d1_test/utilities/index>`: Misc test utilities.
 
 Although this directory is not a package, this __init__.py file is required for pytest
 to be able to reach test directories below this directory.

@@ -13,6 +13,7 @@ Subpackages
 
    d1_client.aio
    d1_client.iter
+   d1_client.tests
 
 Submodules
 ----------

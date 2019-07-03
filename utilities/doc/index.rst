@@ -1,12 +1,15 @@
 DataONE Utilities / Examples
 ============================
 
+.. include:: overview.rst
+
 Contents:
 
 .. toctree::
   :maxdepth: 2
 
-  usage
+  api/modules
+  /glossary
 
 Indices and tables
 ~~~~~~~~~~~~~~~~~~

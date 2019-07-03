@@ -22,7 +22,7 @@ Set the authentication session variables for authenticated access using a certif
 
 Or set to use a certificate in a non-standard location:
 
-  > set cert-file /etc/dataone/client/certs/myclientcert.pem
+  > set cert-file /etc/dataone/d1_client/certs/myclientcert.pem
 
 View all the session variables::
 
@@ -187,7 +187,7 @@ Display event log on a :term:`MN`::
 
   > reset
   > set anonymous false
-  > set cert-file /etc/dataone/client/certs/myclientcert.pem
+  > set cert-file /etc/dataone/d1_client/certs/myclientcert.pem
   > set key-file None
   > set mn-url https://dataone.org/mn
   > log

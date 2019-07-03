@@ -1,4 +1,4 @@
-The :doc:`/gmn/index` is a DataONE Member Node :term:`MN`). It provides an implementation of MN APIs and can be used by organizations to expose their science data to DataONE if they do not wish to create their own, native MN.
+The :doc:`/d1_gmn/index` is a DataONE Member Node :term:`MN`). It provides an implementation of MN APIs and can be used by organizations to expose their science data to DataONE if they do not wish to create their own, native MN.
 
 GMN can be used as a standalone MN or it can be used for exposing data that is already available on the web, to DataONE. When used in this way, GMN provides a DataONE compatible interface to existing data and does not store the data.
 

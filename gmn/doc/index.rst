@@ -17,6 +17,7 @@ Contents:
   maintenance
   performance
   impl
+  api/modules
   /glossary
 
 

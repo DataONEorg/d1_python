@@ -11,6 +11,7 @@ Contents:
   :maxdepth: 2
 
   schema-refresh
+  api/modules
   /glossary
 
 Indices and tables
