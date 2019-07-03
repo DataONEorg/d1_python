@@ -18,6 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """DataONE Utilities and Examples package."""
+import os
 import sys
 
 import setuptools
@@ -36,13 +37,7 @@ def main():
         include_package_data=True,
         install_requires=["dataone.common >= 3.4.4", "dataone.libclient >= 3.4.4"],
         setup_requires=["setuptools_git >= 1.1"],
-        entry_points={
-            "console_scripts": [
-                "cert-create-ca = d1_util.cert_create_ca:main",
-                "cert-create-csr = d1_util.cert_create_csr:main",
-                "cert-sign-csr = d1_util.cert_sign_csr:main",
-            ]
-        },
+        entry_points={"console_scripts": gen_console_scripts()},
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
@@ -52,6 +47,17 @@ def main():
         ],
         keywords="DataONE python",
     )
+
+
+def gen_console_scripts():
+    return [
+        "d1-{} = d1_util.{}:main".format(
+            n.replace('_', '-').replace('.py', ''),
+            n.replace('.py', '')
+        )
+        for n in os.listdir('./d1_util/') if n.endswith('.py')
+    ]
+
 
 
 if __name__ == "__main__":
