@@ -17,11 +17,10 @@
 # limitations under the License.
 """Generator that resolves a list of file and dir paths and returns file paths with
 optional filtering and client feedback."""
-
+import argparse
 import fnmatch
 import logging
 import os
-
 
 log = logging.getLogger(__name__)
 log.setLevel(logging.INFO)
@@ -178,14 +177,14 @@ def path_generator(
         exclude_glob_list += DEFAULT_EXCLUDE_GLOB_LIST
 
     log.debug("file_iter():")
-    log.debug("  paths: {}".format(", ".join(path_list)))
-    log.debug("  include: {}".format(", ".join(include_glob_list)))
-    log.debug("  exclude: {}".format(", ".join(exclude_glob_list)))
-    log.debug("  recursive: {}".format(recursive))
-    log.debug("  ignore_invalid: {}".format(ignore_invalid))
-    log.debug("  default_excludes: {}".format(default_excludes))
-    log.debug("  return_entered_dir_paths: {}".format(return_entered_dir_paths))
-    log.debug("  return_skipped_dir_paths: {}".format(return_skipped_dir_paths))
+    log.debug(f"  paths: {', '.join(path_list)}")
+    log.debug(f"  include: {', '.join(include_glob_list)}")
+    log.debug(f"  exclude: {', '.join(exclude_glob_list)}")
+    log.debug(f"  recursive: {recursive}")
+    log.debug(f"  ignore_invalid: {ignore_invalid}")
+    log.debug(f"  default_excludes: {default_excludes}")
+    log.debug(f"  return_entered_dir_paths: {return_entered_dir_paths}")
+    log.debug(f"  return_skipped_dir_paths: {return_skipped_dir_paths}")
     log.debug("")
 
     include_file_glob_list = [
@@ -220,17 +219,6 @@ def path_generator(
                 return_skipped_dir_paths,
                 recursive,
             )
-            # else:
-            #   # Single directory search
-            #   file_path_iter = os.listdir(path)
-            #
-            # skip_dir = None
-            #
-            # while True:
-            #   file_or_dir_path = file_path_iter.send(skip_dir)
-            #   file_or_dir_name = os.path.split(file_or_dir_path)[1]
-            #   skip_dir = False
-            #     skip_dir = yield file_or_dir_path
 
         else:
             if not ignore_invalid:
@@ -254,7 +242,7 @@ def _filtered_walk(
             return
 
         if any(dir_path.startswith(d) for d in skip_dir_path_list):
-            log.debug("Skipped dir branch: {}".format(dir_path))
+            log.debug(f"Skipped dir branch: {dir_path}")
             continue
 
         enter_dir_list = []
@@ -276,9 +264,7 @@ def _filtered_walk(
                 this_dir_path = os.path.join(dir_path, dir_name)
                 skip_dir = yield this_dir_path
                 if skip_dir:
-                    log.debug(
-                        "Client requested skip of branch: {}".format(this_dir_path)
-                    )
+                    log.debug(f"Client requested skip of branch: {this_dir_path}")
                     skip_dir_path_list.append(this_dir_path)
 
         for file_name in file_list:
@@ -295,3 +281,207 @@ def _is_filtered(name, include_glob_list, exclude_glob_list):
         or exclude_glob_list
         and any(fnmatch.fnmatch(name, g) for g in exclude_glob_list)
     )
+
+
+# =====================================================================================
+
+
+class ArgParser:
+    """An argparse.ArgumentParser populated with a standard set of command line
+    arguments for controlling the path generator from the command line.
+
+    The script that calls this function will typically add its own specific arguments by
+    making additional ``parser.add_argument()`` calls.
+
+    When creating the path_generator, simply pass ``parser.path_arg_dict`` to
+    `path_generator()`.
+
+    Example:
+        import d1_common.iter.path
+
+        parser = d1_common.iter.path.ArgParser(
+            __doc__,
+            # Set non-configurable values
+            include_glob_list=['*.py'],
+            return_entered_dir_paths=True,
+        )
+        # Add command specific arguments
+        parser.add_argument(...)
+        # Create the path_generator and iterate over the resulting paths
+        for p in d1_common.iter.path.path_generator(parser.path_arg_dict):
+            print(p)
+    """
+
+    # From Python 3.7, dicts keep their insertion order, so no list of keys in preferred
+    # order is needed.
+    ARG_DICT = {
+        "path_list": ("path", dict(nargs="+", help="File or directory path")),
+        "exclude_glob_list": (
+            "--exclude",
+            dict(
+                default=DEFAULT_EXCLUDE_GLOB_LIST,
+                nargs="+",
+                metavar="glob",
+                help="Exclude glob patterns",
+            ),
+        ),
+        "include_glob_list": (
+            "--include",
+            dict(nargs="+", metavar="glob", help="Exclude glob patterns"),
+        ),
+        "recursive": (
+            "--no-recursive",
+            dict(action="store_false", help="Do not search directories recursively"),
+        ),
+        "ignore_invalid": (
+            "--ignore-invalid",
+            dict(action="store_true", help="Ignore invalid paths"),
+        ),
+        "default_excludes": (
+            "--no-default-excludes",
+            dict(action="store_false", help="Don't add default glob exclude patterns"),
+        ),
+        "return_entered_dir_paths": (
+            "--return-entered-dir-paths",
+            dict(
+                action="store_true",
+                help="Return the paths of dirs that the generator enters",
+            ),
+        ),
+        "return_skipped_dir_paths": (
+            "--return-skipped-dir-paths",
+            dict(
+                action="store_true",
+                help="Return the paths of dirs that the generator enters",
+            ),
+        ),
+    }
+
+    def __init__(
+        self,
+        description_str=None,
+        # formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        **val_dict,
+    ):
+        """Create a ArgumentParser populated with a standard set of command line
+        arguments for controlling the path generator from the command line.
+
+        Args:
+            description_str: Description of the command
+                The description is included in the automatically generated help message.
+
+            formatter_class:
+                Modify the help message format. See the `argparse` module for available
+                Formatter classes.
+
+            fixed value overrides:
+                Passing any of these arguments causes provided value to be used when
+                instantiating the path generator, and the corresponding command line
+                argument to become hidden and unavailable.
+
+                fixed_path_list
+                fixed_exclude_glob_list
+                fixed_include_glob_list
+                fixed_recursive
+                fixed_ignore_invalid
+                fixed_default_excludes
+                fixed_return_entered_dir_paths
+                fixed_return_skipped_dir_paths
+
+            default value overrides:
+                Passing any of these arguments causes the provided value to be used
+                as the default. The corresponding command line argument is still
+                available and can be used to override the default value
+
+                default_path_list
+                default_exclude_glob_list
+                default_include_glob_list
+                default_recursive
+                default_ignore_invalid
+                default_default_excludes
+                default_return_entered_dir_paths
+                default_return_skipped_dir_paths
+        """
+        self._assert_valid_val_dict(val_dict)
+        self._val_dict = val_dict
+        self._parser = argparse.ArgumentParser(
+            description=description_str, formatter_class=formatter_class
+        )
+        self._add_parser_arguments()
+        self._args = None
+        self._path_arg_dict = None
+
+    def add_argument(self, *arg_list, **arg_dict):
+        """Add command specific arguments."""
+        self._parser.add_argument(*arg_list, **arg_dict)
+
+    @property
+    def args(self):
+        """Get complete command line arguments as Namespace object.
+
+        Returns:
+            Namespace: Complete command line arguments.
+
+            This is an exact representation of the parsed command line and does not
+            include any fixed value substitutions from the val_dict passed to
+            __init__().
+        """
+        if self._args is None:
+            self._args = self._parser.parse_args()
+        return self._args
+
+    @property
+    def path_arg_dict(self):
+        """Get command line arguments as dict suitable for passing to a
+        path_generator create call via argument unpacking.
+
+        Returns:
+            dict: Arguments valid for passing to path_generator() create call.
+
+            The dict will include any fixed value substitutions that were passed to
+            __init__() via the val_dict.
+        """
+        if self._path_arg_dict is None:
+            args_dict = vars(self._args)
+            self._path_arg_dict = {}
+            for k in ArgParser.ARG_DICT.keys():
+                if f"fixed_{k}" in self._val_dict:
+                    v = self._val_dict[f"fixed_{k}"]
+                else:
+                    v = args_dict["path" if k == "path_list" else k]
+                self._path_arg_dict[k] = v
+        return self._path_arg_dict
+
+    def _assert_valid_val_dict(self, val_dict):
+        for k in val_dict:
+            assert k.startswith("fixed_") or k.startswith(
+                "default_"
+            ), "Value overrides must start with 'fixed_' or 'default_'"
+            assert (
+                k.replace("fixed_", "").replace("default_", "")
+                in ArgParser.ARG_DICT.keys()
+            ), "Value overrides must correspond to path_generator() arguments"
+
+    def _add_parser_arguments(self):
+        group = self._parser.add_argument_group("Paths")
+
+        for arg_key in ArgParser.ARG_DICT.keys():
+            arg_name, param_dict = ArgParser.ARG_DICT[arg_key]
+            # Do not add parser arguments for values where a fixed override has been
+            # provided.
+            if f"fixed_{arg_key}" in self._val_dict:
+                continue
+            # Modify the default if a default override has been provided.
+            if f"default_{arg_key}" in self._val_dict:
+                param_dict["default"] = self._val_dict[f"default_{arg_key}"]
+            # Work around that dest cannot be specified for positional args in
+            # argparse.
+            if arg_key != "path_list":
+                param_dict["dest"] = arg_key
+            group.add_argument(arg_name, **param_dict)
+
+        self._parser.add_argument_group("Command")
+        self._parser.add_argument(
+            "--debug", action="store_true", help="Debug level logging"
+        )
