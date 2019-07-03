@@ -24,7 +24,6 @@ import optparse
 import sys
 import traceback
 
-import d1_cli.impl.check_dependencies
 import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
 import d1_cli.impl.session
@@ -48,9 +47,6 @@ import d1_common.util
 
 
 def main():
-    if not d1_cli.impl.check_dependencies.are_modules_importable():
-        raise Exception("Dependency check failed")
-
     print("DataONE Command Line Interface ({})".format(d1_cli.version.__version__))
 
     parser = optparse.OptionParser(

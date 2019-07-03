@@ -38,9 +38,6 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    if not check_dependencies.check_dependencies():
-        raise Exception("Dependency check failed")
-
     parser = optparse.OptionParser("%prog [options]")
     parser.add_option(
         "-v",
