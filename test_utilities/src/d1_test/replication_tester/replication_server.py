@@ -29,6 +29,7 @@ from . import test_object_generator
 
 import d1_common.const
 import d1_common.types.dataoneTypes_v1
+import d1_common.types.exceptions
 
 TEST_CN_NODE_ID = "urn:node:RepTestCN"
 TEST_MN_NODE_ID = "urn:node:RepTestMN"

@@ -19,11 +19,12 @@
 import pytest
 
 import d1_common.types
+import d1_common.types.exceptions
+
+import d1_client.baseclient_1_1
 
 import d1_test.d1_test_case
 import d1_test.mock_api.catch_all
-
-import d1_client.baseclient_1_1
 
 # import d1_test.mock_api.log_records
 # import d1_test.mock_api.all

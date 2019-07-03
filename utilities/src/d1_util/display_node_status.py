@@ -44,6 +44,7 @@ import d1_common.env
 import d1_common.types.exceptions
 
 import d1_client.cnclient
+import d1_client.mnclient_2_0
 
 # Config
 

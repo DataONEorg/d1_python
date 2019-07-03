@@ -29,11 +29,10 @@ import os
 import stat
 import time
 
-import fuse
-
 import d1_onedrive.impl
-
+import d1_onedrive.impl.cache_memory
 import d1_onedrive.impl.onedrive_exceptions
+import fuse
 
 import d1_common.date_time
 

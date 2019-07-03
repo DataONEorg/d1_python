@@ -32,12 +32,14 @@ import argparse
 import logging
 import time
 
-import d1_gmn.app.did
-import d1_gmn.app.management.commands.util.util
-
+import d1_common.types.exceptions
 import d1_common.util
 
 import django.core.management.base
+
+import d1_gmn.app.did
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.revision
 
 
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit

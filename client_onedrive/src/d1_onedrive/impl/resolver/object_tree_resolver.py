@@ -28,6 +28,8 @@ import logging
 from io import StringIO
 
 import d1_onedrive.impl
+import d1_onedrive.impl.attributes
+import d1_onedrive.impl.directory
 import d1_onedrive.impl.onedrive_exceptions
 import d1_onedrive.impl.resolver
 import d1_onedrive.impl.resolver.author
@@ -37,6 +39,7 @@ import d1_onedrive.impl.resolver.resource_map
 import d1_onedrive.impl.resolver.single
 import d1_onedrive.impl.resolver.taxa
 import d1_onedrive.impl.resolver.time_period
+import d1_onedrive.impl.util
 
 log = logging.getLogger(__name__)
 

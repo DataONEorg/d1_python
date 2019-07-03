@@ -25,8 +25,8 @@ import tempfile
 import time
 
 import psycopg2
-
-import d1_gmn.app.models
+import psycopg2.extensions
+import psycopg2.extras
 
 import d1_common.util
 
@@ -35,6 +35,8 @@ import d1_client.d1client
 import django.conf
 import django.core
 import django.core.management.base
+
+import d1_gmn.app.models
 
 single_instance_lock_file = None
 

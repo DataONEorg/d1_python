@@ -26,9 +26,8 @@ though has been modified in many respects.
 """
 
 import codecs
-
-# ===============================================================================
 import datetime
+import datetime.datetime
 import http.client
 import logging
 import random

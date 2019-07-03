@@ -20,6 +20,8 @@
 # stuck with a bit of a messy import section that isort and flake8 don't like.
 # isort:skip_file
 
+import requests.exceptions
+import d1_gmn.tests.gmn_test_case
 import bz2
 import contextlib
 import copy

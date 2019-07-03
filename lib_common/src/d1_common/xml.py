@@ -26,6 +26,7 @@ import xml.sax
 
 import pyxb
 
+import d1_common.type_conversions
 import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
 from d1_common.type_conversions import str_to_etree

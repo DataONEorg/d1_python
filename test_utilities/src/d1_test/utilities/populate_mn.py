@@ -26,6 +26,7 @@ import sys
 
 from . import test_object_generator
 
+import d1_common.const
 import d1_common.types.exceptions
 
 import d1_client.mnclient

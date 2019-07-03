@@ -35,6 +35,8 @@ import os
 import subprocess
 import time
 
+import Xlib.error
+
 import d1_dev.util
 
 try:

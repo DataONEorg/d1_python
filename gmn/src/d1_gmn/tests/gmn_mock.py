@@ -23,21 +23,23 @@ TODO: In Python 3, items() is a view, so must use d.copy.items(), etc.
 
 """
 
+import contextlib
 import functools
 import logging
 import os
 
-import contextlib
 import mock
 import pytest
 import requests
+import requests.exceptions
+
+import django.test
 
 import d1_gmn.tests
+import d1_gmn.tests.gmn_mock
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
-
-import django.test
 
 logger = logging.getLogger(__name__)
 

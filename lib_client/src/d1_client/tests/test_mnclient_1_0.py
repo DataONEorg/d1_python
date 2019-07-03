@@ -22,6 +22,7 @@ import responses
 
 import d1_test.d1_test_case
 import d1_test.mock_api.create
+import d1_test.test_files
 
 
 class TestMNClient(d1_test.d1_test_case.D1TestCase):

@@ -1,5 +1,4 @@
 # This work was created by participants in the DataONE project, and is
-# more information on DataONE, see our web site at http://dataone.org.
 #
 #   Copyright 2009-2019 DataONE
 #

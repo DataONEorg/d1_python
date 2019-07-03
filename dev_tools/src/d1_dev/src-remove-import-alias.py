@@ -31,7 +31,7 @@ import d1_dev.util
 import d1_common.iter.path
 import d1_common.util
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 processed_module_count = 0
 
@@ -97,22 +97,26 @@ def get_specified_file_path_list(args):
 
 
 def proc_module(args, format_path):
-    logger.info("")
-    logger.info("{}".format(format_path))
+    log.info("")
+    log.info("{}".format(format_path))
 
-    red = d1_dev.util.redbaron_module_path_to_tree(format_path)
+    try:
+        r = d1_dev.util.redbaron_module_path_to_tree(format_path)
+    except Exception as e:
+        log.fatal('RedBaron was unable to parse the file. error="{}"'.format(str(e)))
+        return
 
-    alias_dict = get_import_alias_dict(red)
+    alias_dict = get_import_alias_dict(r)
     print_alias("Import alias dict", alias_dict)
 
     if not alias_dict:
         return
 
-    replace_alias_with_full(red, alias_dict)
-    remove_import_alias(red)
+    replace_alias_with_full(r, alias_dict)
+    remove_import_alias(r)
 
     d1_dev.util.update_module_file(
-        red, format_path, show_diff=args.show_diff, dry_run=args.dry_run
+        r, format_path, show_diff=args.show_diff, dry_run=args.dry_run
     )
 
     # Limit for debug
@@ -123,12 +127,12 @@ def proc_module(args, format_path):
 
 
 def print_alias(head_str, alias_dict):
-    logger.info("")
-    logger.info("{}:".format(head_str))
+    log.info("")
+    log.info("{}:".format(head_str))
     for k, v in alias_dict.items():
-        logger.info("  {}: {}".format(k, ".".join(v)))
+        log.info("  {}: {}".format(k, ".".join(v)))
     if not alias_dict:
-        logger.info("  None")
+        log.info("  None")
 
 
 def remove_import_alias(red):

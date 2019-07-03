@@ -26,16 +26,6 @@ import os
 
 import pyxb
 
-import d1_gmn.app
-import d1_gmn.app.auth
-import d1_gmn.app.did
-import d1_gmn.app.model_util
-import d1_gmn.app.models
-import d1_gmn.app.object_format_cache
-import d1_gmn.app.revision
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.views.util
-
 import d1_common.const
 import d1_common.date_time
 import d1_common.types
@@ -47,6 +37,17 @@ import d1_common.wrap.access_policy
 import d1_common.xml
 
 import django.urls
+import django.urls.base
+
+import d1_gmn.app
+import d1_gmn.app.auth
+import d1_gmn.app.did
+import d1_gmn.app.model_util
+import d1_gmn.app.models
+import d1_gmn.app.object_format_cache
+import d1_gmn.app.revision
+import d1_gmn.app.sciobj_store
+import d1_gmn.app.views.util
 
 
 def archive_sciobj(pid):

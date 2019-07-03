@@ -33,14 +33,15 @@ return: QuerySet
 
 """
 
+import django.db.models
+
 import d1_gmn.app.auth
+import d1_gmn.app.db_filter
 import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.views.assert_db
 import d1_gmn.app.views.util
-
-import django.db.models
 
 
 def add_access_policy_filter(request, query, column_name):

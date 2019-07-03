@@ -37,7 +37,9 @@ import os
 import sys
 
 import requests
+import requests.packages.urllib3
 
+import d1_common.const
 import d1_common.env
 import d1_common.util
 

@@ -25,6 +25,7 @@ import sys
 import urllib.parse
 
 import OpenSSL
+import OpenSSL.crypto
 
 import d1_common.types.dataoneTypes_v1
 

@@ -40,15 +40,16 @@ import d1_common.util
 import d1_common.utils.filesystem
 import d1_common.xml
 
-import d1_test.pycharm
-import d1_test.test_files
-
 import d1_client.d1client
 import d1_client.util
 
 import django
 import django.core
 import django.core.management
+
+import d1_test.pycharm
+import d1_test.sample
+import d1_test.test_files
 
 MAX_LINE_WIDTH = 130
 

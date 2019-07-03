@@ -78,27 +78,31 @@ def main():
 
     logger.info(args.path)
 
+    return 0 if insert_import(args.path, args.dotted_name, args.show_diff, args.dry_run) else 1
+
+
+def insert_import(module_path, dotted_name, show_diff, dry_run):
     try:
-        r = d1_dev.util.redbaron_module_path_to_tree(args.path)
+        r = d1_dev.util.redbaron_module_path_to_tree(module_path)
     except Exception as e:
         logger.fatal('RedBaron was unable to parse the file. error="{}"'.format(str(e)))
-        return 1
+        return False
 
     try:
         d1_dev.util.update_module_file(
-            insert_import(r, args.dotted_name),
-            args.path,
-            show_diff=args.show_diff,
-            dry_run=args.dry_run,
+            insert_import_node(r, dotted_name),
+            module_path,
+            show_diff=show_diff,
+            dry_run=dry_run,
         )
     except IOError as e:
         logger.fatal('Unable to update module. error="{}"'.format(str(e)))
-        return 1
+        return False
 
-    return sort_imports(args.path)
+    return sort_imports(module_path)
 
 
-def insert_import(r, dotted_name):
+def insert_import_node(r, dotted_name):
     new_r = redbaron.NodeList()
     first = True
     for v in r.node_list:
@@ -118,8 +122,8 @@ def run_cmd(*cmd_list):
         subprocess.check_call(cmd_list)
     except subprocess.CalledProcessError as e:
         print("Failed: {}".format(str(e)))
-        return 1
-    return 0
+        return False
+    return True
 
 
 if __name__ == "__main__":

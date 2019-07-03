@@ -19,17 +19,18 @@
 
 import xml.sax
 
-import d1_gmn.app
-import d1_gmn.app.did
-import d1_gmn.app.models
-import d1_gmn.app.sciobj_store
-
 import d1_common.const
 import d1_common.resource_map
 import d1_common.types.exceptions
 import d1_common.xml
 
 import django.conf
+
+import d1_gmn.app
+import d1_gmn.app.did
+import d1_gmn.app.models
+import d1_gmn.app.resource_map
+import d1_gmn.app.sciobj_store
 
 # def assert_map_is_valid_for_create_by_str(resource_map_xml):
 #   resource_map = parse_resource_map_from_str(resource_map_xml)

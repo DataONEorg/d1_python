@@ -34,6 +34,7 @@ import re
 import sys
 
 import requests
+import requests.packages.urllib3
 
 import d1_common.checksum
 import d1_common.const

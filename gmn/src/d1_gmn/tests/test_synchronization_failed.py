@@ -22,11 +22,12 @@
 import pytest
 import responses
 
-import d1_gmn.tests.gmn_mock
-import d1_gmn.tests.gmn_test_case
-
 import d1_common
 import d1_common.types
+import d1_common.types.exceptions
+
+import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_test_case
 
 import d1_test.instance_generator.identifier
 

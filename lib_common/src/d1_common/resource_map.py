@@ -51,6 +51,7 @@ Note:
 import logging
 
 import rdflib
+import rdflib.term
 import rdflib.tools.rdf2dot
 
 import d1_common.const

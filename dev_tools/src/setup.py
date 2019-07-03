@@ -50,6 +50,8 @@ def main():
             "pip >= 19.1.1",
             "redbaron >= 0.9.2",
             "python-xlib",
+            'black',
+            'isort'
         ],
         setup_requires=["setuptools_git >= 1.1"],
         classifiers=[

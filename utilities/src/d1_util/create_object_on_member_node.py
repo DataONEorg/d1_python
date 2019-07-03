@@ -46,11 +46,11 @@ import sys
 import d1_scimeta.util
 
 import d1_common.const
-import d1_common.date_time
-import d1_common.env
-import d1_common.types.dataoneTypes
+
+
+
 import d1_common.types.exceptions
-import d1_common.xml
+
 
 import d1_client.command_line
 import d1_client.d1client

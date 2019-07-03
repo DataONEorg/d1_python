@@ -25,10 +25,11 @@ objects on either side of the deleted object with each other
 import pytest
 import responses
 
+import d1_common
+import d1_common.types.exceptions
+
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-
-import d1_common
 
 
 class TestDeleteRevision(d1_gmn.tests.gmn_test_case.GMNTestCase):

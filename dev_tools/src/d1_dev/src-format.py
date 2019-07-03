@@ -18,7 +18,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
 import logging
 import multiprocessing
 import os
@@ -34,10 +33,7 @@ import d1_common.util
 
 DEFAULT_WORKER_COUNT = 16
 
-# These are applied in addition to the default exclude list in the path iterator.
-DEFAULT_EXCLUDE_GLOB_LIST = ["_ignore/"]
-
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def main():
@@ -46,36 +42,17 @@ def main():
     Black + isort + docformatter.
 
     """
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
-    parser.add_argument("path", nargs="+", help="File or directory path")
-    parser.add_argument(
-        "--exclude",
-        nargs="+",
-        default=DEFAULT_EXCLUDE_GLOB_LIST,
-        help="Exclude glob patterns",
-    )
-    parser.add_argument(
-        "--no-recursive",
-        dest="recursive",
-        action="store_false",
-        help="Search directories recursively",
-    )
-    parser.add_argument(
-        "--no-default-excludes",
-        dest="default_excludes",
-        action="store_false",
-        help="Don't add default glob exclude patterns",
+    parser = d1_common.iter.path.ArgParser(
+        __doc__,
+        default_exclude_glob_list=['_ignore/'],
+        fixed_include_glob_list = ['*.py'],
+        fixed_return_entered_dir_paths = True,
     )
     parser.add_argument(
         "--include-untracked",
         "-u",
         action="store_true",
         help="Also process files not tracked by git",
-    )
-    parser.add_argument(
-        "--ignore-invalid", action="store_true", help="Ignore invalid paths"
     )
     parser.add_argument(
         "--pycharm", action="store_true", help="Enable PyCharm integration"
@@ -85,17 +62,15 @@ def main():
         type=int,
         action="store",
         default=DEFAULT_WORKER_COUNT,
-        help="Max number workers",
+        help="Max number of workers",
     )
-    parser.add_argument("--debug", action="store_true", help="Debug level logging")
-
-    args = parser.parse_args()
+    args = parser.args
     d1_common.util.log_setup(args.debug)
 
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     repo = git.Repo(repo_path)
 
-    specified_file_path_set = set(get_specified_file_path_list(args))
+    specified_file_path_set = set(get_specified_file_path_list(parser.path_arg_dict))
 
     if args.include_untracked:
         format_path_set = specified_file_path_set
@@ -106,24 +81,16 @@ def main():
     format_all(args, sorted(format_path_set))
 
 
-def get_specified_file_path_list(args):
+def get_specified_file_path_list(path_arg_dict):
     specified_file_path_list = [
         os.path.realpath(p)
-        for p in d1_common.iter.path.path_generator(
-            path_list=args.path,
-            include_glob_list=["*.py"],
-            exclude_glob_list=args.exclude,
-            recursive=args.recursive,
-            ignore_invalid=args.ignore_invalid,
-            default_excludes=args.default_excludes,
-            return_entered_dir_paths=True,
-        )
+        for p in d1_common.iter.path.path_generator(**path_arg_dict)
     ]
     return specified_file_path_list
 
 
 def format_all(args, format_path_list):
-    logger.info("Creating pool of {} workers".format(args.workers))
+    log.info("Creating pool of {} workers".format(args.workers))
     pool = multiprocessing.Pool(processes=args.workers)
 
     for format_path in format_path_list:
@@ -152,15 +119,14 @@ def format_single(_args, format_path):
 
 
 def run_cmd(*cmd_list):
-    print("Running command: {}".format(" ".join(cmd_list)))
+    log.info("Running command: {}".format(" ".join(cmd_list)))
     py_bin_dir_path = os.path.split(sys.executable)[0]
     cmd_list = list(cmd_list)
     cmd_list[0] = os.path.join(py_bin_dir_path, cmd_list[0])
     try:
         subprocess.check_call(cmd_list)
     except subprocess.CalledProcessError as e:
-        print("Failed: {}".format(str(e)))
-        raise
+        log.error("Failed: {}".format(str(e)))
 
 
 if __name__ == "__main__":

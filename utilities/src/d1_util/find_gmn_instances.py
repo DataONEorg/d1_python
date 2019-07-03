@@ -36,9 +36,13 @@ import json
 import logging
 import sys
 
-import bs4
 import requests
+import requests.exceptions
+import requests.packages.urllib3
 
+import bs4
+
+import d1_common.const
 import d1_common.env
 import d1_common.types.exceptions
 import d1_common.url

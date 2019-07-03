@@ -26,21 +26,22 @@ parser.formatter_class = argparse.RawDescriptionHelpFormatter
 import argparse
 import logging
 
-import d1_gmn.app.event_log
-
-# noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.models
-import d1_gmn.app.sysmeta
-
 import d1_common.types
+import d1_common.types.exceptions
 import d1_common.util
+import d1_common.xml
 
 import d1_client.cnclient
 
 import django.conf
 import django.core.management.base
 from django.db import transaction
+
+import d1_gmn.app.did
+import d1_gmn.app.event_log
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.models
+import d1_gmn.app.sysmeta
 
 
 # noinspection PyClassHasNoInit,PyProtectedMember

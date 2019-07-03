@@ -24,6 +24,7 @@ import urllib.parse
 
 import requests
 import requests.adapters
+import requests.packages.urllib3
 import requests_toolbelt
 import requests_toolbelt.utils.dump
 

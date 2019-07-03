@@ -28,6 +28,7 @@
 """
 
 import xml
+import xml.parsers.expat
 
 import pytest
 

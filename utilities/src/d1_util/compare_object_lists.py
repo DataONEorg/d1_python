@@ -35,6 +35,7 @@ import argparse
 import logging
 import sys
 
+import d1_common.const
 import d1_common.env
 
 import d1_client.cnclient_2_0

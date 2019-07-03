@@ -39,6 +39,7 @@ import re
 
 # 3rd party
 import pyzotero
+import pyzotero.zotero
 
 # App
 import d1_onedrive.impl.onedrive_exceptions

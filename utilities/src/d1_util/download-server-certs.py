@@ -57,6 +57,7 @@ import sys
 import requests
 
 import d1_common.cert.x509
+import d1_common.const
 import d1_common.env
 import d1_common.util
 import d1_common.xml

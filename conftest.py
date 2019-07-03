@@ -24,6 +24,13 @@ import tempfile
 import mock
 import pytest
 
+import d1_client.cnclient_1_2
+import d1_client.cnclient_2_0
+import d1_client.mnclient_1_2
+import d1_client.mnclient_2_0
+
+import django.db
+
 import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
@@ -31,13 +38,6 @@ import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 import d1_test.sample
 import d1_test.test_files
-
-import d1_client.cnclient_1_2
-import d1_client.cnclient_2_0
-import d1_client.mnclient_1_2
-import d1_client.mnclient_2_0
-
-import django.db
 
 if not "TRAVIS" in os.environ:
     import d1_test.pycharm

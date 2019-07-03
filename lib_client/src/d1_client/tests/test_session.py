@@ -24,16 +24,17 @@ import logging
 import freezegun
 import pytest
 import requests
+import requests.exceptions
 import responses
 
 import d1_common.logging_context
+
+import d1_client.session
 
 import d1_test.d1_test_case
 import d1_test.mock_api.get
 import d1_test.mock_api.post
 import d1_test.sample
-
-import d1_client.session
 
 logger = logging.getLogger(__name__)
 

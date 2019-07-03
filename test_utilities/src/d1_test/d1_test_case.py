@@ -32,11 +32,13 @@ import sys
 import tempfile
 import traceback
 import xml
+import xml.sax
 
 import decorator
 import mock
 import psutil
 import psycopg2
+import psycopg2.extensions
 import pyxb
 
 import d1_common

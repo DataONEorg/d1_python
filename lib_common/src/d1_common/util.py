@@ -17,6 +17,7 @@
 # limitations under the License.
 """General utilities often needed by DataONE clients and servers."""
 import collections
+import collections.abc
 import contextlib
 import datetime
 import email.message

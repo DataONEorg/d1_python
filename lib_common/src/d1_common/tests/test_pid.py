@@ -23,6 +23,7 @@ import xml.sax
 import pyxb
 
 import d1_common.types
+import d1_common.types.dataoneTypes
 
 import d1_test.d1_test_case
 

@@ -26,6 +26,7 @@ import os
 import sys
 
 import d1_onedrive
+import d1_onedrive.d1_onedrive
 
 
 def main():
