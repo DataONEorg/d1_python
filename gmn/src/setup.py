@@ -50,6 +50,7 @@ def main():
             "requests >= 2.22.0",
         ],
         setup_requires=["setuptools_git >= 1.1"],
+        entry_points={"console_scripts": "d1-gmn = d1_gmn.manage:main"},
         classifiers=[
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
