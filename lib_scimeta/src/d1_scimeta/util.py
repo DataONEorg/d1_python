@@ -34,7 +34,17 @@ XSLT_TRANSFORM_DICT = {}
 NS_MAP = {
     "xs": "http://www.w3.org/2001/XMLSchema",
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "gco": "http://www.isotc211.org/2005/gco",
+    "gmd": "http://www.isotc211.org/2005/gmd",
+    "gmi": "http://www.isotc211.org/2005/gmi",
+    "gml": "http://www.opengis.net/gml/3.2",
+    "mx": "http://www.isotc211.org/2005/gmx",
+    "gmx": "http://www.isotc211.org/2005/gmx",
+    "ns7": "http://www.isotc211.org/2005/srv",
+    "srv": "http://www.isotc211.org/2005/srv",
+    "xlink": "http://www.w3.org/1999/xlink",
 }
+
 
 XML_SCHEMA_NS = "http://www.w3.org/2001/XMLSchema"
 
@@ -366,7 +376,7 @@ def load_xml_file_to_tree(xml_path):
     return parse_xml_bytes(load_bytes_from_file(xml_path), xml_path)
 
 
-def parse_xml_bytes(xml_bytes, xml_path):
+def parse_xml_bytes(xml_bytes, xml_path=None):
     """Parse XML bytes to tree.
 
     Passing in the path to the file enables relative imports to work.
@@ -558,7 +568,7 @@ def apply_xslt_transform(xml_tree, xslt_path):
             )
         except SciMetaError as e:
             raise SciMetaError(
-                'Unable to create XSLT processor: {}: {}'.format(xslt_path, str(e))
+                "Unable to create XSLT processor: {}: {}".format(xslt_path, str(e))
             )
 
     try:
@@ -588,9 +598,7 @@ def create_lxml_obj(xml_tree, lxml_obj_class):
     try:
         lxml_obj = lxml_obj_class(xml_tree)
     except lxml.etree.LxmlError as e:
-        raise SciMetaError(
-                get_error_log_as_str(e)
-        )
+        raise SciMetaError(get_error_log_as_str(e))
     if lxml_obj.error_log:
         log.warning(get_error_log_as_str(lxml_obj))
     return lxml_obj
