@@ -2,7 +2,7 @@
 # jointly copyrighted by participating institutions in DataONE. For
 # more information on DataONE, see our web site at http://dataone.org.
 #
-#   Copyright 2009-2017 DataONE
+#   Copyright 2009-2019 DataONE
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,29 +16,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# This work was created by participants in the DataONE project, and is
-# jointly copyrighted by participating institutions in DataONE. For
-# more information on DataONE, see our web site at http://dataone.org.
-#
-#   Copyright 2010, 2011
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
 """Native objects for holding DataONE Exceptions.
 
-- Wrap the PyXB client with Exception based classes
-- PyXB based XML serialization and deserialization
+DataONEException and its subclasses are the primary carriers of exceptions in d1_python.
 
-- Add deserialize to string and HTTP headers
+Serialize and deserialize from/to PyXB, clear text, HTTP headers.
 
 Notes:
 
@@ -78,7 +60,7 @@ import traceback
 
 import d1_common.type_conversions
 import d1_common.xml
-from d1_common.types import dataoneErrors
+import d1_common.types.dataoneErrors
 
 
 def xml_is_dataone_exception(xml_str):
@@ -91,13 +73,11 @@ def xml_is_dataone_exception(xml_str):
 
 def pyxb_is_dataone_exception(obj_pyxb):
     """Return True if PyXB object is a valid DataONE Exception."""
-    return isinstance(obj_pyxb, DataONEException)
+    return isinstance(obj_pyxb, d1_common.types.dataoneErrors.DataONEException)
 
 
 def deserialize(dataone_exception_xml):
     """Deserialize a DataONE Exception XML doc."""
-    # logging.debug('dataone_exception_xml="{}"'
-    # .format(d1_common.xml.pretty_xml(dataone_exception_xml)))
     try:
         dataone_exception_pyxb = d1_common.xml.deserialize_d1_exception(
             dataone_exception_xml
@@ -388,7 +368,7 @@ class DataONEException(Exception):
         may be included in a DataONE Exception.
 
         """
-        dataone_exception_pyxb = dataoneErrors.error()
+        dataone_exception_pyxb = d1_common.types.dataoneErrors.error()
         dataone_exception_pyxb.name = self.__class__.__name__
         dataone_exception_pyxb.errorCode = self.errorCode
         dataone_exception_pyxb.detailCode = self.detailCode

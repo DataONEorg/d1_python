@@ -89,7 +89,7 @@ def read_utf8_xml(stream_obj):
     except UnicodeDecodeError as e:
         raise d1_common.types.exceptions.ServiceFailure(
             0,
-            'XML stream encoding is invalid. Must be utf-8. error="{}"'.format(str(e)),
+            'XML stream encoding is invalid. Must be UTF-8. error="{}"'.format(str(e)),
         )
 
 
@@ -98,7 +98,7 @@ def deserialize(xml_file):
     try:
         xml_str = read_utf8_xml(xml_file)
     except d1_common.types.exceptions.ServiceFailure as e:
-        raise d1_common.types.exceptions.InvalidRequest(str(e))
+        raise d1_common.types.exceptions.InvalidRequest(0, str(e))
     try:
         return d1_common.xml.deserialize(xml_str)
     except ValueError as e:

@@ -20,9 +20,21 @@
 import logging
 import uuid
 
+import d1_common.checksum
+import d1_common.const
+import d1_common.date_time
+import d1_common.types.exceptions
+import d1_common.xml
+
+import d1_client.cnclient
+
+import django.conf
+import django.http
+
 import d1_gmn.app.auth
 import d1_gmn.app.db_filter
 import d1_gmn.app.delete
+import d1_gmn.app.did
 import d1_gmn.app.event_log
 import d1_gmn.app.local_replica
 import d1_gmn.app.models
@@ -39,17 +51,6 @@ import d1_gmn.app.views.decorators
 import d1_gmn.app.views.headers
 import d1_gmn.app.views.slice
 import d1_gmn.app.views.util
-
-import d1_common.checksum
-import d1_common.const
-import d1_common.date_time
-import d1_common.types.exceptions
-import d1_common.xml
-
-import d1_client.cnclient
-
-import django.conf
-import django.http
 
 # ==============================================================================
 # Secondary dispatchers (resolve on HTTP method)
@@ -280,26 +281,42 @@ def get_object_list(request):
 def post_error(request):
     """MNRead.synchronizationFailed(session, message)"""
     d1_gmn.app.views.assert_db.post_has_mime_parts(request, (("file", "message"),))
+    d1_gmn.app.views.util.assert_xml_file_is_under_size_limit(request.FILES["message"])
+    dataone_exc_xml = d1_gmn.app.views.util.read_utf8_xml(request.FILES["message"])
     try:
-        synchronization_failed = d1_gmn.app.views.util.deserialize(
-            request.FILES["message"]
-        )
+        # The only valid message is a DataONEException XML doc, from which a native
+        # DataONEException based object is created.
+        dataone_exc = d1_common.types.exceptions.deserialize(dataone_exc_xml)
     except d1_common.types.exceptions.DataONEException as e:
-        # In v1, MNRead.synchronizationFailed() cannot return an InvalidRequest
-        # to the CN. Can only log the issue and return a 200 OK.
+        # MNRead.synchronizationFailed() cannot return an InvalidRequest to the CN. Can
+        # only log the issue and return a 200 OK.
         logging.error(
             "Received notification of synchronization error from CN but was unable "
             "to deserialize the DataONE Exception passed by the CN. "
-            'message="{}" error="{}"'.format(
-                d1_gmn.app.views.util.read_utf8_xml(request.FILES["message"]), str(e)
+            'received_exception_xml="{}" deserialize_error="{}"'.format(
+                dataone_exc_xml, e.description
             )
         )
     else:
-        logging.error(
-            "Received notification of synchronization error from CN:\n{}".format(
-                str(synchronization_failed)
+        # Assume that synchronizationFailed messages are always for PIDs, never SIDs.
+        pid = dataone_exc.identifier
+        if d1_gmn.app.did.is_existing_object(pid):
+            d1_gmn.app.event_log.log_synchronization_failed_event(pid, request)
+            logging.error(
+                "Received notification of synchronization error from CN for an "
+                "existing local Science Object. synchronization_failed added "
+                'to event log for the object. pid="{}" synchronization_error="{}"'.format(
+                    dataone_exc.identifier, dataone_exc.serialize_to_display()
+                )
             )
-        )
+        else:
+            logging.error(
+                "Received notification of synchronization error from CN for a "
+                "object not known to this Member Node. "
+                'pid="{}" synchronization_error="{}"'.format(
+                    dataone_exc.identifier, dataone_exc.serialize_to_display()
+                )
+            )
     return d1_gmn.app.views.util.http_response_with_boolean_true_type()
 
 

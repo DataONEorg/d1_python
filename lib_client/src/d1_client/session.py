@@ -339,7 +339,6 @@ class Session(object):
 
     def _send_mmp_stream(self, method, rest_path_list, fields, **kwargs):
         url = self._prep_url(rest_path_list)
-
         mmp_stream = requests_toolbelt.MultipartEncoder(
             fields=fields,
             boundary=(kwargs.get("headers", None) or {}).pop(

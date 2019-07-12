@@ -18,67 +18,103 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Test MNStorage.synchronizationFailed()"""
-
+import freezegun
+import mock
 import pytest
 import responses
 
 import d1_common
 import d1_common.types
 import d1_common.types.exceptions
+import d1_common.xml
 
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 
+import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 
 
+@d1_test.d1_test_case.reproducible_random_decorator("TestSynchronizationFailed")
+@freezegun.freeze_time("1945-04-02")
 class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
-    def test_1000(self):
-        """MNRead.synchronizationFailed() with valid error returns 200 OK."""
-
-        def test(client):
-            # This test does not test if GMN actually does anything with the message
-            # passed to the synchronizationFailed() method. There is currently no way
-            # for the test to reach that information.
-            pid = d1_test.instance_generator.identifier.generate_pid()
-            msg = "TEST MESSAGE FROM GMN_INTEGRATION_TESTER"
-            exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
-            client.synchronizationFailed(exception)
-
-        with d1_gmn.tests.gmn_mock.disable_auth():
-            test(self.client_v1)
-            test(self.client_v2)
-
-    @responses.activate
-    def test_1010(self):
-        """MNRead.synchronizationFailed() from untrusted subject raises
+    def test_1000(self, gmn_client_v1_v2):
+        """MNRead.synchronizationFailed(): Call from untrusted subject raises
         NotAuthorized."""
-
-        def test(client):
-            pid = d1_test.instance_generator.identifier.generate_pid()
-            msg = "TEST MESSAGE FROM GMN_INTEGRATION_TESTER"
-            exception = d1_common.types.exceptions.SynchronizationFailed(0, msg, pid)
-            with d1_gmn.tests.gmn_mock.set_auth_context(["unk_subj"], ["trusted_subj"]):
-                with pytest.raises(d1_common.types.exceptions.NotAuthorized):
-                    client.synchronizationFailed(exception)
-
-        test(self.client_v1)
-        test(self.client_v2)
+        pid = d1_test.instance_generator.identifier.generate_pid()
+        exception = d1_common.types.exceptions.SynchronizationFailed(
+            0, "valid error message", identifier=pid
+        )
+        with d1_gmn.tests.gmn_mock.set_auth_context(["unk_subj"], ["trusted_subj"]):
+            with pytest.raises(d1_common.types.exceptions.NotAuthorized):
+                assert gmn_client_v1_v2.synchronizationFailed(exception)
 
     @responses.activate
-    def test_1020(self):
-        """MNRead.synchronizationFailed() with invalid XML document returns 200 OK."""
+    def test_1010(self, gmn_client_v1_v2, caplog):
+        """MNRead.synchronizationFailed(): XML not well formed"""
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            exception_mock = mock.Mock()
+            exception_mock.serialize_to_transport = mock.Mock(
+                return_value=b"invalid xml doc"
+            )
+            assert gmn_client_v1_v2.synchronizationFailed(exception_mock)
+        assert "deserialize_error" in d1_test.d1_test_case.get_caplog_text(caplog)
+        assert "syntax error" in d1_test.d1_test_case.get_caplog_text(caplog)
 
-        def test(client):
-            # noinspection PyClassHasNoInit
-            class InvalidException(Exception):
-                def encode(self, *a, **b):
-                    return b"INVALID SERIALIZED DATAONE EXCEPTION"
+    @responses.activate
+    def test_1020(self, gmn_client_v1_v2, caplog):
+        """MNRead.synchronizationFailed(): XML well formed but not an DataONEException
+        XML type
+        """
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            exception_mock = mock.Mock()
+            exception_mock.serialize_to_transport = mock.Mock(
+                return_value=self.test_files.load_xml_to_bytes("logEntry_v2_0.xml")
+            )
+            assert gmn_client_v1_v2.synchronizationFailed(exception_mock)
+        assert "deserialize_error" in d1_test.d1_test_case.get_caplog_text(caplog)
+        assert (
+            "Must be a XML DataONEException type"
+            in d1_test.d1_test_case.get_caplog_text(caplog)
+        )
 
-            with d1_gmn.tests.gmn_mock.disable_auth():
-                result_bool = client.synchronizationFailed(InvalidException())
-                assert result_bool
+    @responses.activate
+    def test_1030(self, gmn_client_v1_v2, caplog):
+        """MNRead.synchronizationFailed(): Valid XML DataONEException but referencing
+        an unknown PID.
+        """
+        unknown_pid = d1_test.instance_generator.identifier.generate_pid()
+        exception = d1_common.types.exceptions.SynchronizationFailed(
+            0, "valid error message", identifier=unknown_pid
+        )
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            assert gmn_client_v1_v2.synchronizationFailed(exception)
+        assert (
+            "object not known to this Member Node"
+            in d1_test.d1_test_case.get_caplog_text(caplog)
+        )
 
-        test(self.client_v1)
-        test(self.client_v2)
+    @responses.activate
+    def test_1040(self, gmn_client_v1_v2, caplog):
+        """MNRead.synchronizationFailed(): Valid XML DataONEException referencing
+        existing PID.
+        """
+        with d1_gmn.tests.gmn_mock.disable_auth():
+            pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
+                self.client_v2, permission_list=[(["public"], ["read"])]
+            )
+            exception = d1_common.types.exceptions.SynchronizationFailed(
+                0, "valid error message", identifier=pid
+            )
+            assert gmn_client_v1_v2.synchronizationFailed(exception)
+            log_pyxb = gmn_client_v1_v2.getLogRecords(pidFilter=pid)
+            self.sample.assert_equals(log_pyxb, "valid_and_existing", gmn_client_v1_v2)
+        assert (
+            "synchronization_failed added to event log"
+            in d1_test.d1_test_case.get_caplog_text(caplog)
+        )
+        assert (
+            "<event>synchronization_failed</event>"
+            in d1_common.xml.serialize_to_xml_str(log_pyxb)
+        )

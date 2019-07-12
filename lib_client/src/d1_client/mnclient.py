@@ -79,13 +79,13 @@ class MemberNodeClient(d1_client.baseclient.DataONEBaseClient):
 
     # MNRead.synchronizationFailed(session, message) → Boolean
     # https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNRead.synchronizationFailed
-
-    def synchronizationFailedResponse(self, message, vendorSpecific=None):
-        mmp_dict = {"message": ("message", message)}
+    #
+    def synchronizationFailedResponse(self, dataone_exception, vendorSpecific=None):
+        mmp_dict = {"message": ("message", dataone_exception.serialize_to_transport())}
         return self.POST("error", fields=mmp_dict, headers=vendorSpecific)
 
-    def synchronizationFailed(self, message, vendorSpecific=None):
-        response = self.synchronizationFailedResponse(message, vendorSpecific)
+    def synchronizationFailed(self, dataone_exception, vendorSpecific=None):
+        response = self.synchronizationFailedResponse(dataone_exception, vendorSpecific)
         return self._read_boolean_response(response)
 
     # ============================================================================

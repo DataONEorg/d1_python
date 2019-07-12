@@ -29,6 +29,7 @@ import pyxb
 import d1_common.type_conversions
 import d1_common.types.dataoneErrors
 import d1_common.types.dataoneTypes
+import d1_common.types.exceptions
 from d1_common.type_conversions import str_to_etree
 
 logger = logging.getLogger(__name__)
@@ -74,7 +75,10 @@ def deserialize_d1_exception(doc_xml):
     Returns:   DataONEException object
 
     """
-    return deserialize(doc_xml, pyxb_binding=d1_common.types.dataoneErrors)
+    doc_pyxb = deserialize(doc_xml, pyxb_binding=d1_common.types.dataoneErrors)
+    if not d1_common.types.exceptions.pyxb_is_dataone_exception(doc_pyxb):
+        raise ValueError("Must be a XML DataONEException type")
+    return doc_pyxb
 
 
 def serialize_gen(

@@ -67,7 +67,7 @@ class TestSession(d1_test.d1_test_case.D1TestCase):
 
     @responses.activate
     def test_1000(self):
-        """HTTP GET is successful Mocked GET returns object bytes uniquely tied to given
+        """HTTP GET is successful. Mocked GET returns object bytes uniquely tied to given
         PID."""
         a_pid = "pid_hy7tf83453y498"
         b_pid = "pid_09y68gh73n60"
