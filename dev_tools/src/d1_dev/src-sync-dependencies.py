@@ -154,8 +154,10 @@ def update_dep_str(str_node, d1_version):
         )
     else:
         new_version_str = get_package_version(package_name, d1_version)
-        if old_version_str != new_version_str:
-            str_node.value = "'{} >= {}'".format(package_name, new_version_str)
+        old_str_node_str = str_node.value
+        new_str_node_str = '"{} >= {}"'.format(package_name, new_version_str)
+        if old_str_node_str != new_str_node_str:
+            str_node.value = new_str_node_str
             logging.debug(
                 'Dependency updated. package="{}" old="{}" new="{}"'.format(
                     package_name, old_version_str, new_version_str

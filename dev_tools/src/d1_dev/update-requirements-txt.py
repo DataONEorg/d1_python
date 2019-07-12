@@ -14,9 +14,6 @@ REQUIREMENTS_FILENAME = "requirements.txt"
 # Modules in my dev environment that are not required by the stack
 
 PACKAGE_EXCLUDE_REGEX_LIST = {
-    "beautifulsoup",
-    "black",
-    "bs4",
     "dataone.*",
     "ete3",
     "Flask",

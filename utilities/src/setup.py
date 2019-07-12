@@ -27,7 +27,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.util",
-        version='3.4.5',
+        version='3.4.6',
         description="DataONE Utilities and Examples",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -35,7 +35,13 @@ def main():
         license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
-        install_requires=['dataone.common >= 3.4.5', 'dataone.libclient >= 3.4.5'],
+        install_requires=[
+            "dataone.common >= 3.4.6",
+            "dataone.libclient >= 3.4.6",
+            "beautifulsoup4 >= 4.7.1",
+            "aiohttp >= 3.5.4",
+            "requests >= 2.22.0",
+        ],
         setup_requires=["setuptools_git >= 1.1"],
         entry_points={"console_scripts": gen_console_scripts()},
         classifiers=[
@@ -50,12 +56,13 @@ def main():
 
 
 def gen_console_scripts():
+    d1_util_path = os.path.join(os.path.split(__file__)[0], 'd1_util')
     return [
         "d1-{} = d1_util.{}:main".format(
-            n.replace('_', '-').replace('.py', ''),
+            os.path.split(n)[1].replace('_', '-').replace('.py', ''),
             n.replace('.py', '')
         )
-        for n in os.listdir('./d1_util/') if n.endswith('.py')
+        for n in os.listdir(d1_util_path) if n.endswith('.py') and not n.startswith('_')
     ]
 
 

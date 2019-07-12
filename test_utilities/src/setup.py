@@ -26,7 +26,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.test_utilities",
-        version='3.4.5',
+        version='3.4.6',
         description="Utilities for testing DataONE infrastructure components",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -35,10 +35,10 @@ def main():
         packages=setuptools.find_packages(),
         include_package_data=True,
         install_requires=[
-            'dataone.libclient >= 3.4.5',
+            "dataone.libclient >= 3.4.6",
             #
-            'coverage >= 4.5.3',
-            'coveralls >= 1.8.1',
+            "coverage >= 4.5.3",
+            "coveralls >= 1.8.1",
             "decorator >= 4.4.0",
             "freezegun >= 0.3.12",
             "gitpython >= 2.1.11",
@@ -47,12 +47,12 @@ def main():
             "posix-ipc >= 1.0.4",
             "psutil >= 5.6.3",
             "pyasn1 >= 0.4.5",
-            'pytest >= 5.0.0',
+            "pytest >= 5.0.0",
             "pytest-cov >= 2.7.1",
-            'pytest-django >= 3.5.1',
+            "pytest-django >= 3.5.1",
             "pytest-forked >= 1.0.2",
             "pytest-random-order >= 1.0.4",
-            'pytest-xdist >= 1.29.0',
+            "pytest-xdist >= 1.29.0",
             "pyxb >= 1.2.6",
             "rdflib >= 4.2.2",
             "requests >= 2.22.0",
