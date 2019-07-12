@@ -332,7 +332,7 @@
       "property_list": []
     }
   },
-  "_last_refresh_timestamp": "2019-06-04 01:53:31.599770+00:00",
+  "_last_refresh_timestamp": "2019-07-11 23:17:49.987001+00:00",
   "anvl/erc-v02": {
     "extension": ".anvl",
     "format_name": "Kernel Metadata and Electronic Resource Citations (ERCs), 2010.05.13",
@@ -591,6 +591,24 @@
     "format_type": "DATA",
     "media_type": {
       "name": "application/x-gzip",
+      "property_list": []
+    }
+  },
+  "application/x-hdf": {
+    "extension": ".h4",
+    "format_name": "Hierarchical Data Format version 4 (HDF4)",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/x-hdf",
+      "property_list": []
+    }
+  },
+  "application/x-hdf5": {
+    "extension": ".h5",
+    "format_name": "Hierarchical Data Format version 5 (HDF5)",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/x-hdf5",
       "property_list": []
     }
   },
