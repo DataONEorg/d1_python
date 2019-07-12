@@ -118,6 +118,7 @@ body {
   padding-top: 2em;
   font-size: .8em;
   color: gray;
+  align-items: flex-start;
 }
 
 #d1-type {
@@ -177,6 +178,11 @@ body {
 
 .nav-outer > a {
   text-align: center;
+}
+
+.round-button-group {
+  display: inline-flex;
+  padding-left: .5em;
 }
 
 .round-button, .nav-button {

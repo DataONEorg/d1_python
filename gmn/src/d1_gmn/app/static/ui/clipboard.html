@@ -20,18 +20,33 @@ click the new Copy button in order to actualy complete the copy.
 
 <html xml:lang="en" lang="en">
 
-{% load static %}
 
 <head>
+  <meta charset="UTF-8" content="text/xhtml; charset=UTF-8"/>
   <title>
     Copy to Clipboard
   </title>
   <script
       src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"
       type="text/javascript"></script>
-  <link href="{% static '/ui/d1type.css' %}" rel="stylesheet"
+  <link href="d1type.css" rel="stylesheet"
         type="text/css"/>
-  <script src="{% static '/ui/d1type.js' %}" type="text/javascript"></script>
+  <script src="d1type.js" type="text/javascript"></script>
+
+  <script type="text/javascript">
+    $(function () {
+      const urlParams = new URLSearchParams(window.location.search);
+      // alert(urlParams.get('clip'));
+      $("#identifier").text(urlParams.get('clip'));
+
+      // $("form").submit(function (event) {
+      //   const url_input = $("#url-input").val();
+      //   window.location.href = 'new/' + encodeURIComponent(url_input) + '/';
+      //   event.preventDefault();
+      // });
+    });
+  </script>
+
 </head>
 
 <body>

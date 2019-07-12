@@ -82,7 +82,7 @@
   <!-- Wrap nodes in <li> elements (deep copy) -->
   <xsl:template match="node()|@*" mode="bullet_value">
     <li>
-      <xsl:copy-of select="."/>
+      <xsl:copy-of select="./node()|@*"/>
     </li>
   </xsl:template>
 
@@ -168,15 +168,13 @@
   <!-- subject, value -->
   <xsl:template match="node()|@*" mode="format_subject">
     <xsl:element name="{ name() }">
-      <a>
-        <xsl:call-template name="add_href_and_text">
-          <xsl:with-param name="abs_url"
-                          select="concat($search_root_url, 'profile')"/>
-          <xsl:with-param name="rel_url" select="."/>
-          <!--<xsl:with-param name="text" select="."/>-->
-          <!--<xsl:with-param name="noencode" select="'y'"/>-->
-        </xsl:call-template>
-      </a>
+      <xsl:call-template name="link_with_button">
+            <xsl:with-param name="abs_url"
+                            select="concat($search_root_url, 'profile')"/>
+            <xsl:with-param name="rel_url" select="."/>
+            <xsl:with-param name="button_text" select="''"/>
+        <xsl:with-param name="link_classes" select="identifier"/>
+      </xsl:call-template>
     </xsl:element>
   </xsl:template>
 
@@ -257,35 +255,41 @@
           </xsl:call-template>
         </a>
       </div>
-      <div>
-        <a class="round-button { $link_classes }" target="_blank">
-          <xsl:call-template name="add_href_and_text">
-            <xsl:with-param name="abs_url" select="'/templates/clipboard'"/>
-            <xsl:with-param name="rel_url" select="$rel_url"/>
-            <xsl:with-param name="text" select="'C'"/>
-          </xsl:call-template>
-        </a>
-      </div>
-      <div>
-        <a class="round-button { $link_classes }">
-          <xsl:call-template name="add_href_and_text">
-            <xsl:with-param name="abs_url" select="$button_abs_url"/>
-            <xsl:with-param name="rel_url" select="$rel_url"/>
-            <xsl:with-param name="text" select="$button_text"/>
-          </xsl:call-template>
-        </a>
-      </div>
-      <xsl:if test="$button_2_text != ''">
+      <div class="round-button-group">
         <div>
-          <a class="round-button">
+          <a class="round-button { $link_classes }" target="_blank">
             <xsl:call-template name="add_href_and_text">
-              <xsl:with-param name="abs_url" select="$button_2_abs_url"/>
+              <xsl:with-param name="abs_url"
+                              select="concat($static_root_url, 'ui/clipboard.html')"/>
               <xsl:with-param name="rel_url" select="$rel_url"/>
-              <xsl:with-param name="text" select="$button_2_text"/>
+              <xsl:with-param name="delimiter" select="'?clip='"/>
+              <xsl:with-param name="text" select="'C'"/>
             </xsl:call-template>
           </a>
         </div>
-      </xsl:if>
+        <xsl:if test="$button_text != ''">
+        <div>
+          <a class="round-button { $link_classes }">
+            <xsl:call-template name="add_href_and_text">
+              <xsl:with-param name="abs_url" select="$button_abs_url"/>
+              <xsl:with-param name="rel_url" select="$rel_url"/>
+              <xsl:with-param name="text" select="$button_text"/>
+            </xsl:call-template>
+          </a>
+        </div>
+        </xsl:if>
+        <xsl:if test="$button_2_text != ''">
+          <div>
+            <a class="round-button">
+              <xsl:call-template name="add_href_and_text">
+                <xsl:with-param name="abs_url" select="$button_2_abs_url"/>
+                <xsl:with-param name="rel_url" select="$rel_url"/>
+                <xsl:with-param name="text" select="$button_2_text"/>
+              </xsl:call-template>
+            </a>
+          </div>
+        </xsl:if>
+      </div>
     </div>
   </xsl:template>
 
@@ -295,6 +299,7 @@
     <xsl:param name="rel_url" select="."/>
     <xsl:param name="text" select="$rel_url"/>
     <xsl:param name="noencode" select="'n'"/>
+    <xsl:param name="delimiter" select="'/'"/>
     <xsl:variable name="enc_element">
       <xsl:choose>
         <xsl:when test="$noencode = 'n'">
@@ -308,7 +313,7 @@
       </xsl:choose>
     </xsl:variable>
     <xsl:attribute name="href">
-      <xsl:value-of select="concat($abs_url, '/', $enc_element)"/>
+      <xsl:value-of select="concat($abs_url, $delimiter, $enc_element)"/>
     </xsl:attribute>
     <xsl:value-of select="$text"/>
   </xsl:template>
