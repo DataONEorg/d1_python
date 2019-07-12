@@ -21,10 +21,10 @@ import tempfile
 
 import pytest
 
+import d1_common.xml
+
 import d1_gmn.app.sysmeta
 import d1_gmn.tests.gmn_test_case
-
-import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.system_metadata

@@ -26,10 +26,10 @@ Note: Does not test authentication.
 import pytest
 import responses
 
+import d1_common.types.exceptions
+
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-
-import d1_common.types.exceptions
 
 
 class TestAuthorization(d1_gmn.tests.gmn_test_case.GMNTestCase):

@@ -21,16 +21,16 @@ These directly return a DataONE Exception to the client if a test condition is n
 
 """
 
-import d1_gmn.app
-import d1_gmn.app.did
-import d1_gmn.app.model_util
-import d1_gmn.app.revision
-
 import d1_common.checksum
 import d1_common.date_time
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.xml
+
+import d1_gmn.app
+import d1_gmn.app.did
+import d1_gmn.app.model_util
+import d1_gmn.app.revision
 
 
 def sanity(request, sysmeta_pyxb):

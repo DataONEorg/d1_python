@@ -27,15 +27,6 @@ but cut can also be run manually.
 import argparse
 import logging
 
-import d1_gmn.app.did
-import d1_gmn.app.event_log
-
-# noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.models
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.sysmeta
-
 import d1_common.types.exceptions
 import d1_common.utils.filesystem
 import d1_common.xml
@@ -47,8 +38,15 @@ import django.conf
 import django.core.management.base
 import django.db.transaction
 
+import d1_gmn.app.did
+import d1_gmn.app.event_log
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.models
+import d1_gmn.app.sciobj_store
+import d1_gmn.app.sysmeta
 
-# noinspection PyClassHasNoInit,PyProtectedMember
+
+# noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__

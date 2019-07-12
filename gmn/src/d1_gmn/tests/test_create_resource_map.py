@@ -23,16 +23,16 @@ import logging
 import pytest
 import responses
 
-import d1_gmn.app.resource_map
-import d1_gmn.tests.gmn_test_case
-
 import d1_common.types
 import d1_common.types.exceptions
 
+import django.test
+
+import d1_gmn.app.resource_map
+import d1_gmn.tests.gmn_test_case
+
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
-
-import django.test
 
 # # Long test
 # NUM_CREATE = 1000

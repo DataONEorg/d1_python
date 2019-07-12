@@ -19,17 +19,17 @@
 
 import functools
 
-import d1_gmn.app.auth
-import d1_gmn.app.did
-import d1_gmn.app.revision
-import d1_gmn.app.views.assert_db
-import d1_gmn.app.views.util
-
 import d1_common.const
 import d1_common.types
 import d1_common.types.exceptions
 
 import django.conf
+
+import d1_gmn.app.auth
+import d1_gmn.app.did
+import d1_gmn.app.revision
+import d1_gmn.app.views.assert_db
+import d1_gmn.app.views.util
 
 # ------------------------------------------------------------------------------
 # Series ID (SID)

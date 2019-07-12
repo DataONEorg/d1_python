@@ -16,14 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """MNPackage.getPackage(session, packageType, id) → OctetStream."""
-import d1_gmn.app.model_util
-import d1_gmn.app.resource_map
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.sysmeta
-import d1_gmn.app.views.decorators
-import d1_gmn.app.views.headers
-import d1_gmn.app.views.util
-
 import d1_common.bagit
 import d1_common.checksum
 import d1_common.const
@@ -31,6 +23,14 @@ import d1_common.iter.bytes
 import d1_common.types.exceptions
 
 import django.http
+
+import d1_gmn.app.model_util
+import d1_gmn.app.resource_map
+import d1_gmn.app.sciobj_store
+import d1_gmn.app.sysmeta
+import d1_gmn.app.views.decorators
+import d1_gmn.app.views.headers
+import d1_gmn.app.views.util
 
 
 def get_package(request, pid, package_type):

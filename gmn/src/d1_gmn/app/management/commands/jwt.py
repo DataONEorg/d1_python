@@ -36,17 +36,16 @@ import logging
 
 from . import jwt
 
-# noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.models
-
 import d1_common.cert.jwt
 import d1_common.types.exceptions
 
 import django.core.management.base
 
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.models
 
-# noinspection PyClassHasNoInit,PyProtectedMember
+
+# noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def add_arguments(self, parser):
         parser.description = __doc__

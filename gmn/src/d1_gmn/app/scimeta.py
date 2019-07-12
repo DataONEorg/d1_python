@@ -19,12 +19,12 @@
 import d1_scimeta.util
 import d1_scimeta.validate
 
-import d1_gmn.app.sciobj_store
-
 import d1_common.types
 import d1_common.types.exceptions
 
 import django.conf
+
+import d1_gmn.app.sciobj_store
 
 
 def assert_valid(sysmeta_pyxb, pid):

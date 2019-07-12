@@ -44,7 +44,7 @@ import d1_gmn.app.models
 import d1_gmn.app.sysmeta
 
 
-# noinspection PyClassHasNoInit,PyProtectedMember
+# noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

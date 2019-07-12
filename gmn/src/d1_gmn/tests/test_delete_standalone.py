@@ -25,10 +25,10 @@ obsoletedBy are unset). For v2, the objects may or may not have a SID
 import pytest
 import responses
 
+import d1_common.types.exceptions
+
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-
-import d1_common.types.exceptions
 
 
 class TestDeleteStandalone(d1_gmn.tests.gmn_test_case.GMNTestCase):

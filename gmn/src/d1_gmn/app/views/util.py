@@ -19,14 +19,6 @@
 
 import re
 
-import d1_gmn.app
-import d1_gmn.app.auth
-import d1_gmn.app.db_filter
-import d1_gmn.app.did
-import d1_gmn.app.models
-import d1_gmn.app.sysmeta
-import d1_gmn.app.views.slice
-
 import d1_common.const
 import d1_common.date_time
 import d1_common.type_conversions
@@ -39,6 +31,14 @@ import d1_common.xml
 import django.conf
 import django.db.models
 import django.http
+
+import d1_gmn.app
+import d1_gmn.app.auth
+import d1_gmn.app.db_filter
+import d1_gmn.app.did
+import d1_gmn.app.models
+import d1_gmn.app.sysmeta
+import d1_gmn.app.views.slice
 
 
 def dataoneTypes(request):

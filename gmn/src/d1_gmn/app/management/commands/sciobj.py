@@ -20,13 +20,13 @@
 
 import logging
 
-import d1_gmn.app.management.commands.util.standard_args
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.sysmeta_extract
-
 import d1_common.utils.progress_logger
 
 import django.core.management.base
+
+import d1_gmn.app.management.commands.util.standard_args
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.sysmeta_extract
 
 # 0 = Timeout disabled
 DEFAULT_TIMEOUT_SEC = 0

@@ -25,7 +25,7 @@ import d1_common.util
 import django.core.management.base
 
 
-# noinspection PyClassHasNoInit
+# noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

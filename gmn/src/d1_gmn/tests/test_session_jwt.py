@@ -19,12 +19,12 @@
 
 import freezegun
 
-import d1_gmn.app.middleware.session_jwt
-import d1_gmn.tests.gmn_test_case
-
 import d1_common.cert.x509
 
 import django.core.cache
+
+import d1_gmn.app.middleware.session_jwt
+import d1_gmn.tests.gmn_test_case
 
 
 class TestSessionJwt(d1_gmn.tests.gmn_test_case.GMNTestCase):

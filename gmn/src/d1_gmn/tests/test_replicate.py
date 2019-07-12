@@ -27,14 +27,14 @@ replication.
 import pytest
 import responses
 
-import d1_gmn.tests.gmn_mock
-import d1_gmn.tests.gmn_test_case
-
 import d1_common
 import d1_common.const
 import d1_common.types.exceptions
 
 import django.test
+
+import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_test_case
 
 
 class TestReplicate(d1_gmn.tests.gmn_test_case.GMNTestCase):

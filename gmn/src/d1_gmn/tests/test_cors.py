@@ -19,11 +19,11 @@
 import freezegun
 import responses
 
-import d1_gmn.tests.gmn_mock
-import d1_gmn.tests.gmn_test_case
-
 import d1_common
 import d1_common.const
+
+import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
 

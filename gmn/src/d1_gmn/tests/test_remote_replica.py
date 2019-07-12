@@ -33,13 +33,13 @@
 
 import responses
 
-import d1_gmn.tests.gmn_test_case
-
 import d1_common
 import d1_common.date_time
 import d1_common.system_metadata
 import d1_common.types.dataoneTypes
 import d1_common.xml
+
+import d1_gmn.tests.gmn_test_case
 
 import d1_test.test_files
 

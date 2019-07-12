@@ -17,12 +17,12 @@
 # limitations under the License.
 """Utilities for manipulating revision chains in the database."""
 
+import d1_common.types.exceptions
+
 import d1_gmn.app
 import d1_gmn.app.did
 import d1_gmn.app.model_util
 import d1_gmn.app.models
-
-import d1_common.types.exceptions
 
 
 def create_or_update_chain(pid, sid, obsoletes_pid, obsoleted_by_pid):

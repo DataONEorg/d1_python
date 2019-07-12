@@ -168,3 +168,28 @@ def assert_path_is_dir(dir_path):
 
 def find_api_major(base_url, client_arg_dict):
     return d1_client.d1client.get_api_major_by_base_url(base_url, **client_arg_dict)
+
+
+def require_force_flag_in_prod(opt):
+    if (not is_debug_mode() or not is_stand_alone()) or not is_force(opt):
+        raise django.core.management.base.CommandError(
+            "This command is potentially harmfull if used outside of local testing "
+            "and debugging. To run this command, enable one or more of DEBUG, "
+            "DEBUG_GMN or STAND_ALONE in the GMN settings or start this command "
+            "with the --force switch."
+        )
+
+
+def is_debug_mode():
+    return django.conf.settings.DEBUG or django.conf.settings.DEBUG_GMN
+
+
+def is_stand_alone():
+    return django.conf.settings.STAND_ALONE
+
+
+def is_force(opt):
+    try:
+        return opt["force"]
+    except KeyError:
+        return False

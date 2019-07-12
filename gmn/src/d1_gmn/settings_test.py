@@ -27,10 +27,10 @@
 import logging
 import warnings
 
+import d1_common.utils.filesystem
+
 # noinspection PyUnresolvedReferences
 from d1_gmn.app.settings_default import *
-
-import d1_common.utils.filesystem
 
 # When running tests, turn Django's RuntimeWarning into exception
 warnings.filterwarnings(

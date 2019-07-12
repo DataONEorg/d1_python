@@ -23,15 +23,15 @@ import io
 import pytest
 import responses
 
-import d1_gmn.tests.gmn_test_case
-
 import d1_common.types.exceptions
+
+import django.test
+
+import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.system_metadata
-
-import django.test
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestSciMeta")
@@ -73,7 +73,8 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1020(self, gmn_client_v1_v2):
         """MNStorage.create(SciMeta): onedcx does not validate as EML."""
         with pytest.raises(
-            d1_common.types.exceptions.InvalidRequest, match="XML document does not validate"
+            d1_common.types.exceptions.InvalidRequest,
+            match="XML document does not validate",
         ):
             self._create_and_check_scimeta(
                 gmn_client_v1_v2,
@@ -97,13 +98,14 @@ class TestSciMeta(d1_gmn.tests.gmn_test_case.GMNTestCase):
     def test_1040(self, gmn_client_v1_v2):
         """MNStorage.create(SciMeta): ISO/TC 211 does not validate as Dryad."""
         with pytest.raises(
-            d1_common.types.exceptions.InvalidRequest, match="XML document does not validate"
+            d1_common.types.exceptions.InvalidRequest,
+            match="XML document does not validate",
         ):
             self._create_and_check_scimeta(
                 gmn_client_v1_v2,
                 d1_test.instance_generator.identifier.generate_pid("PID_SCIMETA_"),
                 "http://datadryad.org/profile/v3.1",
-                self.test_files.load_xml_to_str('isotc211/nsidc.xml'),
+                self.test_files.load_xml_to_str("isotc211/nsidc.xml"),
             )
 
     @responses.activate

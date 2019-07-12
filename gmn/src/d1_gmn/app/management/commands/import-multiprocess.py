@@ -32,17 +32,6 @@ import logging
 import os
 import time
 
-import d1_gmn.app.delete
-import d1_gmn.app.did
-import d1_gmn.app.event_log
-
-# noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.model_util
-import d1_gmn.app.models
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.sysmeta
-
 import d1_common.const
 import d1_common.date_time
 import d1_common.system_metadata
@@ -57,6 +46,15 @@ import d1_client.iter.sysmeta_multi
 
 import django.conf
 import django.core.management.base
+
+import d1_gmn.app.delete
+import d1_gmn.app.did
+import d1_gmn.app.event_log
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.model_util
+import d1_gmn.app.models
+import d1_gmn.app.sciobj_store
+import d1_gmn.app.sysmeta
 
 DEFAULT_TIMEOUT_SEC = 3 * 60
 DEFAULT_N_WORKERS = 8

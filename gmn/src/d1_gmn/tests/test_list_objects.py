@@ -28,11 +28,11 @@ import freezegun
 import pytest
 import responses
 
-import d1_gmn.tests.gmn_mock
-import d1_gmn.tests.gmn_test_case
-
 import d1_common
 import d1_common.types.exceptions
+
+import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_test_case
 
 import d1_test
 import d1_test.d1_test_case

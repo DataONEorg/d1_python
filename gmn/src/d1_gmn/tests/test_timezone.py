@@ -41,15 +41,14 @@ import logging
 
 import responses
 
-import d1_gmn.tests.gmn_direct
-
-# import d1_gmn.tests.gmn_mock
-import d1_gmn.tests.gmn_mock
-import d1_gmn.tests.gmn_test_case
-
 import d1_common.date_time
 import d1_common.wrap.simple_xml
 import d1_common.xml
+
+import d1_gmn.tests.gmn_direct
+# import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_test_case
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.date_time

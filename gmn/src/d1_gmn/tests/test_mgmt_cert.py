@@ -19,9 +19,9 @@
 
 import pytest
 
-import d1_gmn.tests.gmn_test_case
-
 import django.core.management
+
+import d1_gmn.tests.gmn_test_case
 
 
 class TestCmdCert(d1_gmn.tests.gmn_test_case.GMNTestCase):

@@ -34,11 +34,11 @@ Django automatically creates:
 
 """
 
-import d1_gmn.app.did
-
 import d1_common.date_time
 
 import django.db.models
+
+import d1_gmn.app.did
 
 
 class IdNamespace(django.db.models.Model):

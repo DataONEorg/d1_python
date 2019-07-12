@@ -29,8 +29,6 @@ import platform
 import sys
 import xml.etree.ElementTree
 
-import d1_gmn.app.models
-
 import d1_common.const
 import d1_common.date_time
 import d1_common.types.exceptions
@@ -41,6 +39,8 @@ import django.db.models
 import django.http
 import django.shortcuts
 import django.urls.base
+
+import d1_gmn.app.models
 
 
 def root(request):

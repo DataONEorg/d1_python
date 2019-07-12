@@ -21,13 +21,13 @@
 
 import pytest
 
-import d1_gmn.tests.gmn_test_case
-
-import d1_test.d1_test_case
-
 import django.apps
 import django.core.exceptions
 import django.test
+
+import d1_gmn.tests.gmn_test_case
+
+import d1_test.d1_test_case
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestSettings")

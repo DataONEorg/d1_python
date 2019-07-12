@@ -35,13 +35,13 @@ import io
 import logging
 import xml.etree.ElementTree
 
-import d1_gmn.tests.gmn_mock
-
 import d1_common.url
 import d1_common.util
 import d1_common.wrap.simple_xml
 
 import django.test
+
+import d1_gmn.tests.gmn_mock
 
 
 def create(version_tag, sciobj_bytes, sysmeta_xml):

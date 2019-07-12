@@ -23,6 +23,8 @@ import random
 import pytest
 import responses
 
+import d1_common.types.exceptions
+
 import d1_gmn.app.did
 import d1_gmn.app.model_util
 import d1_gmn.app.models
@@ -30,8 +32,6 @@ import d1_gmn.app.revision
 import d1_gmn.app.sysmeta
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-
-import d1_common.types.exceptions
 
 import d1_test
 import d1_test.instance_generator

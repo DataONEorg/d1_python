@@ -24,11 +24,11 @@ import logging
 import pytest
 import requests_toolbelt
 
+import d1_common.xml
+
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
 import d1_gmn.tests.gmn_wsgi
-
-import d1_common.xml
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier

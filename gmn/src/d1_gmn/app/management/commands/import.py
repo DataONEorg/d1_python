@@ -31,20 +31,6 @@ import contextlib
 import logging
 import os
 
-import d1_gmn.app.delete
-import d1_gmn.app.did
-import d1_gmn.app.event_log
-import d1_client.aio.async_client
-import d1_gmn.app.management.commands.util.standard_args
-
-# noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.model_util
-import d1_gmn.app.models
-import d1_gmn.app.resource_map
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.sysmeta
-
 import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.types.dataoneTypes
@@ -53,8 +39,21 @@ import d1_common.utils.filesystem
 import d1_common.utils.progress_logger
 import d1_common.xml
 
+import d1_client.aio.async_client
+
 import django.conf
 import django.core.management.base
+
+import d1_gmn.app.delete
+import d1_gmn.app.did
+import d1_gmn.app.event_log
+import d1_gmn.app.management.commands.util.standard_args
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.model_util
+import d1_gmn.app.models
+import d1_gmn.app.resource_map
+import d1_gmn.app.sciobj_store
+import d1_gmn.app.sysmeta
 
 # import d1_client.cnclient_2_0
 # import d1_client.d1client

@@ -33,14 +33,14 @@ import string
 
 import requests
 
-import d1_gmn.app.sciobj_store
-import d1_gmn.app.util
-
 import d1_common.url
 
 import django.apps
 import django.conf
 import django.core.exceptions
+
+import d1_gmn.app.sciobj_store
+import d1_gmn.app.util
 
 RESOURCE_MAP_CREATE_MODE_LIST = ["block", "open"]
 

@@ -25,15 +25,15 @@ import contextlib
 
 import requests
 
-import d1_gmn.app
-import d1_gmn.app.did
-
 import d1_common.date_time
 import d1_common.types
 import d1_common.types.exceptions
 import d1_common.url
 
 import django.conf
+
+import d1_gmn.app
+import d1_gmn.app.did
 
 # def is_unused(did):
 #   """Assert that the ``did`` is currently unused and so is available to be

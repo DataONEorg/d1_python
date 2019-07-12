@@ -26,13 +26,10 @@
 - Folders are created as required in the hierarchy.
 
 """
+import contextlib
 import hashlib
 import os
 import re
-
-import contextlib
-
-import d1_gmn
 
 import d1_common.iter
 import d1_common.iter.stream
@@ -42,6 +39,8 @@ import d1_common.util
 import d1_common.utils.filesystem
 
 import django.conf
+
+import d1_gmn
 
 SCIOBJ_JSON_NAME = "gmn_object_store.json"
 

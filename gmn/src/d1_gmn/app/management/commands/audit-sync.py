@@ -19,21 +19,20 @@
 import asyncio
 import logging
 
-import d1_gmn.app.did
-import d1_client.aio.async_client
-import d1_gmn.app.management.commands.objectlist_async
-
-# noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.standard_args
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.models
-
 import d1_common.types.exceptions
 import d1_common.utils.progress_logger
 import d1_common.xml
 
+import d1_client.aio.async_client
+
 import django.conf
 import django.core.management.base
+
+import d1_gmn.app.did
+import d1_gmn.app.management.commands.objectlist_async
+import d1_gmn.app.management.commands.util.standard_args
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.models
 
 
 # noinspection PyClassHasNoInit,PyAttributeOutsideInit

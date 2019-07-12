@@ -19,13 +19,13 @@
 
 import urllib.parse
 
+import django.apps
+
 import d1_gmn.app.did
 import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.revision
 import d1_gmn.app.sciobj_store
-
-import django.apps
 
 
 def delete_sciobj(pid):

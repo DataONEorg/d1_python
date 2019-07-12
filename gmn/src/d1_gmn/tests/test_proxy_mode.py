@@ -30,18 +30,18 @@ import pytest
 import requests
 import responses
 
-import d1_gmn.app.sciobj_store
-import d1_gmn.tests.gmn_test_case
-
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.url
 
+import django.test
+
+import d1_gmn.app.sciobj_store
+import d1_gmn.tests.gmn_test_case
+
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 import d1_test.mock_api.catch_all
-
-import django.test
 
 AUTH_USERNAME = "Auth user name 123"
 AUTH_PASSWORD = "!@#%$45 343&^$% asfdAFSD"

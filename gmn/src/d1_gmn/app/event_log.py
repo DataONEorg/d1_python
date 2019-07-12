@@ -23,12 +23,12 @@ MNCore.getLogRecords() and aggregated by CNs.
 """
 import re
 
-import d1_gmn.app.auth
-import d1_gmn.app.models
-
 import d1_common.types.exceptions
 
 import django.conf
+
+import d1_gmn.app.auth
+import d1_gmn.app.models
 
 
 def create_log_entry(object_model, event, ip_address, user_agent, subject):

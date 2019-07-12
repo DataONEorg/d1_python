@@ -22,12 +22,12 @@ import io
 
 import responses
 
-import d1_gmn.tests.gmn_mock
-import d1_gmn.tests.gmn_test_case
-
 import d1_common.date_time
 
 import django.test
+
+import d1_gmn.tests.gmn_mock
+import d1_gmn.tests.gmn_test_case
 
 
 class TestTrustedClientOverrides(d1_gmn.tests.gmn_test_case.GMNTestCase):

@@ -36,10 +36,6 @@ must be used.
 
 import argparse
 
-# noinspection PyProtectedMember
-import d1_gmn.app.management.commands.util.util
-import d1_gmn.app.node
-
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.xml
@@ -49,8 +45,11 @@ import d1_client.cnclient_2_0
 import django.conf
 import django.core.management.base
 
+import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.node
 
-# noinspection PyClassHasNoInit
+
+# noinspection PyClassHasNoInit,PyAttributeOutsideInit
 class Command(django.core.management.base.BaseCommand):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

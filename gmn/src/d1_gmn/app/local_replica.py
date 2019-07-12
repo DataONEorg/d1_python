@@ -17,14 +17,14 @@
 # limitations under the License.
 """Utilities for managing replicas."""
 
-import d1_gmn.app.models
-
 import d1_common.types.exceptions
 import d1_common.wrap.access_policy
 import d1_common.xml
 
 import django.conf
 from django.db.models import Sum
+
+import d1_gmn.app.models
 
 # ------------------------------------------------------------------------------
 # Local Replica / Replication Queue

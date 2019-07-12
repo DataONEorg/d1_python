@@ -16,13 +16,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Extract SciObj values from models."""
-import d1_gmn.app
-import d1_gmn.app.models
-
 import d1_common.types.exceptions
 import d1_common.util
 
 import django.contrib.postgres.aggregates
+
+import d1_gmn.app
+import d1_gmn.app.models
 
 
 def extract_values_query(query, field_list, out_stream=None):
