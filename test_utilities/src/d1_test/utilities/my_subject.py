@@ -32,7 +32,6 @@ import d1_common.utils.ulog
 # flake8: noqa: F403
 
 
-
 log = logging.getLogger(__name__)
 d1_common.utils.ulog.setup(is_debug=True)
 

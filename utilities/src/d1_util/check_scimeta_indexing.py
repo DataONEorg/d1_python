@@ -51,7 +51,6 @@ import d1_test.instance_generator.system_metadata
 DEFAULT_FORMAT_ID = "http://www.isotc211.org/2005/gmd"
 
 
-
 def main():
     parser = d1_client.command_line.D1ClientArgParser(__doc__)
     parser.add_argument("path", help="Path to science metadata file")
