@@ -8,7 +8,7 @@ is provided to the server.
 Obtain the client side certificate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Client side certificates for MNs are issued by the DataONE :term:`CA`. MNs go through a testing phase before being registered in the DataONE production environment used by the public, so DataONE will first issue a test certificate to your node. The test certificate is valid only in DataONE's test environments. When the MN is ready to join the production environment, DataONE will issue a production certifiate for your node. The certificates are valid for several years and are linked to your MN via their :term:`DN`\ s.
+Client side certificates for MNs are issued by the DataONE :term:`CA`. MNs go through a testing phase before being registered in the DataONE production environment used by the public, so DataONE will first issue a test certificate to your node. The test certificate is valid only in DataONE's test environments. When the MN is ready to join the production environment, DataONE will issue a production certificate for your node. The certificates are valid for several years and are linked to your MN via their :term:`DN`\ s.
 
 To obtain a client side certificate for testing:
 

@@ -3,69 +3,79 @@ Migrating Existing Member Node to GMN
 
 This section describes how to migrate an existing, operational MN to GMN.
 
-If you are working on a fresh install, start at :doc:`setup`.
+If you are working on a fresh install, start at :doc:`index`.
+
+This procedure applies both for migrating from a completely different Member Node software stack and from migrating from GMN 1.x or 2.x to the current GMN 3.x.
 
 Because of changes in how later versions of GMN store System Metadata and Science Objects, there is no direct `pip` based upgrade path from 1.x. Instead, 3.x is installed side by side with 1.x and an automatic process migrates settings and contents from v1 to 3.x and switches Apache over to the new version.
 
-The automated migration assumes that GMN v1 was installed with the default settings for filesystem locations and database settings. If this is not the case, constants in the migration scripts must be updated before the procedure will work correctly. Contact us for assistance.
+The existing Member Node is not modified by this pro procedure, so it is possible to roll back to it if are any issues with the migration.
 
-The existing v1 instance is not modified by this procedure, so it is possible to roll back to v1 if there are any issues with the migration or 3.x.
+Replacing an older GMN instance on the same server
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+When replacing an older GMN instance by installing a new instance on the same server, the general procedure is:
 
-Install GMN 3.x and migrate settings and contents
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Install the new GMN instance using the regular install procedure, with the following exceptions:
 
-Prepare pip from PyPI::
+  * Install the new GMN instance to a different virtualenv by using a different virtualenv directory name for the new instance.
+  * Skip all Apache related steps.
+  * Skip all certificate related steps.
+  * Use a separate database for the new instance by modifying the database name in ``settings.py`` and using the new name when initializing the database.
 
-    $ sudo apt install --yes python-pip; \
-    sudo pip install --upgrade pip; \
-    sudo apt remove --yes python-pip;
+* Manually copy individual settings from ``settings.py`` / ``settings_site.py`` of the old instance to ``settings.py`` of the new instance. The new instance will be using the same settings as the old one, including client side certificate paths and science object storage root.
 
-Prepare dependencies::
+* To make sure that all the settings were correctly copied from the old instance, generate a Node document in the new instance and compare it with the version registered in the DataONE environment for the old instance.
 
-    $ sudo pip install --upgrade pip virtualenv
-    $ sudo apt install --yes libffi-dev
-
-Create virtual environment for GMN 3.x::
-
-    $ sudo -u gmn virtualenv /var/local/dataone/gmn_venv_py3
-
-Install GMN 3.x from PyPI::
-
-    $ sudo -u gmn --set-home /var/local/dataone/gmn_venv_py3/bin/pip install dataone.gmn
-
-Configure GMN 3.x instance and migrate settings from GMN v1::
-
-    $ sudo /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/d1_gmn/deployment/migrate_v1_to_v2.sh
-
-Migrate contents from GMN v1::
-
-    $ sudo -u gmn /var/local/dataone/gmn_venv_py3/bin/python \
-    /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/d1_gmn/manage.py \
-    migrate_v1_to_v2
-
-Verify successful upgrade:
-
-* Seen from the user side, the main improvement in GMN v2 is that it adds support for v2 of the DataONE API. For any clients that continue to access GMN via the v1 API, there should be no apparent difference between v1 and v2. Clients that access GMN via the v2 API gain access to the new v2 functionality, such as Serial IDs.
-
-* A quick way to check if the node is now running GMN 3.x is to open the v2 Node document in a browser, at https://your.node.edu/mn/v2. An XML document which announces both v1 and v2 services should be displayed.
+  $ manage.py node-view
 
 
-Roll back to GMN v1
-~~~~~~~~~~~~~~~~~~~
 
-If there are any issues with GMN v2 or the migration procedure, please contact us for assistance. While the issues are being resolved, the following procedure will roll back to v1.
+.. highlight: bash
 
-This procedure should not be performed after any new objects have been added to v2, as they will become unavailable in v1.
+* Start the import. Since the new instance has been set up to use the same object
+  storage location as the old instance, the importer will automatically detect that the
+  object bytes are already present on disk and skip the `get()` calls for the objects.
 
-Switch the GMN version served by Apache to v1::
+  ::
 
-    $ sudo a2dissite gmn3-ssl
-    $ sudo a2ensite gmn-ssl
+    $ manage.py import
 
-Disable v2 services for this MN in the CN Node registry::
+* Temporarily start the new MN with connect to it and check that all data is showing as
+  expected.
 
-    $ sudo -u gmn /var/local/dataone/gmn/bin/python \
-    /var/local/dataone/gmn/lib/python3.6/site-packages/gmn/manage.py \
-    register_node_with_dataone --update
+  ::
 
+    $ manage.py runserver
+
+* Stop the source MN by stopping Apache.
+
+* Modify the VirtualHost file for the source MN, e.g.,
+  `/etc/apache2/sites-available/gmn2-ssl.conf`, to point to the new instance, e.g., by
+  changing `gmn_venv` to the new virtualenv location.
+
+* Start the new instance by starting Apache.
+
+* From the point of view of the CNs and other nodes in the environment, the node will
+  not have changed, as it will be serving the same objects as before, so no further
+  processing or synchronization is required.
+
+If the new instance is set up on a different server, extra steps likely to be required
+include:
+
+* Modify the BaseURL in settings.py
+
+* Update the Node registration
+
+  $ manage.py node update
+
+Notes:
+
+* Any replica requests that have been accepted but not yet processed by the source MN
+  will not be completed. However, requests expire and are automatically reissued by the
+  CN after a certain amount of time, so this should be handled gracefully by the system.
+
+* Any changes on the source MN that occur during the import may or may not be included
+  in the import. To avoid issues such as lost objects, events and system metadata
+  updates, it may be necessary to restrict access to the source MN during the
+  transition.

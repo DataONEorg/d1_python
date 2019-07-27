@@ -1,10 +1,6 @@
 Resources
 =========
 
-View documentation for Apache2 configuration under Debian GNU/Linux::
-
-  $ zless /usr/share/doc/apache2.2-common/README.Debian.gz
-
 Viewing the files involved in the SSL handshake::
 
   openssl rsa -noout -text -in server.key

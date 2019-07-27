@@ -21,14 +21,14 @@ In production, GMN is always served over SSL with an optional :term:`client side
 
 Figure: The various scenarios that GMN can be served under.
 
-* Green: Production with client side certificate. Apache will reject the
+- Green: Production with client side certificate. Apache will reject the
   connection if the certificate is not valid, and GMN will not see the
   connection attempt. The certificate must be signed by :term:`CILogon`.
 
-* Blue: Production without a client side certificate. Apache accepts the
+- Blue: Production without a client side certificate. Apache accepts the
   connection. GMN falls back to the default Public session.
 
-* Red: Testing and debugging with simulated certificate. This path is used by
+- Red: Testing and debugging with simulated certificate. This path is used by
   the integration tests. Debugging is supported. Because HTTP is used, no
   certificate can be provided. Instead, a valid certificate is simulated by
   using a Vendor Specific Extension to pass in a session.
@@ -39,12 +39,12 @@ Figure: The various scenarios that GMN can be served under.
 
   This path is only available when GMN is running in debug mode.
 
-* Orange: Testing and debugging without a certificate. Same as the testing path
+- Orange: Testing and debugging without a certificate. Same as the testing path
   with simulated certificate except that it simulates a connection without a
   session by not providing a session in the Vendor Specific Extension. This
   requires GMN to fall back to the default Public session.
 
-* From the point of view of GMN, there are 3 types of connections:
+- From the point of view of GMN, there are 3 types of connections:
 
   #. Connection with valid certificate
   #. Connection without certificate (accepted, fall back to Public)
@@ -70,11 +70,11 @@ In some cases, it's convenient to test GMN via a browser though only the GET bas
 
 GMN will authenticate with a :term:`server side certificate` signed by CILogon. Set the browser up to accept this certificate by adding the CILogon CA certificates to the browser's trusted CA store:
 
-* Open the Certificate Manager (Edit | Preferences | Advanced | Encryption |
+- Open the Certificate Manager (Edit | Preferences | Advanced | Encryption |
   View Certificates)
-* Import new CA (Authorities | Import)
-* Browse to ``/var/local/dataone/ca/cilogon-basic.pem``
-* Select "Trust this CA to identify web sites."
+- Import new CA (Authorities | Import)
+- Browse to ``/var/local/dataone/ca/cilogon-basic.pem``
+- Select "Trust this CA to identify web sites."
 
 Repeat with the ``cilogon-openid.pem`` and ``cilogon-silver.pem`` certificates.
 

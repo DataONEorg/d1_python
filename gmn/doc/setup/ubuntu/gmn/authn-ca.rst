@@ -16,12 +16,12 @@ The local CA used for signing certificates that will be trusted by this (and no 
 
 Run the commands below to:
 
-* Generate local CA folders
-* Copy custom OpenSSL configuration file
-* Create the certificate database file
-* Generate the private key and certificate signing request (CSR)
-* Self-sign the CA
-* Remove the CA CSR
+- Generate local CA folders
+- Copy custom OpenSSL configuration file
+- Create the certificate database file
+- Generate the private key and certificate signing request (CSR)
+- Self-sign the CA
+- Remove the CA CSR
 
 .. _clip1:
 
@@ -42,9 +42,9 @@ Run the commands below to:
   <button class="btn" data-clipboard-target="#clip1">Copy</button>
 ..
 
-* Enter a password for the private key. Anyone who gains access to the key can create certificates that will be trusted by your MN unless you protect it with   a strong password.
+- Enter a password for the private key. Anyone who gains access to the key can create certificates that will be trusted by your MN unless you protect it with   a strong password.
 
-* You will be prompted for the information that will become the DN of your CA certificate. All fields should be filled with valid information. For Common Name, use something like "CA for GMN Client Side Certificates". Since the DN of the signing CA is included in all signed certificates, this helps indicate the intended use for certificates signed by this CA. The Organization Name indicates where the client side certificates are valid.
+- You will be prompted for the information that will become the DN of your CA certificate. All fields should be filled with valid information. For Common Name, use something like "CA for GMN Client Side Certificates". Since the DN of the signing CA is included in all signed certificates, this helps indicate the intended use for certificates signed by this CA. The Organization Name indicates where the client side certificates are valid.
 
 .. _clip2:
 
@@ -71,11 +71,11 @@ Generate a client side certificate
 
 Generate a client side certificate that is signed by the local CA.
 
-* This certificate will be used in any outgoing connections made by the GMN instance while it is operating in stand-alone mode and for initial tests.
+- This certificate will be used in any outgoing connections made by the GMN instance while it is operating in stand-alone mode and for initial tests.
 
-* If more client side certificates are needed in the future, just repeat this section, changing the filenames of the client_*.pem files.
+- If more client side certificates are needed in the future, just repeat this section, changing the filenames of the client_*.pem files.
 
-* GMN does not include a system for securely managing the password for the private key of the client side certificate so the password is removed.
+- GMN does not include a system for securely managing the password for the private key of the client side certificate so the password is removed.
 
 * The private key implicitly contains the public key. For some use cases, it can be convenient to split out the public key.
 
@@ -169,4 +169,3 @@ Add the local CA that was just created to the CAs trusted by GMN.
 .. raw:: html
 
   <button class="btn" data-clipboard-target="#clip6">Copy</button>
-..

@@ -3,7 +3,7 @@ Configure the GMN asynchronous processes
 
 Run the commands below to:
 
-* Set up cron jobs for GMN's asynchronous processes
+- Set up cron jobs for GMN's asynchronous processes
 
 .. _clip2:
 

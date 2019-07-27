@@ -8,7 +8,7 @@ Two basic types of client side certificates are used in the DataONE infrastructu
 CILogon is the identity provider for DataONE. CILogon provides three
 :term:`LOA`\ s. These instructions set GMN up to accept all three.
 
-DataONE issues certificates that let Nodes communite securely in the DataONE infrastructure. The DataONE :term:`CA` root certificates must be trusted by all Nodes.
+DataONE issues certificates that let Nodes communicate securely in the DataONE infrastructure. The DataONE :term:`CA` root certificates must be trusted by all Nodes.
 
 The OS typically comes with a complete set of commonly trusted CA root certificates. However, DataONE Nodes should not accept certificates signed by these, so a separate CA store is used for the CILogon and DataONE root CAs.
 
@@ -35,3 +35,4 @@ Two separate certificate chains are available. One is used for the DataONE produ
     $ sudo curl -o /var/local/dataone/certs/ca/DataONECAChain.crt \
     https://repository.dataone.org/software/tools/trunk/ca/DataONECAChain.crt; \
     c_rehash /var/local/dataone/certs/ca/
+

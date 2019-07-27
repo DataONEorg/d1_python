@@ -1,10 +1,14 @@
 {%- extends "basic/layout.html" %}
 
 {%- block extrahead %}
-    {{ super() }}
-    <!--<script type="text/javascript" src="../../_static/clipboard.min.js"></script>-->
-    <script src="https://unpkg.com/clipboard@2.0.0/dist/clipboard.min.js"></script>
     <link rel="stylesheet" href="{{ pathto('_static/dataone.css', 1) }}" type="text/css">
+
+    {{ super() }}
+
+    <script type="text/javascript" src="{{ pathto('_static/clipboard.min.js', 1) }}"></script>
+
+    {#<script src="https://unpkg.com/clipboard@2.0.0/dist/clipboard.min.js"></script>#}
+
     <script type="text/javascript">
 
     function load() {

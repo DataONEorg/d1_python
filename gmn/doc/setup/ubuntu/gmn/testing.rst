@@ -13,7 +13,7 @@ Basic testing via web browser or curl
 
 These initial tests can be performed via a web browser or the ``curl`` command line utility. By default, stand-alone instances of GMN use a non-trusted "snakeoil" self-signed certificate. The browser will warn about this and may require you to create a security exception. ``curl`` will need to be started with the ``--insecure`` switch. For example, ``curl --insecure <url>``.
 
-After the stand-alone GMN instance passes the tests, it can be joined to DataONE by performing the :doc:`/gmn/setup/d1env/env` section of the installation, in which the non-trusted certificate is replaced with a publicly trusted certificate from a 3rd party CA.
+After the stand-alone GMN instance passes the tests, it can be joined to DataONE by performing the :doc:`/d1_gmn/setup/d1env/index` section of the installation, in which the non-trusted certificate is replaced with a publicly trusted certificate from a 3rd party CA.
 
 
 Node document
@@ -52,7 +52,7 @@ You should see an XML document such as this:
     <contactSubject>CN=My Name,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
   </ns1:node>
 
-This is your Node document. It exposes information about your Node to the DataONE infrastructure. It currently contains only default values. The :doc:`/gmn/setup/d1env/env` section of the installation includes information on how to customize this document for your node.
+This is your Node document. It exposes information about your Node to the DataONE infrastructure. It currently contains only default values. The :doc:`/d1_gmn/setup/d1env/index` section of the installation includes information on how to customize this document for your node.
 
 
 Home page

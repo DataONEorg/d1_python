@@ -1,10 +1,10 @@
 Upgrading
-=====================================
+=========
 
 This section describes how to migrate an existing, operational MN to GMN.
 
 
-instance of GMN v1. If you are working on a fresh install, start at :doc:`setup`.
+instance of GMN v1. If you are working on a fresh install, start at :doc:`index`.
 
 Because of changes in how later versions of GMN store System Metadata and Science Objects, there is no direct `pip` based upgrade path from 1.x. Instead, 3.x is installed side by side with 1.x and an automatic process migrates settings and contents from v1 to 3.x and switches Apache over to the new version.
 

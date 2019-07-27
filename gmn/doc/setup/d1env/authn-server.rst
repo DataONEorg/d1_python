@@ -36,7 +36,7 @@ Setup the server side certificate and private key
   ``SSLCertificateFile`` and ``SSLCertificateKeyFile`` settings in the
   ``gmn-ssl.conf`` Virtual Host file to match.
 
-  If the server certificate is signed by intermedite certificate(s), the issuing
+  If the server certificate is signed by intermediate certificate(s), the issuing
   `CA` will have provided the intermediate certificate chain in addition to the
   server side certificate. If so, move the intermediate certificate chain file
   to the ``/var/local/dataone/certs/server`` directory and uncomment the

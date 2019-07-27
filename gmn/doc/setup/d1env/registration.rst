@@ -71,7 +71,7 @@ The Node document is a set of values that describe a MN or CN, its internet loca
 
 Modify the following settings:
 
-* NODE_IDENTIFIER: A unique identifier for the node of the form
+- NODE_IDENTIFIER: A unique identifier for the node of the form
   \urn:node:NODEID where NODEID is the node specific identifier. This value
   MUST NOT change for future implementations of the same node, whereas the
   baseURL may change in the future.
@@ -87,13 +87,13 @@ Modify the following settings:
   E.g.: \urn:node:USGSCSAS (for production) and \urn:node:TestUSGSCSAS (for
   testing).
 
-* NODE_NAME: A human readable name of the Node. This name can be used as a label
+- NODE_NAME: A human readable name of the Node. This name can be used as a label
   in many systems to represent the node, and thus should be short, but
   understandable.
 
   E.g.: USGS Core Sciences Clearinghouse
 
-* NODE_DESCRIPTION: Description of a Node, explaining the community it serves
+- NODE_DESCRIPTION: Description of a Node, explaining the community it serves
   and other relevant information about the node, such as what content is
   maintained by this node and any other free style notes.
 
@@ -103,17 +103,17 @@ Modify the following settings:
   documenting land cover and stewardship (ownership and management), and more.
 
 
-* NODE_BASEURL: The base URL of the node, indicating the protocol, fully
+- NODE_BASEURL: The base URL of the node, indicating the protocol, fully
   qualified domain name, and path to the implementing service, excluding the
   version of the API.
 
   E.g.: \https://server.example.edu/app/d1/mn
 
 
-* NODE_SUBJECT: Specify the subject for this Node (retrieved from the client
+- NODE_SUBJECT: Specify the subject for this Node (retrieved from the client
   certificate provided by DataONE)
 
-* NODE_CONTACT_SUBJECT: The appropriate person or group to contact regarding
+- NODE_CONTACT_SUBJECT: The appropriate person or group to contact regarding
   the disposition, management, and status of this Member Node. The
   contactSubject is an X.509 Distinguished Name for a person or group that can
   be used to look up current contact details (e.g., name, email address) for
@@ -130,11 +130,11 @@ Modify the following settings:
   E.g.: CN=My Name,O=Google,C=US,DC=cilogon,DC=org
 
 
-* NODE_REPLICATE: Set to true if the node is willing to be a
+- NODE_REPLICATE: Set to true if the node is willing to be a
   :term:`replication target`, otherwise false.
 
 
-* DATAONE_ROOT: Select the environment that matches the one that was
+- DATAONE_ROOT: Select the environment that matches the one that was
   selected in `Create a DataONE identity`_.
 
   E.g.: https://cn-stage.dataone.org/cn
@@ -165,7 +165,7 @@ The Member Node information is submitted to DataONE in a Node document. GMN auto
 
     $ python lib/python3.6/site-packages/d1_gmn/manage.py node register
 
-* Check for a message saying that the registration was successful.
+- Check for a message saying that the registration was successful.
 
 After running the script or running an automated registration, the Member Node should email support@dataone.org to notify of the registration request.
 
@@ -174,4 +174,4 @@ DataONE evaluates the submission
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 DataONE evaluates the submitted Node document and contacts the person listed as
-*contactSubject* in the Node document by email with the outcome of the approval process. After the node has been approved, the MN is part of the infrastructure environment in which it has been registered, and the CNs in that environment will start processing the information on the node.
+-contactSubject* in the Node document by email with the outcome of the approval process. After the node has been approved, the MN is part of the infrastructure environment in which it has been registered, and the CNs in that environment will start processing the information on the node.

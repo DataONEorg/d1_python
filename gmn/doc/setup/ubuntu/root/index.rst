@@ -6,7 +6,7 @@ The following steps require sudo access. They prepare the server for the part of
 Contents:
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
   apt-deps
   gmn-perm

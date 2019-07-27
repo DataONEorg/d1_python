@@ -48,6 +48,6 @@ GMN should now be ready to start. Simply restart Apache::
   $ sudo service httpd restart
 
 Check the Apache logs for error messages. In case of any issues, refer to
-:doc:`../troubleshooting`
+:doc:`../../troubleshooting/index`
 
 Continue to the next section to test your new node.

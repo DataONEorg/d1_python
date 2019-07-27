@@ -8,22 +8,12 @@ See :doc:`/index` for an overview of the DataONE libraries and other products im
 Contents:
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
-  setup/setup
-  use-authn-and-authz
-  use
-  bulk_import
-  maintenance
-  performance
-  impl
+  setup/index
+  operation/index
+  troubleshooting/index
+  implementation/index
   api/modules
   /glossary
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

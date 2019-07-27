@@ -1,5 +1,5 @@
 DataONE Python Products
-=======================
+===========================
 
 DataONE provides a number of products implemented in Python and Java, as part of the :term:`Investigator Toolkit (ITK)`. Potential users of these products include software developers, Member Node partners and end users. Only the Python products are outlined in this document.
 
@@ -9,32 +9,52 @@ For Member Node partners, DataONE provides a Member Node (MN) implemented in Pyt
 
 Lastly, DataONE provides various tools intended for end users, also implemented in Python. These include ONEDrive and the DataONE Command Line Client.
 
+
+Contents
+~~~~~~~~
+
+.. toctree::
+  :maxdepth: 1
+
+  d1_util/index
+  d1_onedrive/index
+  d1_cli/index
+
+  d1_gmn/index
+
+  d1_common/index
+  d1_client/index
+
+  d1_scimeta/index
+  d1_test/index
+  d1_dev/index
+
+  d1_csw/index
+
+
 Utilities (for end users)
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-DataONE Command Line Utilities and Examples
-```````````````````````````````````````````
+Command Line Utilities and Examples
+```````````````````````````````````
 
 .. include:: ./d1_util/overview.rst
 
 \
 
-DataONE ONEDrive
-````````````````
+ONEDrive
+````````
 
 .. include:: ./d1_onedrive/overview.rst
 
 \
 
-DataONE Command Line Interface
-``````````````````````````````
+Command Line Interface
+``````````````````````
 
 .. include:: ./d1_cli/overview.rst
 
 \
-
-Member Node (for Member Node partners)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Generic Member Node (GMN)
 `````````````````````````
@@ -46,61 +66,42 @@ Generic Member Node (GMN)
 Python Libraries (for software developers)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-DataONE Common Library for Python
-`````````````````````````````````
+Common Library
+``````````````
 
 .. include:: ./d1_common/overview.rst
 
 \
 
-DataONE Client Library for Python
-`````````````````````````````````
+Client Library
+``````````````
 
 .. include:: ./d1_client/overview.rst
 
 \
 
-DataONE Science Metadata Validator for Python
-`````````````````````````````````````````````
+Science Metadata Validator
+``````````````````````````
 
 .. include:: ./d1_scimeta/overview.rst
 
 \
 
-DataONE Test Utilities
-``````````````````````
+Test Utilities
+``````````````
 
 .. include:: ./d1_test/overview.rst
 
 \
 
-DataONE Dev Tools
+Development Tools
 `````````````````
 
 .. include:: ./d1_dev/overview.rst
 
 \
 
-DataONE CSW Harvester
-`````````````````````
+CSW Harvester
+`````````````
 
 .. include:: ./d1_csw/overview.rst
-
-\
-
-Contents
-~~~~~~~~
-
-.. toctree::
-  :maxdepth: 2
-
-  d1_util/index
-  d1_onedrive/index
-  d1_cli/index
-  d1_gmn/index
-  d1_common/index
-  d1_client/index
-  d1_scimeta/index
-  d1_test/index
-  d1_dev/index
-  d1_csw/index

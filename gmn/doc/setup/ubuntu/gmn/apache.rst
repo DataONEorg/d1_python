@@ -12,7 +12,7 @@ Run the commands below to:
 
   sudo -Hu gmn bash -c '
     . /var/local/dataone/gmn_venv_py3/bin/activate
-    GMN_PKG_DIR=`python -c "import site; print(site.getsitepackages()[0])"`
+    #GMN_PKG_DIR=`python -c "import site; print(site.getsitepackages()[0])"`
     FQDN=`python -c "import socket; print(socket.getfqdn())"`
     CONF_PATH=/etc/apache2/sites-available/gmn3-ssl.conf
     DELIMITER=`printf "#%.0s" {1..100}`

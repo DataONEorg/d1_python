@@ -4,7 +4,7 @@ Upgrade OS and GMN to latest versions
 Contents:
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
   os
   gmn

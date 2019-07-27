@@ -49,7 +49,7 @@ The asynchronous processes connect to CNs and other MNs on behalf of your GMN in
 Authentication and authorization
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-:doc:`Authentication and authorization </gmn/use-authn-and-authz>` in DataONE is based on :term:`X.509` (SSL) certificates.
+:doc:`Authentication and authorization </d1_gmn/operation/authn-and-authz>` in DataONE is based on :term:`X.509` (SSL) certificates.
 
 GMN authenticates to incoming connections from :term:`DataONE` :term:`client`\ s and other parts of the DataONE infrastructure, such as :term:`CN`\ s by providing a :term:`server side certificate` during the SSL/TLS handshake.
 
@@ -60,7 +60,7 @@ A stand-alone instance that is not going to be registered with DataONE can use t
 In addition to acting as servers in the DataONE infrastructure, Member Nodes also act as clients, initiating connections to other Nodes. When connecting to other Nodes, Member Nodes authenticate themselves in a process called
 :term:`client side authentication`, in which a client side certificate is provided over an LTS/SSL connection.
 
-Nodes that are registered with DataONE will only trust Member Node connections where a client side sertificate issued by the DataONE :term:`CA` is provided. However, a stand-alone instance of GMN will not connect to registered Member Nodes, so a non-trusted client side certificate can be used instead.
+Nodes that are registered with DataONE will only trust Member Node connections where a client side certificate issued by the DataONE :term:`CA` is provided. However, a stand-alone instance of GMN will not connect to registered Member Nodes, so a non-trusted client side certificate can be used instead.
 
 
 

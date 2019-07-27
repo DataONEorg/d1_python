@@ -3,8 +3,8 @@ Final configuration and startup
 
 Run the following commands to:
 
-* Configure the GMN settings that are required for running a local instance of GMN.
-* Initialize the GMN database
+- Configure the GMN settings that are required for running a local instance of GMN.
+- Initialize the GMN database
 
 .. _clip1:
 
@@ -48,6 +48,6 @@ GMN should now be ready to start. Simply restart Apache:
 ..
 
 
-Check the Apache logs for error messages. In case of any issues, refer to :doc:`/gmn/setup/troubleshooting`
+Check the Apache logs for error messages. In case of any issues, refer to :doc:`/d1_gmn/troubleshooting/index`
 
 Continue to the next section to test your new node.

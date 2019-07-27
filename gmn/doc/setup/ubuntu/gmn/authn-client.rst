@@ -3,7 +3,7 @@ Install non-trusted client side certificate
 
 Run the following commands to:
 
-* Set GMN up to use the previously created locally signed client side certificate for outgoing connections.
+- Set GMN up to use the previously created locally signed client side certificate for outgoing connections.
 
 .. _clip1:
 
