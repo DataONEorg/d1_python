@@ -29,8 +29,6 @@ import os
 import subprocess
 import sys
 
-import d1_common.utils.ulog
-
 try:
     import d1_dev.util
 except ImportError:
@@ -54,7 +52,6 @@ PKG_PATH_LIST = [
 
 
 log = logging.getLogger(__name__)
-d1_common.utils.ulog.setup(is_debug=True)
 
 
 def main():
