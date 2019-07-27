@@ -1,0 +1,57 @@
+* {
+    margin: 0;
+}
+
+div.section {
+  margin: 0.2em;
+}
+
+/* Light gray background for shell command blocks */
+div.highlight, pre {
+  background-color: #e0e0e0;
+}
+
+body > div.footer {
+    padding-top: 2rem;
+    text-align: center;
+    font-size: 80%;
+    color: gray;
+}
+
+.simple > li > p {
+    margin: 0;
+}
+
+.internal, .external, h1, h2, h3, code {
+    font-size:100%;
+    font-weight: bold;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h1, .sig-name {
+    font-size: 1.6em;
+}
+
+h2 {
+    font-size: 1.4em;
+}
+
+h3, .sig-prename, .sig-paren, .sig-param {
+    font-size: 1.2em;
+}
+
+h4, h5, h6 {
+    font-size: 1.0em;
+}
+
+.sig-name {
+    padding: .5em;
+}
+
+.field-odd > ul > li > p, ul.simple > li > p {
+    padding-top: .4em;
+}
+
+dl.class {
+    padding-top: 2em;
+}
