@@ -19,10 +19,10 @@
 # limitations under the License.
 import json
 import logging
-import d1_common.types.exceptions
 
 # import d1_common
 import d1_common.type_conversions
+import d1_common.types.exceptions
 
 import d1_client.baseclient
 
