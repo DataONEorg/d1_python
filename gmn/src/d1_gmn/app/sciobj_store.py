@@ -37,6 +37,7 @@ import d1_common.types
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 import django.conf
 
@@ -128,8 +129,6 @@ def open_sciobj_file_by_pid(pid, write=False):
     """Open the file containing the Science Object bytes at the custom location
     ``abs_path`` in the local filesystem for read."""
     abs_path = get_abs_sciobj_file_path_by_pid(pid)
-    if write:
-        d1_common.utils.filesystem.create_missing_directories_for_file(abs_path)
     return open_sciobj_file_by_path(abs_path, write)
 
 

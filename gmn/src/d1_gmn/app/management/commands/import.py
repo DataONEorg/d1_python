@@ -15,86 +15,111 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Bulk Import.
+"""Make an exact copy of all Science Objects, Permissions, Subjects and Event logs
+available on another Member Node.
 
-Copy from a running MN: Science objects, Permissions, Subjects,  Event logs
+This function can be used for setting up a new instance of GMN to take over for an
+existing MN. The import has been tested with other versions of GMN but should also work
+with other node stacks.
 
-This function can be used for setting up a new instance of GMN to take over for
-an existing MN. The import has been tested with other versions of GMN but should
-also work with other node stacks.
+See :doc:`/d1_gmn/setup/migrate` for more about how to migrate to GMN 3.x.
 
-See the GMN setup documentation for more information on how to use this command.
+The importer depends on the source MN ``listObjects()`` API being accessible to one or
+more of the authenticated subjects, or to the public subject if no certificate was
+provided. Also, for MNs that filter results from ``listObjects()``, only objects that
+are both returned by ``listObjects()`` and are readable by one or more of the
+authenticated subjects(s) can be imported.
 
+If the source MN is a GMN instance, ``PUBLIC_OBJECT_LIST`` in its settings.py controls
+access to ``listObjects()``. For regular authenticated subjects, results returned by
+``listObjects()`` are filtered to include only objects for which one or more of the
+subjects have read or access or better. Subjects that are whitelisted for create, update
+and delete access in GMN, and subjects authenticated as Coordinating Nodes, have
+unfiltered access to ``listObjects()``. See settings.py for more information.
+
+Member Nodes keep an event log, where operations on objects, such as reads, are stored
+together with associated details. After completed object import, the importer will
+attempt to import the events for all successfully imported objects. For event logs,
+``MNRead.getLogRecords()`` provides functionality equivalent to what ``listObjects``
+provides for objects, with the same access control related restrictions.
+
+If the source MN is a GMN instance, ``PUBLIC_LOG_RECORDS`` in settings.py controls
+access to ``getLogRecords()`` and is equivalent to ``PUBLIC_OBJECT_LIST``.
+
+If a certificate is specified with the ``--cert-pub`` and (optionally) ``--cert-key``
+command line switches, GMN will connect to the source MN using that certificate. Else,
+GMN will connect using its client side certificate, if one has been set up via
+CLIENT_CERT_PATH and CLIENT_CERT_PRIVATE_KEY_PATH in settings.py. Else, GMN connects to
+the source MN without using a certificate.
+
+After the certificate provided by GMN is accepted by the source MN, GMN is authenticated
+on the source MN for the subject(s) contained in the certificate. If no certificate was
+provided, only objects and APIs that are available to the public user are accessible.
 """
 import asyncio
-import contextlib
 import logging
-import os
 
 import d1_common.date_time
 import d1_common.type_conversions
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.utils.filesystem
-import d1_common.utils.progress_logger
+import d1_common.utils.progress_tracker
+import d1_common.utils.ulog
 import d1_common.xml
-
-import d1_client.aio.async_client
 
 import django.conf
 import django.core.management.base
+import django.db.transaction
 
 import d1_gmn.app.delete
 import d1_gmn.app.did
 import d1_gmn.app.event_log
-import d1_gmn.app.management.commands.util.standard_args
-import d1_gmn.app.management.commands.util.util
+import d1_gmn.app.mgmt_base
 import d1_gmn.app.model_util
 import d1_gmn.app.models
 import d1_gmn.app.resource_map
 import d1_gmn.app.sciobj_store
 import d1_gmn.app.sysmeta
 
-# import d1_client.cnclient_2_0
-# import d1_client.d1client
-# import d1_client.mnclient
 
+class Command(d1_gmn.app.mgmt_base.GMNCommandBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(__doc__, __name__, *args, **kwargs)
+        self.list_arg_dict = None
+        self.log_records_arg_dict = None
+        self.sciobj_tracker = None
+        self.event_tracker = None
 
-# 0 = Timeout disabled
-
-DEFAULT_TIMEOUT_SEC = 0
-DEFAULT_WORKER_COUNT = 16
-DEFAULT_LIST_COUNT = 1
-DEFAULT_PAGE_SIZE = 1000
-DEFAULT_API_MAJOR = 2
-DEFAULT_MAX_CONCURRENT_TASK_COUNT = 20
-
-
-# noinspection PyClassHasNoInit,PyAttributeOutsideInit
-class Command(django.core.management.base.BaseCommand):
-    def _init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def add_components(self, parser):
+        self.using_single_instance(parser)
+        self.using_force_for_production(parser)
+        self.using_pid_file(parser)
+        self.using_async_d1_client(parser, default_timeout_sec=0)
+        self.using_async_object_list_iter(
+            parser, default_timeout_sec=0
+        )  # , **self.get_list_objects_arg_dict())
+        self.using_async_event_log_iter(
+            parser, default_timeout_sec=0
+        )  # , **self.get_log_records_arg_dict())
 
     def add_arguments(self, parser):
-        d1_gmn.app.management.commands.util.standard_args.add_arguments(parser, __doc__)
-        parser.add_argument(
-            "--force",
-            action="store_true",
-            help="Import even if there are local objects or event logs in DB",
-        )
         parser.add_argument(
             "--clear",
             action="store_true",
-            help="Delete local objects or event logs from DB",
+            help="Delete local objects or Event Logs from DB",
         )
         parser.add_argument(
-            "--type",
+            "--node-type",
+            type=str,
             action="store",
+            default="mn",
+            choices=["mn", "cn"],
             help='Assume source node is a CN ("cn") or MN ("mn") instead of finding '
             "by reading the source Node doc",
         )
         parser.add_argument(
-            "--only-log", action="store_true", help="Only import event logs"
+            "--only-log", action="store_true", help="Only import Event Logs"
         )
         parser.add_argument(
             "--max-obj",
@@ -103,418 +128,208 @@ class Command(django.core.management.base.BaseCommand):
             help="Limit number of objects to import",
         )
         parser.add_argument(
-            "--pid-path",
-            action="store",
-            help="Import only the Science Objects specified by a text file. The file must be UTF-8 encoded and contain one PIDs or SIDs per line",
-        )
-        parser.add_argument("pid", nargs="*", help="")
-
-    def handle(self, *args, **options):
-        self.options = options
-        d1_gmn.app.management.commands.util.util.log_setup(self.options["debug"])
-        self._logger = logging.getLogger(__name__.split(".")[-1])
-        self.progress_logger = d1_common.utils.progress_logger.ProgressLogger(
-            logger=self._logger
-        )
-        # Suppress error logging from d1_client
-        logging.getLogger("d1_client").setLevel(logging.CRITICAL)
-        # if self.options['debug']:
-        #   logger = multiprocessing.log_to_stderr()
-        #   logger.setLevel(multiprocessing.SUBDEBUG)
-        logging.info("Running management command: {}".format(__name__))
-        d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running(
-            __name__
+            "--deep",
+            action="store_true",
+            help="Recursively import all nested objects in Resource Maps",
         )
 
-        # import logging_tree
-        # logging_tree.printout()
-        # sys.exit()
+    async def handle_async(self):
+        # Suppress debug output from async_client
+        logging.getLogger("d1_client.aio.async_client").setLevel(logging.ERROR)
 
-        # Python 3.7
-        # asyncio.run(self._handle(options))
-        # Python 3.6
-        loop = asyncio.get_event_loop()
-        try:
-            loop.run_until_complete(self._handle())
-        except Exception as e:
-            self._logger.exception("Import failed with exception")
-            raise django.core.management.base.CommandError(str(e))
-        finally:
-            loop.close()
-            self.progress_logger.completed()
-
-    async def _handle(self):
-        if (
-            not d1_gmn.app.management.commands.util.util.is_db_empty()
-            and not self.options["force"]
-        ):
+        if not self.is_db_empty() and not self.opt_dict["force"]:
             raise django.core.management.base.CommandError(
-                "There are already local objects or event logs in the DB. "
+                "There are already local objects or Event Logs in the DB. "
                 "Use --force to import anyway. "
-                "Use --clear to delete local objects and event logs from DB. "
-                "Use --only-log with --clear to delete only event logs. "
+                "Use --clear to delete local objects and Event Logs from DB. "
+                "Use --only-log with --clear to delete only Event Logs. "
             )
-        if self.options["clear"]:
-            if self.options["only_log"]:
+        if self.opt_dict["clear"]:
+            if self.opt_dict["only_log"]:
                 d1_gmn.app.models.EventLog.objects.all().delete()
-                self.progress_logger.event("Cleared event logs from DB")
+                self.log.info("Cleared Event Logs from DB")
             else:
                 d1_gmn.app.delete.delete_all_from_db()
-                self.progress_logger.event("Cleared objects and event logs from DB")
+                self.log.info("Cleared objects and Event Logs from DB")
 
-        async with self.create_async_client() as async_client:
-            node_type, api_major = await self.probe_node_type_major(async_client)
-
-            if not self.options["pid_path"]:
-                await self.bulk_import(async_client, node_type)
+        if not self.opt_dict["only_log"]:
+            if self.opt_dict["pid_path"]:
+                await self.sciobj_import_by_pid_list()
             else:
-                await self.restricted_import(async_client, node_type)
+                await self.sciobj_import_all()
+            await self.await_all()
+            self.sciobj_tracker.completed()
 
-    async def bulk_import(self, async_client, node_type):
-        if not self.options["only_log"]:
-            await self.import_all(
-                async_client,
-                async_client.list_objects,
-                self.get_list_objects_arg_dict(node_type),
-                "objectInfo",
-                self.import_object,
-                "Importing objects",
-            )
-        await self.import_all(
-            async_client,
-            async_client.get_log_records,
-            self.get_log_records_arg_dict(node_type),
-            "logEntry",
-            self.import_event,
-            "Importing logs",
-        )
-
-    async def import_all(
-        self,
-        client,
-        list_func,
-        list_arg_dict,
-        iterable_attr,
-        import_func,
-        import_task_name,
-    ):
-        total_count = (await list_func(count=0, **list_arg_dict)).total
-
-        if not total_count:
-            self.progress_logger.event(
-                "{}: Aborted: Received empty list from Node".format(import_task_name)
-            )
-            self._logger.info(
-                "{}: Aborted: Received empty list from Node. list_arg_dict={}".format(
-                    import_task_name, list_arg_dict
-                )
-            )
-            return
-
-        n_pages = (total_count - 1) // self.options["page_size"] + 1
-
-        slice_task_name = "{}: Retrieved slice".format(import_task_name)
-        item_task_name = "{}: Retrieved item".format(import_task_name)
-
-        self.progress_logger.start_task_type(slice_task_name, n_pages)
-        self.progress_logger.start_task_type(item_task_name, total_count)
-
-        task_set = set()
-
-        for page_idx in range(n_pages):
-            self.progress_logger.start_task(slice_task_name)
-
-            if len(task_set) >= self.options["max_concurrent"]:
-                result_set, task_set = await asyncio.wait(
-                    task_set, return_when=asyncio.FIRST_COMPLETED
-                )
-
-            # noinspection PyTypeChecker
-            task_set.add(
-                self.import_page(
-                    client,
-                    list_func,
-                    list_arg_dict,
-                    iterable_attr,
-                    import_func,
-                    import_task_name,
-                    page_idx,
-                )
-            )
-
-            # Debug
-            # if page_idx >= 10:
-            #     break
-
-        await asyncio.wait(task_set)
-
-        # except Exception as e:
-        #     self._logger.error(
-        #         '{}: Retrieved slice failed: page_idx={} n_pages={} error="{}"'.format(
-        #             import_task_name, page_idx, n_pages, str(e)
-        #         )
-        #     )
-
-        self.progress_logger.end_task_type(slice_task_name)
-        self.progress_logger.end_task_type(item_task_name)
-
-    async def restricted_import(self, async_client, node_type):
-        """Import only the Science Objects specified by a text file.
-
-        The file must be UTF-8 encoded and contain one PIDs or SIDs per line.
-
-        """
-        item_task_name = "Importing objects"
-        pid_path = self.options["pid_path"]
-
-        if not os.path.exists(pid_path):
-            raise ConnectionError("File does not exist: {}".format(pid_path))
-
-        with open(pid_path, encoding="UTF-8") as pid_file:
-            self.progress_logger.start_task_type(
-                item_task_name, len(pid_file.readlines())
-            )
-            pid_file.seek(0)
-
-            for pid in pid_file.readlines():
-                pid = pid.strip()
-                self.progress_logger.start_task(item_task_name)
-
-                # Ignore any blank lines in the file
-                if not pid:
-                    continue
-
-                await self.import_aggregated(async_client, pid)
-
-        self.progress_logger.end_task_type(item_task_name)
-
-    async def import_aggregated(self, async_client, pid):
-        """Import the SciObj at {pid}.
-
-        If the SciObj is a Resource Map, also recursively import the aggregated objects.
-
-        """
-        self._logger.info("Importing: {}".format(pid))
-
-        task_set = set()
-
-        object_info_pyxb = d1_common.types.dataoneTypes.ObjectInfo()
-        object_info_pyxb.identifier = pid
-        task_set.add(self.import_object(async_client, object_info_pyxb))
-
-        result_set, task_set = await asyncio.wait(task_set)
-
-        assert len(result_set) == 1
-        assert not task_set
-
-        sysmeta_pyxb = result_set.pop().result()
-
-        if not sysmeta_pyxb:
-            # Import was skipped
-            return
-
-        assert d1_common.xml.get_req_val(sysmeta_pyxb.identifier) == pid
-
-        if d1_gmn.app.did.is_resource_map_db(pid):
-            for member_pid in d1_gmn.app.resource_map.get_resource_map_members_by_map(
-                pid
-            ):
-                self.progress_logger.event("Importing aggregated SciObj")
-                self._logger.info('Importing aggregated SciObj. pid="{}"'.format(pid))
-                await self.import_aggregated(async_client, member_pid)
-
-    async def import_page(
-        self,
-        client,
-        list_func,
-        list_arg_dict,
-        iterable_attr,
-        import_func,
-        import_task_name,
-        page_idx,
-    ):
-        page_start_idx = page_idx * self.options["page_size"]
-
-        type_pyxb = None
-        try:
-            type_pyxb = await list_func(
-                start=page_start_idx, count=self.options["page_size"], **list_arg_dict
-            )
-        except Exception as e:
-            self.progress_logger.event("{}: Skipped slice".format(import_task_name))
-            self._logger.error(
-                '{}: Skipped slice. page_idx={} page_start_idx={} page_size={} error="{}"'.format(
-                    import_task_name,
-                    page_idx,
-                    page_start_idx,
-                    self.options["page_size"],
-                    str(e),
-                )
-            )
-
-        list_pyxb = getattr(type_pyxb, iterable_attr)
-        self.progress_logger.event("{}: Retrieved slice".format(import_task_name))
-        self._logger.debug(
-            "{}: Retrieved slice: page_idx={} n_items={} page_size={}".format(
-                import_task_name, page_idx, len(list_pyxb), self.options["page_size"]
-            )
-        )
-
-        task_set = set()
-
-        for i, item_pyxb in enumerate(list_pyxb):
-            self.progress_logger.start_task(
-                "{}: Retrieved item".format(import_task_name)
-            )
-
-            if len(task_set) >= self.options["max_concurrent"]:
-                result_set, task_set = await asyncio.wait(
-                    task_set, return_when=asyncio.FIRST_COMPLETED
-                )
-
-            task_set.add(import_func(client, item_pyxb))
-
-            # Debug
-            # if i >= 10:
-            #     break
-
-        await asyncio.wait(task_set)
-
-        self._logger.debug(
-            "{}: Completed page: page_idx={} n_items={}".format(
-                import_task_name, page_idx, len(list_pyxb)
-            )
-        )
+        await self.event_import_all()
+        await self.await_all()
+        self.event_tracker.completed()
 
     # SciObj
 
-    async def import_object(self, client, object_info_pyxb):
-        pid = d1_common.xml.get_req_val(object_info_pyxb.identifier)
+    async def sciobj_import_all(self):
+        """Import all SciObj on remote MN."""
+        self.log.info("Starting SciObj import")
+        total_count = await self.async_object_list_iter.total
+        self.log.info("Number of SciObj to import: {}".format(total_count))
+        self.sciobj_tracker = self.tracker.tracker("Importing SciObj", total_count)
+        async for object_info_pyxb in self.async_object_list_iter:
+            pid = object_info_pyxb.identifier.value()
+            await self.add_task(self.sciobj_import_pid(pid))
 
+    async def sciobj_import_by_pid_list(self):
+        """Import SciObj specified by PID list file."""
+        self.log.info("Starting SciObj import from PID file")
+        pid_list = self.load_set_from_file(self.opt_dict["pid_path"])
+        total_count = len(pid_list)
+        self.log.info("Number of SciObj to import: {}".format(total_count))
+        if not total_count:
+            self.log.error("Aborted: Loaded empty list from file")
+            return
+        self.sciobj_tracker = self.tracker.tracker(
+            "Importing SciObj by PID list file", total_count
+        )
+        for pid in pid_list:
+            await self.add_task(self.sciobj_import_pid(pid))
+
+    async def sciobj_import_pid(self, pid):
+        """Import SciObj SysMeta and bytes"""
+        self.log.debug("Starting import of SciObj: {}".format(pid))
+        self.sciobj_tracker.step()
         if d1_gmn.app.did.is_existing_object(pid):
-            self.progress_logger.event(
-                "Skipped object import: Local object already exists"
-            )
-            self._logger.info(
-                'Skipped object import: Local object already exists. pid="{}"'.format(
-                    pid
-                )
+            self.sciobj_tracker.event(
+                "Skipped object import: Local object already exists",
+                'pid="{}"'.format(pid),
             )
             return
 
-        sciobj_url = await self.get_object_proxy_location(client, pid)
+        with django.db.transaction.atomic():
+            await self.sciobj_download_and_create(pid)
 
+        if self.opt_dict["deep"]:
+            if d1_gmn.app.did.is_resource_map_db(pid):
+                for (
+                    member_pid
+                ) in d1_gmn.app.resource_map.get_resource_map_members_by_map(pid):
+                    await self.sciobj_import_pid(member_pid)
+                    self.sciobj_tracker.event(
+                        "Imported aggregated SciObj", 'pid="{}"'.format(pid)
+                    )
+
+    async def sciobj_download_and_create(self, pid):
+        try:
+            sysmeta_pyxb = await self.async_d1_client.get_system_metadata(pid)
+        except d1_common.types.exceptions.DataONEException as e:
+            self.sciobj_tracker.event(
+                "Import failed: MNRead.getSystemMetadata() returned error",
+                'pid="{}" error="{}"'.format(pid, e.friendly_format()),
+                is_error=True,
+            )
+            return
+
+        sciobj_url = await self.sciobj_get_proxy_location(pid)
         if sciobj_url:
-            self.progress_logger.event("Skipped object download: Proxy object")
-            self._logger.info(
-                'Skipped object download: Proxy object. pid="{}" sciobj_url="{}"'.format(
-                    pid, sciobj_url
-                )
+            self.sciobj_tracker.event(
+                "Skipped object download: Proxy object",
+                'pid="{}" sciobj_url="{}"'.format(pid, sciobj_url),
             )
         else:
             try:
-                await self.download_source_sciobj_bytes_to_store(client, pid)
+                await self.sciobj_download_bytes_to_store(pid)
             except d1_common.types.exceptions.DataONEException as e:
-                self.progress_logger.event("Skipped object import: Download failed")
-                self._logger.error(
-                    'Skipped object import: Download failed. pid="{}" error="{}"'.format(
-                        pid, e.friendly_format()
-                    )
+                self.sciobj_tracker.event(
+                    "SciObj import failed: MNRead.get() returned error",
+                    'pid="{}" error="{}"'.format(pid, e.friendly_format()),
+                    is_error=True,
                 )
                 return
             sciobj_url = d1_gmn.app.sciobj_store.get_rel_sciobj_file_url_by_pid(pid)
 
-        try:
-            sysmeta_pyxb = await client.get_system_metadata(pid)
-        except d1_common.types.exceptions.DataONEException as e:
-            self.progress_logger.event(
-                "Skipped object import: getSystemMetadata() failed"
-            )
-            self._logger.error(
-                'Skipped object import: getSystemMetadata() failed. pid="{}" error="{}"'.format(
-                    pid, e.friendly_format()
-                )
-            ),
-            return
-
         d1_gmn.app.sysmeta.create_or_update(sysmeta_pyxb, sciobj_url)
-        d1_gmn.app.resource_map.create_or_update_db(sysmeta_pyxb)
-        self.progress_logger.event("Imported object")
-        self._logger.info('Imported object: pid="{}"'.format(pid)),
 
-        return sysmeta_pyxb
+        if d1_gmn.app.resource_map.is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
+            d1_gmn.app.resource_map.create_or_update_db(sysmeta_pyxb)
+            self.sciobj_tracker.event("Processed Resource Map", 'pid="{}"'.format(pid))
 
-    async def get_object_proxy_location(self, client, pid):
-        """If object is proxied, return the proxy location URL.
+        self.sciobj_tracker.event("Imported SciObj", 'pid="{}"'.format(pid))
+
+    async def sciobj_get_proxy_location(self, pid):
+        """If object is a proxy, return the proxy location URL.
 
         If object is local, return None.
 
         """
         try:
-            return (await client.describe(pid)).get("DataONE-Proxy")
+            return (await self.async_d1_client.describe(pid)).get("DataONE-Proxy")
         except d1_common.types.exceptions.DataONEException:
             # Workaround for older GMNs that return 500 instead of 404 for describe()
             pass
 
-    async def download_source_sciobj_bytes_to_store(self, client, pid):
-        # if d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid):
-        #     self.progress_logger.event(
-        #         "Skipped object bytes download: File already in local object store"
-        #     )
-        #     self._logger.info(
-        #         'Skipped object bytes download: File already in local object store. pid="{}"'.format(
-        #             pid
-        #         )
-        #     )
-        #     return
+    async def sciobj_download_bytes_to_store(self, pid):
+        if d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid):
+            self.sciobj_tracker.event(
+                "Skipped object bytes download: File already in local SciObj store",
+                'pid="{}"'.format(pid),
+            )
+            return
 
-        with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid, write=True) as (
-            sciobj_file,
-            file_url,
-        ):
-            await client.get(sciobj_file, pid)
+        with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_ctx(
+            pid, write=True
+        ) as sciobj_file:
+            await self.async_d1_client.get(sciobj_file, pid)
 
-    def get_list_objects_arg_dict(self, node_type):
+    def get_list_objects_arg_dict(self):
         """Create a dict of arguments that will be passed to listObjects().
 
         If {node_type} is a CN, add filtering to include only objects from this GMN
         instance in the ObjectList returned by CNCore.listObjects().
-
         """
         arg_dict = {
             # Restrict query for faster debugging
             # "fromDate": datetime.datetime(2017, 1, 1),
             # "toDate": datetime.datetime(2017, 1, 10),
         }
-        if node_type == "cn":
+        if self.opt_dict["node_type"] == "cn":
             arg_dict["nodeId"] = django.conf.settings.NODE_IDENTIFIER
+        self.log.debug("listObjects args: {}".format(arg_dict))
         return arg_dict
 
     # Event Logs
 
-    async def import_event(self, client_, log_entry_pyxb):
-        pid = d1_common.xml.get_req_val(log_entry_pyxb.identifier)
+    async def event_import_all(self):
+        """Import all events on remote MN."""
+        self.log.info("Starting Event Log import")
+        total_count = await self.async_event_log_iter.total
+        self.log.info("Number of events to import: {}".format(total_count))
+        self.event_tracker = self.tracker.tracker("Importing Event Logs", total_count)
+        async for log_entry_pyxb in self.async_event_log_iter:
+            await self.add_task(self.event_import_entry(log_entry_pyxb))
 
+    async def event_import_entry(self, log_entry_pyxb):
+        self.event_tracker.step()
+        pid = d1_common.xml.get_req_val(log_entry_pyxb.identifier)
         if not d1_gmn.app.did.is_existing_object(pid):
-            self.progress_logger.event("Skipped event log: Local object does not exist")
-            self._logger.info(
-                'Skipped event log: Local object does not exist. pid="{}"'.format(pid)
+            self.event_tracker.event(
+                "Skipped Event Log: Local object does not exist", 'pid="{}"'.format(pid)
             )
             return
 
-        event_log_model = d1_gmn.app.event_log.create_log_entry(
-            d1_gmn.app.model_util.get_sci_model(pid),
-            log_entry_pyxb.event,
-            log_entry_pyxb.ipAddress,
-            log_entry_pyxb.userAgent,
-            log_entry_pyxb.subject.value(),
-        )
-        event_log_model.timestamp = d1_common.date_time.normalize_datetime_to_utc(
-            log_entry_pyxb.dateLogged
-        )
-        event_log_model.save()
+        with django.db.transaction.atomic():
 
-    def get_log_records_arg_dict(self, node_type):
+            event_log_model = d1_gmn.app.event_log.create_log_entry(
+                d1_gmn.app.model_util.get_sci_model(pid),
+                log_entry_pyxb.event,
+                log_entry_pyxb.ipAddress,
+                log_entry_pyxb.userAgent,
+                log_entry_pyxb.subject.value(),
+            )
+            event_log_model.timestamp = d1_common.date_time.normalize_datetime_to_utc(
+                log_entry_pyxb.dateLogged
+            )
+            event_log_model.save()
+
+        self.event_tracker.event("Imported Event", 'pid="{}"'.format(pid))
+
+    def get_log_records_arg_dict(self):
         """Create a dict of arguments that will be passed to getLogRecords().
 
         If {node_type} is a CN, add filtering to include only objects from this GMN
@@ -526,129 +341,7 @@ class Command(django.core.management.base.BaseCommand):
             # "fromDate": datetime.datetime(2017, 1, 1),
             # "toDate": datetime.datetime(2017, 1, 3),
         }
-        if node_type == "cn":
+        if self.opt_dict["node_type"] == "cn":
             arg_dict["nodeId"] = django.conf.settings.NODE_IDENTIFIER
+        self.log.debug("getLogRecords args: {}".format(arg_dict))
         return arg_dict
-
-    # Client
-
-    # def create_source_client(self, api_major, node_type):
-    #     if node_type == "cn":
-    #         return self.create_async_client()
-    #     elif node_type == "mn":
-    #         return self.create_async_client()
-    #     raise AssertionError(
-    #         'node_type must be "mn" or "cn", not "{}"'.format(node_type)
-    #     )
-
-    @contextlib.asynccontextmanager
-    async def create_async_client(self):
-        async with d1_client.aio.async_client.AsyncDataONEClient(
-            self.options["baseurl"]
-        ) as async_client:
-            yield async_client
-
-    def get_client_arg_dict(self):
-        client_dict = {"timeout_sec": self.options["timeout"]}
-        if self.options["disable_server_cert_validation"]:
-            client_dict.update({"verify_tls": False, "suppress_verify_warnings": True})
-        if not self.options["public"]:
-            client_dict.update(
-                {
-                    "cert_pem_path": self.options["cert_pem_path"]
-                    or django.conf.settings.CLIENT_CERT_PATH,
-                    "cert_key_path": self.options["cert_key_path"]
-                    or django.conf.settings.CLIENT_CERT_PRIVATE_KEY_PATH,
-                }
-            )
-        return client_dict
-
-    async def is_cn(self, client):
-        """Return True if node at {base_url} is a CN, False if it is an MN.
-
-        Raise a DataONEException if it's not a functional CN or MN.
-
-        """
-        node_pyxb = await client.get_capabilities()
-        return d1_common.type_conversions.pyxb_get_type_name(node_pyxb) == "NodeList"
-
-    async def get_node_doc(self, client):
-        """If options["baseurl"] is a CN, return the NodeList.
-
-        If it's a MN, return the Node doc.
-
-        """
-        return await client.get_capabilities()
-
-    async def probe_node_type_major(self, client):
-        """Determine if import source node is a CN or MN and which major version API to
-        use."""
-        try:
-            node_pyxb = await self.get_node_doc(client)
-        except d1_common.types.exceptions.DataONEException as e:
-            raise django.core.management.base.CommandError(
-                "Could not find a functional CN or MN at the provided BaseURL. "
-                'base_url="{}" error="{}"'.format(
-                    self.options["baseurl"], e.friendly_format()
-                )
-            )
-
-        is_cn = d1_common.type_conversions.pyxb_get_type_name(node_pyxb) == "NodeList"
-
-        if is_cn:
-            self.assert_is_known_node_id(
-                node_pyxb, django.conf.settings.NODE_IDENTIFIER
-            )
-            self._logger.info(
-                "Importing from CN: {}. filtered on MN: {}".format(
-                    d1_common.xml.get_req_val(
-                        self.find_node(node_pyxb, self.options["baseurl"]).identifier
-                    ),
-                    django.conf.settings.NODE_IDENTIFIER,
-                )
-            )
-            return "cn", "v2"
-        else:
-            self._logger.info(
-                "Importing from MN: {}".format(
-                    d1_common.xml.get_req_val(node_pyxb.identifier)
-                )
-            )
-            return "mn", self.find_node_api_version(node_pyxb)
-
-    def find_node(self, node_list_pyxb, base_url):
-        """Search NodeList for Node that has {base_url}.
-
-        Return matching Node or None
-
-        """
-        for node_pyxb in node_list_pyxb.node:
-            if node_pyxb.baseURL == base_url:
-                return node_pyxb
-
-    def assert_is_known_node_id(self, node_list_pyxb, node_id):
-        """When importing from a CN, ensure that the NodeID which the ObjectList will be
-        filtered by is known to the CN."""
-        node_pyxb = self.find_node_by_id(node_list_pyxb, node_id)
-        assert node_pyxb is not None, (
-            "The NodeID of this GMN instance is unknown to the CN at the provided BaseURL. "
-            'node_id="{}" base_url="{}"'.format(node_id, self.options["baseurl"])
-        )
-
-    def find_node_api_version(self, node_pyxb):
-        """Find the highest API major version supported by node."""
-        max_major = 0
-        for s in node_pyxb.services.service:
-            max_major = max(max_major, int(s.version[1:]))
-        return max_major
-
-    def find_node_by_id(self, node_list_pyxb, node_id):
-        """Search NodeList for Node with {node_id}.
-
-        Return matching Node or None
-
-        """
-        for node_pyxb in node_list_pyxb.node:
-            # if node_pyxb.baseURL == base_url:
-            if d1_common.xml.get_req_val(node_pyxb.identifier) == node_id:
-                return node_pyxb

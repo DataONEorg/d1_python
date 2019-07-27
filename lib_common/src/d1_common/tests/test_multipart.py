@@ -23,10 +23,10 @@ import responses
 
 import d1_common.multipart
 
+import d1_client.session
+
 import d1_test.d1_test_case
 import d1_test.mock_api.post
-
-import d1_client.session
 
 
 class TestMultipart(d1_test.d1_test_case.D1TestCase):

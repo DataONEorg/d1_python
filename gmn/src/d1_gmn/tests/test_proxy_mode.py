@@ -61,12 +61,12 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         """
 
         # Use the catch_all echo to simulate a remote 3rd party server that holds
-        # objects to be proxied.
+        # proxy objects.
         d1_test.mock_api.catch_all.add_callback(
             d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
         )
 
-        # Create a proxied object.
+        # Create a proxy object.
         pid = d1_test.instance_generator.identifier.generate_pid()
 
         if not use_invalid_url:
@@ -81,7 +81,7 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         # Check that object was not stored locally
         assert not d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid)
 
-        # Retrieve the proxied object and return echo dict.
+        # Retrieve the proxy object and return echo dict.
         response = self.call_d1_client(client.get, pid)
         return json.loads(response.text)
 
@@ -110,11 +110,11 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         return requests.get(sciobj_url).content
 
     def test_1000(self, gmn_client_v1_v2):
-        """create(): Proxy mode: Create and retrieve proxied object, no redirect."""
+        """create(): Proxy mode: Create and retrieve proxy object, no redirect."""
         self.create_and_check_proxy_obj(gmn_client_v1_v2, do_redirect=False)
 
     def test_1020(self, gmn_client_v1_v2):
-        """create(): Proxy mode: Create and retrieve proxied object with redirect."""
+        """create(): Proxy mode: Create and retrieve proxy object with redirect."""
         self.create_and_check_proxy_obj(gmn_client_v1_v2, do_redirect=True)
 
     def test_1040(self):

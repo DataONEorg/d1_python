@@ -28,6 +28,7 @@ import logging
 import warnings
 
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 # noinspection PyUnresolvedReferences
 from d1_gmn.app.settings_default import *
@@ -120,7 +121,7 @@ LOGGING = {
         }
     },
     "handlers": {
-        "console": {
+        "stdout": {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
             "level": logging.DEBUG,
@@ -128,7 +129,7 @@ LOGGING = {
         }
     },
     "loggers": {
-        "": {"handlers": ["console"], "level": logging.DEBUG, "propagate": True}
+        "": {"handlers": ["stdout"], "level": logging.DEBUG, "propagate": True}
     },
 }
 

@@ -3,9 +3,8 @@
 import io
 
 import freezegun
-import responses
-
 import pytest
+import responses
 
 # This work was created by participants in the DataONE project, and is
 # jointly copyrighted by participating institutions in DataONE. For
@@ -26,11 +25,11 @@ import pytest
 # limitations under the License.
 import d1_common.types.exceptions
 
+import d1_client.d1client
+
 import d1_test.d1_test_case
 import d1_test.mock_api.create
 import d1_test.mock_api.get_capabilities
-
-import d1_client.d1client
 
 
 @freezegun.freeze_time("1988-05-01")

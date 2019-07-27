@@ -77,9 +77,9 @@ Notes:
 
 """
 
+import contextlib
 import xml.etree.ElementTree
 
-import contextlib
 import iso8601
 
 import d1_common.date_time

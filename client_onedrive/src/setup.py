@@ -27,7 +27,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.onedrive",
-        version='3.4.6',
+        version="3.4.6",
         description="Filesystem access to the DataONE Workspace",
         author="DataONE Project",
         author_email="developers@dataone.org",

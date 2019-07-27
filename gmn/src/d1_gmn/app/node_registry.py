@@ -32,6 +32,8 @@ import d1_client.cnclient
 import django.conf
 import django.core.cache
 
+log = logging.getLogger(__name__)
+
 
 def get_cn_subjects():
     cn_subjects = django.core.cache.cache.get("cn_subjects")
@@ -39,12 +41,10 @@ def get_cn_subjects():
         return cn_subjects
 
     if django.conf.settings.STAND_ALONE:
-        logging.info("Running in stand-alone mode. Skipping node registry download.")
+        log.info("Running in stand-alone mode. Skipping node registry download.")
         set_empty_cn_subjects_cache()
     else:
-        logging.info(
-            "Running in environment: {}".format(django.conf.settings.DATAONE_ROOT)
-        )
+        log.info("Running in environment: {}".format(django.conf.settings.DATAONE_ROOT))
         set_cn_subjects_for_environment()
 
     return django.core.cache.cache.get("cn_subjects")
@@ -52,7 +52,7 @@ def get_cn_subjects():
 
 def set_empty_cn_subjects_cache():
     django.core.cache.cache.set("cn_subjects", set())
-    logging.info("CN Subjects set to empty list")
+    log.info("CN Subjects set to empty list")
 
 
 def set_cn_subjects_for_environment():
@@ -61,14 +61,14 @@ def set_cn_subjects_for_environment():
     try:
         cn_subjects = get_cn_subjects_from_dataone_root()
     except Exception as e:
-        logging.warning(
+        log.warning(
             "Unable to get CN Subjects from the DataONE environment. "
             "If this server is being used for testing, see the STAND_ALONE setting. "
             'error="{}" env="{}"'.format(str(e), django.conf.settings.DATAONE_ROOT)
         )
         cn_subjects = []
     else:
-        logging.info(
+        log.info(
             "CN Subjects successfully retrieved from the DataONE environment: {}".format(
                 ", ".join(cn_subjects)
             )
@@ -98,7 +98,7 @@ def get_cn_subjects_from_dataone_root():
 
 
 def download_node_registry():
-    logging.info(
+    log.info(
         "Downloading node registry from environment: {}".format(
             django.conf.settings.DATAONE_ROOT
         )

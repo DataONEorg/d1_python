@@ -27,13 +27,11 @@ import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
 
-
 import d1_client.cnclient
 import d1_client.cnclient_2_0
 import d1_client.mnclient
 import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
-
 
 BASE_URL_TO_NODE_ID_DICT = {}
 
@@ -183,3 +181,28 @@ def get_client_class_by_version_tag(api_major):
         return d1_client.mnclient_2_0.MemberNodeClient_2_0
     else:
         raise ValueError("Unknown DataONE API version tag: {}".format(api_major))
+
+
+def get_client_class(api_major=2, node_type="mn"):
+    """Get a DataONEClient based class that can be used for creating clients for use
+    with a node of the given ``node_type`` that supports the DataONE API with the given
+    ``api_major``.
+
+    Args:
+        api_major: str or int
+            'v1', '1' or 1
+            'v2', '2' or 2
+
+        node_type: str
+            mn: Member Node
+            cn: Coordinating Node
+
+    Returns:
+        DataONEClient based class
+    """
+    if node_type.lower == "mn":
+        return get_mn_client_class_by_version_tag(api_major)
+    elif node_type.lower == "cn":
+        return d1_client.cnclient_2_0.CoordinatingNodeClient_2_0
+    else:
+        raise ValueError("Unknown node type: {}".format(node_type))

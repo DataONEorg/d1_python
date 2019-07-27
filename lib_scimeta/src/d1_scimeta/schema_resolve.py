@@ -31,7 +31,6 @@ import logging
 import requests
 
 import d1_scimeta.util
-import d1_scimeta.util
 
 import d1_client.command_line
 

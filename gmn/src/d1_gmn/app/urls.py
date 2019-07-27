@@ -17,6 +17,7 @@
 # limitations under the License.
 """URL to view mapping."""
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 import django.conf.urls
 import django.views.static

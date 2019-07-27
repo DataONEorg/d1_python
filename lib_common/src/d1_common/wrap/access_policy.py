@@ -22,6 +22,7 @@ Examples:
   Perform multiple operations on an AccessPolicy:
 
   .. highlight:: python
+
   ::
 
     # Wrap a SystemMetadata PyXB object to modify its AccessPolicy section
@@ -200,13 +201,12 @@ Notes:
 
 """
 
+import contextlib
 import copy
 import inspect
 import logging
 import pprint
 import sys
-
-import contextlib
 
 import d1_common.const
 import d1_common.types.dataoneTypes
@@ -386,32 +386,31 @@ class AccessPolicyWrapper(object):
         return self.subj_has_perm(d1_common.const.SUBJECT_PUBLIC, "read")
 
     def is_private(self):
-        """Returns:
-
-        bool: **True** if AccessPolicy does not grant access to any subjects.
+        """
+        Returns: bool:
+          ``True`` if AccessPolicy does not grant access to any subjects.
 
         """
         return not self.get_subjects_with_equal_or_higher_perm("read")
 
     def is_empty(self):
-        """Returns:
-
-        bool: ``True`` if AccessPolicy does not grant access to any subjects.
+        """  Returns: bool:
+        ``True`` if AccessPolicy does not grant access to any subjects.
 
         """
         return self.is_private()
 
     def are_equivalent_pyxb(self, access_pyxb):
         """
-    Args:
-      access_pyxb : AccessPolicy PyXB object with which to compare.
+        Args:
+          access_pyxb : AccessPolicy PyXB object with which to compare.
 
-    Returns:
-       bool: ``True`` if ``access_pyxb`` grants the exact same permissions as the wrapped AccessPolicy.
+        Returns: bool:
+          ``True`` if ``access_pyxb`` grants the exact same permissions as the wrapped AccessPolicy.
 
-       Differences in how the permissions are represented in the XML docs are
-       handled by transforming to normalized lists before comparison.
-    """
+       Differences in how the permissions are represented in the XML docs are handled by
+       transforming to normalized lists before comparison.
+        """
         return self.get_normalized_perm_list() == get_normalized_perm_list(access_pyxb)
 
     def are_equivalent_xml(self, access_xml):

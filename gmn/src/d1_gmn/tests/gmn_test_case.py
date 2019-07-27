@@ -842,7 +842,7 @@ class GMNTestCase(d1_test.d1_test_case.D1TestCase):
         )
 
     def call_management_command(self, *args, **kwargs):
-        with self.mock.disable_management_command_logging():
+        with self.mock.disable_management_command_logging_setup():
             with self.mock.disable_management_command_concurrent_instance_check():
                 django.core.management.call_command(*args, **kwargs)
 

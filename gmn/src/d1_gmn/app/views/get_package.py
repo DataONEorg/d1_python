@@ -68,7 +68,7 @@ def _create_sciobj_info_list(request, pid_list):
     sciobj_info_list = []
     for pid in pid_list:
         # Skip any sciobj which are aggregated by the package but do not exist locally.
-        # TODO: Handle proxied sciobj.
+        # TODO: Handle proxy sciobj.
         if not d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid):
             continue
         sciobj_model = d1_gmn.app.model_util.get_sci_model(pid)

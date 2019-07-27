@@ -29,10 +29,10 @@ import d1_cli.impl.command_parser
 import d1_cli.impl.exceptions
 import d1_cli.impl.util
 
+import d1_client.mnclient_2_0
+
 import d1_test.d1_test_case
 import d1_test.mock_api.get
-
-import d1_client.mnclient_2_0
 
 
 class TestCLIUtil(d1_test.d1_test_case.D1TestCase):

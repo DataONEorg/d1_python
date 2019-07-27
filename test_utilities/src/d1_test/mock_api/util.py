@@ -29,12 +29,12 @@ import d1_common.const
 import d1_common.url
 import d1_common.util
 
+import d1_client.d1client
+
 import d1_test.instance_generator.date_time
 import d1_test.instance_generator.sciobj
 import d1_test.mock_api
 import d1_test.mock_api.d1_exception
-
-import d1_client.d1client
 
 NUM_SCIOBJ_BYTES = 1024
 SYSMETA_FORMATID = "application/octet-stream"

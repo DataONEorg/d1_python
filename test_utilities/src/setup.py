@@ -26,7 +26,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.test_utilities",
-        version='3.4.6',
+        version="3.4.6",
         description="Utilities for testing DataONE infrastructure components",
         author="DataONE Project",
         author_email="developers@dataone.org",

@@ -18,6 +18,7 @@
 """SciObj create for view methods."""
 import d1_common.date_time
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 import d1_common.xml
 
 import django.conf
@@ -34,7 +35,7 @@ import d1_gmn.app.views.assert_sysmeta
 
 def create_sciobj(request, sysmeta_pyxb):
     """Create object file and database entries for a new native locally stored (non-
-    proxied) science object.
+    proxy) science object.
 
     This method takes a request object and is only called from the views that
     handle:

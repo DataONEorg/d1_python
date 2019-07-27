@@ -187,7 +187,7 @@ def get_object(request, pid):
     content_type_str = d1_gmn.app.object_format_cache.get_content_type(
         sciobj.format.format
     )
-    # Return local or proxied SciObj bytes
+    # Return local or proxy SciObj bytes
     response = django.http.StreamingHttpResponse(
         _get_sciobj_iter(sciobj), content_type_str
     )

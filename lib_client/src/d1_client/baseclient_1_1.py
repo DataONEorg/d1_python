@@ -19,6 +19,7 @@
 # limitations under the License.
 
 import logging
+import d1_common.types.exceptions
 
 # import d1_common
 import d1_common.type_conversions
@@ -82,7 +83,9 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
             )
         )
         return (self.POST if do_post else self.GET)(
-            ["query", queryEngine, query_str], headers=vendorSpecific, **kwargs
+            ["query", queryEngine, self.EncodedUrlPathSeg(query_str)],
+            headers=vendorSpecific,
+            **kwargs
         )
 
     def query(
@@ -103,10 +106,19 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         response = self.queryResponse(
             queryEngine, query_str, vendorSpecific, do_post, **kwargs
         )
-        if self._content_type_is_json(response):
+        try:
             return self._read_json_response(response)
-        else:
-            return self._read_stream_response(response)
+        except d1_common.types.exceptions.DataONEException:
+            pass
+        try:
+            return response.json()
+        except Exception:
+            pass
+        try:
+            return json.loads(response.text)
+        except Exception:
+            pass
+        return self._read_stream_response(response)
 
     def getQueryEngineDescriptionResponse(
         self, queryEngine, vendorSpecific=None, **kwargs

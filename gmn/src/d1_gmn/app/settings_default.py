@@ -32,6 +32,7 @@ import os.path
 
 import d1_common.const
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 DEBUG = False
 DEBUG_GMN = False
@@ -218,7 +219,7 @@ LOGGING = {
             "formatter": "verbose",
         },
         # Write logs to stdout. Useful when running via ./manage.py runserver.
-        "console": {
+        "stdout": {
             "class": "logging.StreamHandler",
             "formatter": "verbose",
             "level": LOG_LEVEL,

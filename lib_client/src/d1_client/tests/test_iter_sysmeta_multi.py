@@ -24,11 +24,11 @@ import responses
 import d1_common.date_time
 import d1_common.xml
 
+import d1_client.iter.sysmeta_multi
+
 import d1_test.d1_test_case
 import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.list_objects
-
-import d1_client.iter.sysmeta_multi
 
 N_TOTAL = 50
 

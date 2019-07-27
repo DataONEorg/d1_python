@@ -53,8 +53,9 @@ def main():
     xml_tree = d1_scimeta.util.load_xml_file_to_tree(args.xml_path)
 
     no_empty_elements_xml_tree = d1_scimeta.util.remove_empty_elements(xml_tree)
-    d1_scimeta.util.dump_pretty_tree(no_empty_elements_xml_tree, 'Result of XSLT processing',
-                                     log.info)
+    d1_scimeta.util.dump_pretty_tree(
+        no_empty_elements_xml_tree, "Result of XSLT processing", log.info
+    )
     if args.update:
         d1_scimeta.util.save_tree_to_file(no_empty_elements_xml_tree, args.xml_path)
 

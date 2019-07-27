@@ -29,7 +29,6 @@ import django.conf
 import d1_gmn.app
 import d1_gmn.app.did
 import d1_gmn.app.models
-import d1_gmn.app.resource_map
 import d1_gmn.app.sciobj_store
 
 # def assert_map_is_valid_for_create_by_str(resource_map_xml):
@@ -78,15 +77,13 @@ def _is_map_valid_for_block_mode_create(resource_map):
 
 
 def create_or_update_db(sysmeta_pyxb):
-    if not is_resource_map_sysmeta_pyxb(sysmeta_pyxb):
-        return
     pid = d1_common.xml.get_req_val(sysmeta_pyxb.identifier)
     resource_map = get_resource_map_from_sciobj(pid)
     create_or_update(pid, resource_map)
 
 
 def get_resource_map_from_sciobj(pid):
-    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid(pid) as sciobj_file:
+    with d1_gmn.app.sciobj_store.open_sciobj_file_by_pid_ctx(pid) as sciobj_file:
         return d1_gmn.app.resource_map.parse_resource_map_from_str(sciobj_file.read())
 
 
@@ -143,7 +140,10 @@ def parse_resource_map_from_str(resource_map_xml):
         resource_map.deserialize(data=resource_map_xml, format="xml")
     except xml.sax.SAXException as e:
         raise d1_common.types.exceptions.InvalidRequest(
-            0, 'Invalid Resource Map. error="{}"'.format(str(e))
+            0,
+            'Invalid Resource Map. error="{}" map="{}"'.format(
+                str(e), resource_map_xml
+            ),
         )
     return resource_map
 

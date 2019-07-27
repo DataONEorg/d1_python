@@ -26,10 +26,10 @@ import responses
 import d1_common.types.dataoneTypes
 import d1_common.xml
 
+import d1_client.iter.logrecord_multi
+
 import d1_test.d1_test_case
 import d1_test.mock_api.get_log_records
-
-import d1_client.iter.logrecord_multi
 
 
 # @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")

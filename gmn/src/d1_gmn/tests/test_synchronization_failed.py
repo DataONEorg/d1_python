@@ -59,8 +59,11 @@ class TestSynchronizationFailed(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 return_value=b"invalid xml doc"
             )
             assert gmn_client_v1_v2.synchronizationFailed(exception_mock)
-        assert "deserialize_error" in d1_test.d1_test_case.get_caplog_text(caplog)
-        assert "syntax error" in d1_test.d1_test_case.get_caplog_text(caplog)
+        self.sample.assert_equals(
+            d1_test.d1_test_case.get_caplog_text(caplog),
+            "sync_not_well_formed",
+            gmn_client_v1_v2,
+        )
 
     @responses.activate
     def test_1020(self, gmn_client_v1_v2, caplog):

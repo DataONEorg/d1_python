@@ -25,10 +25,11 @@ The XSD docs much be further edited by hand to correctly import all namespaces r
 for validation of each given formatId.
 
 """
-import lxml.etree
-
 import logging
 import os
+
+import lxml.etree
+
 import d1_scimeta.util
 
 import d1_client.command_line

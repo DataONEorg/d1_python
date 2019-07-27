@@ -323,12 +323,11 @@ DATAONE_ROOT = d1_common.const.URL_DATAONE_ROOT
 # DATAONE_ROOT = 'https://cn-sandbox.test.dataone.org/cn'
 # DATAONE_ROOT = 'https://cn-dev.test.dataone.org/cn'
 
-# Subjects for implicitly trusted DataONE infrastructure. Connections containing
-# client side certificates with these subjects bypass access control rules and
-# have access to REST interfaces meant only for use by CNs. These subjects are
-# added to the ones discovered by connecting to the DataONE root CN. See the
-# DATAONE_ROOT setting. If the STAND_ALONE setting is set to True, these become
-# the only trusted subjects.
+# Subjects for implicitly trusted DataONE infrastructure. Connections containing client
+# side certificates with these subjects bypass access control rules and have access to
+# REST interfaces meant only for use by CNs. These subjects are added to the subjects
+# discovered by connecting to the DataONE root CN. See the DATAONE_ROOT setting. If the
+# STAND_ALONE setting is set to True, these become the only trusted subjects.
 DATAONE_TRUSTED_SUBJECTS = set(
     [
         # For testing and debugging, it's possible to add the public subject here.
@@ -476,23 +475,22 @@ SCIMETA_VALIDATION_MAX_SIZE = 100 * 1024 ** 2
 SCIMETA_VALIDATION_OVER_SIZE_ACTION = "reject"
 
 # GMN implements a vendor specific extension for MNStorage.create(). Instead of
-# providing an object for GMN to manage, the object can be left empty and the
-# URL of the object on a 3rd party server be provided instead. In that case, GMN
-# will stream the object bytes from the remote server while handling all other
-# object related operations like usual. An object that is created using this
-# extension is said to be proxied. GMN can stream proxied objects from HTTP and
-# HTTPS.
+# providing an object for GMN to manage, the object can be left empty and the URL of the
+# object on a 3rd party server be provided instead. In that case, GMN will stream the
+# object bytes from the remote server while handling all other object related operations
+# like usual. An object that is created using this extension is called a proxy object in
+# GMN. GMN can stream proxied objects from HTTP and HTTPS.
 #
 # GMN provides limited support for streaming objects that are access controlled
 # on the remote server. GMN has the ability to supply credentials to the remote
 # server via simple HTTP Basic Authentication. This type of authentication is
 # secure only when it is performed over an HTTPS connection. The username and
-# password provided here must provide access to all the proxied objects handled
+# password provided here must provide access to all the proxy objects handled
 # by this instance of GMN. Because of this, this type of authentication is ONLY
 # secure if ALL subjects that have permission to create objects on this GMN
 # instance also have full access to ALL objects on the remote server. The attack
 # vector would be that someone could gain access to an object on the remote
-# server for which they do not have access by creating a proxied object on GMN,
+# server for which they do not have access by creating a proxy object on GMN,
 # supplying the URL for the access controlled object together with an access
 # control list that lets them access the object on GMN.
 PROXY_MODE_BASIC_AUTH_ENABLED = False

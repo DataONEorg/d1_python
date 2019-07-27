@@ -26,7 +26,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.dev",
-        version='3.4.6',
+        version="3.4.6",
         description="DataONE developer tools",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -49,11 +49,11 @@ def main():
             "baron >= 0.9",
             "pip >= 19.1.1",
             "redbaron >= 0.9.2",
-            'sphinx',
-            'sphinx-better-theme',
+            "sphinx",
+            "sphinx-better-theme",
             "python-xlib",
-            'black',
-            'isort'
+            "black",
+            "isort",
         ],
         setup_requires=["setuptools_git >= 1.1"],
         classifiers=[

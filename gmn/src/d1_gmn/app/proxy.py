@@ -38,15 +38,14 @@ def get_sciobj_iter_remote(url):
         )
     except requests.RequestException as e:
         raise d1_common.types.exceptions.ServiceFailure(
-            0, 'Unable to open proxied object for streaming. error="{}"'.format(str(e))
+            0, 'Unable to open proxy object for streaming. error="{}"'.format(str(e))
         )
     else:
         return response.iter_content(chunk_size=django.conf.settings.NUM_CHUNK_BYTES)
 
 
 def is_proxy_url(url):
-    url_split = urllib.parse.urlparse(url)
-    return url_split.scheme in ("http", "https")
+    return d1_common.url.isHttpOrHttps(url)
 
 
 def _mk_header_dict():

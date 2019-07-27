@@ -46,7 +46,7 @@ def create_subject_report(
         # d1_common.const.SUBJECT_PUBLIC,
         # d1_common.const.SUBJECT_VERIFIED,
         # d1_common.const.SUBJECT_AUTHENTICATED,
-        primary_str,
+        primary_str
     }
 
     whitelisted_set = d1_gmn.app.auth.get_whitelisted_subject_set()
@@ -59,36 +59,39 @@ def create_subject_report(
 
     @contextlib.contextmanager
     def section(header_str_, ind=4):
-        with stream_writer.section(header_str_, col_space=4, header_indent=ind, list_indent=4, count=True, sort=True) as w:
+        with stream_writer.section(
+            header_str_,
+            col_space=4,
+            header_indent=ind,
+            list_indent=4,
+            count=True,
+            sort=True,
+        ) as w:
             yield w
 
     def yesno(cond):
         return "yes" if cond else "no"
 
     def log_subject_sciobj_perm_count(subj_str_):
-        with section(
-            "Number of science objects with access for subject",
-        ) as w:
+        with section("Number of science objects with access for subject") as w:
             perm_tup = d1_gmn.app.auth.get_permission_count(subj_str_)
             for level, count in enumerate(perm_tup if any(perm_tup) else ()):
                 w(f"{d1_gmn.app.auth.level_to_action(level)}:| {count}")
 
     def log_subject_gmn_permissions(subj_str_):
-        with section(
-            "Administrative permissions on this GMN",
-        ) as w:
+        with section("Administrative permissions on this GMN") as w:
             w(
                 f"Whitelisted for create, update and delete of science objects:| "
-                    f"{yesno(subj_str_ in whitelisted_set)}"
+                f"{yesno(subj_str_ in whitelisted_set)}"
             ),
             w(
-                    f"Recognized as CN or other fully trusted infrastructure component:|"
-                    f"{yesno(subj_str_ in trusted_set)}"
-                ),
+                f"Recognized as CN or other fully trusted infrastructure component:|"
+                f"{yesno(subj_str_ in trusted_set)}"
+            ),
             w(
                 f"Is GMN client side certificate subject:|"
-                    f"{yesno(subj_str_ == client_cert_subj_str)}"
-                ),
+                f"{yesno(subj_str_ == client_cert_subj_str)}"
+            ),
 
     stream_writer.header(title_str)
 

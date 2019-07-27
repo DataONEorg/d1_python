@@ -19,33 +19,37 @@
 
 import logging
 
+import d1_common.types.exceptions
+
 import d1_gmn.app
 import d1_gmn.app.model_util
 import d1_gmn.app.models
+import d1_gmn.app.proxy
 import d1_gmn.app.resource_map
 import d1_gmn.app.revision
+import d1_gmn.app.views
 
 logger = logging.getLogger(__name__)
 
 
 def is_valid_pid_for_create(did):
     """Return True if ``did`` is the PID of an object that can be created with
-    MNStorage.create() or MNStorage.update().
+    ``MNStorage.create()`` or ``MNStorage.update()``.
 
-    To be valid for create() and update(), the DID:
+    To be valid for ``create()`` and ``update()``, the DID:
 
-    - Must not be the PID of an object that exists on this MN
-    - Must not be a known SID known to this MN
-    - Must not have been accepted for replication by this MN.
-    - Must not be referenced as obsoletes or obsoletedBy in an object that exists on
-      this MN
+      - Must not be the PID of an object that exists on this MN
+      - Must not be a known SID known to this MN
+      - Must not have been accepted for replication by this MN
+      - Must not be referenced as obsoletes or obsoletedBy in an object that exists on
+        this MN
 
     In addition, if the DID exists in a resource map:
 
-    - If RESOURCE_MAP_CREATE = 'reserve':
+      - If RESOURCE_MAP_CREATE = 'reserve':
 
-      - The DataONE subject that is making the call must have write or changePermission
-        on the resource map.
+        - The DataONE subject that is making the call must have write or changePermission
+          on the resource map.
 
     """
     # logger.debug('existing: {}'.format(is_existing_object(did)))
@@ -100,6 +104,32 @@ def is_valid_sid_for_chain(pid, sid):
     return existing_sid == sid
 
 
+def resolve_sid_v1(did):
+    """Resolve DIDs passed to a v1 API method.
+
+    As SIDs are not supported in v1 of the infrastructure, DIDs are returned directly if
+    an an object exists for the PID. Otherwise, NotFound is raised.
+    """
+    d1_gmn.app.views.assert_db.is_existing_object(did)
+    return did
+
+
+def resolve_sid_v2(did):
+    """Resolve DIDs passed to a v2 API method.
+
+    If the DID is a valid PID, return it. If not, try to resolve it as a SID and, if
+    successful, return the new PID. Else, raise NotFound exception.
+    """
+    if is_existing_object(did):
+        return did
+    elif is_sid(did):
+        return d1_gmn.app.revision.resolve_sid(did)
+    else:
+        raise d1_common.types.exceptions.NotFound(
+            0, 'Unknown identifier. id="{}"'.format(did), identifier=did
+        )
+
+
 def get_did_by_foreign_key(did_foreign_key):
     """Return the DID referenced by a ForeignKey or OneToOneField to IdNamespace.
 
@@ -113,7 +143,7 @@ def get_did_by_foreign_key(did_foreign_key):
 
 
 def is_existing_object(did):
-    """Return True if PID is for an object for which science bytes are stored locally.
+    """Return True if PID is for an object for which sysmeta exists.
 
     This excludes SIDs and PIDs for unprocessed replica requests, remote or non-existing
     revisions of local replicas and objects aggregated in Resource Maps.
@@ -156,6 +186,8 @@ def classify_identifier(did):
         return (
             "a Persistent ID (PID) of an accepted but not yet processed local replica"
         )
+    elif is_proxy(did):
+        return "a Persistent ID (PID) for a proxy object (bytes on 3rd party server)"
     elif is_archived(did):
         return "a Persistent ID (PID) of a previously archived local object"
     elif is_obsoleted(did):
@@ -186,6 +218,12 @@ def is_in_revision_chain(sciobj_model):
     return bool(sciobj_model.obsoleted_by or sciobj_model.obsoletes)
 
 
+def is_proxy(pid):
+    return is_existing_object(pid) and d1_gmn.app.proxy.is_proxy_url(
+        d1_gmn.app.model_util.get_sci_model(pid).url
+    )
+
+
 def is_archived(pid):
     return (
         is_existing_object(pid) and d1_gmn.app.model_util.get_sci_model(pid).is_archived
@@ -212,6 +250,17 @@ def is_revision_chain_placeholder(pid):
     ).exists()
 
 
+def is_did(did):
+    """Return True if ``did`` is recorded in a local context.
+
+    ``did``=None is supported and returns False.
+
+    A DID can be classified with classify_identifier().
+
+    """
+    return d1_gmn.app.models.IdNamespace.objects.filter(did=did).exists()
+
+
 # These are private methods because decisions cannot typically be based only on
 # the existence or non-existence of an identifier. Instead, use or make a
 # "is_valid_for_*" method.
@@ -225,18 +274,7 @@ def _is_unused_did(did):
     A DID can be classified with classify_identifier().
 
     """
-    return not _is_did(did)
-
-
-def _is_did(did):
-    """Return True if ``did`` is recorded in a local context.
-
-    ``did``=None is supported and returns False.
-
-    A DID can be classified with classify_identifier().
-
-    """
-    return d1_gmn.app.models.IdNamespace.objects.filter(did=did).exists()
+    return not is_did(did)
 
 
 def _is_pid(did):
@@ -248,4 +286,4 @@ def _is_pid(did):
     assumed to be PIDs by this function.
 
     """
-    return _is_did(did) and not is_sid(did)
+    return is_did(did) and not is_sid(did)

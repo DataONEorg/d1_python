@@ -53,7 +53,9 @@ def main():
     xml_tree = d1_scimeta.util.load_xml_file_to_tree(args.xml_path)
 
     proc_xml_tree = d1_scimeta.util.apply_xslt_transform(xml_tree, args.xslt_path)
-    d1_scimeta.util.dump_pretty_tree(proc_xml_tree, 'Result of XSLT processing', log.info)
+    d1_scimeta.util.dump_pretty_tree(
+        proc_xml_tree, "Result of XSLT processing", log.info
+    )
     if args.update:
         d1_scimeta.util.save_tree_to_file(proc_xml_tree, args.xml_path)
 

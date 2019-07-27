@@ -21,12 +21,12 @@
 # Stdlib
 # import os
 
+import contextlib
 import logging
 import shutil
 import tempfile
 import time
 
-import contextlib
 import pytest
 
 import d1_onedrive.impl.disk_cache

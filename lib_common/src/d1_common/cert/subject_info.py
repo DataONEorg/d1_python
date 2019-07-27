@@ -134,6 +134,7 @@ Authorization: Denied
 import os
 
 import d1_common.const
+import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.xml
 
@@ -247,6 +248,26 @@ def extract_subjects(subject_info_xml, primary_str):
     subject_info_pyxb = deserialize_subject_info(subject_info_xml)
     subject_info_tree = gen_subject_info_tree(subject_info_pyxb, primary_str)
     return subject_info_tree.get_subject_set()
+
+
+def generate_subject_info(person_list, group_list, subject_list):
+    """Generate SubjectInfo."""
+    # TODO: Document and flesh out.
+    subject_list = d1_common.types.dataoneTypes.SubjectList()
+    for person in person_list:
+        person_pyxb = d1_common.types.dataoneTypes.Person()
+        person_pyxb.subject = person
+        person_pyxb.givenName = ["given"]
+        person_pyxb.familyName = "family"
+        person_pyxb.email = ["email@email.com"]
+        subject_list.person.append(person_pyxb)
+    for group in group_list:
+        group_pyxb = d1_common.types.dataoneTypes.Group()
+        group_pyxb.subject = group
+        group_pyxb.groupName = "groupname"
+    session = d1_common.types.dataoneTypes.Session()
+    session.subject = subject_list
+    session.subjectList = subject_list
 
 
 def deserialize_subject_info(subject_info_xml):

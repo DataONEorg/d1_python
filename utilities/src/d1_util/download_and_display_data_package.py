@@ -34,8 +34,8 @@ Operation:
 import logging
 import sys
 
-
 import d1_common.resource_map
+
 
 # Config
 def main():

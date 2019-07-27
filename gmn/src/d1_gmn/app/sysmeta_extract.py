@@ -16,13 +16,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Extract SciObj values from models."""
+import csv
+
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.ulog
 
 import django.contrib.postgres.aggregates
 
-import d1_gmn.app
-import d1_gmn.app.models
+import d1_gmn.app.model_util
+from d1_gmn.app.model_util import annotate_query
 
 
 def extract_values_query(query, field_list, out_stream=None):
@@ -52,7 +55,7 @@ def extract_values_query(query, field_list, out_stream=None):
     """
     lookup_dict, generate_dict = _split_field_list(field_list)
 
-    query, annotate_key_list = _annotate_query(query, generate_dict)
+    query, annotate_key_list = annotate_query(query, generate_dict)
     # return query, annotate_key_list
     #
     # query, annotate_key_list = _create_query(filter_arg_dict, generate_dict)
@@ -62,10 +65,14 @@ def extract_values_query(query, field_list, out_stream=None):
     if out_stream is None:
         return _create_sciobj_list(query, lookup_list, lookup_dict, generate_dict)
     else:
-        return _write_stream(query, lookup_list, lookup_dict, generate_dict, out_stream)
+        return _write_json_stream(
+            query, lookup_list, lookup_dict, generate_dict, out_stream
+        )
 
 
-def extract_values(field_list=None, filter_arg_dict=None, out_stream=None):
+def extract_values(
+    field_list=None, filter_arg_dict=None, out_stream=None, out_format="json"
+):
     """Get list of dicts where each dict holds values from one SciObj.
 
     Args:
@@ -78,6 +85,10 @@ def extract_values(field_list=None, filter_arg_dict=None, out_stream=None):
         filter_arg_dict: dict
             Dict of arguments to pass to ``ScienceObject.objects.filter()``.
 
+        out_format: str
+            'json': Stream to JSON
+            'csv': Stream to Excel dialect CSV.
+
     Returns:
         list of dict: The keys in the returned dict correspond to the field names in
         ``field_list``.
@@ -88,14 +99,23 @@ def extract_values(field_list=None, filter_arg_dict=None, out_stream=None):
 
     """
     lookup_dict, generate_dict = _split_field_list(field_list)
-    query, annotate_key_list = _create_query(filter_arg_dict, generate_dict)
+    query, annotate_key_list = d1_gmn.app.model_util.query_sciobj_with_annotate(
+        filter_arg_dict, generate_dict
+    )
 
     lookup_list = [v["lookup_str"] for k, v in lookup_dict.items()] + annotate_key_list
+
+    if out_format == "json":
+        stream_func = _write_json_stream
+    elif out_format == "csv":
+        stream_func = _write_csv_stream
+    else:
+        raise ValueError('out_format must be "json" or "csv".')
 
     if out_stream is None:
         return _create_sciobj_list(query, lookup_list, lookup_dict, generate_dict)
     else:
-        return _write_stream(query, lookup_list, lookup_dict, generate_dict, out_stream)
+        return stream_func(query, lookup_list, lookup_dict, generate_dict, out_stream)
 
 
 def _create_sciobj_list(query, lookup_list, lookup_dict, generate_dict):
@@ -109,7 +129,15 @@ def _create_sciobj_list(query, lookup_list, lookup_dict, generate_dict):
     return sciobj_list
 
 
-def _write_stream(query, lookup_list, lookup_dict, generate_dict, out_stream):
+def _write_json_stream(query, lookup_list, lookup_dict, generate_dict, out_stream):
+    """Stream database query results to JSON.
+
+    This writes a JSON stream without buffering the JSON in memory.
+
+    The JSON structure is a list of dics. This writes the list start ('[') to the stream
+    first, then serializes one record at a time to a JSON dict and writes it to the
+    stream. When there are no more records, it writes the list end (']').
+    """
     out_stream.write("[\n")
     for j, sciobj_value_list in enumerate(query.values_list(*lookup_list)):
         json_str = d1_common.util.serialize_to_normalized_pretty_json(
@@ -124,6 +152,19 @@ def _write_stream(query, lookup_list, lookup_dict, generate_dict, out_stream):
             sep_str = "," if is_last_line and not is_last_dict else ""
             out_stream.write("  {}{}\n".format(json_line, sep_str))
     out_stream.write("]\n")
+
+
+def _write_csv_stream(query, lookup_list, lookup_dict, generate_dict, out_stream):
+    """Stream database query results to CSV.
+    """
+    writer = csv.DictWriter(out_stream, fieldnames=lookup_dict.keys())
+    writer.writeheader()
+    for j, sciobj_value_list in enumerate(query.values_list(*lookup_list)):
+        writer.writerow(
+            _value_list_to_sciobj_dict(
+                sciobj_value_list, lookup_list, lookup_dict, generate_dict
+            )
+        )
 
 
 def assert_invalid_field_list(field_list):
@@ -149,25 +190,6 @@ def get_valid_field_name_list():
 
 
 # Private
-
-
-def _create_query(filter_arg_dict, generate_dict):
-    query = d1_gmn.app.models.ScienceObject.objects.filter(**(filter_arg_dict or {}))
-    query = query.order_by("modified_timestamp", "id")
-    # query = query.order_by("pid__did")
-    query, annotate_key_list = _annotate_query(query, generate_dict)
-    return query, annotate_key_list
-
-
-def _annotate_query(query, generate_dict):
-    """Add annotations to the query to retrieve values required by field value generate
-    functions."""
-    annotate_key_list = []
-    for field_name, annotate_dict in generate_dict.items():
-        for annotate_name, annotate_func in annotate_dict["annotate_dict"].items():
-            query = annotate_func(query)
-            annotate_key_list.append(annotate_name)
-    return query, annotate_key_list
 
 
 def _value_list_to_sciobj_dict(

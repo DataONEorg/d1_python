@@ -29,6 +29,7 @@ import d1_common.types.exceptions
 
 import django.conf
 import django.core.cache
+import django.db.models
 
 import d1_gmn.app.models
 import d1_gmn.app.node_registry
@@ -84,7 +85,7 @@ def level_to_action(level):
 def get_trusted_subjects():
     """Get set of subjects that have unlimited access to all SciObj and APIs on this
     node."""
-    cert_subj = _get_client_side_certificate_subject()
+    cert_subj = get_client_side_certificate_subject()
     return (
         d1_gmn.app.node_registry.get_cn_subjects()
         | django.conf.settings.DATAONE_TRUSTED_SUBJECTS
@@ -100,9 +101,7 @@ def get_trusted_subjects_string():
     return ", ".join(sorted(get_trusted_subjects()))
 
 
-# ------------------------------------------------------------------------------
-# Check permissions.
-# ------------------------------------------------------------------------------
+# Permission checks
 
 
 def is_trusted_subject(request):
@@ -115,10 +114,10 @@ def is_trusted_subject(request):
 def is_client_side_cert_subject(request):
     """Return True if the current connection has been authenticated by the MN's own
     client side cert."""
-    return _get_client_side_certificate_subject() == request.primary_subject_str
+    return get_client_side_certificate_subject() == request.primary_subject_str
 
 
-def _get_client_side_certificate_subject():
+def get_client_side_certificate_subject():
     """Return the DN from the client side certificate as a D1 subject if a client side
     cert has been configured. Else return None.
 
@@ -252,3 +251,47 @@ def format_session_subjects(request):
         if subject != request.primary_subject_str:
             decorated_subject_list.append(subject)
     return ", ".join(decorated_subject_list)
+
+
+def get_subject_stats(request):
+    """For a given subject, get:
+
+    - Count of matching subjects that are used in access control rules on this GMN.
+
+    - Count of access controlled SciObj for which access would be granted by this
+    certificate, along with the types of access (read, write, changePermission).
+
+    - List access to create, update and delete SciObj on this GMN for each subject.
+"""
+
+
+def get_permission_count(subj_str):
+    """Return count of science objects granting
+    permissions for each of the read, write and changePermission access levels.
+
+    Returns:
+        3-tuple of ints.
+
+        E.g, (5, 0, 10) for 5 objects with read, none with write, 10 with change.
+    """
+    q = d1_gmn.app.models.Permission.objects.values("level")
+    q = q.filter(subject__subject=subj_str)
+    q = q.annotate(level_count=django.db.models.Count("level"))
+    d = {v["level"]: v["level_count"] for v in q}
+    return tuple(d.get(i, 0) for i in range(3))
+
+
+def split_known_and_unknown_subj(subj_set):
+    """Split a set of subjects into two sets, one of subjects that are in the local
+    subjects table, and one of subjects unknown to this GMN.
+
+    A subject being in the table only means that it has been included in some capacity
+    in an API call.
+
+    Returns:
+        2-tup of sets: (known_set, unknown_set)
+    """
+    q = d1_gmn.app.models.Subject.objects.filter(subject__in=subj_set)
+    q = q.values_list("subject", flat=True)
+    known_set = set(q)
+    return known_set, subj_set - known_set

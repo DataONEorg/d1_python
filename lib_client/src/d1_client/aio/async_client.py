@@ -26,6 +26,7 @@ import aiohttp
 import d1_common.const
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
+import d1_common.typing as t
 import d1_common.url
 
 DEFAULT_MAX_CONCURRENT_CONNECTIONS = 100
@@ -33,6 +34,8 @@ DEFAULT_RETRY_COUNT = 3
 
 
 class AsyncDataONEClient:
+    """Asynchronous DataONE Client."""
+
     def __init__(
         self,
         base_url=d1_common.const.URL_DATAONE_ROOT,
@@ -53,25 +56,29 @@ class AsyncDataONEClient:
         outgoing connections enforced internally by aiohttp. try_count:
 
         """
-        self._logger = logging.getLogger(__name__)
+        self._log = logging.getLogger(__name__)
+        self._log.debug("__init__()")
         self._base_url = base_url
         self._try_count = try_count
 
-        if not disable_server_cert_validation:
-            ssl_ctx = ssl.create_default_context()  # cafile=
+        self._session = None
+        self.create_session()
+
+    def create_session(self,):
+        self._log.debug("Creating aiohttp.ClientSession()")
+        if not self._disable_server_cert_validation:
+            ssl_ctx = ssl.create_default_context()
         else:
             # noinspection PyProtectedMember
             ssl_ctx = ssl._create_unverified_context()
+        if self._cert_pem_path:
+            self.assert_valid_path("cert_pem_path", self._cert_pem_path)
+            self.assert_valid_path("cert_key_path", self._cert_key_path)
+            ssl_ctx.load_cert_chain(self._cert_pem_path, self._cert_key_path)
 
-        if cert_pub_path:
-            ssl_ctx.load_cert_chain(cert_pub_path, cert_key_path)
-            tcp_connector = aiohttp.TCPConnector(
-                ssl_context=ssl_ctx, limit=max_concurrent_connections
-            )  # ssl=False
-        else:
-            tcp_connector = aiohttp.TCPConnector(
-                ssl_context=ssl_ctx, limit=max_concurrent_connections
-            )
+        tcp_connector = aiohttp.TCPConnector(
+            ssl_context=ssl_ctx, limit=self._max_concurrent
+        )
 
         self._session = aiohttp.ClientSession(
             connector=tcp_connector,
@@ -80,9 +87,12 @@ class AsyncDataONEClient:
         )
 
     async def __aenter__(self):
+        self._log.debug("__aenter__()")
+        self.create_session()
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
+        self._log.debug("__aexit__()")
         await self.close()
 
     @property
@@ -90,6 +100,7 @@ class AsyncDataONEClient:
         return self._session
 
     async def close(self):
+        self._log.debug("Closing aiohttp.ClientSession()")
         await self._session.close()
 
     # D1 API
@@ -202,6 +213,10 @@ class AsyncDataONEClient:
         return await self.list_nodes(*arg_list, **arg_dict)
 
     # Private
+
+    def assert_valid_path(self, path_name, path):
+        if path is not None and not os.path.isfile(path):
+            raise ValueError(f"Invalid path: {path_name}={path}")
 
     async def _request_pyxb(self, *arg_list, **arg_dict):
         async with await self._retry_request(*arg_list, **arg_dict) as response:

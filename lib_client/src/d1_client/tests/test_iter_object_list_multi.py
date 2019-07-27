@@ -24,11 +24,11 @@ import responses
 import d1_common
 import d1_common.xml
 
-import d1_test.d1_test_case
-import d1_test.mock_api.list_objects
-
 import d1_client.d1client
 import d1_client.iter.objectlist_multi
+
+import d1_test.d1_test_case
+import d1_test.mock_api.list_objects
 
 
 # @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")

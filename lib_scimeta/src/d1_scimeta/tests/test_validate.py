@@ -19,9 +19,10 @@
 # limitations under the License.
 import os
 
-import d1_scimeta.validate
-import d1_scimeta.util
 import pytest
+
+import d1_scimeta.util
+import d1_scimeta.validate
 
 import d1_test.d1_test_case
 
@@ -35,16 +36,16 @@ class TestSciMetaValidate(d1_test.d1_test_case.D1TestCase):
         """SciMeta.assert_valid(): Missing schema raises SciMetaError with
         expected message."""
         xml_str = self.test_files.load_bin("xml/isotc211/ieda.xml")
-        with pytest.raises(
-            d1_scimeta.util.SciMetaError, match="Invalid formatId"
-        ):
+        with pytest.raises(d1_scimeta.util.SciMetaError, match="Invalid formatId"):
             d1_scimeta.validate.assert_valid(missing_invalid_format_id, xml_str)
 
     def test_1020(self):
         """SciMeta.assert_valid(): onedcx does not validate as EML."""
         xml_str = self.test_files.load_bin("xml/scimeta_dc_1.xml")
         format_id = "eml://ecoinformatics.org/eml-2.1.1"
-        with pytest.raises(d1_scimeta.util.SciMetaError, match="XML document does not validate"):
+        with pytest.raises(
+            d1_scimeta.util.SciMetaError, match="XML document does not validate"
+        ):
             d1_scimeta.validate.assert_valid(format_id, xml_str)
 
     def test_1030(self):
@@ -97,7 +98,9 @@ class TestSciMetaValidate(d1_test.d1_test_case.D1TestCase):
     def test_1080(self, format_id):
         """SciMeta.assert_valid(): ISO/TC 211 does not validate as other formatId."""
         xml_str = self.test_files.load_bin("xml/isotc211/noaa_ncei.xml")
-        with pytest.raises(d1_scimeta.util.SciMetaError, match="XML document does not validate"):
+        with pytest.raises(
+            d1_scimeta.util.SciMetaError, match="XML document does not validate"
+        ):
             d1_scimeta.validate.assert_valid(format_id, xml_str)
 
     @pytest.mark.parametrize(
@@ -105,5 +108,5 @@ class TestSciMetaValidate(d1_test.d1_test_case.D1TestCase):
     )
     def test_1090(self, xml_doc):
         """SciMeta.assert_valid(): Valid ISO/TC 211"""
-        xml_str = self.test_files.load_xml_to_bytes(os.path.join('isotc211', xml_doc))
-        d1_scimeta.validate.assert_valid('http://www.isotc211.org/2005/gmd', xml_str)
+        xml_str = self.test_files.load_xml_to_bytes(os.path.join("isotc211", xml_doc))
+        d1_scimeta.validate.assert_valid("http://www.isotc211.org/2005/gmd", xml_str)

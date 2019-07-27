@@ -32,10 +32,6 @@ Though object bytes are also created, they are not captured in the db fixture.
 See the README.md for more info on the fixtures.
 
 """
-# The Django init needs to occur before the django and gmn_test_case imports, so we're
-# stuck with a bit of a messy import section that isort and flake8 don't like.
-# isort:skip_file
-
 import datetime
 import io
 import logging
@@ -45,18 +41,16 @@ import sys
 import freezegun
 import responses
 
+import d1_client.mnclient_2_0
+
 import d1_gmn.tests.gmn_mock
 import d1_gmn.tests.gmn_test_case
-
 
 import d1_test.instance_generator.identifier
 import d1_test.instance_generator.random_data
 import d1_test.instance_generator.sciobj
 import d1_test.instance_generator.user_agent
 import d1_test.mock_api.django_client
-
-
-import d1_client.mnclient_2_0
 
 N_OBJECTS = 1000
 N_READ_EVENTS = 2 * N_OBJECTS

@@ -22,7 +22,6 @@ import multiprocessing
 import time
 
 import d1_common.const
-
 import d1_common.types.exceptions
 
 import d1_client.mnclient_1_2

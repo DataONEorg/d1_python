@@ -33,6 +33,7 @@ import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 import d1_common.utils
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 import d1_common.wrap.access_policy
 import d1_common.xml
 
@@ -84,17 +85,19 @@ def create_or_update(sysmeta_pyxb, sciobj_url=None):
     """Create or update database representation of a System Metadata object and closely
     related internal state.
 
-    - If ``sciobj_url`` is not passed on create, storage in the internal sciobj store
-      is assumed
-    - If ``sciobj_url`` is passed on create, it can reference a location in the
-      internal sciobj store, or an arbitrary location on disk, or a remote web server.
-      See the sciobj_store module for more information
-    - if ``sciobj_url`` is not passed on update, the sciobj location remains unchanged
-    - If ``sciobj_url`` is passed on update, the sciobj location is updated
+    Args:
+        sciobj_url: url
+            - If not passed on create, storage in the internal sciobj store
+              is assumed
+            - If passed on create, it can reference a location in the internal sciobj
+              store, or an arbitrary location on disk, or a remote web server. See the
+              sciobj_store module for more information
+            - If not passed on update, the sciobj location remains unchanged
+            - If passed on update, the sciobj location is updated
 
     Preconditions:
-    - All values in ``sysmeta_pyxb`` must be valid for the operation being performed
 
+        - All values in ``sysmeta_pyxb`` must be valid for the operation being performed
     """
     # TODO: Make sure that old sections are removed if not included in update.
 
@@ -331,7 +334,6 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
     are removed and the access policy for the rights holder is recreated.
 
     Preconditions:
-      - Each subject has been verified to a valid DataONE account.
       - Subject has changePermission for object.
 
     Postconditions:
@@ -343,12 +345,12 @@ def _access_policy_pyxb_to_model(sci_model, sysmeta_pyxb):
         times in a policy. If this happens, multiple, conflicting action levels may be
         provided for the subject. This is handled by checking for an existing row for
         the subject for this object and updating it if it contains a lower action
-        level. The end result is that there is one row for each subject, for each
-        object and this row contains the highest action level.
+        level. The end result is that there is one row for each combination of subject
+        and object, and this row contains the highest action level.
 
     """
     _delete_existing_access_policy(sysmeta_pyxb)
-    # Add an implicit allow rule with all permissions for the rights holder.
+    # Add changePermission for rights holder.
     allow_rights_holder = d1_common.types.dataoneTypes.AccessRule()
     permission = d1_common.types.dataoneTypes.Permission(
         d1_gmn.app.auth.CHANGEPERMISSION_STR

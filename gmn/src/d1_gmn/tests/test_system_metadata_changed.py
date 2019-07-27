@@ -82,11 +82,18 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
     @responses.activate
     @django.test.override_settings(STAND_ALONE=False)
     def test_1030(self, gmn_client_v1_v2):
-        """systemMetadataChanged(): Async processing."""
-        # Create 3 new objects and add them to the refresh queue
-        sysmeta_pyxb_list = []
+        """systemMetadataChanged(): Async processing.
+
+        Check that objects generated with random system metadata are updated with the
+        reproducible system metadata that is provided by the mock getSystemMetadata()
+        handler.
+
+        """
         with freezegun.freeze_time("2014-12-14") as freeze_time:
             with d1_gmn.tests.gmn_mock.disable_auth():
+
+                # Create 3 new objects with random sysmeta and add them to the refresh queue
+                sysmeta_pyxb_list = []
                 for i in range(3):
                     pid, sid, sciobj_bytes, sysmeta_pyxb = self.create_obj(
                         gmn_client_v1_v2, sid=True
@@ -100,13 +107,14 @@ class TestSystemMetadataChanged(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 # Call the async mgmt command to process the refresh queue
                 self._call_process_refresh_queue()
 
-                # Verify that the objects were updated as refreshed
+                # Verify that the randomly generated sysmeta was changed to reproducible sysmeta.
                 for i, before_sysmeta_pyxb in enumerate(sysmeta_pyxb_list):
                     after_sysmeta_pyxb = gmn_client_v1_v2.getSystemMetadata(
                         before_sysmeta_pyxb.identifier.value()
                     )
                     d1_common.system_metadata.normalize_in_place(before_sysmeta_pyxb)
                     d1_common.system_metadata.normalize_in_place(after_sysmeta_pyxb)
+                    # self.sample.gui_sxs_diff(before_sysmeta_pyxb, after_sysmeta_pyxb)
                     diff_str = d1_common.xml.format_diff_pyxb(
                         before_sysmeta_pyxb, after_sysmeta_pyxb
                     )

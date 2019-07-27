@@ -3,6 +3,7 @@ import importlib
 
 # import cryptography
 import cryptography.x509
+import freezegun
 import mock
 import responses
 
@@ -10,9 +11,9 @@ import d1_common.cert.x509
 
 import d1_test.d1_test_case
 import d1_test.mock_api.echo_credentials
-import freezegun
 
-@freezegun.freeze_time('1999-01-01')
+
+@freezegun.freeze_time("1999-01-01")
 class TestDataONEBaseClient(d1_test.d1_test_case.D1TestCase):
     def _cmd(self, module_name, **cmd_arg_dict):
         cmd = importlib.import_module(module_name)

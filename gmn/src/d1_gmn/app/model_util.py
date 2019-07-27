@@ -33,14 +33,62 @@ import d1_gmn.app.models
 logger = logging.getLogger(__name__)
 
 
+def query_sciobj(filter_arg_dict=None):
+    """Return a query for iterating over local SciObj.
+
+    Args:
+        filter_arg_dict:
+    """
+    query = d1_gmn.app.models.ScienceObject.objects.filter(**(filter_arg_dict or {}))
+    query = query.order_by("modified_timestamp", "id")
+    return query
+
+
+def query_sciobj_count(filter_arg_dict=None):
+    """Return a query for iterating over local SciObj.
+
+    Args:
+        filter_arg_dict:
+    """
+    return query_sciobj(filter_arg_dict).count()
+
+
+def query_sciobj_with_annotate(filter_arg_dict=None, generate_dict=None):
+    """Return a query for iterating over local SciObj.
+
+    Args:
+        filter_arg_dict:
+        generate_dict:
+    """
+    query = query_sciobj(filter_arg_dict)
+    query, annotate_key_list = annotate_query(query, generate_dict or {})
+    return query, annotate_key_list
+
+
+def annotate_query(query, generate_dict):
+    """Add annotations to the query to retrieve values required by field value generate
+    functions."""
+    annotate_key_list = []
+    for field_name, annotate_dict in generate_dict.items():
+        for annotate_name, annotate_func in annotate_dict["annotate_dict"].items():
+            query = annotate_func(query)
+            annotate_key_list.append(annotate_name)
+    return query, annotate_key_list
+
+
 def get_sci_model(pid):
     return d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
 
 
-def get_pids_for_all_locally_stored_objects():
-    return d1_gmn.app.models.ScienceObject.objects.all().values_list(
-        "pid__did", flat=True
-    )
+def query_all_sysmeta_backed_sciobj():
+    """Get PIDs for all SciObj for which there is locally stored SysMeta. This excludes
+    many possible other PIDs. See classify_identifier() for an overview.
+    """
+    return d1_gmn.app.models.ScienceObject.objects.all()
+
+
+def count_all_sysmeta_backed_sciobj():
+    return query_all_sysmeta_backed_sciobj().count()
 
 
 def delete_unused_subjects():

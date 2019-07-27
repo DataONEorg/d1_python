@@ -20,6 +20,7 @@ import os
 import sys
 
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 import django
 import django.core.handlers.wsgi

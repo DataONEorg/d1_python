@@ -17,6 +17,7 @@
 # limitations under the License.
 """Utilities for processing X.509 v3 certificates."""
 
+import contextlib
 import datetime
 import ipaddress
 import logging
@@ -25,7 +26,6 @@ import socket
 import ssl
 import urllib.parse
 
-import contextlib
 import cryptography
 import cryptography.hazmat
 import cryptography.hazmat.backends

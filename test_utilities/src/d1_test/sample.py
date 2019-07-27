@@ -38,6 +38,7 @@ import d1_common.types
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 import d1_common.xml
 
 import d1_client.d1client
@@ -226,7 +227,7 @@ def get_sxs_diff(left_obj, right_obj):
     return _get_sxs_diff_str(left_str, right_str)
 
 
-def gui_sxs_diff(left_obj, right_obj, file_post_str):
+def gui_sxs_diff(left_obj, right_obj, file_post_str="FILE_POST"):
     file_ext_str, left_str = obj_to_pretty_str(left_obj)
     right_str = obj_to_pretty_str(right_obj)[1]
     return _gui_diff_str_str(left_str, right_str, file_post_str, file_ext_str)

@@ -15,4 +15,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Utilities for GMN management commands."""
+
+"""Show GMN status information.
+
+The information is the same that is available under /home in the Web UI. Output is in JSON.
+"""
+import d1_common.types.exceptions
+import d1_common.xml
+
+import d1_gmn.app.did
+import d1_gmn.app.mgmt_base
+import d1_gmn.app.models
+
+
+class Command(d1_gmn.app.mgmt_base.GMNCommandBase):
+    def __init__(self, *args, **kwargs):
+        super().__init__(__doc__, __name__, *args, **kwargs)
+
+    def add_arguments(self, parser):
+        # self.add_arg_force(parser)
+        pass
+
+    def handle_serial(self):
+        pass

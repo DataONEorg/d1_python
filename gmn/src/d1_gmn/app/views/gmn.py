@@ -20,6 +20,7 @@
 import d1_common
 import d1_common.const
 import d1_common.util
+import d1_common.utils.ulog
 
 import django.http
 

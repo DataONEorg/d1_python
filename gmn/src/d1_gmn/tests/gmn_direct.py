@@ -37,6 +37,7 @@ import xml.etree.ElementTree
 
 import d1_common.url
 import d1_common.util
+import d1_common.utils.ulog
 import d1_common.wrap.simple_xml
 
 import django.test

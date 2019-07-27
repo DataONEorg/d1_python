@@ -109,7 +109,9 @@ def _assert_valid_tree(xsd_tree, xml_tree):
     try:
         validator = d1_scimeta.util.create_lxml_obj(xsd_tree, lxml.etree.XMLSchema)
     except d1_scimeta.util.SciMetaError as e:
-        raise d1_scimeta.util.SciMetaError('Unable to create lxml schema validator: {}'.format(str(e)))
+        raise d1_scimeta.util.SciMetaError(
+            "Unable to create lxml schema validator: {}".format(str(e))
+        )
     try:
         validator.assertValid(xml_tree)
     except lxml.etree.DocumentInvalid as e:

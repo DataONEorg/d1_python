@@ -80,13 +80,14 @@ def is_valid_pid_to_be_updated(did):
 
 
 def is_did(did):
-    if not d1_gmn.app.did._is_did(did):
+    if not d1_gmn.app.did.is_did(did):
         raise d1_common.types.exceptions.NotFound(
             0, 'Unknown identifier. id="{}"'.format(did), identifier=did
         )
 
 
 def is_existing_object(did):
+    """Raise NotFound if object does not exist."""
     if not d1_gmn.app.did.is_existing_object(did):
         raise d1_common.types.exceptions.NotFound(
             0,

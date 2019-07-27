@@ -36,7 +36,6 @@ import requests.exceptions
 import django.test
 
 import d1_gmn.tests
-import d1_gmn.tests.gmn_mock
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
@@ -184,7 +183,7 @@ def set_auth_context_with_defaults(
     coming from a fully trusted subject. ``param``=True: Use a default list of subjects.
 
     """
-    with d1_gmn.tests.gmn_mock.set_auth_context(
+    with set_auth_context(
         ["session_subj_1", "session_subj_2", "session_subj_3"]
         if session_subj_list is True
         else session_subj_list,
@@ -254,19 +253,24 @@ def disable_sysmeta_sanity_checks():
 
 
 @contextlib.contextmanager
-def disable_management_command_logging():
-    """Prevent management commands from setting up logging, which cause duplicated log
-    messages when the commands are launched multiple times."""
-    with mock.patch("d1_gmn.app.management.commands.util.util.log_setup"):
+def disable_management_command_logging_setup():
+    """Prevent management commands from setting up logging, which interferes with the
+    logging that has already been set up by the test framework.
+    """
+    # logger = logging.getLogger()
+    # d1_test.d1_test_case.logsetup()
+    with mock.patch(
+        "d1_gmn.app.mgmt_base.GMNCommandBase.setup_logging",
+        return_value=logging.getLogger(""),
+    ):
+        # pytest.logsetup()
         yield
 
 
 @contextlib.contextmanager
 def disable_management_command_concurrent_instance_check():
     """Allow concurrent instances of the same management command."""
-    with mock.patch(
-        "d1_gmn.app.management.commands.util.util.exit_if_other_instance_is_running"
-    ):
+    with mock.patch("d1_gmn.app.mgmt_base.GMNCommandBase.using_single_instance"):
         yield
 
 

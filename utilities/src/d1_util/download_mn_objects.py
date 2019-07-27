@@ -38,7 +38,6 @@ import urllib.parse
 
 import d1_common.const
 import d1_common.env
-
 # D1
 # import d1_common.types.generated.dataoneTypes as v2
 import d1_common.types.exceptions

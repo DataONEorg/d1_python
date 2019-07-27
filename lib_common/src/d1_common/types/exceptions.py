@@ -59,8 +59,8 @@ import logging
 import traceback
 
 import d1_common.type_conversions
-import d1_common.xml
 import d1_common.types.dataoneErrors
+import d1_common.xml
 
 
 def xml_is_dataone_exception(xml_str):

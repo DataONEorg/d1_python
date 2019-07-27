@@ -36,7 +36,6 @@ return: QuerySet
 import django.db.models
 
 import d1_gmn.app.auth
-import d1_gmn.app.db_filter
 import d1_gmn.app.did
 import d1_gmn.app.models
 import d1_gmn.app.revision

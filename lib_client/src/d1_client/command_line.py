@@ -34,14 +34,8 @@ import d1_common.const
 import d1_common.env
 
 
-def get_standard_arg_parser(
-    description_str=None,
-    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    # formatter_class=argparse.RawDescriptionHelpFormatter,
-    add_base_url=False,
-):
-    """Return an argparse.ArgumentParser populated with a standard set of command line
-    arguments.
+"""Return an argparse.ArgumentParser populated with a standard set of command line
+arguments.
 
     Command line tools that interact with the DataONE infrastructure typically
     instantiate a DataONE Client with all arguments either set to their defaults or

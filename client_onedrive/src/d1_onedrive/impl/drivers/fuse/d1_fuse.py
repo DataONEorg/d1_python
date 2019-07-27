@@ -18,9 +18,8 @@
 
 import os
 
-import fuse
-
 import d1_onedrive.impl.drivers.fuse.callbacks
+import fuse
 
 
 def run(options, root_resolver):

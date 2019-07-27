@@ -27,7 +27,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.util",
-        version='3.4.6',
+        version="3.4.6",
         description="DataONE Utilities and Examples",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -56,15 +56,15 @@ def main():
 
 
 def gen_console_scripts():
-    d1_util_path = os.path.join(os.path.split(__file__)[0], 'd1_util')
+    d1_util_path = os.path.join(os.path.split(__file__)[0], "d1_util")
     return [
         "d1-{} = d1_util.{}:main".format(
-            os.path.split(n)[1].replace('_', '-').replace('.py', ''),
-            n.replace('.py', '')
+            os.path.split(n)[1].replace("_", "-").replace(".py", ""),
+            n.replace(".py", ""),
         )
-        for n in os.listdir(d1_util_path) if n.endswith('.py') and not n.startswith('_')
+        for n in os.listdir(d1_util_path)
+        if n.endswith(".py") and not n.startswith("_")
     ]
-
 
 
 if __name__ == "__main__":

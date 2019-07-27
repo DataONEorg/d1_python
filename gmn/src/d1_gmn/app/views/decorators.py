@@ -56,17 +56,9 @@ def resolve_sid(f):
 
 def resolve_sid_func(request, did):
     if d1_gmn.app.views.util.is_v1_api(request):
-        d1_gmn.app.views.assert_db.is_existing_object(did)
-        return did
+        return d1_gmn.app.did.resolve_sid_v1(did)
     elif d1_gmn.app.views.util.is_v2_api(request):
-        if d1_gmn.app.did.is_existing_object(did):
-            return did
-        elif d1_gmn.app.did.is_sid(did):
-            return d1_gmn.app.revision.resolve_sid(did)
-        else:
-            raise d1_common.types.exceptions.NotFound(
-                0, 'Unknown identifier. id="{}"'.format(did), identifier=did
-            )
+        return d1_gmn.app.did.resolve_sid_v2(did)
     else:
         assert False, "Unable to determine API version"
 

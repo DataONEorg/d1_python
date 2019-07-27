@@ -27,7 +27,6 @@ import logging
 
 import d1_onedrive.impl.resolver.resolver_base
 import d1_onedrive.impl.resolver.resource_map
-
 from d1_onedrive.impl import attributes
 from d1_onedrive.impl import directory
 from d1_onedrive.impl import onedrive_exceptions
