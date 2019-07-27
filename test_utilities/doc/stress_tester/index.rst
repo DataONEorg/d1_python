@@ -7,16 +7,8 @@ DataONE Member Node Stress Tester
 Contents:
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
   configuration
   certificates
   tests
-
-
-Indices and tables
-~~~~~~~~~~~~~~~~~~
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

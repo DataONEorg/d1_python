@@ -11,9 +11,7 @@ Subpackages
 
 .. toctree::
 
-   d1_gmn.app.management
    d1_gmn.app.middleware
-   d1_gmn.app.migrations
    d1_gmn.app.views
 
 Submodules
@@ -79,6 +77,14 @@ d1\_gmn.app.local\_replica module
 ---------------------------------
 
 .. automodule:: d1_gmn.app.local_replica
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+d1\_gmn.app.mgmt\_base module
+-----------------------------
+
+.. automodule:: d1_gmn.app.mgmt_base
    :members:
    :undoc-members:
    :show-inheritance:
@@ -175,6 +181,14 @@ d1\_gmn.app.settings\_default module
 ------------------------------------
 
 .. automodule:: d1_gmn.app.settings_default
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+d1\_gmn.app.subject module
+--------------------------
+
+.. automodule:: d1_gmn.app.subject
    :members:
    :undoc-members:
    :show-inheritance:

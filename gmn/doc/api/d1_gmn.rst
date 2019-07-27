@@ -12,7 +12,6 @@ Subpackages
 .. toctree::
 
    d1_gmn.app
-   d1_gmn.tests
 
 Submodules
 ----------

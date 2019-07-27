@@ -53,13 +53,13 @@ ONEDrive shows up in your computer as an extra storage device, much like a CD dr
 
 Folders can contain objects that have been specified directly and search queries that can specify any number of objects. Search queries are dynamically resolved to their matching DataONE objects and those objects become available within the ONEDrive filesystem, in the same folder in which the search query is stored.
 
-ONEDrive recognizes DataONE objects in the Zotery library by their URLs. Zotero library items that have URLs that reference the DataONE Coordinating Node resolve endpoint at ``https://cn.dataone.org/cn/v1/resolve/<identifier>`` appear directly as DataONE objects. Library items that have URLs that reference the query endpoint at ``https://cn.dataone.org/cn/v1/query/solr/<query>`` will cause the queries to be executed on the Coordinating Node and the resulting DataONE objects will appear in the ONEDrive filesystem.
+ONEDrive recognizes DataONE objects in the Zotero library by their URLs. Zotero library items that have URLs that reference the DataONE Coordinating Node resolve endpoint at ``https://cn.dataone.org/cn/v1/resolve/<identifier>`` appear directly as DataONE objects. Library items that have URLs that reference the query endpoint at ``https://cn.dataone.org/cn/v1/query/solr/<query>`` will cause the queries to be executed on the Coordinating Node and the resulting DataONE objects will appear in the ONEDrive filesystem.
 
 
 Notes
 ~~~~~
 
-ONEDrive checks for updates in the Zotery library each time it is started. If the library has been updated, ONEDrive will refresh its local cache of the Zotero library and the metadata for the DataONE objects exposed through the filesystem.
+ONEDrive checks for updates in the Zotero library each time it is started. If the library has been updated, ONEDrive will refresh its local cache of the Zotero library and the metadata for the DataONE objects exposed through the filesystem.
 
 Zotero can have multiple root level collections while a filesystem can have only one root. ONEDrive handles this by adding an additional level, so that root level collections in Zotero are the first level directories in the filesystem root.
 

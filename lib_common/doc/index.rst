@@ -1,5 +1,5 @@
-DataONE Common Library for Python
-=================================
+DataONE Common Library
+======================
 
 See :doc:`/index` for an overview of the DataONE libraries and other products implemented in Python.
 
@@ -8,16 +8,10 @@ See :doc:`/index` for an overview of the DataONE libraries and other products im
 Contents:
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
   setup
   update
   api/modules
   /glossary
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

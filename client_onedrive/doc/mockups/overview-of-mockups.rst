@@ -32,6 +32,6 @@ Data package
 
 The data package mockup aims to show the following:
 
-- When a data package folder is opened, the entire contents of the package can   be exposed as a bagit or zip file. - The same object can be exposed in multipe formats. For instance, an EML file   may also be exposed as an HTML file. - The system metadata for all the objects is in a separate folder in order to   keep the main folder from getting too crowded.
+- When a data package folder is opened, the entire contents of the package can   be exposed as a bagit or zip file. - The same object can be exposed in multiple formats. For instance, an EML file   may also be exposed as an HTML file. - The system metadata for all the objects is in a separate folder in order to   keep the main folder from getting too crowded.
 
 Transformations can be implemented as CN services or can be implemented directly in ONEDrive, maybe as a plugin system.

@@ -25,7 +25,7 @@
     - New command that exports user-selected Science Metadata values to JSON
 
     - New commands that list objects and logs on a remote MN or CN
-      - The commands can authenticate to remote MNs using the local DataONE-issuded client side certificate, which may provide elevated permissions on the remote MN
+      - The commands can authenticate to remote MNs using the local DataONE-issued client side certificate, which may provide elevated permissions on the remote MN
 
     - New command that checks MN -> CN sync and MN object availability
       - Compares the CN's ObjectLists with locally managed object and reports on discrepancies
@@ -42,7 +42,7 @@
     
       - New features:
       
-        - Option to restrict the import by supplying a file contining a list of PIDs and/or SIDs to import
+        - Option to restrict the import by supplying a file continuing a list of PIDs and/or SIDs to import
       
         - Option to recursively import aggregated objects
         
@@ -95,7 +95,7 @@
 
   - Filesystem utilities are now in a separate module
 
-  - New modules for manupulating and visualizing SubjectInfo trees
+  - New modules for manipulating and visualizing SubjectInfo trees
 
     - The DataONE SubjectInfo type is an arbitrarily nested tree of subjects, groups, equivalence and group membership assertions.
     
@@ -273,7 +273,7 @@
   - Add tests for settings check performed at GMN startup
 
 - DataONE Client Library
-  - Move updateSystemMetadata() to baseclient to make it availble for CN calls
+  - Move updateSystemMetadata() to baseclient to make it available for CN calls
 
 - DataONE Common Library
   - Improve StringIterator to allow for more general usage
@@ -425,10 +425,10 @@
       - Minimal document size
       - Part of a new API class, "ext", which will holds GMN specific APIs
   - Optimize slicing / paging of multi-page result sets
-  - Add support for proxied objects in bulk importer
+  - Add support for proxy objects in bulk importer
   - Add support for rejecting replication requests for non-public objects
   - Add Proxy, Obsoletes, ObsoletedBy and SeriesId to the custom headers returned by most D1 API methods
-    - Proxy header allows clients to determine if an object is proxied and, if so, where the original object resides
+    - Proxy header allows clients to determine if an object is a proxy and, if so, where the original object resides
     - Obsoletes, ObsoletedBy headers allow clients to determine if object is part of a revision chain
   - Keep track of ownership and versioning of object filesystem store
   - Check every minute instead of every hour for new replication and sysmeta refresh tasks

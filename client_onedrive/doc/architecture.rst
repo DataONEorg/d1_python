@@ -202,5 +202,5 @@ Future improvements
 
 There's a lot more that can be done with Zotero integration if desired. For instance, ONEDrive could enable access to other information that can be stored in Zotero libraries, such as tags, notes and attached objects.
 
-ONEDrive could detect updates in Zotoro while it is running and dynamically update itself. Currently, ONEDrive only refreshes its caches during startup.
+ONEDrive could detect updates in Zotero while it is running and dynamically update itself. Currently, ONEDrive only refreshes its caches during startup.
 

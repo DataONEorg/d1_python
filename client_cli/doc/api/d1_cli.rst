@@ -12,7 +12,6 @@ Subpackages
 .. toctree::
 
    d1_cli.impl
-   d1_cli.tests
 
 Submodules
 ----------
@@ -21,14 +20,6 @@ d1\_cli.dataone module
 ----------------------
 
 .. automodule:: d1_cli.dataone
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-d1\_cli.pids2ore module
------------------------
-
-.. automodule:: d1_cli.pids2ore
    :members:
    :undoc-members:
    :show-inheritance:

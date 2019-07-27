@@ -43,7 +43,7 @@ Many users are unaware of the Spotlight filter UI described above, and don't nat
 
    *Figure 1.* Mac OS X Mockup showing the ONEDrive dropdown menu.
 
-The use of a filtering dialog box gives us a lot of flexibility in layoing out filter widgets, including the capability to use map widgets and other UI widgets to make constructing filters powerful. Once a filter is applied, the view in the ONEDrive window is constrained to display only packages that match the filter criteria.
+The use of a filtering dialog box gives us a lot of flexibility in laying out filter widgets, including the capability to use map widgets and other UI widgets to make constructing filters powerful. Once a filter is applied, the view in the ONEDrive window is constrained to display only packages that match the filter criteria.
 
 .. figure:: onedrive-mockup-5-filter-dialog.png
    :width: 1000px

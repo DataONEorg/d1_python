@@ -2,7 +2,7 @@ Reference
 =========
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
   ref_operation
   ref_startup

@@ -3,7 +3,7 @@
 Certificates
 ============
 
-As many of the stress tests excercise Member Node functionality that is not accessible to unauthenticated clients, a set of test certificates, with which the connections can be established, must be prepared. The certificates must be trusted by the Member Node being tested and each certificate must contain one or more DataONE subjects that are allowed to perform the operations on the MN which a given stress test is exercising.
+As many of the stress tests exercise Member Node functionality that is not accessible to unauthenticated clients, a set of test certificates, with which the connections can be established, must be prepared. The certificates must be trusted by the Member Node being tested and each certificate must contain one or more DataONE subjects that are allowed to perform the operations on the MN which a given stress test is exercising.
 
 This section describes how to generate and set up the required certificates.
 
@@ -39,7 +39,7 @@ For convenience, remove the password from the key::
 
 Create the local test CA. You will be prompted for the information that
 OpenSSL will use for generating the DN of the certificate. The information
-you enter is not important, but it is recomended to indicate, in one or more
+you enter is not important, but it is recommended to indicate, in one or more
 of the fields, that the CA is for testing only. As the DN of the signing
 CA is included in all signed certificates, it helps with marking those
 certificates as being for testing only as well.

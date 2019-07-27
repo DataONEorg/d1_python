@@ -1,6 +1,5 @@
-
-DataONE Command Line Interface (CLI)
-====================================
+Command Line Interface (CLI)
+============================
 
 See :doc:`/index` for an overview of the DataONE libraries and other products implemented in Python.
 
@@ -9,7 +8,7 @@ See :doc:`/index` for an overview of the DataONE libraries and other products im
 Contents:
 
 .. toctree::
-  :maxdepth: 3
+  :maxdepth: 1
 
   install
   examples
@@ -18,11 +17,3 @@ Contents:
   ref_options
   api/modules
   /glossary
-
-
-Indices and tables
-~~~~~~~~~~~~~~~~~~
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

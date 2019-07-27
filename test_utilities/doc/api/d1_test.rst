@@ -14,7 +14,6 @@ Subpackages
    d1_test.instance_generator
    d1_test.mock_api
    d1_test.replication_tester
-   d1_test.tests
    d1_test.utilities
 
 Submodules
@@ -48,14 +47,6 @@ d1\_test.slender\_node\_test\_client module
 -------------------------------------------
 
 .. automodule:: d1_test.slender_node_test_client
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-d1\_test.test\_files module
----------------------------
-
-.. automodule:: d1_test.test_files
    :members:
    :undoc-members:
    :show-inheritance:

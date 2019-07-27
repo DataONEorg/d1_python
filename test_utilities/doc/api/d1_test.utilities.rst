@@ -9,14 +9,6 @@ d1\_test.utilities package
 Submodules
 ----------
 
-d1\_test.utilities.create\_dataone\_test\_certificate module
-------------------------------------------------------------
-
-.. automodule:: d1_test.utilities.create_dataone_test_certificate
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 d1\_test.utilities.create\_from\_file module
 --------------------------------------------
 
@@ -69,14 +61,6 @@ d1\_test.utilities.populate\_mn module
 --------------------------------------
 
 .. automodule:: d1_test.utilities.populate_mn
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-d1\_test.utilities.test\_object\_generator module
--------------------------------------------------
-
-.. automodule:: d1_test.utilities.test_object_generator
    :members:
    :undoc-members:
    :show-inheritance:

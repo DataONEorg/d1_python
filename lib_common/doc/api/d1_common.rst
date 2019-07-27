@@ -14,8 +14,6 @@ Subpackages
    d1_common.cert
    d1_common.ext
    d1_common.iter
-   d1_common.tests
-   d1_common.types
    d1_common.utils
    d1_common.wrap
 
@@ -130,6 +128,14 @@ d1\_common.type\_conversions module
 -----------------------------------
 
 .. automodule:: d1_common.type_conversions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+d1\_common.typing module
+------------------------
+
+.. automodule:: d1_common.typing
    :members:
    :undoc-members:
    :show-inheritance:

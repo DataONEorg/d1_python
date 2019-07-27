@@ -12,9 +12,7 @@ Subpackages
 .. toctree::
 
    d1_onedrive.impl.clients
-   d1_onedrive.impl.drivers
    d1_onedrive.impl.resolver
-   d1_onedrive.impl.tests
 
 Submodules
 ----------

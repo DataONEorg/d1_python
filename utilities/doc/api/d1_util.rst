@@ -11,7 +11,7 @@ Subpackages
 
 .. toctree::
 
-   d1_util.tests
+   d1_util.access-set-public
 
 Submodules
 ----------
@@ -200,6 +200,14 @@ d1\_util.find\_gmn\_instances module
    :undoc-members:
    :show-inheritance:
 
+d1\_util.find\_node\_versions module
+------------------------------------
+
+.. automodule:: d1_util.find_node_versions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 d1\_util.generate\_data\_package\_from\_stream module
 -----------------------------------------------------
 
@@ -216,6 +224,22 @@ d1\_util.generate\_object\_stats module
    :undoc-members:
    :show-inheritance:
 
+d1\_util.generate\_sysmeta module
+---------------------------------
+
+.. automodule:: d1_util.generate_sysmeta
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+d1\_util.generate\_test\_subject\_certs module
+----------------------------------------------
+
+.. automodule:: d1_util.generate_test_subject_certs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 d1\_util.jwt\_token\_tasks module
 ---------------------------------
 
@@ -228,6 +252,14 @@ d1\_util.parse\_format\_id\_list module
 ---------------------------------------
 
 .. automodule:: d1_util.parse_format_id_list
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+d1\_util.ping\_nodes module
+---------------------------
+
+.. automodule:: d1_util.ping_nodes
    :members:
    :undoc-members:
    :show-inheritance:
@@ -264,6 +296,14 @@ d1\_util.xml\_apply\_xslt module
    :undoc-members:
    :show-inheritance:
 
+d1\_util.xml\_guess\_format\_id module
+--------------------------------------
+
+.. automodule:: d1_util.xml_guess_format_id
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 d1\_util.xml\_remove\_empty\_elements module
 --------------------------------------------
 
@@ -276,6 +316,14 @@ d1\_util.xml\_strip\_whitespace module
 --------------------------------------
 
 .. automodule:: d1_util.xml_strip_whitespace
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+d1\_util.xml\_xpath module
+--------------------------
+
+.. automodule:: d1_util.xml_xpath
    :members:
    :undoc-members:
    :show-inheritance:

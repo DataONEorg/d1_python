@@ -9,13 +9,6 @@ It is part of the DataONE Test Utilities for Python and is installed as part of 
 Contents:
 
 .. toctree::
-  :maxdepth: 2
+  :maxdepth: 1
 
-
-
-Indices and tables
-~~~~~~~~~~~~~~~~~~
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+  ../api/modules

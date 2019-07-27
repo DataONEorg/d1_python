@@ -6,13 +6,6 @@ d1\_scimeta package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-
-   d1_scimeta.tests
-
 Submodules
 ----------
 
