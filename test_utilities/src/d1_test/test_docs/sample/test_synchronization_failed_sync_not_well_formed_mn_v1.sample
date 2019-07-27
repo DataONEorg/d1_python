@@ -1,0 +1,10 @@
+ContextManager: disable_auth()
+Request kwargs:
+{"headers":{"Charset":"utf-8","User-Agent":"DataONE-Python/[VERSION]
++http://dataone.org/"},"params":{},"stream":false,"timeout":60.0,"verify":"/etc/ssl/certs/ca-certificates.crt"}
+Received callback. url="http://gmn.client/node/v1/error"
+Calling Django test client. base_url="http://gmn.client/node" url_path="/v1/error"
+Calling view: func_name="post_error", method="POST", args="()", kwargs="{'allowed_method_list': ['POST']}", url="/v1/error"
+Received notification of synchronization error from CN but was unable to deserialize the DataONE Exception passed by the CN.
+received_exception_xml="invalid xml doc" deserialize_error="Deserialization failed. error="Unable to deserialize XML to PyXB.
+error="<unknown>:1:0: syntax error" xml="invalid xml doc"" doc="invalid xml doc""
