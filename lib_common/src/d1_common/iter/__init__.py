@@ -20,8 +20,7 @@
 """This package contains iterators that provide a convenient way to retrieve and iterate
 over Node contents.
 
-Although this directory is not a package, this __init__.py file is required for pytest
-to be able to reach test directories below this directory.
+
 
 """
 

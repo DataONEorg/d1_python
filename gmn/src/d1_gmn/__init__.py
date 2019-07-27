@@ -18,4 +18,4 @@
 
 from .version import __version__  # noqa: F401
 
-# default_app_config = "d1_gmn.app.startup.GMNStartupChecks"
+#default_app_config = "d1_gmn.app.startup.GMNStartupChecks"

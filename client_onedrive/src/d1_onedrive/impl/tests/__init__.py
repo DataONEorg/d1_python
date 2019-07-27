@@ -19,8 +19,7 @@
 # limitations under the License.
 """ONEDrive tests.
 
-Although this directory is not a package, this __init__.py file is required for pytest
-to be able to reach test directories below this directory.
+
 
 """
 

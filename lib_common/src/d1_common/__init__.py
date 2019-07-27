@@ -16,10 +16,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """DataONE Common Library.
-
-Although this directory is not a package, this __init__.py file is required for pytest
-to be able to reach test directories below this directory.
-
 """
 
 # Suppress log messages instead of raising exception if the program using the library
