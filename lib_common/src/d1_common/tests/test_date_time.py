@@ -284,7 +284,7 @@ class TestDateTime(d1_test.d1_test_case.D1TestCase):
         )
 
     def test_1150(self):
-        """http_datetime_str_from_dt(): Inludes timezone (MST, UTC-7)"""
+        """http_datetime_str_from_dt(): Includes timezone (MST, UTC-7)"""
         assert (
             d1_common.date_time.http_datetime_str_from_dt(T1_MST)
             == "Sat, 02 Jan 1999 10:04:05 GMT"

@@ -32,12 +32,11 @@ import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
-import d1_common.utils.progress_logger
+import d1_common.utils.progress_tracker
+import d1_common.utils.ulog
 
-# d1_common.util.log_setup()
-# logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger(__name__)
-progress_logger = d1_common.utils.progress_logger.ProgressLogger()
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
 
 
 WRAP_MARGIN_INT = 88
@@ -79,24 +78,24 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     repo = git.Repo(repo_path)
 
     specified_file_path_list = get_specified_file_path_list(args)
-    tracked_path_list = list(d1_dev.util.get_tracked_files(repo))
-    format_path_list = sorted(
-        set(specified_file_path_list).intersection(tracked_path_list)
-    )
+    # tracked_path_list = list(d1_dev.util.get_tracked_files(repo))
+    # format_path_list = sorted(
+    #     set(specified_file_path_list).intersection(tracked_path_list)
+    # )
+    format_path_list = sorted(specified_file_path_list)
+    with d1_common.utils.progress_tracker.ProgressTracker(
+        "Format modules", len(format_path_list)
+    ) as format_tracker:
 
-    progress_logger.start_task_type("Format modules", len(format_path_list))
-
-    for i, format_path in enumerate(format_path_list):
-        progress_logger.start_task("Format modules", i)
-        format_all_docstr(args, format_path)
-
-    progress_logger.end_task_type("Format modules")
+        for format_path in format_path_list:
+            format_tracker.step()
+            format_all_docstr(args, format_path, format_tracker)
 
 
 def get_specified_file_path_list(args):
@@ -115,7 +114,7 @@ def get_specified_file_path_list(args):
     return specified_file_path_list
 
 
-def format_all_docstr(args, module_path):
+def format_all_docstr(args, module_path, format_tracker):
     logger.info("-" * 79)
     logger.info("{}".format(module_path))
 
@@ -124,21 +123,18 @@ def format_all_docstr(args, module_path):
     docstr_list = get_docstr_list(red)
 
     if not docstr_list:
-        # No docstrings in module
         return
 
-    progress_logger.start_task_type("Format docstrings in module", len(docstr_list))
+        # format_tracker.event("Format docstrings in module", len(docstr_list))
 
     for docstr_idx, docstr_node in enumerate(docstr_list):
-        progress_logger.start_task("Format docstrings in module", docstr_idx)
+        # sub_task.step()
         format_docstr(docstr_node)
         # break
 
     d1_dev.util.update_module_file(
         red, module_path, show_diff=args.show_diff, dry_run=args.dry_run
     )
-
-    progress_logger.end_task_type("Format docstrings in module")
 
 
 def get_docstr_list(red):
@@ -165,9 +161,9 @@ def format_docstr(docstr_node):
                 block_str = wrap(indent_int, wrap_str)
                 str_buf.write("{}".format(block_str))
 
-        # The first line in a StringNode is indented indirectly by a preceeding
+        # The first line in a StringNode is indented indirectly by a preceding
         # EndLNode, so there's no leading whitespace in the string itself. All remaining
-        # lines are indended directly by spaces in the string. To simplify things, we
+        # lines are indented directly by spaces in the string. To simplify things, we
         # indent first line just like all remaining lines, and remove it here.
         docstr_node.value = str_buf.getvalue().strip()
 
@@ -188,7 +184,7 @@ def unwrap(s, node_indent):
 
     For now, only groups markdown list sections.
 
-    A block designates a list of consequtive lines that all start at the same
+    A block designates a list of consecutive lines that all start at the same
     indentation level.
 
     The lines of the docstring are iterated top to bottom. Each line is added to
@@ -242,7 +238,7 @@ def unwrap(s, node_indent):
         if line_str == "":
             finish_block()
 
-        # Indent any lines that are less indentend than the docstr node
+        # Indent any lines that are less indented than the docstr node
         # if line_indent < node_indent:
         #     line_indent = block_indent
 

@@ -27,7 +27,72 @@ from OpenSSL import crypto
 from pyasn1.codec.ber import decoder
 from pyasn1.error import PyAsn1Error
 
+import d1_common.utils.ulog
+
 # flake8: noqa: F403
+
+
+
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
+
+
+def main():
+    usage = "usage: %prog [options] cert_file_name"
+    parser = optparse.OptionParser(usage=usage)
+    parser.add_option(
+        "-l",
+        "--loglevel",
+        dest="llevel",
+        default=20,
+        type="int",
+        help="Reporting level: 10=debug, 20=Info, 30=Warning, "
+        "40=Error, 50=Fatal [default: %default]",
+    )
+    parser.add_option(
+        "-i",
+        "--info",
+        action="store_true",
+        help="Show subject info in certificate [default: %default]",
+    )
+    parser.add_option(
+        "-f",
+        "--format",
+        action="store_true",
+        help="Format output for people [default: %default]",
+    )
+
+    (options, args) = parser.parse_args(sys.argv)
+    if options.llevel not in [10, 20, 30, 40, 50]:
+        options.llevel = 20
+    logging.basicConfig(level=int(options.llevel))
+    if len(args) < 2:
+        parser.print_help()
+        sys.exit()
+
+    fname = args[1]
+    subject, status = getSubjectFromCertFile(fname)
+    print(subject["subject"])
+    if options.info:
+        if subject["subjectInfo"] is not None:
+            if options.format:
+                root = etree.fromstring(str(subject["subjectInfo"]))
+                print("SubjectInfo:")
+                print(
+                    (
+                        etree.tostring(
+                            root,
+                            pretty_print=True,
+                            encoding="utf-8",
+                            xml_declaration=True,
+                        )
+                    )
+                )
+            else:
+                print(str(subject["subjectInfo"]))
+    if status == 0:
+        sys.exit(2)
+    sys.exit(0)
 
 
 def getSubjectFromName(xName):
@@ -95,7 +160,7 @@ def getSubjectFromCertFile(certFileName):
     logging.debug("Not after: %s" % x509.get_notAfter())
     return (
         {
-            "subject": getSubjectFromName(x509.get_subject()),
+            "subject": getSubjectFromName(x509.get_jwt_subject()),
             "subjectInfo": getSubjectInfoFromCert(x509),
         },
         status,
@@ -103,58 +168,4 @@ def getSubjectFromCertFile(certFileName):
 
 
 if __name__ == "__main__":
-    usage = "usage: %prog [options] cert_file_name"
-    parser = optparse.OptionParser(usage=usage)
-    parser.add_option(
-        "-l",
-        "--loglevel",
-        dest="llevel",
-        default=20,
-        type="int",
-        help="Reporting level: 10=debug, 20=Info, 30=Warning, "
-        "40=Error, 50=Fatal [default: %default]",
-    )
-    parser.add_option(
-        "-i",
-        "--info",
-        action="store_true",
-        help="Show subject info in certificate [default: %default]",
-    )
-    parser.add_option(
-        "-f",
-        "--format",
-        action="store_true",
-        help="Format output for people [default: %default]",
-    )
-
-    (options, args) = parser.parse_args(sys.argv)
-    if options.llevel not in [10, 20, 30, 40, 50]:
-        options.llevel = 20
-    logging.basicConfig(level=int(options.llevel))
-    if len(args) < 2:
-        parser.print_help()
-        sys.exit()
-
-    fname = args[1]
-    subject, status = getSubjectFromCertFile(fname)
-    print(subject["subject"])
-    if options.info:
-        if subject["subjectInfo"] is not None:
-            if options.format:
-                root = etree.fromstring(str(subject["subjectInfo"]))
-                print("SubjectInfo:")
-                print(
-                    (
-                        etree.tostring(
-                            root,
-                            pretty_print=True,
-                            encoding="utf-8",
-                            xml_declaration=True,
-                        )
-                    )
-                )
-            else:
-                print(str(subject["subjectInfo"]))
-    if status == 0:
-        sys.exit(2)
-    sys.exit(0)
+    main()

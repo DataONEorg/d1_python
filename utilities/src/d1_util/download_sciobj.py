@@ -29,6 +29,7 @@ import logging
 import sys
 
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 import d1_client.cnclient_2_0
 import d1_client.command_line
@@ -37,7 +38,7 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    parser = d1_client.command_line.get_standard_arg_parser(__doc__)
+    parser = d1_client.command_line.D1ClientArgParser(__doc__)
     parser.add_argument("pid", help="PID of object to download")
     parser.add_argument(
         "path",
@@ -50,10 +51,10 @@ def main():
         ),
     )
     args = parser.parse_args()
-    d1_client.command_line.log_setup(args)
+    d1_client.command_line.log_setup(args.debug)
 
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-        **d1_client.command_line.args_adapter(args)
+        parser.get_method_args(args)
     )
 
     path = args.path or d1_common.utils.filesystem.gen_safe_path_element(args.pid)

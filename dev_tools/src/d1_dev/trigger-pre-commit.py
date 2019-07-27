@@ -50,6 +50,7 @@ import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
+import d1_common.utils.ulog
 
 import d1_test.pycharm
 
@@ -76,7 +77,7 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     repo = git.Repo(repo_path)

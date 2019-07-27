@@ -48,8 +48,8 @@ import d1_common.env
 import d1_common.types.dataoneTypes
 import d1_common.types.exceptions
 
+import d1_client.iter.objectlist_multi
 import d1_client.mnclient_2_0
-import d1_client.objectlistiterator
 
 # Config
 
@@ -123,7 +123,9 @@ class DataONENodeObjectValidator(object):
         self._print_status()
 
     def validate(self):
-        for o in d1_client.objectlistiterator.ObjectListIterator(self._src_client):
+        for o in d1_client.iter.objectlist_multi.ObjectListIteratorMulti(
+            self._src_client
+        ):
             pid = o.identifier.value()
             self.validate_pid(pid)
 

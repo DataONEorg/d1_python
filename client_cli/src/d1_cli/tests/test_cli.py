@@ -36,6 +36,8 @@ import d1_common.date_time
 import d1_common.system_metadata
 import d1_common.types.dataoneTypes
 
+import d1_client.mnclient
+
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
 import d1_test.mock_api.catch_all
@@ -44,8 +46,6 @@ import d1_test.mock_api.get_log_records
 import d1_test.mock_api.get_system_metadata
 import d1_test.mock_api.list_nodes
 import d1_test.mock_api.list_objects
-
-import d1_client.mnclient
 
 
 @freezegun.freeze_time("1977-03-27")
@@ -61,7 +61,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         cli.preloop()
 
     def test_1010(self, cn_client_v2):
-        """preloop(): Successful deinitialization."""
+        """preloop(): Successful shutdown."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         with d1_test.d1_test_case.capture_std() as (out_stream, err_stream):
@@ -69,7 +69,7 @@ class TestCLI(d1_test.d1_test_case.D1TestCase):
         assert "Exiting" in out_stream.getvalue()
 
     def test_1020(self, cn_client_v2):
-        """precmd(): Successful line formattting."""
+        """precmd(): Successful line formatting."""
         cli = d1_cli.impl.command_parser.CLI()
         cli.preloop()
         test_cmd_str = "somecommand arg1 arg2 arg3"

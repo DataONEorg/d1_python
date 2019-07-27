@@ -33,6 +33,7 @@ import os
 
 import d1_common.cert.x509
 import d1_common.util
+import d1_common.utils.ulog
 
 
 def main():
@@ -44,7 +45,7 @@ def main():
         "ca_path", action="store", help="Save path for PEM formatted CA certificate"
     )
     args = parser.parse_args()
-    d1_common.util.log_setup(is_debug=args.debug)
+    d1_common.utils.ulog.setup(is_debug=args.debug)
     try:
         create_ca(args)
     except CACreateError as e:

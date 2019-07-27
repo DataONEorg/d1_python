@@ -32,6 +32,7 @@ import sys
 
 import d1_common.iter.path
 import d1_common.util
+import d1_common.utils.ulog
 
 # Files and directories to delete
 JUNK_GLOB_DIR_LIST = [
@@ -85,7 +86,7 @@ def main():
     )
 
     args = parser.parse_args()
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     itr = d1_common.iter.path.path_generator(
         path_list=args.path,

@@ -24,7 +24,7 @@ and retrieve the indexing result for that object.
 
 As values from the associated System Metadata document are also indexed, this example
 generates a randomized System Metadata document that is included with the Science
-Metdata object.
+Metadata object.
 
 This is an example on how to use the DataONE Client and Common libraries for Python. It
 shows how to:
@@ -35,26 +35,25 @@ API:
 
 CNDiagnostic.echoIndexedObject(session, queryEngine, sysmeta, object) → OctetStream
 https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html
-  #CNDiagnostic.echoIndexedObject
+#CNDiagnostic.echoIndexedObject
 
 """
 
 import sys
 
-
 import d1_common.xml
+
+import d1_client.cnclient_2_0
+import d1_client.command_line
 
 import d1_test.instance_generator.system_metadata
 
-import d1_client.cnclient_2_0
-
 DEFAULT_FORMAT_ID = "http://www.isotc211.org/2005/gmd"
 
-import d1_client.command_line
 
 
 def main():
-    parser = d1_client.command_line.get_standard_arg_parser(__doc__)
+    parser = d1_client.command_line.D1ClientArgParser(__doc__)
     parser.add_argument("path", help="Path to science metadata file")
     parser.add_argument(
         "--format",
@@ -62,10 +61,10 @@ def main():
         help="Set the formatId of the submitted Science Metadata",
     )
     args = parser.parse_args()
-    d1_client.command_line.log_setup(args)
+    d1_client.command_line.log_setup(args.debug)
 
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-        **d1_client.command_line.args_adapter(args)
+        **parser.get_method_args(args)
     )
 
     sysmeta_pyxb = d1_test.instance_generator.system_metadata.generate_from_file_path(

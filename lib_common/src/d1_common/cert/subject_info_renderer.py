@@ -21,7 +21,8 @@ Based on the ETE Toolkit for analysis and visualization of trees.
 
 ETE is a somewhat large dependency, so it is not installed by default with the
 DataONE stack. To install, follow the instructions on the ETE site:
-    http://etetoolkit.org.
+
+http://etetoolkit.org.
 
 """
 # See the module level docstring if ImportError is raised here
@@ -67,7 +68,7 @@ class SubjectInfoRenderer:
         self._tree = ete3.Tree(name="Root")
         self._tree.add_feature(TYPE_NODE_TAG, True)
         self._render_type = None
-        self._gen_etetoolkit_tree(self._tree, subject_info_tree)
+        self._gen_ete_toolkit_tree(self._tree, subject_info_tree)
 
     def render_to_image_file(
         self, image_out_path, width_pixels=None, height_pixels=None, dpi=90
@@ -121,7 +122,7 @@ class SubjectInfoRenderer:
 
     # Private
 
-    def _gen_etetoolkit_tree(self, node, subject_info_tree):
+    def _gen_ete_toolkit_tree(self, node, subject_info_tree):
         """Copy SubjectInfoTree to a ETE Tree."""
         for si_node in subject_info_tree.child_list:
             if si_node.type_str == TYPE_NODE_TAG:
@@ -132,7 +133,7 @@ class SubjectInfoRenderer:
                 raise AssertionError(
                     'Unknown node type. type_str="{}"'.format(si_node.type_str)
                 )
-            self._gen_etetoolkit_tree(child, si_node)
+            self._gen_ete_toolkit_tree(child, si_node)
 
     def _add_type_node(self, node, label):
         """Add a node representing a SubjectInfo type."""

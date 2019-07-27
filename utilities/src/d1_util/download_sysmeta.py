@@ -38,7 +38,7 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    parser = d1_client.command_line.get_standard_arg_parser(__doc__)
+    parser = d1_client.command_line.D1ClientArgParser(__doc__)
     parser.add_argument(
         "pid", help="PID of object for which to download System Metadata"
     )
@@ -52,10 +52,10 @@ def main():
         ),
     )
     args = parser.parse_args()
-    d1_client.command_line.log_setup(args)
+    d1_client.command_line.log_setup(args.debug)
 
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-        **d1_client.command_line.args_adapter(args)
+        parser.get_method_args(args)
     )
 
     sysmeta_pyxb = client.getSystemMetadata(args.pid)

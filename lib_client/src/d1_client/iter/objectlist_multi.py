@@ -15,13 +15,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Multiprocessed ObjectList Iterator.
-
-Fast retrieval of ObjectList from a DataONE Node.
-
-See additional notes in SysMeta iter docstring.
-
-"""
 
 import logging
 
@@ -34,6 +27,14 @@ logger = logging.getLogger(__name__)
 
 # fmt: off
 class ObjectListIteratorMulti(d1_client.iter.base_multi.MultiprocessedIteratorBase):
+    # language=rst
+    """Multiprocessed ObjectList Iterator.
+
+    Iterate over information about Science Objects available on Member Nodes.
+
+    This is a multiprocessed implementation. See :ref:`d1_client/ref/iterators:DataONE
+    Iterators` for an overview of the available iterator types and implementations.
+    """
     def __init__(
         self,
         base_url=d1_common.const.URL_DATAONE_ROOT,

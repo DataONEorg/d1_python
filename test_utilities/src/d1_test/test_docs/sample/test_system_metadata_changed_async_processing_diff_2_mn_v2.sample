@@ -89,9 +89,23 @@
 
     </replica>
     <seriesId>SID_srowbqbiukpc</seriesId>
-    <mediaType name="media_type_jo">
-      <property name="prop_dfgkhlheyfxq">casqsnwomvxb</property>
+-   <mediaType name="media_type_jo">
+?                               ^^
+
++   <mediaType name="media_type_mv">
+?                               ^^
+
+-     <property name="prop_dfgkhlheyfxq">casqsnwomvxb</property>
+?                                     ---------------
+
++     <property name="prop_miokfxpuyfeu">ddfgkhlheyfx</property>
+?                          +++++++++++++++
+
++     <property name="prop_wixfvzisjkrl">fcaeojdbrrfc</property>
++     <property name="prop_mqochfcshpti">gpmfjbrjsqfk</property>
++     <property name="prop_osnmueokvigl">obfqlraysghr</property>
++     <property name="prop_wzoquxziotix">oyqcbmnseqli</property>
     </mediaType>
 -   <fileName>file_miokfxpuyfeu</fileName>
-+   <fileName>PID_bgxeiwesunrv.nc</fileName>
++   <fileName>file_fprczrtlnavb.nc</fileName>
   </ns1:systemMetadata>

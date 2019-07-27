@@ -103,11 +103,26 @@
 
     </replica>
     <seriesId>SID_lcjnhzxmwdwg</seriesId>
-    <mediaType name="media_type_pa">
-      <property name="prop_ircauwqfofpq">jzfiywwihpkt</property>
-      <property name="prop_xqwumuycupwj">sodwdvouinff</property>
-      <property name="prop_aztwpbjccwzg">wpopirxbfiyh</property>
+-   <mediaType name="media_type_pa">
+?                               ^^
+
++   <mediaType name="media_type_cw">
+?                               ^^
+
+-     <property name="prop_ircauwqfofpq">jzfiywwihpkt</property>
+-     <property name="prop_xqwumuycupwj">sodwdvouinff</property>
+?                                   ---            -
+
++     <property name="prop_qudxqwumuycu">ksodwdvouinf</property>
+?                          +++           +
+
+-     <property name="prop_aztwpbjccwzg">wpopirxbfiyh</property>
++     <property name="prop_hpktgircauwq">wjzycjzfiyww</property>
     </mediaType>
 -   <fileName>file_jjqeerjcuzut</fileName>
-+   <fileName>PID_gpminqffoqnu.json</fileName>
+?                         ^^^^^
+
++   <fileName>file_ofpqajjqeerj.json</fileName>
+?                  +++++       ^^^^^
+
   </ns1:systemMetadata>

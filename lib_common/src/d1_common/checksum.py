@@ -198,13 +198,12 @@ def are_checksums_equal(checksum_a_pyxb, checksum_b_pyxb):
     Args:
        checksum_a_pyxb, checksum_b_pyxb: PyXB Checksum objects to compare.
 
-    Returns:
-      bool
-        - **True**: The checksums contain the same hexadecimal values calculated with
-          the same algorithm. Identical checksums guarantee (for all practical
-          purposes) that the checksums were calculated from the same sequence of bytes.
-        - **False**: The checksums were calculated with the same algorithm but the
-          hexadecimal values are different.
+    Returns: bool
+      - ``True``: The checksums contain the same hexadecimal values calculated with
+        the same algorithm. Identical checksums guarantee (for all practical
+        purposes) that the checksums were calculated from the same sequence of bytes.
+      - ``False``: The checksums were calculated with the same algorithm but the
+        hexadecimal values are different.
 
     Raises:
       ValueError
@@ -261,11 +260,10 @@ def is_supported_algorithm(algorithm_str):
       algorithm_str: str
         String that may or may not contain the name of a supported algorithm.
 
-    Returns:
-      bool
-        - **True**: The string contains the name of a supported algorithm and can be
-          passed as the ``algorithm_str`` to the functions in this module.
-        - **False**: The string is not a supported algorithm.
+    Returns: bool
+      - ``True``: The string contains the name of a supported algorithm and can be
+        passed as the ``algorithm_str`` to the functions in this module.
+      - ``False``: The string is not a supported algorithm.
 
     """
     return algorithm_str in DATAONE_TO_PYTHON_CHECKSUM_ALGORITHM_MAP

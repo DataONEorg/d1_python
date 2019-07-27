@@ -35,20 +35,21 @@ import os
 import subprocess
 import time
 
-import Xlib.error
-
 import d1_dev.util
+
+log = logging.getLogger(__name__)
 
 try:
     import Xlib
+    import Xlib.error
     import Xlib.display
 
     is_headless = False
+    log.debug("Pycharm diffs are available")
 except ImportError:
     is_headless = True
+    log.error("Pycharm diffs are NOT available")
 
-
-logger = logging.getLogger(__name__)
 
 # Set this path to the binary that launches PyCharm. If an environment variable
 # of the same name exists, it is used instead of this setting.
@@ -63,10 +64,10 @@ def open_and_set_cursor(src_path, src_line=1):
       DataONE Git repository.
 
     """
-    if is_headless:
+    if _is_headless():
         return
     if src_path == "<string>":
-        logger.debug("Unable to find location of error")
+        log.debug("Unable to find location of error")
         return
     # Handle LocalPath from pytest
     src_path = str(src_path)
@@ -76,7 +77,7 @@ def open_and_set_cursor(src_path, src_line=1):
 
 def diff(left_path, right_path):
     """Attempt to open a diff of the two files in the PyCharm Diff & Merge tool."""
-    if is_headless:
+    if _is_headless():
         return
     _tag_empty_file(left_path)
     _tag_empty_file(right_path)
@@ -87,7 +88,7 @@ def diff(left_path, right_path):
 def _wait_for_diff_to_close(left_path, right_path):
     """Wait for the user to close the diff window."""
     # Wait for window to open.
-    logging.info("Waiting for PyCharm diff window to close. Press Enter to skip...")
+    log.info("Waiting for PyCharm diff window to close. Press Enter to skip...")
     # Wait for window to open
     sleep_interval_sec = 0.1
     wait_sec = 3
@@ -181,8 +182,15 @@ def _call_pycharm(*arg_list):
         )
         subprocess.call([PYCHARM_BIN_PATH] + arg_list)
     except subprocess.CalledProcessError as e:
-        logging.warning(
-            'PyCharm call failed. error="{}" args="{}"'.format(str(e), arg_str)
-        )
+        log.warning('PyCharm call failed. error="{}" args="{}"'.format(str(e), arg_str))
     else:
-        logging.debug('PyCharm call ok. args="{}"'.format(arg_str))
+        log.debug('PyCharm call ok. args="{}"'.format(arg_str))
+
+
+def _is_headless():
+    """Check and log headless status"""
+    if is_headless:
+        log.error("Called pycharm when running in test-only environment")
+        return True
+    else:
+        return False

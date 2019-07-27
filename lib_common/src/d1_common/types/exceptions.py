@@ -303,7 +303,7 @@ class DataONEException(Exception):
             msg = "errorCode: {} / detailCode: {}".format(
                 self.errorCode, self.detailCode
             )
-        return self._fmt(self.name, msg)
+        return self._fmt(self.name, msg).strip()
 
     def serialize_to_transport(self, encoding="utf-8", xslt_url=None):
         """Serialize to XML ``bytes`` with prolog.

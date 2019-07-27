@@ -22,13 +22,13 @@ import responses
 
 import d1_common.type_conversions
 
+import d1_client.d1client
+
 import d1_test.d1_test_case
 import d1_test.mock_api.get_capabilities
 
-import d1_client.d1client
 
-
-class TesttUtil(d1_test.d1_test_case.D1TestCase):
+class TestUtil(d1_test.d1_test_case.D1TestCase):
     @responses.activate
     def test_1000(self, mn_client_v1_v2):
         """get_api_major_by_base_url(): Returns correct API major versions."""

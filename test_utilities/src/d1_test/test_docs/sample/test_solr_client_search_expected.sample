@@ -17,11 +17,7 @@
   },
   "responseHeader": {
     "params": {
-      "fl": [
-        "id",
-        "checksum",
-        "dateUploaded"
-      ],
+      "fl": "id,checksum,dateUploaded",
       "fq": "dateUploaded:{ 2017-01-01T00:00:00.000Z TO 2017-01-10T00:00:00.000Z }",
       "q": "id:a*",
       "sort": "id asc",

@@ -15,20 +15,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Iterate over the nodes that are registered in a DataONE environment.
-
-For each Node in the environment, returns a PyXB representation of a DataONE
-Node document.
-
-https://releases.dataone.org/online/api-documentation-v2.0/
-apis/Types.html#Types.Node
-
-"""
 
 import logging
 
 
 class NodeListIterator(object):
+    """Iterate over the nodes that are registered in a DataONE environment.
+
+    This is a serial implementation. See :ref:`d1_client/ref/iterators:DataONE
+    Iterators` for an overview of the available iterator types and implementations.
+    """
+
     def __init__(self, cn_client):
         self._cn_client = cn_client
         self._log = logging.getLogger(__name__)

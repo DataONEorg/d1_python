@@ -26,6 +26,8 @@ import sys
 import settings
 import subject_dn
 
+import d1_common.utils.ulog
+
 # D1
 from d1_test.instance_generator import random_data
 
@@ -33,7 +35,7 @@ logger = logging.getLogger()
 
 
 def main():
-    log_setup()
+    d1_common.utils.ulog.setup(is_debug=False)
 
     # Command line opts.
     parser = optparse.OptionParser(
@@ -59,14 +61,6 @@ def create_subject_list(n_subjects):
             cn = random_data.random_3_words()
             f.write(subject_dn.get_dataone_compliant_dn_serialization_by_subject(cn))
             f.write("\n")
-
-
-def log_setup():
-    logging.getLogger("").setLevel(logging.INFO)
-    formatter = logging.Formatter("%(levelname)-8s %(message)s")
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger("").addHandler(console_logger)
 
 
 if __name__ == "__main__":

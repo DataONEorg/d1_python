@@ -19,7 +19,6 @@
 # limitations under the License.
 
 import io
-
 # TODO: Move this to docs
 #
 # d1_pyore Examples
@@ -34,7 +33,7 @@ import io
 #   # These are example values for pids2ore
 #   # First row = identifier for resource map object
 #   # Second row = identifier for metadata document
-#   # Subsquent rows = identifiers for data
+#   # Subsequent rows = identifiers for data
 #   # Blank rows are ignored
 #   # White space is stripped from start and end of rows.
 #
@@ -117,7 +116,7 @@ import io
 # -----------------------------------
 #
 # Given the rdf-xml OAI-ORE document from above saved as "test.xml", parse and
-# dump out the contents in slightly more intelligable plain text::
+# dump out the contents in slightly more intelligible plain text::
 #
 #   ore2txt test.xml
 #

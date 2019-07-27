@@ -160,8 +160,8 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     def test_1040(self):
         """deserialize, serialize, deserialize round trip of valid error XML doc."""
         x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND)
-        sxml = x1.serialize_to_display()
-        x2 = exceptions.deserialize(sxml)
+        s_xml = x1.serialize_to_display()
+        x2 = exceptions.deserialize(s_xml)
         assert isinstance(x2, exceptions.NotFound)
         assert x1.errorCode == x2.errorCode
         assert x1.detailCode == x2.detailCode
@@ -175,8 +175,8 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     def test_1050(self):
         """deserialize, serialize, deserialize round trip 2."""
         x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_2)
-        sxml = x1.serialize_to_display()
-        x2 = exceptions.deserialize(sxml)
+        s_xml = x1.serialize_to_display()
+        x2 = exceptions.deserialize(s_xml)
         assert isinstance(x2, exceptions.NotFound)
         assert x1.errorCode == x2.errorCode
         assert x1.detailCode == x2.detailCode
@@ -190,8 +190,8 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
     def test_1060(self):
         """deserialize, serialize, deserialize round trip 3."""
         x1 = exceptions.deserialize(VALID_ERROR_DOC_NOTFOUND_3)
-        sxml = x1.serialize_to_display()
-        x2 = exceptions.deserialize(sxml)
+        s_xml = x1.serialize_to_display()
+        x2 = exceptions.deserialize(s_xml)
         assert isinstance(x2, exceptions.NotFound)
         assert x1.errorCode == x2.errorCode
         assert x1.detailCode == x2.detailCode
@@ -304,12 +304,12 @@ class TestExceptions(d1_test.d1_test_case.D1TestCase):
         # self.assertEqual(root.getElementsByTagName('traceInformation')[0]\
         #                 .childNodes[0].nodeValue, u'test trace information')
         # Deserialize XML.
-        exc_deser = exceptions.deserialize(exc_ser_xml)
+        exc_deserialize = exceptions.deserialize(exc_ser_xml)
         # Check deserialized native object.
-        assert exc_deser.detailCode == "1010"
-        assert exc_deser.errorCode == 409
-        assert exc_deser.name == "IdentifierNotUnique"
-        assert exc_deser.identifier == "test_pid"
-        assert exc_deser.description == "description_test"
+        assert exc_deserialize.detailCode == "1010"
+        assert exc_deserialize.errorCode == 409
+        assert exc_deserialize.name == "IdentifierNotUnique"
+        assert exc_deserialize.identifier == "test_pid"
+        assert exc_deserialize.description == "description_test"
         # Disabled until we have decided how to encode traceInformation.
-        # self.assertEqual(exc_deser.traceInformation, 'test trace information')
+        # self.assertEqual(exc_deserialize.traceInformation, 'test trace information')

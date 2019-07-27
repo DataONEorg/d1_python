@@ -21,9 +21,12 @@ import collections.abc
 import contextlib
 import datetime
 import email.message
+import inspect
 import json
 import logging
 import sys
+
+import requests.structures
 
 import d1_common.date_time
 
@@ -62,12 +65,10 @@ def get_content_type(content_type):
       content_type: str
         String with content type and optional subtype and parameter fields.
 
-    Returns:
-      str: String with only content type
+    Returns: str
+        String with only content type
 
-    Example:
-
-    ::
+    Example::
 
       Input:   multipart/form-data; boundary=aBoundaryString
       Returns: multipart/form-data
@@ -334,6 +335,8 @@ class ToJsonCompatibleTypes(json.JSONEncoder):
 
     # noinspection PyMissingOrEmptyDocstring
     def default(self, o):
+        if isinstance(o, requests.structures.CaseInsensitiveDict):
+            return dict(o)
         # bytes -> str (assume UTF-8)
         if isinstance(o, bytes):
             return o.decode("utf-8", errors="replace")
@@ -351,13 +354,46 @@ def format_sec_to_dhm(sec):
 
     Args:
       sec: float or int
-        Number of seconds in a period of time
+        Number of seconds in a period of time.
 
-    Returns:
-      Period of time represented as a string on the form ``0d:00h:00m``.
+    Returns: str
+      Period of time represented as a string on the form ``0d\:00h\:00m``.
 
     """
     rem_int, s_int = divmod(int(sec), 60)
     rem_int, m_int, = divmod(rem_int, 60)
     d_int, h_int, = divmod(rem_int, 24)
-    return "{}d{:02d}h{:02d}m".format(d_int, h_int, m_int)
+    return "{}d {:02d}h {:02d}m".format(d_int, h_int, m_int)
+
+
+def format_sec_to_hms(sec):
+    """Format seconds to hours, minutes, seconds.
+
+    Args:
+      sec: float or int
+        Number of seconds in a period of time
+
+    Returns: str
+      Period of time represented as a string on the form ``0d\:00h\:00m``.
+
+    """
+    rem_int, s_int = divmod(int(sec), 60)
+    h_int, m_int, = divmod(rem_int, 60)
+    return "{}h {:02d}m {:02d}s".format(h_int, m_int, s_int)
+
+
+def get_stack_frame(frame_index=2):
+    """Get the name of a module in the stack frame leading up to the call to this
+    function.
+
+    Args:
+        frame_index : int
+            - 0: Name of module in the current frame, which will always be the module
+            this function is in.
+
+            - 1: Name of module that is calling this function.
+
+            - 2 (default): Name of module that called the function that is calling this function.
+    """
+    frame_records = inspect.stack()[frame_index]
+    return inspect.getmodulename(frame_records[frame_index])

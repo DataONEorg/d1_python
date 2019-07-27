@@ -70,7 +70,7 @@ def get_d1_env(env_key):
 
 def get_d1_env_by_base_url(cn_base_url):
     """Given the BaseURL for a CN, return the DataONE environment dict for the CN's
-    environemnt."""
+    environment."""
     for k, v in D1_ENV_DICT:
         if v["base_url"].startswith(cn_base_url):
             return D1_ENV_DICT[k]

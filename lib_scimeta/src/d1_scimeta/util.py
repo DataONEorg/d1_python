@@ -14,6 +14,7 @@ import d1_common.iter
 import d1_common.iter.path
 import d1_common.util
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 # Paths
 
@@ -32,17 +33,21 @@ XSLT_TRANSFORM_DICT = {}
 # Constants
 
 NS_MAP = {
+    # XMLSchema
     "xs": "http://www.w3.org/2001/XMLSchema",
     "xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "xlink": "http://www.w3.org/1999/xlink",
+    # isotc211
     "gco": "http://www.isotc211.org/2005/gco",
     "gmd": "http://www.isotc211.org/2005/gmd",
     "gmi": "http://www.isotc211.org/2005/gmi",
     "gml": "http://www.opengis.net/gml/3.2",
-    "mx": "http://www.isotc211.org/2005/gmx",
     "gmx": "http://www.isotc211.org/2005/gmx",
+    "mx": "http://www.isotc211.org/2005/gmx",
     "ns7": "http://www.isotc211.org/2005/srv",
     "srv": "http://www.isotc211.org/2005/srv",
-    "xlink": "http://www.w3.org/1999/xlink",
+    "gfc": "http://www.isotc211.org/2005/gfc",
+    "gts": "http://www.isotc211.org/2005/gts",
 }
 
 

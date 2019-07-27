@@ -17,6 +17,7 @@
 # limitations under the License.
 """pytest setup and customization."""
 import logging
+import logging.config
 import os
 import sys
 import tempfile

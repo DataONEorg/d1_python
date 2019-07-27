@@ -40,7 +40,7 @@ class TestReplicationPolicy(d1_test.d1_test_case.D1TestCase):
         assert not len(s.get_preferred())
 
     def test_1020(self):
-        """After instatiation, get_blocked() returns empty list."""
+        """After instantiation, get_blocked() returns empty list."""
         s = d1_cli.impl.replication_policy.ReplicationPolicy()
         assert not len(s.get_blocked())
 

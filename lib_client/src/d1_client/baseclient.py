@@ -37,13 +37,13 @@ class DataONEBaseClient(d1_client.session.Session):
     """Extend Session by adding REST API wrappers for APIs that are available on both
     Coordinating Nodes and Member Nodes, and that have the same signature on both:
 
-    CNCore/MNCore.getLogRecords()
-    CNRead/MNRead.get()
-    CNRead/MNRead.getSystemMetadata()
-    CNRead/MNRead.describe()
-    CNRead/MNRead.listObjects()
-    CNAuthorization/MNAuthorization.isAuthorized()
-    CNCore/MNCore.ping()
+    - CNCore/MNCore.getLogRecords()
+    - CNRead/MNRead.get()
+    - CNRead/MNRead.getSystemMetadata()
+    - CNRead/MNRead.describe()
+    - CNRead/MNRead.listObjects()
+    - CNAuthorization/MNAuthorization.isAuthorized()
+    - CNCore/MNCore.ping()
 
     For details on how to use these methods, see:
 
@@ -157,6 +157,44 @@ class DataONEBaseClient(d1_client.session.Session):
 
       * d1_client.solr_client
 
+    Response handling
+    -----------------
+
+    - When expecting boolean response:
+      - If status is 200:
+        -> Ignore content_type and return True
+
+      - If status is NOT 200:
+        -> Error
+
+    - When expecting DataONE type with regular non-redirect method:
+      If status is 200 and content_type is "text/xml":
+        -> Attempt to deserialize to DataONE type.
+        - If deserialize fails:
+          -> ServiceFailure
+
+      - If status is 200 and content_type is NOT "text/xml":
+        -> ServiceFailure
+
+      - If status is NOT 200:
+        -> Error
+
+    - When expecting DataONE type together with 303 redirect:
+      -> Substitute 303 for 200 above.
+
+    - Error:
+      - If content_type is "text/xml":
+        -> Attempt to deserialize to DataONEError.
+
+        - If deserialize fails:
+          -> ServiceFailure
+
+      - If content_type is NOT "text/xml":
+        -> ServiceFailure
+
+    - ServiceFailure:
+      -> raise ServiceFailure that wraps up information returned from Node.
+
     """
 
     def __init__(self, base_url=d1_common.const.URL_DATAONE_ROOT, *args, **kwargs):
@@ -187,44 +225,6 @@ class DataONEBaseClient(d1_client.session.Session):
     @property
     def pyxb_binding(self):
         return self._pyxb_binding
-
-    # ----------------------------------------------------------------------------
-    # Response handling.
-    # ----------------------------------------------------------------------------
-
-    # When expecting boolean response:
-    #   If status is 200:
-    #     -> Ignore content_type and return True
-    #
-    #   If status is NOT 200:
-    #     -> ERROR
-    #
-    # When expecting DataONE type with regular non-redirect method:
-    #   If status is 200 and content_type is "text/xml":
-    #     -> Attempt to deserialize to DataONE type.
-    #     If deserialize fails:
-    #       -> SERVICEFAILURE
-    #
-    #   if status is 200 and content_type is NOT "text/xml":
-    #     -> SERVICEFAILURE
-    #
-    #   If status is NOT 200:
-    #     -> ERROR
-    #
-    # When expecting DataONE type together with 303 redirect:
-    #   -> Substitute 303 for 200 above.
-    #
-    # ERROR:
-    #   If content_type is "text/xml":
-    #     -> Attempt to deserialize to DataONEError.
-    #     If deserialize fails:
-    #       -> SERVICEFAILURE
-    #
-    #   If content_type is NOT "text/xml":
-    #     -> SERVICEFAILURE
-    #
-    # SERVICEFAILURE:
-    #   -> raise ServiceFailure that wraps up information returned from Node.
 
     def _raise_service_failure(self, response, msg):
         try:
@@ -380,6 +380,7 @@ class DataONEBaseClient(d1_client.session.Session):
         raise d1_common.types.exceptions.deserialize_from_headers(response.headers)
 
     def _read_response_to_content(self, response):
+        # noinspection PyStatementEffect
         response.content
 
     # ----------------------------------------------------------------------------
@@ -520,7 +521,7 @@ class DataONEBaseClient(d1_client.session.Session):
     def get_and_save(self, pid, sciobj_stream, vendorSpecific=None):
         """Like MNRead.get(), but also retrieve the object bytes and write them to the
         provided stream. This method does not have the potential issue with excessive
-        memory usage that get() with ``stream``=False has.
+        memory usage that get() with ``stream=False`` has.
 
         Also see MNRead.get().
 

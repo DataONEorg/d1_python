@@ -29,20 +29,16 @@ import sys
 
 import d1_common.checksum
 
-
-import d1_client.mnclient_1_2
-
 import d1_client.command_line
+import d1_client.mnclient_1_2
 
 
 def main():
-    parser = d1_client.command_line.get_standard_arg_parser(__doc__, add_base_url=True)
+    parser = d1_client.command_line.D1ClientArgParser(__doc__, add_base_url=True)
     args = parser.parse_args()
-    d1_client.command_line.log_setup(args)
+    d1_client.command_line.log_setup(args.debug)
 
-    client = d1_client.mnclient_1_2.MemberNodeClient_1_2(
-        **d1_client.command_line.args_adapter(args)
-    )
+    client = d1_client.mnclient_1_2.MemberNodeClient_1_2(parser.get_method_args(args))
 
     response = client.get(sysmeta_pyxb.identifier.value())
     checksum_pyxb = d1_common.checksum.create_checksum_object_from_iterator(

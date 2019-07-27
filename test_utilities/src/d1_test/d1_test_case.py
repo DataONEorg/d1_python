@@ -102,6 +102,7 @@ def get_caplog_text(caplog, logger_name=None):
     are retrieved, not the timestamps, loggers and log levels.
 
     """
+    # TODO: Move to caplog.messages
     return "\n".join(
         [
             r.getMessage()
@@ -281,6 +282,38 @@ def memory_limit(max_mem_bytes):
         logging.debug("Removing memory limit. limit={:,} bytes".format(limit_bytes))
         resource.setrlimit(resource.RLIMIT_AS, old_limit_tup)
 
+
+# def config_logging_for_test():
+#     """Set up logging for unit tests. The format includes only the level and message,
+#     making it easy to capture and check log sections with samples."""
+#     logging.config.dictConfig({
+#             "version": 1,
+#             "disable_existing_loggers": True,
+#             "formatters": {
+#                 "d1test": {
+#                     "format": "%(levelname)-5s %(message)s",
+#                     "datefmt": "",
+#                 }
+#             },
+#             "loggers": {
+#                 "": {
+#                     "handlers": ["stdout"],
+#                     "level": logging.DEBUG,
+#                     "propagate": True,
+#                 }
+#             },
+#             "handlers": {
+#                 "stdout": {
+#                     "class": "logging.StreamHandler",
+#                     "level": "DEBUG",
+#                     "formatter": "d1test",
+#                     "stream": "ext://sys.stdout",
+#                 }
+#             },
+#         }
+#     )
+#
+# config_logging_for_test()
 
 # ===============================================================================
 
@@ -521,70 +554,6 @@ class D1TestCase(object):
             return [
                 "urn:node:{}".format(self.random_tag(tag_str)) for _ in range(num_nodes)
             ]
-
-
-# ===============================================================================
-
-# import logging, logging.config, colorstreamhandler
-#
-# _LOGCONFIG = {
-#     "version": 1,
-#     "disable_existing_loggers": False,
-#
-#     "handlers": {
-#         "console": {
-#             "class": "colorstreamhandler.ColorStreamHandler",
-#             "stream": "ext://sys.stderr",
-#             "level": "INFO"
-#         }
-#     },
-#
-#     "root": {
-#         "level": "INFO",
-#         "handlers": ["console"]
-#     }
-# }
-#
-# logging.config.dictConfig(_LOGCONFIG)
-# mylogger = logging.getLogger("mylogger")
-# mylogger.warning("foobar")
-
-
-class ColorStreamHandler(logging.StreamHandler):
-    DEFAULT = "\x1b[0m"
-    RED = "\x1b[31m"
-    GREEN = "\x1b[32m"
-    YELLOW = "\x1b[33m"
-    CYAN = "\x1b[36m"
-
-    CRITICAL = RED
-    ERROR = RED
-    WARNING = YELLOW
-    INFO = GREEN
-    DEBUG = CYAN
-
-    @classmethod
-    def _get_color(cls, level):
-        if level >= logging.CRITICAL:
-            return cls.CRITICAL
-        elif level >= logging.ERROR:
-            return cls.ERROR
-        elif level >= logging.WARNING:
-            return cls.WARNING
-        elif level >= logging.INFO:
-            return cls.INFO
-        elif level >= logging.DEBUG:
-            return cls.DEBUG
-        else:
-            return cls.DEFAULT
-
-    def __init__(self, stream=None):
-        logging.StreamHandler.__init__(self, stream)
-
-    def format(self, record):
-        text = logging.StreamHandler.format(self, record)
-        color = self._get_color(record.levelno)
-        return color + text + self.DEFAULT
 
 
 def get_test_module_name():

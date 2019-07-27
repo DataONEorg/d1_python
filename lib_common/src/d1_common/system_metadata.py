@@ -218,8 +218,8 @@ def are_equivalent_pyxb(a_pyxb, b_pyxb, ignore_timestamps=False, ignore_filename
         This is necessary in cases where GMN returns a generated filename because one
         was not provided in the SysMeta.
 
-    Returns:
-      bool: **True** if SystemMetadata PyXB objects are semantically equivalent.
+    Returns: bool:
+      ``True`` if SystemMetadata PyXB objects are semantically equivalent.
 
     Notes:
       The SystemMetadata is normalized by removing any redundant information and
@@ -252,8 +252,8 @@ def are_equivalent_xml(a_xml, b_xml, ignore_timestamps=False):
         ``True``: Timestamps in the SystemMetadata are ignored so that objects that are
         compared register as equivalent if only their timestamps differ.
 
-    Returns:
-      bool: **True** if SystemMetadata XML docs are semantically equivalent.
+    Returns: bool:
+      ``True`` if SystemMetadata XML docs are semantically equivalent.
 
     Notes:
       The SystemMetadata is normalized by removing any redundant information and
@@ -336,7 +336,7 @@ def generate_system_metadata_pyxb(
     media_property_list=None,
     # Replication Policy
     is_replication_allowed=False,
-    prefered_mn_list=None,
+    preferred_mn_list=None,
     blocked_mn_list=None,
     #
     pyxb_binding=None,
@@ -365,7 +365,7 @@ def generate_system_metadata_pyxb(
         media_name:
         media_property_list:
         is_replication_allowed:
-        prefered_mn_list:
+        preferred_mn_list:
         blocked_mn_list:
 
     Returns:
@@ -404,7 +404,7 @@ def generate_system_metadata_pyxb(
     gen_access_policy(pyxb_binding, sysmeta_pyxb, is_private, access_list)
 
     sysmeta_pyxb.replicationPolicy = gen_replication_policy(
-        pyxb_binding, prefered_mn_list, blocked_mn_list, is_replication_allowed
+        pyxb_binding, preferred_mn_list, blocked_mn_list, is_replication_allowed
     )
 
     if media_name or media_property_list:
@@ -438,12 +438,12 @@ def gen_access_policy(pyxb_binding, sysmeta_pyxb, is_private, access_list):
 
 def gen_replication_policy(
     pyxb_binding,
-    prefered_mn_list=None,
+    preferred_mn_list=None,
     blocked_mn_list=None,
     is_replication_allowed=False,
 ):
     rp_pyxb = pyxb_binding.replicationPolicy()
-    rp_pyxb.preferredMemberNode = prefered_mn_list
+    rp_pyxb.preferredMemberNode = preferred_mn_list
     rp_pyxb.blockedMemberNode = blocked_mn_list
     rp_pyxb.replicationAllowed = is_replication_allowed
     rp_pyxb.numberReplicas = 3 if is_replication_allowed else 0

@@ -8,7 +8,7 @@
   [                                                                  [
     "write",                                                           "write",
     [                                                                  [
-                                                                >        "newsubj",
+                                                                >        "new-subj",
       "subj1",                                                           "subj1",
       "subj4"                                                            "subj4"
     ]                                                                  ]

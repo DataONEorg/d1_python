@@ -43,6 +43,7 @@ import d1_dev.util
 import d1_common.date_time
 import d1_common.iter.path
 import d1_common.util
+import d1_common.utils.ulog
 
 # Single line comments containing these strings will not be removed.
 KEEP_COMMENTS = ["noqa", "noinspection"]
@@ -109,7 +110,7 @@ def main():
 
     args = parser.parse_args()
 
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     event_counter = d1_common.util.EventCounter()
 

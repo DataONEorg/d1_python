@@ -6,13 +6,6 @@ d1\_csw package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-
-   d1_csw.tests
-
 Submodules
 ----------
 
@@ -44,14 +37,6 @@ d1\_csw.ogc\_content\_iterator module
 -------------------------------------
 
 .. automodule:: d1_csw.ogc_content_iterator
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-d1\_csw.test\_ogc\_iterator module
-----------------------------------
-
-.. automodule:: d1_csw.test_ogc_iterator
    :members:
    :undoc-members:
    :show-inheritance:

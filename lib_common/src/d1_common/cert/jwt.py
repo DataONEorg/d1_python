@@ -142,7 +142,12 @@ def get_bu64_tup(jwt_bu64):
       3-tup of Base64: Component sections of the JWT.
 
     """
-    return jwt_bu64.strip().split(b".")
+    try:
+        return jwt_bu64.strip().split(b".")
+    except TypeError:
+        raise JwtException(
+            "Unable to split the Base64 encoded JWT to its 3 component sections"
+        )
 
 
 def get_jwt_tup(jwt_bu64):
@@ -367,7 +372,7 @@ def decode_bu64(b):
     return base64.standard_b64decode(s)
 
 
-class JwtException(Exception):
+class JwtException(jwt.InvalidTokenError):
     """Exceptions raised directly by this module."""
 
     pass

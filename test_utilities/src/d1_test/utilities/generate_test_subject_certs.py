@@ -281,11 +281,13 @@ def create_certificate(
     cert.set_serial_number(serial)
     cert.gmtime_adj_notBefore(not_before)
     cert.gmtime_adj_notAfter(not_after)
-    cert.set_issuer(issuer_cert.get_subject())
-    cert.set_subject(req.get_subject())
+    cert.set_issuer(issuer_cert.get_jwt_subject())
+    cert.set_subject(req.get_jwt_subject())
     cert.set_pubkey(req.get_pubkey())
     # Add DataONE session.
-    ext = create_session_extension(str(req.get_subject()), ["p1", "p2"], ["g1", "g2"])
+    ext = create_session_extension(
+        str(req.get_jwt_subject()), ["p1", "p2"], ["g1", "g2"]
+    )
     cert.add_extensions([ext])
     # Sign the certificate.
     cert.sign(issuer_key, digest)
@@ -294,8 +296,6 @@ def create_certificate(
 
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
-
     test_ca_pw = input("Dataone Test CA private key pass phrase (in SystemPW.txt): ")
 
     # Create the destination folder.

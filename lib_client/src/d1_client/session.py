@@ -24,7 +24,7 @@ import urllib.parse
 
 import requests
 import requests.adapters
-import requests.packages.urllib3
+import requests.packages
 import requests_toolbelt
 import requests_toolbelt.utils.dump
 
@@ -60,18 +60,19 @@ class Session(object):
         - HTTP persistent connections (HTTP/1.1 and keep-alive)
 
         Based on Python Requests:
-        - http://docs.python-requests.org/en/master/
-        - http://docs.python-requests.org/en/master/user/advanced/#session-objects
+
+            - http://docs.python-requests.org/en/master/
+            - http://docs.python-requests.org/en/master/user/advanced/#session-objects
 
         :param base_url: DataONE Node REST service BaseURL.
         :type host: string
 
         :param cert_pem_path: Path to a PEM formatted certificate file. If provided and
-        accepted by the remote node, the subject for which the certificate was issued is
-        added to the authenticated context in which API calls are made by the client.
-        Equivalent subjects and group subjects may be implicitly included as well. If
-        the certificate is used together with an JWT token, the two sets of subjects are
-        combined.
+          accepted by the remote node, the subject for which the certificate was issued is
+          added to the authenticated context in which API calls are made by the client.
+          Equivalent subjects and group subjects may be implicitly included as well. If
+          the certificate is used together with an JWT token, the two sets of subjects are
+          combined.
         :type cert_pem_path: string
 
         :param cert_key_path: Path to a PEM formatted file that contains the private
@@ -80,10 +81,10 @@ class Session(object):
         :type cert_key_path: string
 
         :param jwt_token: Base64 encoded JSON Web Token. If provided and accepted by the
-        remote node, the subject for which the token was issued is added to the
-        authenticated context in which API calls are made by the client. Equivalent
-        subjects and group subjects may be implicitly included as well. If the token is
-        used together with an X.509 certificate, the two sets of subjects are combined.
+          remote node, the subject for which the token was issued is added to the
+          authenticated context in which API calls are made by the client. Equivalent
+          subjects and group subjects may be implicitly included as well. If the token is
+          used together with an X.509 certificate, the two sets of subjects are combined.
         :type token: string
 
         :param timeout_sec: Time in seconds that requests will wait for a response.
@@ -123,10 +124,10 @@ class Session(object):
         :type charset: str
 
         :param mmp_boundary:
-            By default, boundary strings used in Mime Multipart (MMP) documents are
-            automatically generated as required. If provided, this string will be used
-            instead. This is typically required for creating reproducible test results
-            and may be required by non-compliant MMP parsers.
+          By default, boundary strings used in Mime Multipart (MMP) documents are
+          automatically generated as required. If provided, this string will be used
+          instead. This is typically required for creating reproducible test results
+          and may be required by non-compliant MMP parsers.
         :type mmp_boundary: str
 
         :returns: None
@@ -340,6 +341,7 @@ class Session(object):
 
     def _send_mmp_stream(self, method, rest_path_list, fields, **kwargs):
         url = self._prep_url(rest_path_list)
+
         mmp_stream = requests_toolbelt.MultipartEncoder(
             fields=fields,
             boundary=(kwargs.get("headers", None) or {}).pop(
@@ -437,12 +439,15 @@ class Session(object):
         }
 
     def _encode_path_elements(self, path_element_list):
-        return [
-            d1_common.url.encodePathElement(v)
-            if isinstance(v, (int, str))
-            else d1_common.url.encodePathElement(v.value())
-            for v in path_element_list
-        ]
+        enc_path_list = []
+        for v in path_element_list:
+            if isinstance(v, self.EncodedUrlPathSeg):
+                enc_path_list.append(v.seg)
+            elif isinstance(v, (int, str)):
+                enc_path_list.append(d1_common.url.encodePathElement(v))
+            else:
+                enc_path_list.append(d1_common.url.encodePathElement(v.value()))
+        return enc_path_list
 
     def _get_api_version_path_element(self):
         return "v{}".format(self._api_major)
@@ -458,3 +463,11 @@ class Session(object):
             d1_common.const.DATAONE_SCHEMA_ATTRIBUTE_BASE,
             self._get_api_version_xml_type(),
         )
+
+    class EncodedUrlPathSeg(object):
+        """Designate a URL path segment as having already been encoded and so should be
+        inserted into the URL without being encoded again.
+        """
+
+        def __init__(self, url_path_seg):
+            self.seg = url_path_seg

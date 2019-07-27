@@ -38,13 +38,14 @@ import sys
 import time
 
 import d1_common.types.exceptions
+import d1_common.utils.ulog
+
+import d1_client.mnclient
 
 import d1_test.replication_tester.replication_error
 import d1_test.replication_tester.replication_server
 import d1_test.replication_tester.test_object_generator
 from d1_test.replication_tester.test_object_generator import generate_random_ascii
-
-import d1_client.mnclient
 
 # Defaults. These can be modified on the command line.
 
@@ -66,10 +67,11 @@ TEST_CN_NODE_ID = "urn:node:RepTestCN"
 TEST_MN_NODE_ID = "urn:node:RepTestMN"
 
 
-def main():
-    logging.basicConfig(level=logging.DEBUG)
-    logger = logging.getLogger("main")
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
 
+
+def main():
     parser = optparse.OptionParser()
 
     # Base URLs
@@ -158,11 +160,9 @@ def main():
     # Known identifiers.
 
     if options.only_src and options.only_dst:
-        logging.error("--only-src and --only-dst are mutually exclusive")
+        log.error("--only-src and --only-dst are mutually exclusive")
         parser.print_help()
         sys.exit()
-
-    logging.getLogger("").setLevel(logging.DEBUG if options.debug else logging.INFO)
 
     # A PID that is not known on the node receiving the call.
     pid_unknown = generate_random_ascii("replication_tester_pid_unknown")
@@ -192,7 +192,7 @@ def main():
             dst_existing_pid,
         ) as tester:
             if options.server_mode:
-                logging.info("Server mode")
+                log.info("Server mode")
                 while True:
                     time.sleep(0.1)
             else:
@@ -213,9 +213,9 @@ def main():
             if not options.only_src:
                 tester.test_dst_mn()
     except d1_test.replication_tester.replication_error.ReplicationTesterError as e:
-        logger.error("Replication testing failed: {}".format(e))
+        log.error("Replication testing failed: {}".format(e))
     else:
-        logging.info("All replication tests passed")
+        log.info("All replication tests passed")
 
 
 def create_test_object_on_mn(base_url, pid):
@@ -259,11 +259,10 @@ class ReplicationTester(object):
             src_existing_pid_deny,
             self._queue,
         )
-        self._log = logging.getLogger(self.__class__.__name__)
 
     def __enter__(self):
         self._http_server.start()
-        time.sleep(2)
+        # time.sleep(2)
         return self
 
     # noinspection PyShadowingBuiltins
@@ -461,8 +460,8 @@ class ReplicationTester(object):
     #
 
     def _log_debug_header(self, msg):
-        self._log.debug("-" * 100)
-        self._log.info("Testing: {}".format(msg))
+        log.debug("-" * 100)
+        log.info("Testing: {}".format(msg))
 
     def _assert_correct_mn_call_with_wait(self, *expected_call):
         return self._assert_correct_mn_call(True, expected_call)
@@ -472,7 +471,7 @@ class ReplicationTester(object):
 
     def _assert_correct_mn_call(self, block, expected_call):
         if block:
-            self._log.debug("Waiting for call from MN: {}".format(expected_call))
+            log.debug("Waiting for call from MN: {}".format(expected_call))
         try:
             call = self._queue.get(block, self._options.timeout_sec)
         except queue.Empty:

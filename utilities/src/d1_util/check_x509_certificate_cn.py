@@ -46,6 +46,7 @@ import requests.packages.urllib3
 import d1_common.const
 import d1_common.env
 import d1_common.util
+import d1_common.utils.ulog
 import d1_common.xml
 
 import d1_client.cnclient_2_0
@@ -82,10 +83,6 @@ def main():
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
         help="Amount of time to wait for calls to complete (seconds)",
     )
-
-    parser = argparse.ArgumentParser(
-        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
-    )
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
     parser.add_argument(
         "-b",
@@ -93,17 +90,9 @@ def main():
         default=DEFAULT_BASE_URL,
         help="The base URL for CN that will validate the certificate",
     )
-    parser.add_argument(
-        "cert_pem_path", help="Path to the .PEM certificate file to check"
-    )
-    parser.add_argument(
-        "cert_key_path",
-        help="Path to the .PEM private key file for the certificate to check",
-    )
-
     args = parser.parse_args()
 
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     if not os.path.exists(args.cert_pem_path):
         raise ValueError("No such file: {}".format(args.cert_pem_path))

@@ -27,9 +27,13 @@ The cache is stored in a file and is automatically updated periodically.
 
 Simple methods for looking up elements of the ObjectFormatList are provided.
 
-Examples:
+.. highlight:: python
+
+Example:
 
     Section of an ObjectFormatList:
+
+    ::
 
         {
           '-//ecoinformatics.org//eml-access-2.0.0beta4//EN': {
@@ -51,6 +55,8 @@ Examples:
             },
         }
 
+.. highlight:: none
+
 """
 import contextlib
 import datetime
@@ -65,6 +71,7 @@ import d1_common.date_time
 import d1_common.types.exceptions
 import d1_common.util
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 import d1_client.cnclient_2_0
 

@@ -33,6 +33,7 @@ import d1_cli.version
 import d1_common.const
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.ulog
 
 # def module_path():
 #     """ This will get us the program's directory,
@@ -57,7 +58,7 @@ def main():
     command_parser = d1_cli.impl.command_parser.CLI()
     handle_options(command_parser, options)
 
-    d1_common.util.log_setup(options.debug)
+    d1_common.utils.ulog.setup(options.debug)
 
     # If the user passed commands on the command line, run them.
     for command in commands:

@@ -172,9 +172,9 @@ class OperationQueue(object):
             elif operation["operation"] == "create_package":
                 pid_package = operation["parameters"]["identifier-package"]
                 pid_meta = operation["parameters"]["identifier-science-meta"]
-                pid_datas = operation["parameters"]["identifier-science-data"]
+                pid_data = operation["parameters"]["identifier-science-data"]
                 operation["_comment"] = "{} of {}: create_package({}, {}, {})".format(
-                    j, k, pid_package, pid_meta, ", ".join(pid_datas)
+                    j, k, pid_package, pid_meta, ", ".join(pid_data)
                 )
             elif operation["operation"] == "archive":
                 pid = operation["parameters"]["identifier"]

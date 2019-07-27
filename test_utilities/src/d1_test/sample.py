@@ -57,7 +57,7 @@ MAX_LINE_WIDTH = 130
 # Options are populated by pytest.
 options = {}
 
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 
 def start_tidy():
@@ -68,7 +68,7 @@ def start_tidy():
     it from appears to be ./conftest.pytest_sessionstart().
 
     """
-    logging.info("Moving files to tidy dir")
+    log.info("Moving files to tidy dir")
     with _get_tidy_path() as tidy_dir_path:
         with _get_sample_path() as sample_dir_path:
             d1_common.utils.filesystem.create_missing_directories_for_dir(
@@ -82,7 +82,7 @@ def start_tidy():
                 if os.path.exists(tidy_path):
                     os.unlink(tidy_path)
                 os.rename(sample_path, tidy_path)
-            logging.info("Moved {} files".format(i))
+            log.info("Moved {} files".format(i))
 
 
 def assert_diff_equals(left_obj, right_obj, file_post_str, client=None):
@@ -101,7 +101,7 @@ def assert_equals(
 ):
     file_ext_str, got_str = obj_to_pretty_str(got_obj, no_wrap=no_wrap)
     filename = _format_file_name(client, file_post_str, sample_ext)
-    logging.info('Using sample file. filename="{}"'.format(filename))
+    log.info('Using sample file. filename="{}"'.format(filename))
     exp_path = _get_or_create_path(filename)
 
     if options.get("review"):
@@ -113,7 +113,7 @@ def assert_equals(
     if diff_str is None:
         return
 
-    logging.info(
+    log.info(
         "\nSample file: {0}\n{1} Sample mismatch. GOT <-> EXPECTED {1}\n{2}".format(
             filename, "-" * 10, diff_str
         )
@@ -137,7 +137,7 @@ def assert_equals(
 @contextlib.contextmanager
 def path_lock(path):
     path = str(path)
-    logger.debug("Waiting for lock on path: {}".format(path))
+    log.debug("Waiting for lock on path: {}".format(path))
     sem = posix_ipc.Semaphore(
         name="/{}".format(hashlib.md5(path.encode("utf-8")).hexdigest()),
         flags=posix_ipc.O_CREAT,
@@ -148,11 +148,11 @@ def path_lock(path):
     # not ``close()`` and ``unlink()``.
     try:
         sem.acquire()
-        logger.debug("Acquired lock on path: {}".format(path))
+        log.debug("Acquired lock on path: {}".format(path))
         yield
     finally:
         sem.release()
-        logger.debug("Released lock on path: {}".format(path))
+        log.debug("Released lock on path: {}".format(path))
         try:
             sem.unlink()
             sem.close()
@@ -195,7 +195,7 @@ def _get_tidy_path(filename=None):
         yield p
 
 
-def dump(o, log_func=logger.debug):
+def dump(o, log_func=log.debug):
     map(log_func, d1_test.sample.obj_to_pretty_str(o, no_clobber=True)[1].splitlines())
 
 
@@ -206,7 +206,7 @@ def load(filename, mode_str="rb"):
 
 def save_path(got_str, exp_path):
     assert isinstance(got_str, str)
-    logging.info('Saving sample file. filename="{}"'.format(os.path.split(exp_path)[1]))
+    log.info('Saving sample file. filename="{}"'.format(os.path.split(exp_path)[1]))
     with open(exp_path, "wb") as f:
         f.write(got_str.encode("utf-8"))
 
@@ -247,7 +247,7 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
 
     # noinspection PyUnreachableCode
     def serialize(o_):
-        logging.debug('Serializing object. type="{}"'.format(type(o_)))
+        log.debug('Serializing object. type="{}"'.format(type(o_)))
         #
         # Special cases are ordered before general cases
         #
@@ -420,7 +420,7 @@ def _get_or_create_path(filename):
     """
     with get_path(filename) as path:
         if not os.path.isfile(path):
-            logging.info("Write new sample file: {}".format(path))
+            log.info("Write new sample file: {}".format(path))
             with open(path, "w") as f:
                 f.write("<new sample file>\n")
         return path
@@ -549,7 +549,7 @@ def ignore_exceptions(*exception_list):
     except exception_list as e:
         if e is SyntaxError:
             raise
-        # logging.debug('Ignoring exception: {}'.format(str(e)))
+        # log.debug('Ignoring exception: {}'.format(str(e)))
 
 
 @contextlib.contextmanager
@@ -572,7 +572,7 @@ def _tmp_file_pair(got_str, exp_str, file_post_str, file_ext_str):
 
 def save_compressed_db_fixture(filename):
     with get_path(filename) as fixture_file_path:
-        logging.info('Writing fixture sample. path="{}"'.format(fixture_file_path))
+        log.info('Writing fixture sample. path="{}"'.format(fixture_file_path))
         with bz2.BZ2File(
             fixture_file_path, "w", buffering=1024, compresslevel=9
         ) as bz2_file:

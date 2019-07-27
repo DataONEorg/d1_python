@@ -130,7 +130,7 @@ def quality_parsed(mime_type, parsed_ranges):
     have already been parsed by parse_media_range().
 
     Returns the 'q' quality parameter of the best match, 0 if no match was found. This
-    function bahaves the same as quality() except that 'parsed_ranges' must be a list of
+    function behaves the same as quality() except that 'parsed_ranges' must be a list of
     parsed media ranges.
 
     """

@@ -173,11 +173,11 @@ def get_version_tag_by_d1_client(d1_client_obj):
     return d1_common.type_conversions.get_version_tag(api_major)
 
 
-def get_client_class_by_version_tag(api_major):
+def get_mn_client_class_by_version_tag(api_major):
     api_major = str(api_major)
-    if api_major in ("v1", "1"):
+    if api_major in ("v1", "1", 1):
         return d1_client.mnclient_1_2.MemberNodeClient_1_2
-    elif api_major in ("v2", "2"):
+    elif api_major in ("v2", "2", 2):
         return d1_client.mnclient_2_0.MemberNodeClient_2_0
     else:
         raise ValueError("Unknown DataONE API version tag: {}".format(api_major))

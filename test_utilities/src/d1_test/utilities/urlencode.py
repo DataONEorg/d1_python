@@ -45,26 +45,14 @@ import logging
 import optparse
 import sys
 
+import d1_common.utils.ulog
 from d1_common import url
 
-
-def process_input(input, decode=False, path=False):
-    if decode:
-        # decode the provided string
-        if path:
-            res = url.decodePathElement(input)
-        else:
-            res = url.decodeQueryElement(input)
-    else:
-        # encode the provided string
-        if path:
-            res = url.encodePathElement(input)
-        else:
-            res = url.encodeQueryElement(input)
-    return res
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
 
 
-if __name__ == "__main__":
+def main():
     usage = "usage: %prog [options]"
     parser = optparse.OptionParser(usage=usage)
     parser.add_option(
@@ -95,9 +83,7 @@ if __name__ == "__main__":
         help="Read input from stdin instead of command line args [default: %default]",
     )
     (options, args) = parser.parse_args(sys.argv)
-    if options.llevel not in [10, 20, 30, 40, 50]:
-        options.llevel = 40
-    logging.basicConfig(level=int(options.llevel))
+
     if options.stdin:
         for arg in sys.stdin:
             input = arg.decode(sys.getfilesystemencoding()).strip()
@@ -109,3 +95,23 @@ if __name__ == "__main__":
             input = arg.decode(sys.getfilesystemencoding())
             res = process_input(input, options.decode, options.path)
             print(res)
+
+
+def process_input(input, decode=False, path=False):
+    if decode:
+        # decode the provided string
+        if path:
+            res = url.decodePathElement(input)
+        else:
+            res = url.decodeQueryElement(input)
+    else:
+        # encode the provided string
+        if path:
+            res = url.encodePathElement(input)
+        else:
+            res = url.encodeQueryElement(input)
+    return res
+
+
+if __name__ == "__main__":
+    main()

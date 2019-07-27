@@ -66,7 +66,7 @@ def encodePathElement(element):
             if isinstance(element, int)
             else element
         ),
-        safe=d1_common.const.URL_PATHELEMENT_SAFE_CHARS,
+        safe=d1_common.const.URL_PATH_ELEMENT_SAFE_CHARS,
     )
 
 
@@ -85,7 +85,7 @@ def encodeQueryElement(element):
             if isinstance(element, int)
             else element
         ),
-        safe=d1_common.const.URL_QUERYELEMENT_SAFE_CHARS,
+        safe=d1_common.const.URL_QUERY_ELEMENT_SAFE_CHARS,
     )
 
 

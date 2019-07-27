@@ -19,17 +19,17 @@
 
 Timezones (tz):
 
-- A datetime object can be **tz-naive** or **tz-aware**.
+    - A datetime object can be **tz-naive** or **tz-aware**.
 
-- **tz-naive**: The datetime does not include timezone information. As such, it does
-  not by itself fully specify an absolute point in time. The exact point in time
-  depends on in which timezone the time is specified, and the information may not be
-  accessible to the end user. However, as timezones go from GMT-12 to GMT+14, and when
-  including a possible daylight saving offset of 1 hour, a tz-naive datetime will
-  always be within 14 hours of the real time.
+    - **tz-naive**: The datetime does not include timezone information. As such, it does
+      not by itself fully specify an absolute point in time. The exact point in time
+      depends on in which timezone the time is specified, and the information may not be
+      accessible to the end user. However, as timezones go from GMT-12 to GMT+14, and when
+      including a possible daylight saving offset of 1 hour, a tz-naive datetime will
+      always be within 14 hours of the real time.
 
-- **tz-aware**: The datetime includes a timezone, specified as an abbreviation or as a
-  hour and minute offset. It specifies an exact point in time.
+    - **tz-aware**: The datetime includes a timezone, specified as an abbreviation or as a
+      hour and minute offset. It specifies an exact point in time.
 
 """
 
@@ -166,10 +166,9 @@ def has_tz(dt):
     Args:
       dt : datetime
 
-    Returns:
-      bool
-        - **True**: ``datetime`` is tz-aware.
-        - **False**: ``datetime`` is tz-naive.
+    Returns: bool
+        - ``True``: ``datetime`` is tz-aware.
+        - ``False``: ``datetime`` is tz-naive.
 
     """
     return dt.tzinfo is not None
@@ -222,12 +221,11 @@ def are_equal(a_dt, b_dt, round_sec=1):
         value. Of course, the rounding also causes a loss in resolution in the values
         compared, so should be kept as low as possible. The default value of 1 second
         should
-        be a good tradeoff in most cases.
+        be a good trade-off in most cases.
 
-    Returns:
-      bool
-        - **True**: If the two datetimes are equal after being rounded by
-          ``round_sec``.
+    Returns: bool
+      - ``True``: If the two datetimes are equal after being rounded by
+        ``round_sec``.
 
     """
     ra_dt = round_to_nearest(a_dt, round_sec)
@@ -379,13 +377,11 @@ def dt_from_iso8601_str(iso8601_str):
           returned datetime.
         - See ``test_iso8601.py`` in the iso8601 package for examples.
 
-    Returns:
-      datetime
+    Returns: datetime
         The returned datetime is always timezone aware and in UTC.
 
-    Raises:
-      d1_common.date_time.iso8601.ParseError
-        If ``iso8601_string` is not on the general form of ISO 8601.
+    Raises: d1_common.date_time.iso8601.ParseError
+        If ``iso8601_string`` is not on the general form of ISO 8601.
 
     """
     return iso8601.parse_date(iso8601_str)
@@ -405,6 +401,7 @@ def normalize_datetime_to_utc(dt):
 
     Args:
       dt : datetime
+
         - tz-aware: Used in the formatted string.
         - tz-naive: Assumed to be in UTC.
 

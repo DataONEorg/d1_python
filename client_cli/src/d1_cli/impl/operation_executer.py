@@ -78,9 +78,9 @@ class OperationExecuter(object):
     def _execute_create_package(self, operation):
         pid_package = operation["parameters"]["identifier-package"]
         pid_sci_meta = operation["parameters"]["identifier-science-meta"]
-        pid_sci_datas = operation["parameters"]["identifier-science-data"]
+        pid_sci_data = operation["parameters"]["identifier-science-data"]
         resource_map = self._generate_resource_map(
-            operation, pid_package, pid_sci_meta, pid_sci_datas
+            operation, pid_package, pid_sci_meta, pid_sci_data
         )
         sys_meta = self._create_system_metadata_for_package(resource_map, operation)
         client = d1_cli.impl.client.CLIMNClient(
@@ -136,13 +136,13 @@ class OperationExecuter(object):
         return c.create_system_metadata_for_update(operation)
 
     def _generate_resource_map(
-        self, operation, package_pid, pid_sci_meta, pid_sci_datas
+        self, operation, package_pid, pid_sci_meta, pid_sci_data
     ):
         resource_map_generator = d1_common.resource_map.ResourceMapGenerator(
             dataone_root=operation["parameters"]["mn-url"]
         )
         return resource_map_generator.simple_generate_resource_map(
-            package_pid, pid_sci_meta, pid_sci_datas
+            package_pid, pid_sci_meta, pid_sci_data
         )
 
     def _create_system_metadata_for_package(self, resource_map, operation):

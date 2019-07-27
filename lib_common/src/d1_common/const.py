@@ -72,8 +72,8 @@ DEFAULT_CHARSET = "utf-8"
 # are listed as safe characters for URL query sections. DataONE uses a
 # convention with key=value pairs in queries, so "=" has been omitted as well.
 # More info in RFC3986.
-URL_PATHELEMENT_SAFE_CHARS = ":@$!()',~*&="
-URL_QUERYELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
+URL_PATH_ELEMENT_SAFE_CHARS = ":@$!()',~*&="
+URL_QUERY_ELEMENT_SAFE_CHARS = ":;@$!()',~*/?"
 
 # Symbolic subjects
 SUBJECT_VERIFIED = "verifiedUser"

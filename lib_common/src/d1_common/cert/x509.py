@@ -144,6 +144,10 @@ def create_mn_dn(node_urn):
     issued by DataONE, and thus in Certificate Signing Requests (CSR). The DN will be on
     the form:
 
+    .. highlight:: none
+
+    ::
+
         DC=org, DC=dataone, CN=urn:node:<ID>
 
     where <ID> typically is a short acronym for the name of the organization responsible
@@ -153,19 +157,22 @@ def create_mn_dn(node_urn):
     authorization and event tracking.
 
     Args:
-        node_urn: str
-            Node URN. E.g.,
-                Production certificate: ``urn:node:XYZ``.
-                Test certificate ``urn:node:mnTestXYZ``.
+        node_urn (str): Node URN. E.g.:
+
+            - Production certificate: ``urn:node:XYZ``.
+            - Test certificate ``urn:node:mnTestXYZ``.
 
     Returns:
         cryptography.x509.Name
     """
-    return create_simple_dn(node_urn, domain_componet_list=["org", "dataone"])
+    return create_simple_dn(node_urn, domain_component_list=["org", "dataone"])
 
 
-def create_simple_dn(common_name_str, domain_componet_list=None):
-    """Create a simple certificate DN suitable for use in testing and for generating self signed CA and other certificate.
+def create_simple_dn(common_name_str, domain_component_list=None):
+    """Create a simple certificate DN suitable for use in testing and for generating
+    self signed CA and other certificate.
+
+    ::
 
         DC=local, DC=dataone, CN=<common name>
 
@@ -183,7 +190,7 @@ def create_simple_dn(common_name_str, domain_componet_list=None):
             For a locally trusted client side certificate, something like
             ``localClient`` may be used.
 
-        domain_componet_list: list
+        domain_component_list: list
             Optionally set custom domain components.
 
         fqdn_list: list of str
@@ -198,9 +205,9 @@ def create_simple_dn(common_name_str, domain_componet_list=None):
     Returns:
         cryptography.x509.Name
     """
-    domain_componet_list = domain_componet_list or ["local", "dataone"]
+    domain_component_list = domain_component_list or ["local", "dataone"]
     attr_list = []
-    for dc_str in domain_componet_list:
+    for dc_str in domain_component_list:
         attr_list.append(
             cryptography.x509.NameAttribute(
                 cryptography.x509.oid.NameOID.DOMAIN_COMPONENT, dc_str
@@ -690,7 +697,7 @@ def generate_ca_cert(
     alt_names = cryptography.x509.SubjectAlternativeName(alt_name_list)
 
     # path_len=0: This cert can only sign itself, not other certs.
-    basic_contraints = cryptography.x509.BasicConstraints(ca=True, path_length=0)
+    basic_constraints = cryptography.x509.BasicConstraints(ca=True, path_length=0)
     now = datetime.datetime.utcnow()
     return (
         cryptography.x509.CertificateBuilder()
@@ -700,7 +707,7 @@ def generate_ca_cert(
         .serial_number(cryptography.x509.random_serial_number())
         .not_valid_before(now)
         .not_valid_after(now + datetime.timedelta(days=valid_days))
-        .add_extension(basic_contraints, critical=False)
+        .add_extension(basic_constraints, critical=False)
         .add_extension(alt_names, critical=False)
         .sign(
             private_key=private_key,

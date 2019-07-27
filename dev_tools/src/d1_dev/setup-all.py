@@ -29,6 +29,8 @@ import os
 import subprocess
 import sys
 
+import d1_common.utils.ulog
+
 try:
     import d1_dev.util
 except ImportError:
@@ -51,11 +53,13 @@ PKG_PATH_LIST = [
 ]
 
 
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
+
+
 def main():
     if sys.version_info[0] != 3:
         raise Exception("Python 3 required. Current version: {}".format(sys.version))
-
-    logging.basicConfig(level=logging.DEBUG)
 
     parser = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -85,7 +89,7 @@ def run_setup(setup_dir_path, command_list):
             ["python3", "setup.py"] + command_list, cwd=setup_dir_path
         )
     except subprocess.CalledProcessError as e:
-        logging.error('Setup failed. error="{}"'.format(str(e)))
+        log.error('Setup failed. error="{}"'.format(str(e)))
         raise
 
 

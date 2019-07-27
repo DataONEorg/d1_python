@@ -43,13 +43,16 @@ import zipfile
 
 import git
 
+import d1_common.utils.ulog
+
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
+
 
 def main():
 
-    logging.basicConfig(level=logging.DEBUG)
-
     if len(sys.argv) != 3:
-        logging.error("Usage: {} <setup.py> <package.whl>".format(sys.argv[0]))
+        log.error("Usage: {} <setup.py> <package.whl>".format(sys.argv[0]))
         sys.exit(1)
 
     setup_path = sys.argv[1]
@@ -58,7 +61,7 @@ def main():
     try:
         check(setup_path, wheel_path)
     except PackageError as e:
-        logging.error("Error: {}".format(str(e)))
+        log.error("Error: {}".format(str(e)))
         sys.exit(1)
 
 
@@ -74,22 +77,22 @@ def check(setup_path, wheel_path):
     repo = open_repo(repo_path)
     untracked_path_list = repo.untracked_files
     abs_untracked_path_list = [os.path.join(repo_path, p) for p in untracked_path_list]
-    logging.info("Number of untracked files: {}".format(len(abs_untracked_path_list)))
+    log.info("Number of untracked files: {}".format(len(abs_untracked_path_list)))
 
     # if len(abs_untracked_path_list):
-    #   logging.debug('Untracked files:')
+    #   log.debug('Untracked files:')
     #   for abs_untracked_path in abs_untracked_path_list:
-    #     logging.debug(abs_untracked_path)
+    #     log.debug(abs_untracked_path)
 
     packaged_path_list = get_packaged_files(wheel_path)
     abs_packaged_path_list = [
         os.path.join(setup_dir_path, p) for p in packaged_path_list
     ]
-    logging.info("Number of files in package: {}".format(len(packaged_path_list)))
+    log.info("Number of files in package: {}".format(len(packaged_path_list)))
 
-    # logging.debug('Files in package:')
+    # log.debug('Files in package:')
     # for abs_packaged_path in abs_packaged_path_list:
-    #   logging.debug(abs_packaged_path)
+    #   log.debug(abs_packaged_path)
 
     abs_untracked_path_set = set(abs_untracked_path_list)
     abs_packaged_path_set = set(abs_packaged_path_list)
@@ -97,21 +100,21 @@ def check(setup_path, wheel_path):
         abs_packaged_path_set
     )
 
-    logging.info(
+    log.info(
         "Number of untracked files in package: {}".format(
             len(abs_untracked_in_wheel_path_set)
         )
     )
     if len(abs_untracked_in_wheel_path_set):
-        logging.info("Untracked files in package:")
+        log.info("Untracked files in package:")
     for abs_untracked_in_wheel_path in sorted(list(abs_untracked_in_wheel_path_set)):
-        logging.info(abs_untracked_in_wheel_path)
+        log.info(abs_untracked_in_wheel_path)
 
 
 def open_repo(repo_path):
     repo = git.Repo(repo_path)
     if repo.is_dirty():
-        logging.warning("Working tree is dirty (has uncommitted changes)")
+        log.warning("Working tree is dirty (has uncommitted changes)")
     if repo.bare:
         raise PackageError("Repository is bare (does not have a working tree")
     return repo

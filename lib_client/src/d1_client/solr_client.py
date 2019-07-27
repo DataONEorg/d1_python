@@ -18,10 +18,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# language=rst
 """Basic Solr client.
 
-Based on: http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/
-client/python/solr.py
+Based on: http://svn.apache.org/viewvc/lucene/solr/tags/release-1.2.0/client/python/solr.py
 
 DataONE provides an index of all objects stored in the Member Nodes that form the
 DataONE federation. The index is stored in an Apache :term:`Solr` database and can be
@@ -30,10 +30,11 @@ queried with the SolrClient.
 The DataONE Solr index provides information only about objects for which the caller has
 access. When querying the index without authenticating, only records related to public
 objects can be retrieved. To authenticate, provide a certificate signed by
-:term:`CILogon` when creating the client.
-
+:term:`CILogon` or a JWT token issued by DataONE when creating the client.
 
 Example:
+
+.. highlight:: python
 
 ::
 
@@ -48,6 +49,8 @@ Example:
 
   pprint.pprint(search_result)
 
+.. highlight:: none
+
 """
 import datetime
 import logging
@@ -58,10 +61,13 @@ import xml.sax.saxutils
 import requests.structures
 
 import d1_common.const
+import d1_common.url
+import d1_common.utils.ulog
 
 import d1_client.baseclient_1_2
 
-logger = logging.getLogger(__name__)
+log = d1_common.utils.ulog.getLogger(__name__)
+
 
 FIELD_TYPE_CONVERSION_MAP = {
     "t": "text",
@@ -102,83 +108,155 @@ RESERVED_CHAR_LIST = [
     ":",
 ]
 
+DEFAULT_QUERY_DICT = {"wt": {"json": []}, "q": {"*.*": []}, "fl": {"*": []}}
 
-class Param:
-    """Solr Query Parameter"""
 
-    def __init__(self, field, param):
-        self._field = field
-        self._param = param
+def dump(o, msg=None):
+    """Dump object to the log.
+    """
+    log.debug(">" * 100)
+    if msg:
+        log.debug(msg)
+    log.debug(pprint.pformat(o))
+    log.debug("<" * 100)
+
+
+class QueryBuilder:
+    def __init__(self, q=None):
+        q = q or {}
+        self.param_dict = {}
+        for param, field in q.items():
+            self.add(param, field)
 
     def __str__(self):
-        return "{}:{}".format(
-            self._prepare_query_term(self._field), self._prepare_query_term(self._param)
-        )
+        return "QueryBuilder({})".format(",".join(self.query_dict.keys()))
 
-    def __repr__(self):
-        return "Param({})".format(str(self))
-
-    def _prepare_query_term(self, term):
-        """Prepare a query term for inclusion in a query.
+    def add(self, param, field="", value=None):
         """
-        add_star = term.endswith("*")
-        term.rstrip("*")
-        term = self._escape_query_term(term)
+        param: q, fl
+        field: id, checksum
+        value: str, int, bytes or arbitrarily nested lists of same.
+        """
+        log.info("#" * 20)
+        log.info('add: "{}" "{}" "{}"'.format(param, field, value))
+        self.param_dict.setdefault(param, {}).setdefault(field, [])
+        if value is None:
+            return
+        dump(value)
+        norm_value = self._norm_value(value)
+        dump(norm_value)
+        if isinstance(norm_value, str):
+            norm_value = [norm_value]
+        self.param_dict[param][field].extend(norm_value)
+        dump(self.query_dict, "------------------------------")
+
+    @property
+    def query_str(self):
+        s = self._get_query_str()
+        log.info("#" * 100)
+        log.info("Generated query string: {}".format(s))
+        dump(self.query_dict, "Returned query str from this dict")
+        log.info("#" * 100)
+        return s
+
+    @property
+    def query_dict(self):
+        """Direct access to the underlying dict"""
+        return self.param_dict
+
+    def get_value(self, param, field, value_idx):
+        return self.query_dict[param][field][value_idx]
+
+    def _get_query_str(self):
+        default_dict = {**DEFAULT_QUERY_DICT, **self.param_dict}
+        ret_list = []
+        for param, field_dict in default_dict.items():
+            for field, value_list in field_dict.items():
+                if not value_list:
+                    ret_list.append("{}={}".format(param, field))
+                else:
+                    for value in value_list:
+                        ret_list.append(
+                            "{}={}:{}".format(param, field, self._get_value_str(value))
+                        )
+        return "?{}".format("&".join(ret_list))
+
+    def _get_value_str(self, value):
+        return self._prep_query_term(value)
+
+    def _norm_value(self, value):
+        flat_list = []
+
+        def r_(v_):
+            if isinstance(v_, (str, int)):
+                flat_list.append(str(v_))
+            elif isinstance(v_, bytes):
+                flat_list.append(v_.decode("utf-8"))
+            else:
+                for v in v_:
+                    r_(v)
+
+        r_(value)
+        return flat_list
+
+    def _prep_query_term(self, term_str):
+        add_star = term_str.endswith("*")
+        term_str = term_str.rstrip("*")
+        esc_term_str = self._escape_query_term(term_str)
         if add_star:
-            return term + "*"
-        return term
+            return esc_term_str + "*"
+        return d1_common.url.encodeQueryElement(esc_term_str)
 
     def _escape_query_term(self, term):
         """Escape a query term for inclusion in a query.
-
         """
-        term = term.replace("\\", "\\\\")
+        # term = term.replace("\\", "\\\\")
         for c in RESERVED_CHAR_LIST:
             term = term.replace(c, r"\{}".format(c))
         return term
 
 
 class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
+    # language=rst
     """Extend DataONEBaseClient_1_2 with functions for querying Solr indexes hosted on
     CNs and MNs.
 
-    Example:
+    Examples:
 
-    To connect to DataONE's production environment:
+        To connect to DataONE's production environment::
 
-        solr_client = SolrClient()
+            solr_client = SolrClient()
 
-    - To connect to a non-production environment, pass the baseURL for the environment. E.g.:
+        To connect to a non-production environment, pass the baseURL for the environment. E.g.::
 
-        solr_client = SolrClient('https://cn-stage.test.dataone.org/cn')
+            solr_client = SolrClient('https://cn-stage.test.dataone.org/cn')
 
-    For the supported keyword args, see:
+        For the supported keyword args, see::
 
-        d1_client.session.Session()
+            d1_client.session.Session()
 
-    - Most methods take a **query_dict as a parameter. It allows passing any number of
-      query parameters that will be sent to Solr.
+        Most methods take a ``query_dict`` as a parameter. It allows passing any number
+        of query parameters that will be sent to Solr.
 
-    Pass the query parameters as regular keyword arguments. E.g.:
+        Pass the query parameters as regular keyword arguments. E.g.::
 
-        solr_client.search(q=Param('id', 'abc*'), fq=Param('id', 'def*'))
+            solr_client.search(q=Param('id', 'abc*'), fq=Param('id', 'def*'))
 
-    To pass multiple query parameters of the same type, pass a list. E.g., to
-    pass multiple filter query (fq) parameters:
+        To pass multiple query parameters of the same type, pass a list. E.g., to
+        pass multiple filter query (``fq``) parameters::
 
-        solr_client.search(
-            q=Param('id', 'abc*'),
-            fq=[Param('id', 'def*'), Param('id', 'ghi')]
-        )
+            solr_client.search(
+                q=Param('id', 'abc*'),
+                fq=[Param('id', 'def*'), Param('id', 'ghi')]
+            )
 
-    - For more information about DataONE's Solr index, see:
+    See also:
 
-    https://releases.dataone.org/online/api-documentation-v2.0/design/SearchMetadata.html
+        https://releases.dataone.org/online/api-documentation-v2.0/design/SearchMetadata.html
 
     """
 
     def __init__(self, base_url=d1_common.const.URL_DATAONE_ROOT, *args, **kwargs):
-        self._log = logging.getLogger(__name__)
         self._base_url = base_url
         header_dict = requests.structures.CaseInsensitiveDict(kwargs.pop("headers", {}))
         header_dict.setdefault(
@@ -195,6 +273,15 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
 
     # GET queries
 
+    # noinspection PyMethodOverriding
+    def get_object(self, doc_id):
+        """Retrieve information about the specified document."""
+        q = QueryBuilder()
+        q.add("q", "id", doc_id)
+        resp_dict = self._get_query(q)
+        if resp_dict["response"]["numFound"] > 0:
+            return resp_dict["response"]["docs"][0]
+
     def search(self, **query_dict):
         """Search the Solr index.
 
@@ -205,17 +292,10 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         """
         return self._get_query(**query_dict)
 
-    # noinspection PyMethodOverriding
-    def get(self, doc_id):
-        """Retrieve the specified document."""
-        resp_dict = self._get_query(q="id:{}".format(doc_id))
-        if resp_dict["response"]["numFound"] > 0:
-            return resp_dict["response"]["docs"][0]
-
     # noinspection PyTypeChecker
     def get_ids(self, start=0, rows=1000, **query_dict):
         """Retrieve a list of identifiers for documents matching the query."""
-        resp_dict = self._get_query(start=start, rows=rows, **query_dict)
+        resp_dict = self._get_query(**query_dict)
         return {
             "matches": resp_dict["response"]["numFound"],
             "start": start,
@@ -229,11 +309,11 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         resp_dict = self._get_query(**param_dict)
         return resp_dict["response"]["numFound"]
 
-    def get_field_values(self, name, maxvalues=-1, sort=True, **query_dict):
+    def get_value_counts(self, field_name, maxvalues=-1, sort=True, **query_dict):
         """Retrieve the unique values for a field, along with their usage counts.
 
-        :param name: Name of field for which to retrieve values
-        :type name: string
+        :param field_name: Name of field for which to retrieve values
+        :type field_name: string
 
         :param sort: Sort the result
 
@@ -244,153 +324,209 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         :returns: dict of {fieldname: [[value, count], ... ], }
 
         """
-        param_dict = query_dict.copy()
-        param_dict.update(
+        q = QueryBuilder(
             {
-                "rows": "0",
-                "facet": "true",
-                "facet.field": name,
-                "facet.limit": str(maxvalues),
-                "facet.zeros": "false",
-                "facet.sort": str(sort).lower(),
+                **{
+                    "rows": "0",
+                    "facet": "true",
+                    "facet.field": field_name,
+                    "facet.limit": str(maxvalues),
+                    "facet.zeros": "false",
+                    "facet.sort": str(sort).lower(),
+                },
+                **query_dict,
             }
         )
-        resp_dict = self._post_query(**param_dict)
-        result_dict = resp_dict["facet_counts"]["facet_fields"]
-        result_dict["numFound"] = resp_dict["response"]["numFound"]
-        return result_dict
+        resp_dict = self._post_query(q)
+        self.add_solr_dict_root_refs(resp_dict)
+        self.make_pairs(resp_dict["facet_fields"])
+        self.add_root_attr(
+            resp_dict, f"facet_counts/facet_fields/{field_name}", "value_count_list"
+        )
+        dump(resp_dict, "get_value_counts() returned")
+        return resp_dict
 
-    def get_field_min_max(self, name, **query_dict):
+    def add_solr_dict_root_refs(self, resp_dict, attr_name=None):
+        """Add attributes of nested dicts to the root of Solr response dicts for easier
+        access.
+
+        Can be applied to all Solr response dicts.
+        """
+        self.add_root_attr(resp_dict, "facet_counts/facet_fields", attr_name)
+        self.add_root_attr(resp_dict, "response/numFound")
+
+    def add_root_attr(self, root_obj, attr_path, attr_name=None):
+        """Add attribute to attribute in object tree to root for easier access.
+        Takes a path to the attribute instead of the attribute directly and is
+        a no-op for objects without the attribute.
+
+        Args:
+            root_obj: The object in which the new name for
+            attr_path: str
+                String on form '/attr/attr/attr'
+
+                Path to attribute which for which a attribute will be added to the root.
+                Each element of the path corresponds to an attribute of the object in
+                that location of the tree. All attributes except the final one must
+                support element access, like lists and dicts (anything providing
+                ``__getitem__()``).
+            attr_name: str (optional)
+                Name of the new attribute. If not provided, the same name as the
+                existing attribute is used.
+        """
+
+        def _r(obj_, path_):
+            if len(path_) == 1:
+                return obj_[path_[0]]
+            return _r(obj_[path_[0]], path_[1:])
+
+        path_list = attr_path.strip("/ \n").split("/")
+        try:
+            root_obj[attr_name or path_list[-1]] = _r(root_obj, path_list)
+        except LookupError:
+            log.debug(
+                'Invalid path for object. path="{}" obj="{}"'.format(
+                    attr_path, root_obj
+                )
+            )
+
+    def make_pairs(self, field_dict):
+        """Modify values in dict that are lists that look like they're holding a
+        sequence of strings and counts to a list of (str, int) tuples.
+
+        [field, count, field, count] -> [(field, count), (field, count)]
+
+        This is to help prevent the pairs from being split up.
+        """
+        for k, v in field_dict.items():
+            try:
+                if not len(v) & 1:
+                    field_dict[k] = [
+                        (field, int(count)) for field, count in zip(v[::2], v[1::2])
+                    ]
+            except (ValueError, TypeError):
+                pass
+
+    def get_field_min_max(self, field_name, **query_dict):
         """Returns the minimum and maximum values of the specified field. This requires
         two search calls to the service, each requesting a single value of a single
         field.
 
-        @param name(string) Name of the field
-        @param q(string) Query identifying range of records for min and max values
-        @param fq(string) Filter restricting range of query
+        @param field_name(string) field_name of the field
+        @param query_dict(string) Query identifying range of records for min and max values
 
         @return list of [min, max]
 
         """
         param_dict = query_dict.copy()
-        param_dict.update({"rows": 1, "fl": name, "sort": "%s asc" % name})
+        param_dict.update({"rows": 1, "fl": field_name, "sort": "%s asc" % field_name})
         try:
             min_resp_dict = self._post_query(**param_dict)
-            param_dict["sort"] = "%s desc" % name
+            param_dict["sort"] = "%s desc" % field_name
             max_resp_dict = self._post_query(**param_dict)
             return (
-                min_resp_dict["response"]["docs"][0][name],
-                max_resp_dict["response"]["docs"][0][name],
+                min_resp_dict["response"]["docs"][0][field_name],
+                max_resp_dict["response"]["docs"][0][field_name],
             )
         except Exception:
-            self._log.exception("Exception")
+            log.exception("Exception")
             raise
 
-    def field_alpha_histogram(
-        self, name, n_bins=10, include_queries=True, **query_dict
-    ):
+    def field_alpha_histogram(self, field_name, bin_count=10, **query_dict):
         """Generates a histogram of values from a string field.
 
         Output is: [[low, high, count, query], ... ]. Bin edges is determined by equal
         division of the fields.
 
+        Potentially very expensive for fields that have a high number of different
+        strings.
+
         """
-        bin_list = []
-        q_bin = []
-        try:
-            # get total number of values for the field
-            # TODO: this is a slow mechanism to retrieve the number of distinct values
-            # Need to replace this with something more efficient.
-            # Can probably replace with a range of alpha chars - need to check on
-            # case sensitivity
-            param_dict = query_dict.copy()
-            f_vals = self.get_field_values(name, maxvalues=-1, **param_dict)
-            n_values = len(f_vals[name]) // 2
-            if n_values < n_bins:
-                n_bins = n_values
-            if n_values == n_bins:
-                # Use equivalence instead of range queries to retrieve the
-                # values
-                for i in range(n_bins):
-                    a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
-                    bin_q = "{}:{}".format(
-                        name, self._prepare_query_term(name, a_bin[0])
-                    )
-                    q_bin.append(bin_q)
-                    bin_list.append(a_bin)
-            else:
-                delta = n_values / n_bins
-                if delta == 1:
-                    # Use equivalence queries, except the last one which includes the
-                    # remainder of terms
-                    for i in range(n_bins - 1):
-                        a_bin = [f_vals[name][i * 2], f_vals[name][i * 2], 0]
-                        bin_q = "{}:{}".format(
-                            name, self._prepare_query_term(name, a_bin[0])
-                        )
-                        q_bin.append(bin_q)
-                        bin_list.append(a_bin)
-                    term = f_vals[name][(n_bins - 1) * 2]
-                    a_bin = [term, f_vals[name][((n_values - 1) * 2)], 0]
-                    bin_q = "{}:[{} TO *]".format(
-                        name, self._prepare_query_term(name, term)
-                    )
-                    q_bin.append(bin_q)
-                    bin_list.append(a_bin)
-                else:
-                    # Use range for all terms
-                    # now need to page through all the values and get those at
-                    # the edges
-                    c_offset = 0.0
-                    delta = float(n_values) / float(n_bins)
-                    for i in range(n_bins):
-                        idx_l = int(c_offset) * 2
-                        idx_u = (int(c_offset + delta) * 2) - 2
-                        a_bin = [f_vals[name][idx_l], f_vals[name][idx_u], 0]
-                        # logger.info(str(a_bin))
-                        try:
-                            if i == 0:
-                                bin_q = "{}:[* TO {}]".format(
-                                    name, self._prepare_query_term(name, a_bin[1])
-                                )
-                            elif i == n_bins - 1:
-                                bin_q = "{}:[{} TO *]".format(
-                                    name, self._prepare_query_term(name, a_bin[0])
-                                )
-                            else:
-                                bin_q = "{}:[{} TO {}]".format(
-                                    name,
-                                    self._prepare_query_term(name, a_bin[0]),
-                                    self._prepare_query_term(name, a_bin[1]),
-                                )
-                        except Exception:
-                            self._log.exception("Exception:")
-                            raise
-                        q_bin.append(bin_q)
-                        bin_list.append(a_bin)
-                        c_offset = c_offset + delta
-            # now execute the facet query request
-            param_dict = query_dict.copy()
-            param_dict.update(
-                {
+
+        log.setLevel(level=logging.DEBUG)
+        d1_common.utils.ulog.setup(True)
+
+        q = QueryBuilder(
+            {
+                **{
                     "rows": "0",
                     "facet": "true",
-                    "facet.field": name,
-                    "facet.limit": "1",
+                    "facet.field": field_name,
+                    "facet.limit": 1,
                     "facet.mincount": 1,
-                    "facet.query": [sq.encode("utf-8") for sq in q_bin],
-                }
+                },
+                **query_dict,
+            }
+        )
+
+        bin_dict = {}
+
+        def add_bin_(bin_facet, bin_name=None):
+            bin_name = bin_name or bin_facet
+            log.debug(f'Adding facet query for bin "{bin_name}": {bin_facet}')
+            q.add("facet.query", field=field_name, value=bin_facet)
+            bin_dict[bin_facet] = bin_name
+
+        value_count_dict = self.get_value_counts(field_name, maxvalues=-1, **query_dict)
+        value_count_list = value_count_dict["value_count_list"]
+        value_name_list = [v[0] for v in value_count_list]
+        unique_value_count = len(value_count_list)
+
+        log.debug(
+            f'Number of unique values for field "{field_name}": {unique_value_count}'
+        )
+
+        if unique_value_count == bin_count:
+            log.debug(
+                "Field has same number of unique values as the requested number of bins."
             )
-            resp_dict = self._post_query(**param_dict)
-            for i in range(len(bin_list)):
-                v = resp_dict["facet_counts"]["facet_queries"][q_bin[i]]
-                bin_list[i][2] = v
-                if include_queries:
-                    bin_list[i].append(q_bin[i])
-        except Exception:
-            self._log.exception("Exception")
-            raise
-        return bin_list
+
+        if unique_value_count < bin_count:
+            log.debug(
+                "Field has fewer unique values than the requested number of bins. Lowering number of bins to {}.".format(
+                    unique_value_count
+                )
+            )
+            bin_count = unique_value_count
+
+        if unique_value_count == bin_count:
+            log.debug("Using equivalence queries for all bins.")
+            for v in value_name_list:
+                add_bin_(v)
+
+        else:
+            log.debug("Field has more unique values than the requested number of bins.")
+            delta = unique_value_count // bin_count
+            if delta == 1:
+                log.debug(
+                    "Using equivalence queries for all bins except the last bin, which will include the remainder of terms."
+                )
+                for i in range(bin_count - 1):
+                    add_bin_(value_name_list[i])
+
+                add_bin_(f"[{value_name_list[-1]} TO *]", value_name_list[-1])
+            else:
+                log.debug("Using range queries for all bins.")
+                c_offset = 0.0
+                delta = float(unique_value_count) / float(bin_count)
+                for i in range(bin_count):
+                    lower_idx = int(c_offset)
+                    upper_idx = (int(c_offset + delta)) - 1
+                    lower_term = value_name_list[lower_idx]
+                    upper_term = value_name_list[upper_idx]
+                    if i == 0:
+                        add_bin_(f"[* TO {upper_term}]", upper_term)
+                    elif i == bin_count - 1:
+                        add_bin_(f"[{lower_term} TO *]", lower_term)
+                    else:
+                        add_bin_(f"[{lower_term} TO {upper_term}]", lower_term)
+
+                    c_offset = c_offset + delta
+
+        resp_dict = self._post_query(q)
+        resp_dict["bin_dict"] = bin_dict
+        dump(resp_dict, "field_alpha_histogram() returned")
+        return resp_dict
 
     # POST queries
 
@@ -414,7 +550,7 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         )
 
     def add_docs(self, docs):
-        """docs is a list of fields that are a dictionary of name:value for a record."""
+        """docs is a list of fields that are a dictionary of field_name:value for a record."""
         return self.query(
             "solr",
             "<add>{}</add>".format(
@@ -482,10 +618,10 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         return str(value)
 
     def _get_solr_type(self, field):
-        """Returns the Solr type of the specified field name.
+        """Returns the Solr type of the specified field field_name.
 
         Assumes the convention of dynamic fields using an underscore + type character
-        code for the field name.
+        code for the field field_name.
 
         """
         field_type = "string"
@@ -529,61 +665,22 @@ class SolrClient(d1_client.baseclient_1_2.DataONEBaseClient_1_2):
         el_list.append("</doc>")
         return "".join(el_list)
 
-    def _get_query(self, **query_dict):
+    def _get_query(self, q):
         """Perform a GET query against Solr and return the response as a Python dict."""
-        param_dict = query_dict.copy()
-        return self._send_query(do_post=False, **param_dict)
+        return self._send_query(q, do_post=False)
 
-    def _post_query(self, **query_dict):
+    def _post_query(self, q):
         """Perform a POST query against Solr and return the response as a Python
         dict."""
-        param_dict = query_dict.copy()
-        return self._send_query(do_post=True, **param_dict)
+        return self._send_query(q, do_post=True)
 
-    def _send_query(self, do_post=False, **query_dict):
+    def _send_query(self, q, do_post=False):
         """Perform a query against Solr and return the response as a Python dict."""
-        # self._prepare_query_term()
-        param_dict = query_dict.copy()
-        param_dict.setdefault("wt", "json")
-        param_dict.setdefault("q", "*.*")
-        param_dict.setdefault("fl", "*")
-        for q, param in param_dict.items():
-            if isinstance(param, Param):
-                param_dict[q] = str(param)
-
-        return self.query("solr", "", do_post=do_post, query=param_dict)
-
-    # Building queries
-
-    def _prepare_query_term(self, field, term):
-        """Prepare a query term for inclusion in a query.
-
-        This escapes the term and if necessary, wraps the term in quotes.
-
-        """
-        if term == "*":
-            return term
-        add_star = False
-        if term[len(term) - 1] == "*":
-            add_star = True
-            term = term[0 : len(term) - 1]
-        term = self._escape_query_term(term)
-        if add_star:
-            term = "{}*".format(term)
-        if self._get_solr_type(field) in ["string", "text", "text_ws"]:
-            return '"{}"'.format(term)
-        return term
-
-    def _escape_query_term(self, term):
-        """Escape a query term for inclusion in a query.
-
-        - Also see: prepare_query_term().
-
-        """
-        term = term.replace("\\", "\\\\")
-        for c in RESERVED_CHAR_LIST:
-            term = term.replace(c, r"\{}".format(c))
-        return term
+        result_dict = self.query(
+            queryEngine="solr", query_str=q.query_str, do_post=do_post
+        )
+        dump(result_dict, "Response from Solr")
+        return result_dict
 
 
 # =========================================================================
@@ -641,10 +738,8 @@ class SolrSearchResponseIterator(object):
         page_size=100,
         max_records=1000,
         transformer=SolrRecordTransformerBase(),
-        **query_dict
+        **query_dict,
     ):
-        self._log = logging.getLogger(__name__)
-
         self.client = client
         self.query_dict = query_dict.copy()
         self.page_size = page_size
@@ -657,11 +752,11 @@ class SolrSearchResponseIterator(object):
         self._next_page(self.c_record)
         self._num_hits = 0
 
-        self._log.debug("Iterator hits={}".format(self.res["response"]["numFound"]))
+        log.debug("Iterator hits={}".format(self.res["response"]["numFound"]))
 
     def _next_page(self, offset):
         """Retrieves the next set of results from the service."""
-        self._log.debug("Iterator c_record={}".format(self.c_record))
+        log.debug("Iterator c_record={}".format(self.c_record))
         page_size = self.page_size
         if (offset + page_size) > self.max_records:
             page_size = self.max_records - offset
@@ -717,8 +812,6 @@ class SolrArrayResponseIterator(SolrSearchResponseIterator):
     """
 
     def __init__(self, client, page_size=100, cols=None, **query_dict):
-        self._log = logging.getLogger(__name__)
-
         cols = cols or ["lng", "lat"]
         transformer = SolrArrayTransformer(cols)
 
@@ -810,8 +903,6 @@ class SolrValuesResponseIterator(object):
 
         """
 
-        self._log = logging.getLogger(__name__)
-
         self.client = client
         self.field = field
         self.page_size = page_size
@@ -829,7 +920,7 @@ class SolrValuesResponseIterator(object):
 
     def _next_page(self, offset):
         """Retrieves the next set of results from the service."""
-        self._log.debug("Iterator c_record={}".format(self.c_record))
+        log.debug("Iterator c_record={}".format(self.c_record))
         param_dict = self.query_dict.copy()
         param_dict.update(
             {
@@ -840,14 +931,10 @@ class SolrValuesResponseIterator(object):
                 "facet.zeros": "false",
             }
         )
-        print(param_dict)
-        # resp_dict = self.client._get_query(**param_dict)
         resp_dict = self.client._post_query(**param_dict)
-        # resp_dict = self.client.search(**param_dict)
-        pprint.pprint(resp_dict)
         try:
             self.res = resp_dict["facet_counts"]["facet_fields"][self.field]
-            self._log.debug(self.res)
+            log.debug(self.res)
         except Exception:
             self.res = []
         self.index = 0

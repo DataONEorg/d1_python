@@ -60,16 +60,13 @@ import subprocess
 import requests
 
 import d1_scimeta.util
-import d1_scimeta.util
-
 
 import d1_common.utils.filesystem
-
-
-import d1_test.pycharm
-
+import d1_common.utils.ulog
 
 import d1_client.command_line
+
+import d1_test.pycharm
 
 log = logging.getLogger(__name__)
 

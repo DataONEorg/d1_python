@@ -19,20 +19,17 @@
 # limitations under the License.
 """DataONE Client Library.
 
-The :doc:`/client/index` works together with the :doc:`/common/index` to provide
+:doc:`/d1_client/index` works together with :doc:`/d1_common/index` to provide
 functionality commonly needed by client software that connects to DataONE nodes.
 
 The main functionality provided by this library is a complete set of wrappers for all
-DataONE API methods. There are many details related to interacting with the DataONE API,
-such as creating MIME multipart messages, encoding parameters into URLs and handling
-Unicode. The wrappers hide these details, allowing the developer to communicate with
-nodes by calling native Python methods which take and return native objects.
+DataONE API methods. The wrappers hide many details related to interacting with the
+DataONE API, such as creating MIME multipart messages, encoding parameters into URLs and
+handling Unicode. Allowing the developer to communicate with nodes by calling native
+Python methods which take and return native objects.
 
 The wrappers also convert any errors received from the nodes into native exceptions,
 enabling clients to use Python's concise exception handling system to handle errors.
-
-Although this directory is not a package, this __init__.py file is required for pytest
-to be able to reach test directories below this directory.
 
 """
 

@@ -23,16 +23,18 @@ ZIP archive of the package.
 This is an example on how to use the DataONE Client and Common libraries for Python.
 
 """
-import d1_common.url
-import d1_common.env
-import d1_common.util
-import d1_common.const
-import d1_client.cnclient_2_0
 import argparse
 import logging
 import sys
 
+import d1_common.const
+import d1_common.env
 import d1_common.resource_map
+import d1_common.url
+import d1_common.util
+import d1_common.utils.ulog
+
+import d1_client.cnclient_2_0
 
 # Config
 
@@ -86,7 +88,7 @@ def main():
     )
 
     args = parser.parse_args()
-    d1_common.util.log_setup(is_debug=args.debug)
+    d1_common.utils.ulog.setup(is_debug=args.debug)
 
     # TODO: Refactor to use module scope logger set to __name__.
     # logging.getLogger("").setLevel(logging.DEBUG)

@@ -36,17 +36,17 @@ import json
 import logging
 import sys
 
+import bs4
 import requests
 import requests.exceptions
 import requests.packages.urllib3
-
-import bs4
 
 import d1_common.const
 import d1_common.env
 import d1_common.types.exceptions
 import d1_common.url
 import d1_common.util
+import d1_common.utils.ulog
 
 import d1_client.iter.node
 import d1_client.mnclient
@@ -110,7 +110,7 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
     args = parser.parse_args()
 
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     requests.packages.urllib3.disable_warnings()
 

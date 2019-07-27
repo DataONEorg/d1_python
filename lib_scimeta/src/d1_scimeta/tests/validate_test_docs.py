@@ -7,14 +7,11 @@ import sys
 import d1_scimeta.util
 import d1_scimeta.validate
 
-
 import d1_common.utils.filesystem
-
+import d1_common.utils.tracker
+import d1_common.utils.ulog
 
 import d1_client.command_line
-
-
-import d1_common.utils.progress_logger
 
 log = logging.getLogger(__name__)
 
@@ -27,17 +24,15 @@ These should all validate.
 def main():
     d1_client.command_line.log_setup(is_debug=True)
 
-    progress_logger = d1_common.utils.progress_logger.ProgressLogger(logger=log)
+    with d1_common.utils.tracker.ProgressTracker(logger=log) as tracker:
 
-    for format_id in d1_scimeta.util.get_supported_format_id_list():
-        if format_id in ("FGDC-STD-001-1998", "FGDC-STD-001.1-1999"):
-            continue
-        validate_format_id(format_id, progress_logger)
-
-    progress_logger.completed()
+        for format_id in d1_scimeta.util.get_supported_format_id_list():
+            if format_id in ("FGDC-STD-001-1998", "FGDC-STD-001.1-1999"):
+                continue
+            validate_format_id(format_id, tracker)
 
 
-def validate_format_id(format_id, progress_logger):
+def validate_format_id(format_id, tracker):
     schema_name = d1_scimeta.util.get_schema_name(format_id)
     out_dir_path = d1_common.utils.filesystem.abs_path(
         os.path.join("./test_xml", schema_name)
@@ -46,15 +41,15 @@ def validate_format_id(format_id, progress_logger):
 
     task_name = "Validate SciObj with formatId: {}".format(format_id)
 
-    progress_logger.start_task_type(task_name, len(test_path_list))
+    tracker.start_task_type(task_name, len(test_path_list))
 
     for test_xml_path in test_path_list:
-        validate_xml(format_id, test_xml_path, progress_logger)
+        validate_xml(format_id, test_xml_path, tracker)
 
-    progress_logger.end_task_type(task_name)
+    tracker.end_task_type(task_name)
 
 
-def validate_xml(format_id, test_xml_path, progress_logger):
+def validate_xml(format_id, test_xml_path, tracker):
     log.info("-" * 100)
     log.info(format_id)
     log.info(test_xml_path)
@@ -66,9 +61,7 @@ def validate_xml(format_id, test_xml_path, progress_logger):
 
         except d1_scimeta.util.SciMetaError as e:
             if not event_logged:
-                progress_logger.event(
-                    "Validation failed: formatId: {}".format(format_id)
-                )
+                tracker.event("Validation failed: formatId: {}".format(format_id))
                 event_logged = True
 
             log.info(">" * 100)
@@ -96,9 +89,7 @@ def validate_xml(format_id, test_xml_path, progress_logger):
             log.info("")
             log.info("SUCCESS")
 
-            progress_logger.event(
-                "Validation successful: formatId: {}".format(format_id)
-            )
+            tracker.event("Validation successful: formatId: {}".format(format_id))
 
             break
 

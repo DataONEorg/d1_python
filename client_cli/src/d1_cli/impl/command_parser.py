@@ -334,7 +334,7 @@ be lost if you exit.""".format(
 
         If the metadata is not on the Coordinating Node, the Member Node is checked.
 
-        Provide ``file`` to save the System Metada to disk instead of displaying it.
+        Provide ``file`` to save the System Metadata to disk instead of displaying it.
 
         """
         pid, output_file = self._split_args(line, 1, 1)

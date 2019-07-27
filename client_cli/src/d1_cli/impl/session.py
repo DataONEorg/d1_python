@@ -45,7 +45,7 @@
 #           format-id                     text/xml
 #           rights-holder                 public
 #         access:
-#           read                          "s1", "s2", "usera", "userb", "userc"
+#           read                          "s1", "s2", "user-a", "user-b", "user-c"
 #         replication:
 #           preferred member nodes        "p1", "p2", "p3"
 #           blocked member nodes          "b1", "b2", "b3", "b4"

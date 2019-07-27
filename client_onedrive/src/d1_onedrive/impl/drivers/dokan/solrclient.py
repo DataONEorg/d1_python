@@ -35,6 +35,11 @@ import socket
 import urllib.parse
 import xml.dom.minidom
 
+import d1_common.utils.ulog
+
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
+
 
 class SolrException(Exception):
     """An exception thrown by solr connections."""
@@ -1225,5 +1230,4 @@ if __name__ == "__main__":
     #  for rec in results:
     #    print rec
 
-    logging.basicConfig(level=logging.DEBUG)
     test1()

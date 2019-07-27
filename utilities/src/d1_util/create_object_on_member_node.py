@@ -46,11 +46,7 @@ import sys
 import d1_scimeta.util
 
 import d1_common.const
-
-
-
 import d1_common.types.exceptions
-
 
 import d1_client.command_line
 import d1_client.d1client
@@ -59,7 +55,7 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    parser = d1_client.command_line.get_standard_arg_parser(__doc__, add_base_url=True)
+    parser = d1_client.command_line.D1ClientArgParser(__doc__, add_base_url=True)
     parser.add_argument("--formats", action="store_true", help="List valid formatIds")
     # parser.add_argument(
     #     "node_id", help="URN of target node (e.g.: urn:node:ABC)"
@@ -68,15 +64,13 @@ def main():
     parser.add_argument("format_id", help="formatId for Science Object")
     parser.add_argument("path", help="Path to Science Object file")
     args = parser.parse_args()
-    d1_client.command_line.log_setup(args)
+    d1_client.command_line.log_setup(args.debug)
 
     if args.formats:
         d1_scimeta.util.get_supported_format_id_list()
         return 0
 
-    client = d1_client.d1client.DataONEClient(
-        **d1_client.command_line.args_adapter(args)
-    )
+    client = d1_client.d1client.DataONEClient(parser.get_method_args(args))
 
     if client.auth_subj_tup[0] == d1_common.const.SUBJECT_PUBLIC:
         log.error(

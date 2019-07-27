@@ -1,62 +1,73 @@
-[
-  [
-    "application/mathematica",
-    "application/mathematica",
-    1,
-    "formatId:[* TO \"application/mathematica\"]"
-  ],
-  [
-    "application/octet-stream",
-    "application/pdf",
-    63,
-    "formatId:[\"application/octet\\-stream\" TO \"application/pdf\"]"
-  ],
-  [
-    "application/vnd.ms-excel",
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    55,
-    "formatId:[\"application/vnd.ms\\-excel\" TO \"application/vnd.openxmlformats\\-officedocument.spreadsheetml.sheet\"]"
-  ],
-  [
-    "application/x-fasta",
-    "application/x-gzip",
-    33,
-    "formatId:[\"application/x\\-fasta\" TO \"application/x\\-gzip\"]"
-  ],
-  [
-    "application/x-tar",
-    "application/zip",
-    27,
-    "formatId:[\"application/x\\-tar\" TO \"application/zip\"]"
-  ],
-  [
-    "eml://ecoinformatics.org/eml-2.1.0",
-    "eml://ecoinformatics.org/eml-2.1.0",
-    3,
-    "formatId:[\"eml\\://ecoinformatics.org/eml\\-2.1.0\" TO \"eml\\://ecoinformatics.org/eml\\-2.1.0\"]"
-  ],
-  [
-    "eml://ecoinformatics.org/eml-2.1.1",
-    "http://datadryad.org/profile/v3.1",
-    725,
-    "formatId:[\"eml\\://ecoinformatics.org/eml\\-2.1.1\" TO \"http\\://datadryad.org/profile/v3.1\"]"
-  ],
-  [
-    "http://ns.dataone.org/metadata/schema/onedcx/v1.0",
-    "http://www.isotc211.org/2005/gmd-noaa",
-    60,
-    "formatId:[\"http\\://ns.dataone.org/metadata/schema/onedcx/v1.0\" TO \"http\\://www.isotc211.org/2005/gmd\\-noaa\"]"
-  ],
-  [
-    "http://www.openarchives.org/ore/terms",
-    "text/csv",
-    386,
-    "formatId:[\"http\\://www.openarchives.org/ore/terms\" TO \"text/csv\"]"
-  ],
-  [
-    "text/plain",
-    "text/xml",
-    35,
-    "formatId:[\"text/plain\" TO *]"
-  ]
-]
+{
+  "bin_dict": {
+    "[text/xml TO *]": "text/xml",
+    "application/mathematica": "application/mathematica",
+    "application/octet-stream": "application/octet-stream",
+    "application/pdf": "application/pdf",
+    "application/vnd.ms-excel": "application/vnd.ms-excel",
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": "application/vnd.openxmlformats-
+officedocument.spreadsheetml.sheet",
+    "application/x-fasta": "application/x-fasta",
+    "application/x-gzip": "application/x-gzip",
+    "application/x-tar": "application/x-tar",
+    "application/zip": "application/zip"
+  },
+  "facet_counts": {
+    "facet_dates": {},
+    "facet_fields": {
+      "formatId": [
+        "http://datadryad.org/profile/v3.1",
+        653
+      ]
+    },
+    "facet_heatmaps": {},
+    "facet_intervals": {},
+    "facet_queries": {
+      "formatId:\\[text/xml TO \\*\\]": 0,
+      "formatId:application/mathematica": 1,
+      "formatId:application/octet\\-stream": 57,
+      "formatId:application/pdf": 6,
+      "formatId:application/vnd.ms\\-excel": 12,
+      "formatId:application/vnd.openxmlformats\\-officedocument.spreadsheetml.sheet": 43,
+      "formatId:application/x\\-fasta": 24,
+      "formatId:application/x\\-gzip": 9,
+      "formatId:application/x\\-tar": 1,
+      "formatId:application/zip": 26
+    },
+    "facet_ranges": {}
+  },
+  "response": {
+    "docs": [],
+    "numFound": 1388,
+    "start": 0
+  },
+  "responseHeader": {
+    "QTime": 7,
+    "params": {
+      "facet": "true",
+      "facet.field": "formatId",
+      "facet.limit": "1",
+      "facet.mincount": "1",
+      "facet.query": [
+        "formatId:application/mathematica",
+        "formatId:application/octet\\-stream",
+        "formatId:application/pdf",
+        "formatId:application/vnd.ms\\-excel",
+        "formatId:application/vnd.openxmlformats\\-officedocument.spreadsheetml.sheet",
+        "formatId:application/x\\-fasta",
+        "formatId:application/x\\-gzip",
+        "formatId:application/x\\-tar",
+        "formatId:application/zip",
+        "formatId:\\[text/xml TO \\*\\]"
+      ],
+      "fl": "*",
+      "fq": "dateUploaded:{ 2017-01-01T00:00:00.000Z TO 2017-01-10T00:00:00.000Z }",
+      "n_bins": "10",
+      "q": "id:*",
+      "rows": "0",
+      "sort": "id asc",
+      "wt": "json"
+    },
+    "status": 0
+  }
+}

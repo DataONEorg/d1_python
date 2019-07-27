@@ -17,60 +17,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Log Record Iterator.
+"""Iterate over Event Logs for Science Objects available on Member Nodes.
 
-Iterator that provides a convenient way to retrieve log records from a DataONE node and
-iterate over the results.
-
-Log records are automatically retrieved from the node in batches as required.
-
-
-The LogRecordIterator takes a CoordinatingNodeClient or MemberNodeClient together with
-filters to select a set of log records. It returns an iterator object which enables
-using a Python ``for`` loop for iterating over the matching log records.
-
-Log records are retrieved from the Node only when required. This avoids storing a large
-list of records in memory.
-
-The LogRecordIterator repeatedly calls the Node's ``getLogRecords()`` API method. The
-CN implementation of this method yields log records for objects for which the caller
-has access. Log records are not provided for public objects. This is also how
-``getLogRecords()`` is implemented in the :term:`Metacat` Member Node. In
-:term:`GMN`, the requirements for authentication for this method are configurable.
-Other MNs are free to chose how or if to implement access control for this method.
-
-To authenticate to the target Node, provide a valid CILogon signed certificate when
-creating the CoordinatingNodeClient or MemberNodeClient.
-
-See the `CNCore.getLogRecords()
-<https://releases.dataone.org/online/api-documentation-v2.0.1/apis/CN_APIs.html#CNCore.getLogRecords>`_ and `MNCore.getLogRecords()
-<https://releases.dataone.org/online/api-documentation-v2.0.1/apis/MN_APIs.html#MNCore.getLogRecords>`_
-specifications in the `DataONE Architecture Documentation
-<https://releases.dataone.org/online/api-documentation-v2.0.1/index.html>`_ for more
-information.
-
-Example
--------
-
-::
-
-  #!/usr/bin/env python
-
-  import d1_client.client
-  import sys
-
-  logging.basicConfig(level=logging.INFO)
-  target = "https://mn-unm-1.dataone.org/mn"
-  client = d1_client.client.MemberNodeClient(target=target)
-  log_record_iterator = LogRecordIterator(client)
-  for event in log_record_iterator:
-    print "Event    = %s" % event.event
-    print "Timestamp  = %s" % event.dateLogged.isoformat()
-    print "IP Addres  = %s" % event.ipAddress
-    print "Identifier = %s" % event.identifier
-    print "User agent = %s" % event.userAgent
-    print "Subject  = %s" % event.subject
-    print '-' * 79
+This is a serial implementation. See :ref:`d1_client/ref/iterators:DataONE
+Iterators` for an overview of the available iterator types and implementations.
 
 """
 

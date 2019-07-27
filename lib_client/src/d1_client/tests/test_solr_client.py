@@ -24,11 +24,13 @@ Note: Currently issues requests to the production DataONE Solr index.
 TODO: Create Solr mockup
 
 """
+import pytest
+
 import d1_common.const
 
-import d1_test.d1_test_case
-
 import d1_client.solr_client
+
+import d1_test.d1_test_case
 
 CN_RESPONSES_BASE_URL = d1_common.const.URL_DATAONE_ROOT
 
@@ -37,9 +39,7 @@ SHORT_SPAN = "dateUploaded:" "{ 2017-01-01T00:00:00.000Z TO 2017-01-10T00:00:00.
 LONG_SPAN = "dateUploaded:" "{ 2017-01-01T00:00:00.000Z TO 2017-03-01T00:00:00.000Z }"
 
 
-# @pytest.mark.xfail(
-#   reason='Testing against live server.'
-# )
+@pytest.mark.skip("TODO: Update to work with current SolrClient")
 class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
     def _assert_at_least_one_populated_row(self, rows):
         assert any(rows), "Expected at least one populated row in results"
@@ -92,7 +92,14 @@ class TestSolrClientReal(d1_test.d1_test_case.D1TestCase):
 
     # search()
 
-    def test_1020(self):
+    def test_1011(self):
+        """get_object()"""
+        solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
+        solr_dict = solr_client.get_object("*")
+        # self._delete_volatile_keys(solr_dict)
+        self.sample.assert_equals(solr_dict, "get_object_invalid_pid")
+
+    def test_1015(self):
         """search(): Query with no results returns valid dict."""
         solr_client = d1_client.solr_client.SolrClient(CN_RESPONSES_BASE_URL)
         solr_dict = solr_client.search(q="id:invalid_solr_record_id")

@@ -31,6 +31,7 @@ import sys
 
 import d1_common.iter.path
 import d1_common.util
+import d1_common.utils.ulog
 
 
 def main():
@@ -59,7 +60,7 @@ def main():
 
     args = parser.parse_args()
 
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     for file_path in d1_common.iter.path.path_generator(
         path_list=args.path,

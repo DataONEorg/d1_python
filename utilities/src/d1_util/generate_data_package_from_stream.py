@@ -25,10 +25,9 @@ This is an example on how to use the DataONE Client and Common libraries for Pyt
 import argparse
 import logging
 
-from resource_map import ResourceMap
-
 import d1_common.const
 import d1_common.env
+import d1_common.resource_map
 
 
 def main():
@@ -64,7 +63,7 @@ def main():
 
 def createSimpleResourceMap(ore_pid, sci_meta_pid, data_pids):
     """Create a simple resource map with one metadata document and n data objects."""
-    ore = ResourceMap()
+    ore = d1_common.resource_map.ResourceMap()
     ore.initialize(ore_pid)
     ore.addMetadataDocument(sci_meta_pid)
     ore.addDataDocuments(data_pids, sci_meta_pid)
@@ -88,7 +87,7 @@ def pids2ore(in_stream, fmt="xml", base_url="https://cn.dataone.org/cn"):
 
     logging.info("Read %d identifiers", len(pids))
 
-    ore = ResourceMap(base_url=base_url)
+    ore = d1_common.resource_map.ResourceMap(base_url=base_url)
 
     logging.info("ORE PID = %s", pids[0])
     ore.initialize(pids[0])

@@ -89,16 +89,15 @@ def assert_file_exists(path):
 
 def copy_file_like_object_to_file(file_like_object, path):
     try:
-        fsrc = sys.stdin
+        src_file = sys.stdin
         if file_like_object:
-            fsrc = file_like_object
+            src_file = file_like_object
         if path:
-            fdst = open(os.path.expanduser(path), "w", encoding="utf-8")
-            # fdst = open(os.path.expanduser(path), "wb")
-            shutil.copyfileobj(fsrc, fdst)
-            fdst.close()
+            dst_file = open(os.path.expanduser(path), "w", encoding="utf-8")
+            shutil.copyfileobj(src_file, dst_file)
+            dst_file.close()
         else:
-            shutil.copyfileobj(fsrc, sys.stdout)
+            shutil.copyfileobj(src_file, sys.stdout)
 
     except EnvironmentError as xxx_todo_changeme1:
         (errno, strerror) = xxx_todo_changeme1.args

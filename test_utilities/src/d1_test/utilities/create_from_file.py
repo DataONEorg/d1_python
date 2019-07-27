@@ -33,6 +33,7 @@ import d1_common.date_time
 import d1_common.types.dataoneTypes_v1
 import d1_common.types.dataoneTypes_v2_0
 import d1_common.types.exceptions
+import d1_common.utils.ulog
 
 import d1_client.mnclient
 import d1_client.mnclient_2_0
@@ -48,10 +49,11 @@ import d1_client.mnclient_2_0
 TIMEOUT_SEC = 30 * 60
 
 
-def main():
-    logging.basicConfig()
-    logging.getLogger("").setLevel(logging.DEBUG)
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
 
+
+def main():
     parser = argparse.ArgumentParser(description="Create object from file")
 
     parser.add_argument(
@@ -98,8 +100,6 @@ def main():
 
     args = parser.parse_args()
 
-    logging.getLogger("").setLevel(logging.DEBUG if args.debug else logging.INFO)
-
     if args.use_v1:
         mn_client = d1_client.mnclient.MemberNodeClient(
             args.mn_base_url,
@@ -116,15 +116,15 @@ def main():
     try:
         _create(mn_client, args)
     except d1_common.types.exceptions.DataONEException as e:
-        logging.exception("MNStorage.create() failed with exception:")
+        log.exception("MNStorage.create() failed with exception:")
         if e.traceInformation and len(e.traceInformation) >= 100:
             trace_path = "traceInformation.out"
             with open(trace_path, "wb") as f:
                 f.write(e.traceInformation)
-                logging.error("Dumped traceInformation to file: {}".format(trace_path))
+                log.error("Dumped traceInformation to file: {}".format(trace_path))
                 sys.exit()
     except Exception:
-        logging.exception("MNStorage.create() failed with exception:")
+        log.exception("MNStorage.create() failed with exception:")
 
 
 def _create(mn_client, args):

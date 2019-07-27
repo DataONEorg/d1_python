@@ -7,12 +7,6 @@
     }
   },
   "handlers": {
-    "console": {
-      "class": "logging.StreamHandler",
-      "formatter": "verbose",
-      "level": "DEBUG",
-      "stream": "ext://sys.stdout"
-    },
     "new_key_1": {
       "l1": {
         "l2": {
@@ -37,6 +31,12 @@
       "formatter": "verbose",
       "level": "DEBUG",
       "maxBytes": 10485760
+    },
+    "stdout": {
+      "class": "logging.StreamHandler",
+      "formatter": "verbose",
+      "level": "DEBUG",
+      "stream": "ext://sys.stdout"
     }
   },
   "loggers": {

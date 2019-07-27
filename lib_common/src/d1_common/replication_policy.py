@@ -21,19 +21,21 @@ The Replication Policy is an optional section of the System Metadata which may b
 to enable or disable replication, set the desired number of replicas and specify remote
 MNs to either prefer or block as replication targets.
 
-Examples::
+.. highlight:: xml
 
-  ReplicationPolicy:
+Example ``ReplicationPolicy``::
 
-  <replicationPolicy replicationAllowed="true" numberReplicas="3">
-    <!--Zero or more repetitions:-->
-    <preferredMemberNode>node1</preferredMemberNode>
-    <preferredMemberNode>node2</preferredMemberNode>
-    <preferredMemberNode>node3</preferredMemberNode>
-    <!--Zero or more repetitions:-->
-    <blockedMemberNode>node4</blockedMemberNode>
-    <blockedMemberNode>node5</blockedMemberNode>
-  </replicationPolicy>
+    <replicationPolicy replicationAllowed="true" numberReplicas="3">
+        <!--Zero or more repetitions:-->
+        <preferredMemberNode>node1</preferredMemberNode>
+        <preferredMemberNode>node2</preferredMemberNode>
+        <preferredMemberNode>node3</preferredMemberNode>
+        <!--Zero or more repetitions:-->
+        <blockedMemberNode>node4</blockedMemberNode>
+        <blockedMemberNode>node5</blockedMemberNode>
+    </replicationPolicy>
+
+.. highlight:: none
 
 """
 
@@ -42,10 +44,13 @@ import d1_common.xml
 
 
 def has_replication_policy(sysmeta_pyxb):
-    """Args: sysmeta_pyxb: SystemMetadata PyXB object.
+    """Check if SystemMetadata has ReplicationPolicy section.
 
-    Returns:   bool: ``True`` if SystemMetadata includes the optional ReplicationPolicy
-    section.
+    Args:
+        sysmeta_pyxb: SystemMetadata PyXB object
+
+    Returns: bool
+        ``True`` if SystemMetadata includes the optional ReplicationPolicy section.
 
     """
     return bool(getattr(sysmeta_pyxb, "replicationPolicy", False))
@@ -61,7 +66,7 @@ def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
     function is a no-op.
 
     Args:
-      sysmeta_pyxb : SystemMetadata PyXB object.
+      sysmeta_pyxb : SystemMetadata PyXB object
         System Metadata in which to add the preferred replication target.
 
         If the System Metadata does not already have a Replication Policy, a default
@@ -70,7 +75,7 @@ def sysmeta_add_preferred(sysmeta_pyxb, node_urn):
 
       node_urn : str
         Node URN of the remote MN that will be added. On the form
-       ``urn:node:MyMemberNode``.
+        ``urn:node:MyMemberNode``.
 
     """
     if not has_replication_policy(sysmeta_pyxb):

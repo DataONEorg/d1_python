@@ -15,37 +15,6 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Multiprocessed System Metadata iterator.
-
-Parallel download of a set of SystemMetadata documents from a CN or MN. The
-SystemMetadata to download can be selected by the filters that are available in
-the MNRead.listObjects() and CNRead.listObjects() API calls. For MNs, these
-include: fromDate, toDate, formatId and identifier. For CNs, these include the
-ones supported by MNs plus nodeId.
-
-Note: Unhandled exceptions raised in client code while iterating over results
-from this iterator, or in the iterator itself, will not be shown and may cause
-the client code to hang. This is a limitation of the multiprocessing module.
-
-If there is an error when retrieving a System Metadata, such as NotAuthorized,
-an object that is derived from d1_common.types.exceptions.DataONEException is
-returned instead.
-
-Will create the same number of DataONE clients and HTTP or HTTPS connections as
-the number of workers. A single connection is reused, first for retrieving a
-page of results, then all System Metadata objects in the result.
-
-There is a bottleneck somewhere in this iterator, but it's not pickle/unpickle
-of sysmeta_pyxb.
-
-Notes on MAX_QUEUE_SIZE:
-
-Queues that become too large can cause deadlocks:
-https://stackoverflow.com/questions/21641887/python-multiprocessing-process-hangs-on-join-for-large-queue
-Each item in the queue is a potentially large SysMeta PyXB object, so we set a
-low max queue size.
-
-"""
 
 import logging
 
@@ -59,6 +28,15 @@ logger = logging.getLogger(__name__)
 
 # fmt: off
 class SystemMetadataIteratorMulti(d1_client.iter.base_multi.MultiprocessedIteratorBase):
+    # language=rst
+    """Multiprocessed SystemMetadata Iterator.
+
+    Iterate over SystemMetadata XML objects, describing Science Objects available on Member
+    Nodes.
+
+    This is a multiprocessed implementation. See :ref:`d1_client/ref/iterators:DataONE
+    Iterators` for an overview of the available iterator types and implementations.
+    """
     def __init__(
         self,
         base_url=d1_common.const.URL_DATAONE_ROOT,

@@ -18,6 +18,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Format tracked .py files with Black + isort + docformatter.
+"""
+
 import logging
 import multiprocessing
 import os
@@ -30,6 +33,7 @@ import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
+import d1_common.utils.ulog
 
 DEFAULT_WORKER_COUNT = 16
 
@@ -37,16 +41,11 @@ log = logging.getLogger(__name__)
 
 
 def main():
-    """Format all tracked .py files.
-
-    Black + isort + docformatter.
-
-    """
     parser = d1_common.iter.path.ArgParser(
         __doc__,
-        default_exclude_glob_list=['_ignore/'],
-        fixed_include_glob_list = ['*.py'],
-        fixed_return_entered_dir_paths = True,
+        default_exclude_glob_list=["_ignore/"],
+        fixed_include_glob_list=["*.py"],
+        fixed_return_entered_dir_paths=True,
     )
     parser.add_argument(
         "--include-untracked",
@@ -65,12 +64,12 @@ def main():
         help="Max number of workers",
     )
     args = parser.args
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     repo = git.Repo(repo_path)
 
-    specified_file_path_set = set(get_specified_file_path_list(parser.path_arg_dict))
+    specified_file_path_set = set(get_specified_file_path_list(parser))
 
     if args.include_untracked:
         format_path_set = specified_file_path_set
@@ -81,10 +80,10 @@ def main():
     format_all(args, sorted(format_path_set))
 
 
-def get_specified_file_path_list(path_arg_dict):
+def get_specified_file_path_list(parser):
     specified_file_path_list = [
         os.path.realpath(p)
-        for p in d1_common.iter.path.path_generator(**path_arg_dict)
+        for p in d1_common.iter.path.path_generator(**parser.get_method_args())
     ]
     return specified_file_path_list
 
@@ -107,15 +106,17 @@ def format_all(args, format_path_list):
 def format_single(_args, format_path):
     run_cmd("black", format_path)
     run_cmd("isort", format_path)
-    run_cmd(
-        "docformatter",
-        "-i",
-        "--wrap-summaries",
-        "88",
-        "--wrap-descriptions",
-        "88",
-        format_path,
-    )
+    # TODO: docformatter disabled for now because it breaks some of the RestructuredText
+    # and Google format docstrings. Investigate...
+    # run_cmd(
+    #     "docformatter",
+    #     "-i",
+    #     "--wrap-summaries",
+    #     "88",
+    #     "--wrap-descriptions",
+    #     "88",
+    #     format_path,
+    # )
 
 
 def run_cmd(*cmd_list):

@@ -18,6 +18,7 @@
 import asyncio
 import datetime
 import logging
+import os
 import pprint
 import ssl
 
@@ -29,8 +30,9 @@ import d1_common.types.exceptions
 import d1_common.typing as t
 import d1_common.url
 
-DEFAULT_MAX_CONCURRENT_CONNECTIONS = 100
-DEFAULT_RETRY_COUNT = 3
+DEFAULT_MAX_CONCURRENT = 20
+DEFAULT_TRY_COUNT = 3
+DEFAULT_PAGE_SIZE = 500
 
 
 class AsyncDataONEClient:
@@ -40,26 +42,31 @@ class AsyncDataONEClient:
         self,
         base_url=d1_common.const.URL_DATAONE_ROOT,
         timeout_sec=None,
-        cert_pub_path=None,
+        cert_pem_path=None,
         cert_key_path=None,
         disable_server_cert_validation=False,
-        max_concurrent_connections=DEFAULT_MAX_CONCURRENT_CONNECTIONS,
-        try_count=DEFAULT_RETRY_COUNT,
-        verify_tls=False,
+        max_concurrent=DEFAULT_MAX_CONCURRENT,
+        try_count=DEFAULT_TRY_COUNT,
         user_agent=None,
-        charset=None,
-    ):
-        """Args:
-
-        base_url: timeout_sec: cert_pub_path: cert_key_path:
-        disable_server_cert_validation: max_concurrent_connections: Limit on concurrent
-        outgoing connections enforced internally by aiohttp. try_count:
+        # charset=None,
+    ) -> t.AsyncD1Client:
+        """
+        Args:
+            base_url: timeout_sec: cert_pem_path: cert_key_path:
+            disable_server_cert_validation: max_concurrent: Limit on concurrent
+            outgoing connections enforced internally by aiohttp. try_count:
 
         """
         self._log = logging.getLogger(__name__)
         self._log.debug("__init__()")
         self._base_url = base_url
         self._try_count = try_count
+        self._max_concurrent = max_concurrent
+        self._cert_pem_path = cert_pem_path
+        self._cert_key_path = cert_key_path
+        self._disable_server_cert_validation = disable_server_cert_validation
+        self._timeout_sec = timeout_sec
+        self._user_agent = user_agent
 
         self._session = None
         self.create_session()
@@ -82,8 +89,12 @@ class AsyncDataONEClient:
 
         self._session = aiohttp.ClientSession(
             connector=tcp_connector,
-            timeout=aiohttp.ClientTimeout(total=timeout_sec),
-            # headers={"Connection": "close"},
+            timeout=aiohttp.ClientTimeout(total=self._timeout_sec),
+            headers={
+                "User-Agent": self._user_agent
+                or d1_common.const.USER_AGENT
+                # "Connection": "close"
+            },
         )
 
     async def __aenter__(self):
@@ -98,6 +109,10 @@ class AsyncDataONEClient:
     @property
     def session(self):
         return self._session
+
+    @property
+    def max_concurrent(self):
+        return self._max_concurrent
 
     async def close(self):
         self._log.debug("Closing aiohttp.ClientSession()")
@@ -251,7 +266,7 @@ class AsyncDataONEClient:
             "headers": headers,
         }
 
-        self._logger.debug("Request: {}".format(request_arg_dict))
+        self._log.debug("Request: {}".format(request_arg_dict))
 
         for i in range(self._try_count):
             try:
@@ -259,17 +274,17 @@ class AsyncDataONEClient:
             except aiohttp.ClientError as e:
                 # This assignment is required in Py3. See doc for try/except.
                 final_exception = e
-                self._logger.warning(
+                self._log.warning(
                     "Retrying due to exception: {}: {}".format(
                         e.__class__.__name__, str(e)
                     )
                 )
                 await asyncio.sleep(1.0)
             else:
-                self.dump_headers(response.headers)
+                # self.dump_headers(response.headers)
                 return response
 
-        self._logger.error("Giving up after {} tries".format(self._try_count))
+        self._log.error("Giving up after {} tries".format(self._try_count))
         raise final_exception
 
     def _prep_url(self, url_element_list):
@@ -278,7 +293,7 @@ class AsyncDataONEClient:
         prepped_url = d1_common.url.joinPathElements(
             self._base_url, "v2", *self._encode_path_elements(url_element_list)
         )
-        self._logger.debug("Prepared URL: {}".format(prepped_url))
+        self._log.debug("Prepared URL: {}".format(prepped_url))
         return prepped_url
 
     def _prep_query_dict(self, query_dict):
@@ -286,7 +301,7 @@ class AsyncDataONEClient:
         # self._date_span_sanity_check(fromDate, toDate)
         query_dict = self._remove_none_value_items(query_dict)
         query_dict = self._datetime_to_iso8601(query_dict)
-        self._logger.debug("Prepared Query:\n{}".format(pprint.pformat(query_dict)))
+        self._log.debug("Prepared Query:\n{}".format(pprint.pformat(query_dict)))
         return query_dict
 
     def _encode_path_elements(self, path_element_list):
@@ -314,6 +329,6 @@ class AsyncDataONEClient:
         return {k: v for k, v in list(query_dict.items()) if v is not None}
 
     def dump_headers(self, header_dict):
-        self._logger.debug("Response headers:")
+        self._log.debug("Response headers:")
         for k, v in sorted(header_dict.items()):
-            self._logger.debug("  {}: {}".format(k, v))
+            self._log.debug("  {}: {}".format(k, v))

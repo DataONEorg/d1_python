@@ -30,6 +30,7 @@ import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
+import d1_common.utils.ulog
 
 log = logging.getLogger(__name__)
 
@@ -66,7 +67,7 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     repo = git.Repo(repo_path)
@@ -178,7 +179,7 @@ def get_atomtrailer_list(r):
     """Capture only the leading dotted name list.
 
     A full sequence typically includes function calls and parameters.
-    pkga.pkgb.pkgc.one_call(arg1, arg2, arg3=4)
+    pkg_a.pkg_b.pkg_c.one_call(arg1, arg2, arg3=4)
 
     """
     dot_set = set()

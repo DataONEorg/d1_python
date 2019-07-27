@@ -174,13 +174,15 @@ class GenerateVersionFile(object):
         version_path = os.path.join(self.binding_dir, version_filename)
         schema_path = os.path.join(self.schema_dir, schema_filename)
         try:
-            tstamp, svnpath, svnrev, version = self.get_version_info_from_svn(
+            timestamp_ts, svn_path, svn_rev, version = self.get_version_info_from_svn(
                 schema_path
             )
         except TypeError:
             pass
         else:
-            self.write_version_file(version_path, tstamp, svnpath, svnrev, version)
+            self.write_version_file(
+                version_path, timestamp_ts, svn_path, svn_rev, version
+            )
 
     def write_version_file(self, version_file_path, tstamp, svnpath, svnrev, version):
         """Args:

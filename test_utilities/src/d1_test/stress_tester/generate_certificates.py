@@ -35,6 +35,8 @@ import d1_x509v3_certificate_generator
 import settings
 import subject_dn
 
+import d1_common.utils.ulog
+
 logger = logging.getLogger()
 
 # The SubjectInfo to include in the certificate.
@@ -52,7 +54,7 @@ subject_info_template = """<?xml version="1.0" encoding="utf-8"?>
 
 
 def main():
-    log_setup()
+    d1_common.utils.ulog.setup(is_debug=False)
 
     # Command line opts.
     parser = optparse.OptionParser("usage: %prog [options]")
@@ -109,14 +111,6 @@ def create_certificate(subject, subject_dn_tuple, subject_info):
 
 def create_subject_info(subject):
     return subject_info_template.replace("%subject%", xml.sax.saxutils.escape(subject))
-
-
-def log_setup():
-    logging.getLogger("").setLevel(logging.INFO)
-    formatter = logging.Formatter("%(levelname)-8s %(message)s")
-    console_logger = logging.StreamHandler(sys.stdout)
-    console_logger.setFormatter(formatter)
-    logging.getLogger("").addHandler(console_logger)
 
 
 if __name__ == "__main__":

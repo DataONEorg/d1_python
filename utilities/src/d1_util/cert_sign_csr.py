@@ -23,7 +23,7 @@ This is an example on how to use the DataONE Client and Common libraries for Pyt
 shows how to:
 
 - Use the d1_common.cert.x509 module to sign a Certificate Signing Request (CSR) using a
-local CA.
+  local CA.
 
 """
 import argparse
@@ -31,6 +31,7 @@ import os
 
 import d1_common.cert.x509
 import d1_common.util
+import d1_common.utils.ulog
 
 
 def main():
@@ -45,7 +46,7 @@ def main():
         "ca_key_path", action="store", help="Load path for CA certificate private key"
     )
     args = parser.parse_args()
-    d1_common.util.log_setup(is_debug=args.debug)
+    d1_common.utils.ulog.setup(is_debug=args.debug)
     try:
         sign_csr(args)
     except CSRSignError as e:

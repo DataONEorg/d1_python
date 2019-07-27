@@ -28,6 +28,7 @@ from . import test_object_generator
 
 import d1_common.const
 import d1_common.types.exceptions
+import d1_common.utils.ulog
 
 import d1_client.mnclient
 import d1_client.mnclient_2_0
@@ -42,10 +43,11 @@ NUM_MIN_BYTES = 1024 * 10
 NUM_MAX_BYTES = 1024 * 100
 
 
-def main():
-    logging.basicConfig()
-    logging.getLogger("").setLevel(logging.DEBUG)
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
 
+
+def main():
     parser = optparse.OptionParser()
 
     parser.add_option(
@@ -112,8 +114,6 @@ def main():
 
     (options, args) = parser.parse_args()
 
-    logging.getLogger("").setLevel(logging.DEBUG if options.debug else logging.INFO)
-
     if options.use_v1:
         mn_client = d1_client.mnclient.MemberNodeClient(
             options.mn_base_url,
@@ -138,14 +138,12 @@ def main():
         try:
             mn_client.create(pid, io.BytesIO(sciobj_bytes), sysmeta_pyxb)
         except d1_common.types.exceptions.DataONEException as e:
-            logging.exception("MNStorage.create() failed with exception:")
+            log.exception("MNStorage.create() failed with exception:")
             if e.traceInformation and len(e.traceInformation) >= 100:
                 trace_path = "traceInformation.out"
                 with open(trace_path, "wb") as f:
                     f.write(e.traceInformation)
-                    logging.error(
-                        "Dumped traceInformation to file: {}".format(trace_path)
-                    )
+                    log.error("Dumped traceInformation to file: {}".format(trace_path))
                     sys.exit()
 
 

@@ -44,6 +44,7 @@ import requests.packages.urllib3
 import d1_common.cert.subject_info
 import d1_common.cert.x509
 import d1_common.util
+import d1_common.utils.ulog
 
 
 def main():
@@ -57,7 +58,7 @@ def main():
 
     args = parser.parse_args()
 
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     if not os.path.exists(args.cert_pem_path):
         raise ValueError("No such file: {}".format(args.cert_pem_path))

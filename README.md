@@ -374,11 +374,12 @@ Create a Python venv to use for build and deploy:
 Build and publish the packages:
 
 * Download current master from GitHub, create binary wheel packages and push the packages to PyPI.
+
+    $ pyenv activate venv_build
     
-    bash -c '
+    $ bash -c '
       bdir=~/d1_python_build
       rm -rf ${bdir}
-      pyenv activate venv_build
       pip install --upgrade pip
       pip install --upgrade wheel    
       git clone git@github.com:DataONEorg/d1_python.git ${bdir}

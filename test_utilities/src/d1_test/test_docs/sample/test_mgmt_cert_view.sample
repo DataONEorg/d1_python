@@ -1,5 +1,46 @@
-Primary subject:
-  DC=org,DC=cilogon,C=US,O=Google,CN=Robert Waltz A610
-Equivalent subjects:
-  authenticatedUser
-  public
+[
+  "Certificate parsed successfully.",
+  "
+The following subjects(s) were extracted from the certificate:
+
+    Primary subject (1):
+        DC=org,DC=cilogon,C=US,O=Google,CN=Robert Waltz A610
+
+    Equivalent subjects (2):
+        authenticatedUser
+        public
+
+Subjects known by this GMN (2):
+    authenticatedUser
+    public
+
+Subjects not known by this GMN (1):
+    DC=org,DC=cilogon,C=US,O=Google,CN=Robert Waltz A610
+
+Subject details:
+
+  Subject: authenticatedUser:
+
+    Number of science objects with access for subject (3):
+        changePermission:    99
+        read:                25
+        write:               66
+
+    Administrative permissions on this GMN (3):
+        Is GMN client side certificate subject:                              no
+        Recognized as CN or other fully trusted infrastructure component:    no
+        Whitelisted for create, update and delete of science objects:        no
+
+  Subject: public:
+
+    Number of science objects with access for subject (3):
+        changePermission:    117
+        read:                34
+        write:               62
+
+    Administrative permissions on this GMN (3):
+        Is GMN client side certificate subject:                              no
+        Recognized as CN or other fully trusted infrastructure component:    no
+        Whitelisted for create, update and delete of science objects:        no
+"
+]

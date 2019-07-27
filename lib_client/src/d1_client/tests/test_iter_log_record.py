@@ -24,11 +24,11 @@ import responses
 
 import d1_common.types.dataoneTypes
 
-import d1_test.d1_test_case
-import d1_test.mock_api.get_log_records
-
 import d1_client.iter.logrecord
 import d1_client.mnclient
+
+import d1_test.d1_test_case
+import d1_test.mock_api.get_log_records
 
 # These tests are disabled because they require a MN that permits access to
 # log records.
@@ -66,7 +66,7 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
             assert isinstance(event.event, d1_common.types.dataoneTypes.Event)
             # logging.info("Event      = {}".format(event.event))
             # logging.info("Timestamp  = {}".format(event.dateLogged.isoformat()))
-            # logging.info("IP Addres  = {}".format(event.ipAddress))
+            # logging.info("IP Address = {}".format(event.ipAddress))
             # logging.info("Identifier = {}".format(event.identifier.value()))
             # logging.info("User agent = {}".format(event.userAgent))
             # logging.info("Subject    = {}".format(event.subject.value()))

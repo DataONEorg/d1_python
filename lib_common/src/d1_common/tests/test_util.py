@@ -22,6 +22,7 @@ import copy
 import pytest
 
 import d1_common.util
+import d1_common.utils.ulog
 
 import d1_test.d1_test_case
 
@@ -48,7 +49,7 @@ import d1_test.d1_test_case
                     "backupCount": 5,
                     "formatter": "verbose",
                 },
-                "console": {
+                "stdout": {
                     "class": "logging.StreamHandler",
                     "formatter": "verbose",
                     "level": "DEBUG",

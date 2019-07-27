@@ -42,6 +42,7 @@ import requests.packages.urllib3
 import d1_common.const
 import d1_common.env
 import d1_common.util
+import d1_common.utils.ulog
 
 import d1_client.iter.sysmeta_multi
 
@@ -97,7 +98,7 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
     args = parser.parse_args()
 
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     if not os.path.exists(args.fin):
         raise ValueError("No such file: {}".format(args.fin))

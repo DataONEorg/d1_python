@@ -15,11 +15,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Multiprocessed LogRecord Iterator.
+"""Iterate over Event Logs for Science Objects available on Member Nodes.
 
-Fast retrieval of event log records from a DataONE Node.
-
-See additional notes in SysMeta iter docstring.
+This is a multiprocessed implementation. See :ref:`d1_client/ref/iterators:DataONE
+Iterators` for an overview of the available iterator types and implementations.
 
 """
 

@@ -49,12 +49,12 @@ import d1_client.command_line
 
 
 def main():
-    parser = d1_client.command_line.get_standard_arg_parser(__doc__)
+    parser = d1_client.command_line.D1ClientArgParser(__doc__)
     args = parser.parse_args()
-    d1_client.command_line.log_setup(args)
+    d1_client.command_line.log_setup(args.debug)
 
     client = d1_client.cnclient_2_0.CoordinatingNodeClient_2_0(
-        **d1_client.command_line.args_adapter(args)
+        **parser.get_method_args(args)
     )
 
     subject_info_pyxb = client.echoCredentials()

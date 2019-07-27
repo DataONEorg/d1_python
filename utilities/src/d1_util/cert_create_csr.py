@@ -24,7 +24,7 @@ This is an example on how to use the DataONE Client and Common libraries for Pyt
 shows how to:
 
 - Use the d1_common.cert.x509 module to create a local Certificate Signing Request
-(CSR).
+  (CSR).
 
 """
 import argparse
@@ -32,6 +32,7 @@ import os
 
 import d1_common.cert.x509
 import d1_common.util
+import d1_common.utils.ulog
 
 
 def main():
@@ -45,7 +46,7 @@ def main():
         "csr_path", action="store", help="Save path for PEM formatted CSR"
     )
     args = parser.parse_args()
-    d1_common.util.log_setup(is_debug=args.debug)
+    d1_common.utils.ulog.setup(is_debug=args.debug)
     try:
         create_csr(args)
     except CSRCreateError as e:

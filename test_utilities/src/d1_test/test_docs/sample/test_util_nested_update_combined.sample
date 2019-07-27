@@ -7,12 +7,6 @@
     }
   },
   "handlers": {
-    "console": {
-      "class": "logging.StreamHandler",
-      "formatter": "verbose",
-      "level": "DEBUG",
-      "stream": "ext://sys.stdout"
-    },
     "rotating_file": {
       "backupCount": 5,
       "class": "logging.handlers.RotatingFileHandler",
@@ -20,6 +14,12 @@
       "formatter": "verbose",
       "level": "DEBUG",
       "maxBytes": 1234
+    },
+    "stdout": {
+      "class": "logging.StreamHandler",
+      "formatter": "verbose",
+      "level": "DEBUG",
+      "stream": "ext://sys.stdout"
     }
   },
   "key3": "val5",

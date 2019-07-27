@@ -60,6 +60,7 @@ import d1_common.cert.x509
 import d1_common.const
 import d1_common.env
 import d1_common.util
+import d1_common.utils.ulog
 import d1_common.xml
 
 import d1_client.iter.node
@@ -108,7 +109,7 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
     args = parser.parse_args()
 
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     if not os.path.isdir(args.dir):
         raise ValueError("Directory does not exist: {}".format(args.dir))

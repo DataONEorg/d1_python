@@ -37,10 +37,11 @@ import sys
 
 import d1_common.const
 import d1_common.env
+import d1_common.utils.ulog
 
 import d1_client.cnclient_2_0
+import d1_client.iter.objectlist_multi
 import d1_client.mnclient_2_0
-import d1_client.objectlistiterator
 
 # Config
 
@@ -50,6 +51,10 @@ CN_BASE_URL = "https://cn-stage.test.dataone.org/cn"
 # CN_BASE_URL = 'https://cn-dev.test.dataone.org/cn'
 
 NODE_ID = "urn:node:mnTestR2R"
+
+
+log = logging.getLogger(__name__)
+d1_common.utils.ulog.setup(is_debug=True)
 
 
 def main():
@@ -81,8 +86,6 @@ def main():
         default=d1_common.const.DEFAULT_HTTP_TIMEOUT,
         help="Amount of time to wait for calls to complete (seconds)",
     )
-
-    logging.basicConfig(level=logging.INFO)
 
     node_pyxb = find_node(NODE_ID)
 
@@ -121,7 +124,7 @@ def dump_unique(from_dict, not_in_dict, base_url):
 
 def get_object_dict(client, node_id=None):
     pid_dict = {}
-    for object_info in d1_client.objectlistiterator.ObjectListIterator(
+    for object_info in d1_client.iter.objectlist_multi.ObjectListIteratorMulti(
         client, nodeId=node_id
     ):
         pid_dict[object_info.identifier.value()] = object_info

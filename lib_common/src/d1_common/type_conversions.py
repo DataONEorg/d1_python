@@ -305,18 +305,18 @@ def str_to_v2_pyxb(xml_str):
 
 
 def is_pyxb(pyxb_obj):
-    """Returns:
-
-    bool: **True** if ``pyxb_obj`` is a PyXB object.
+    """
+    Returns: bool:
+      ``True`` if ``pyxb_obj`` is a PyXB object.
 
     """
     return isinstance(pyxb_obj, pyxb.cscRoot)
 
 
 def is_pyxb_d1_type(pyxb_obj):
-    """Returns:
-
-    bool: **True** if ``pyxb_obj`` is a PyXB object holding a DataONE API type.
+    """
+    Returns: bool:
+      ``True`` if ``pyxb_obj`` is a PyXB object holding a DataONE API type.
 
     """
     try:
@@ -336,8 +336,8 @@ def is_pyxb_d1_type_name(pyxb_obj, expected_pyxb_type_name):
 
       E.g.: ``SystemMetadata``, ``LogEntry``, ``ObjectInfo``.
 
-  Returns:
-     bool: **True** if object is a PyXB object holding a value of the specified type.
+  Returns: bool:
+    ``True`` if object is a PyXB object holding a value of the specified type.
   """
     try:
         return pyxb_get_type_name(pyxb_obj) == expected_pyxb_type_name
@@ -376,8 +376,8 @@ def str_is_v1(xml_str):
     xml_str : str
       DataONE API XML doc.
 
-  Returns:
-    bool: **True** if XML doc is a DataONE API v1 type.
+  Returns: bool
+    ``True`` if XML doc is a DataONE API v1 type.
   """
     return pyxb_is_v1(str_to_pyxb(xml_str))
 
@@ -388,8 +388,8 @@ def str_is_v2(xml_str):
     xml_str : str
       DataONE API XML doc.
 
-  Returns:
-    bool: **True** if XML doc is a DataONE API v2 type.
+  Returns: bool:
+    ``True`` if XML doc is a DataONE API v2 type.
   """
     return pyxb_is_v2(str_to_pyxb(xml_str))
 
@@ -400,8 +400,8 @@ def str_is_error(xml_str):
     xml_str : str
       DataONE API XML doc.
 
-  Returns:
-    bool: **True** if XML doc is a DataONE Exception type.
+  Returns: bool:
+    ``True`` if XML doc is a DataONE Exception type.
   """
     return str_to_etree(xml_str).tag == "error"
 
@@ -412,8 +412,8 @@ def str_is_identifier(xml_str):
     xml_str : str
       DataONE API XML doc.
 
-  Returns:
-    bool: **True** if XML doc is a DataONE Identifier type.
+  Returns: bool:
+    ``True`` if XML doc is a DataONE Identifier type.
   """
     return (
         str_to_etree(xml_str).tag
@@ -427,8 +427,8 @@ def str_is_objectList(xml_str):
     xml_str : str
       DataONE API XML doc.
 
-  Returns:
-    bool: **True** if XML doc is a DataONE ObjectList type.
+  Returns: bool:
+    ``True`` if XML doc is a DataONE ObjectList type.
   """
     return (
         str_to_etree(xml_str).tag
@@ -442,8 +442,8 @@ def str_is_well_formed(xml_str):
     xml_str : str
       DataONE API XML doc.
 
-  Returns:
-    bool: **True** if XML doc is well formed.
+  Returns: bool:
+    ``True`` ``True`` if XML doc is well formed.
   """
     try:
         str_to_etree(xml_str)
@@ -460,8 +460,8 @@ def pyxb_is_v1(pyxb_obj):
     pyxb_obj : PyXB object
       PyXB object holding an unknown type.
 
-  Returns:
-    bool: **True** if ``pyxb_obj`` holds an API v1 type.
+  Returns: bool:
+    ``True`` if ``pyxb_obj`` holds an API v1 type.
   """
     # TODO: Will not detect v1.2 as v1.
     return (
@@ -477,8 +477,8 @@ def pyxb_is_v2(pyxb_obj):
     pyxb_obj : PyXB object
       PyXB object holding an unknown type.
 
-  Returns:
-    bool: **True** if ``pyxb_obj`` holds an API v2 type.
+  Returns: bool:
+    ``True`` if ``pyxb_obj`` holds an API v2 type.
   """
     return (
         pyxb_obj._element().name().namespace()

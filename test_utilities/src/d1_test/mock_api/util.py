@@ -28,6 +28,7 @@ import urllib.parse
 import d1_common.const
 import d1_common.url
 import d1_common.util
+import d1_common.utils.ulog
 
 import d1_client.d1client
 
@@ -56,7 +57,7 @@ def parse_rest_url(rest_url):
     param_list = _decode_path_elements(url_obj.path)
     endpoint_str = param_list.pop(0)
     query_dict = urllib.parse.parse_qs(url_obj.query) if url_obj.query else {}
-    client = d1_client.d1client.get_client_class_by_version_tag(version_tag)(
+    client = d1_client.d1client.get_mn_client_class_by_version_tag(version_tag)(
         base_url="http://invalid/"
     )
     return version_tag, endpoint_str, param_list, query_dict, client

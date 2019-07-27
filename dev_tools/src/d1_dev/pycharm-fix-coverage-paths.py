@@ -31,11 +31,12 @@ import d1_dev.util
 
 import d1_common.type_conversions
 import d1_common.util
+import d1_common.utils.ulog
 import d1_common.xml
 
 
 def main():
-    d1_common.util.log_setup()
+    d1_common.utils.ulog.setup()
 
     repo_root_path = d1_dev.util.find_repo_root()
 

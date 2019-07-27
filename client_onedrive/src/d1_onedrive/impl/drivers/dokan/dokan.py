@@ -418,7 +418,7 @@ class Dokan(object):
         :param fileName: name of file to set attributes for
         :type fileName: ctypes.c_wchar_p
         :param fileAttributes: new file attributes
-        :type fileAttrributes: ctypes.c_ulong
+        :type fileAttributes: ctypes.c_ulong
         :param dokanFileInfo: used by Dokan
         :type dokanFileInfo: PDOKAN_FILE_INFO
         :return: error code
@@ -474,7 +474,7 @@ class Dokan(object):
         """
         return self.operations("deleteDirectory", fileName)
 
-    def moveFile(self, existingFileName, newFileName, replaceExisiting, dokanFileInfo):
+    def moveFile(self, existingFileName, newFileName, replaceExisting, dokanFileInfo):
         """Move a file.
 
         :param existingFileName: name of file to move

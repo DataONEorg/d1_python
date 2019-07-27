@@ -28,6 +28,7 @@ import d1_common
 import d1_common.types
 import d1_common.types.dataoneTypes
 import d1_common.utils.filesystem
+import d1_common.utils.ulog
 
 
 def get_abs_test_file_path(rel_path):

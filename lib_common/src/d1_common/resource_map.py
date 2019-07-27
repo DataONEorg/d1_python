@@ -87,7 +87,7 @@ def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
         described by the Science Metadata.
 
     Returns:
-      ResourceMap : OAI-ORE Resource Map
+      resource_map.ResourceMap : OAI-ORE Resource Map
 
     """
     ore = ResourceMap()
@@ -120,7 +120,7 @@ def createResourceMapFromStream(in_stream, base_url=d1_common.const.URL_DATAONE_
         Root of the DataONE environment in which the Resource Map will be used.
 
     Returns:
-      ResourceMap : OAI-ORE Resource Map
+      resource_map.ResourceMap : OAI-ORE Resource Map
 
     """
     pids = []

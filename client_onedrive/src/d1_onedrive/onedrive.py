@@ -48,7 +48,7 @@ def main():
 
     # Add options to override defaults in settings.py.
     for k, v in list(settings.__dict__.items()):
-        # Only allow overriding strings, ints and bools.
+        # Only allow overriding strings, ints and booleans.
         if k.isupper():
             param_name = "--{}".format(k.lower().replace("_", "-"))
             if type(v) is str or type(v) is int:

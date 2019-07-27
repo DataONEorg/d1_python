@@ -52,6 +52,7 @@ import redbaron
 import d1_dev.util
 
 import d1_common.util
+import d1_common.utils.ulog
 
 logger = logging.getLogger(__name__)
 
@@ -74,11 +75,15 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     logger.info(args.path)
 
-    return 0 if insert_import(args.path, args.dotted_name, args.show_diff, args.dry_run) else 1
+    return (
+        0
+        if insert_import(args.path, args.dotted_name, args.show_diff, args.dry_run)
+        else 1
+    )
 
 
 def insert_import(module_path, dotted_name, show_diff, dry_run):

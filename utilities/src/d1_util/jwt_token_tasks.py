@@ -42,6 +42,7 @@ import d1_common.cert.x509
 import d1_common.const
 import d1_common.env
 import d1_common.util
+import d1_common.utils.ulog
 
 
 def main():
@@ -74,7 +75,7 @@ def main():
         help="Amount of time to wait for calls to complete (seconds)",
     )
 
-    d1_common.util.log_setup(True)
+    d1_common.utils.ulog.setup(True)
     # jwt_cleanup()
     # cert_cleanup()
     download_cn_certs()

@@ -39,7 +39,7 @@ import a.b.c
 However, simply importing `a` makes `b` and `c` available, so this will work:
 
 import a
-a.b.c.myfunc()
+a.b.c.my_func()
 
 This tends to confuse IDEs, which often highlight `b` and `c` as potential errors. It is
 also better to make sure all required packages are imported explicitly.
@@ -53,16 +53,15 @@ import logging
 import os
 import sys
 
-
-
 import d1_dev.util
 
 import d1_common.iter.path
 import d1_common.util
+import d1_common.utils.ulog
 
 import django.core.exceptions
 
-insert_import = importlib.import_module('src-insert-import')
+insert_import = importlib.import_module("src-insert-import")
 
 log = logging.getLogger(__name__)
 
@@ -100,7 +99,7 @@ def main():
     parser.add_argument("--debug", action="store_true", help="Debug level logging")
 
     args = parser.parse_args()
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
 
     repo_path = d1_dev.util.find_repo_root_by_path(__file__)
     # repo = git.Repo(repo_path)
@@ -143,17 +142,17 @@ def find_missing_imports(args, module_path):
 
     missing_import_list = get_missing_import_list(r)
 
-    log.info('Checking imports')
+    log.info("Checking imports")
 
     for dot_list in missing_import_list:
-        dot_str = '.'.join(dot_list)
-        log.info('Module: {}'.format(module_path))
-        log.info('import {}'.format(dot_str))
+        dot_str = ".".join(dot_list)
+        log.info("Module: {}".format(module_path))
+        log.info("import {}".format(dot_str))
         if is_valid_import(dot_str):
-            log.info('Adding valid import: {}'.format(dot_str))
+            log.info("Adding valid import: {}".format(dot_str))
             insert_import.insert_import(module_path, dot_str, False, False)
         else:
-            log.info('Skipped invalid import: {}'.format(dot_str))
+            log.info("Skipped invalid import: {}".format(dot_str))
         # input('Enter to continue... ')
 
 
@@ -164,6 +163,7 @@ def is_valid_import(dot_str):
         return False
     else:
         return True
+
 
 def get_missing_import_list(r):
     import_list = get_import_list(r)
@@ -187,7 +187,7 @@ def get_missing_import_list(r):
 
     def is_imported(trunc_list):
         for import_dot_list_ in import_list:
-            if trunc_list == import_dot_list_[:len(trunc_list)]:
+            if trunc_list == import_dot_list_[: len(trunc_list)]:
                 return True
         return False
 
@@ -199,7 +199,7 @@ def get_missing_import_list(r):
 
         if is_first_name_imported(trunc_dot_list):
             if not is_imported(trunc_dot_list):
-                if not '.'.join(trunc_dot_list) in ('os.path',):
+                if not ".".join(trunc_dot_list) in ("os.path",):
                     missing_import_set.add(trunc_dot_list)
 
     missing_import_list = sorted(missing_import_set)
@@ -238,7 +238,7 @@ def get_atomtrailer_list(r):
     """Capture only the leading dotted name list.
 
     A full sequence typically includes function calls and parameters.
-    pkga.pkgb.pkgc.one_call(arg1, arg2, arg3=4)
+    pkg_a.pkg_b.pkg_c.one_call(arg1, arg2, arg3=4)
 
     """
     dot_set = set()

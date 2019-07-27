@@ -25,7 +25,7 @@ shows how to:
 
 - Query the DataONE Solr index for a random selection of object identifiers for a given
   formatId.
-- Download objects with high bandwith throughput by using the async DataONEClient to
+- Download objects with high bandwidth throughput by using the async DataONEClient to
   perform concurrent downloads.
 """
 
@@ -34,13 +34,14 @@ import io
 import logging
 import os
 import random
+import sys
 
 import d1_scimeta.util
 
 import d1_common.types.exceptions
-
 import d1_common.utils.filesystem
-import d1_common.utils.progress_logger
+import d1_common.utils.progress_tracker
+import d1_common.utils.ulog
 
 import d1_client.aio.async_client
 import d1_client.command_line
@@ -52,103 +53,105 @@ log = logging.getLogger(__name__)
 DEFAULT_PAGE_COUNT = 1
 
 
-async def main():
-    parser = d1_client.command_line.get_standard_arg_parser(__doc__)
+def main():
+    """Sync wrapper of main() for use by d1_util.setup() to generate console entry
+    points."""
+    sys.exit(asyncio.run(_main()))
+
+
+async def _main():
+    parser = d1_client.command_line.D1ClientArgParser(__doc__)
     parser.add_argument(
-        "--page-count", default=DEFAULT_PAGE_COUNT, help="Number of bulk downloads to perform"
+        "--page-count",
+        type=int,
+        default=DEFAULT_PAGE_COUNT,
+        help="Number of bulk downloads to perform",
     )
     parser.add_argument(
-        "out_path",
-        help="Path to dir in which to save the downloaded files"
+        "out_path", help="Path to dir in which to save the downloaded files"
     )
     args = parser.parse_args()
     d1_client.command_line.log_setup(args.debug)
 
     solr_client = d1_client.solr_client.SolrClient()
     client = d1_client.aio.async_client.AsyncDataONEClient(
-        **d1_client.command_line.args_adapter(args)
+        **d1_client.command_line.D1ClientArgParser.get_method_args()
     )
 
-    progress_logger = d1_common.utils.progress_logger.ProgressLogger(logger=log)
+    with d1_common.utils.progress_tracker.ProgressTracker(logger=log) as tracker:
 
-    for format_id in d1_scimeta.util.get_supported_format_id_list():
-        schema_name = d1_scimeta.util.get_schema_name(format_id)
-        out_dir_path = os.path.join(args.out_path, schema_name)
-        d1_common.utils.filesystem.create_missing_directories_for_dir(out_dir_path)
+        for format_id in d1_scimeta.util.get_supported_format_id_list():
+            schema_name = d1_scimeta.util.get_schema_name(format_id)
+            out_dir_path = os.path.join(args.out_path, schema_name)
+            d1_common.utils.filesystem.create_missing_directories_for_dir(out_dir_path)
 
-        task_name = "Download SciObj with formatId: {}".format(format_id)
+            task_name = "Download SciObj with formatId: {}".format(format_id)
 
-        progress_logger.start_task_type(task_name, args.page_size * args.page_count)
+            tracker.start_task_type(task_name, args.page_size * args.page_count)
 
-        for i in range(args.page_count):
-            await validate_bulk(
-                client,
-                out_dir_path,
-                format_id,
-                args.page_size,
-                solr_client,
-                progress_logger,
-                task_name,
-            )
+            for i in range(args.page_count):
+                await validate_bulk(
+                    client,
+                    out_dir_path,
+                    format_id,
+                    args.page_size,
+                    solr_client,
+                    tracker,
+                    task_name,
+                )
 
-        progress_logger.end_task_type(task_name)
+            tracker.end_task_type(task_name)
 
-    await client.close()
-
-    progress_logger.completed()
+        await client.close()
 
 
 async def validate_bulk(
-    client, out_dir_path, format_id, pid_count, solr_client, progress_logger, task_name
+    client, out_dir_path, format_id, pid_count, solr_client, tracker, task_name
 ):
 
-    progress_logger.start_task(task_name)
+    tracker.start_task(task_name)
 
     pid_list = await get_random_pid_list(solr_client, format_id, pid_count)
 
     if not pid_list:
-        progress_logger.event(
+        tracker.event(
             "Solr query returned no objects for formatId: {}".format(format_id)
         )
         return
 
-    progress_logger.event(
+    tracker.event(
         "Solr returned randomly selected PIDs for formatId: {}".format(format_id),
-        len(pid_list),
+        count_int=len(pid_list),
     )
 
     task_set = set()
 
     for pid in pid_list:
-        task_set.add(download(client, out_dir_path, pid, format_id, progress_logger))
+        task_set.add(download(client, out_dir_path, pid, format_id, tracker))
 
     await asyncio.wait(task_set)
 
 
-async def download(client, out_dir_path, pid, format_id, progress_logger):
+async def download(client, out_dir_path, pid, format_id, tracker):
     try:
         sciobj_f = io.BytesIO()
         await client.get(sciobj_f, pid)
     except d1_common.types.exceptions.DataONEException as e:
-        progress_logger.event("Download failed. formatId: {}".format(format_id))
-        log.error(
-            'Download failed. formatId="{}" pid="{}" error="{}"'.format(
-                format_id, pid, str(e)
-            )
+        tracker.event(
+            "Download failed. formatId: {}".format(format_id),
+            'pid="{}" error="{}"'.format(format_id, pid, str(e)),
         )
         return
 
     try:
         await save_xml(out_dir_path, pid, sciobj_f)
     except d1_scimeta.util.SciMetaError as e:
-        progress_logger.event("XML save to file failed: {}".format(str(e)))
-        log.error(
-            'XML save to file failed. out_dir_path="{}" pid="{}" error="{}"'.format(
-                out_dir_path, pid, str(e)
-            )
+        tracker.event(
+            "XML save to file failed. formatId: {}".format(format_id),
+            'out_dir_path="{}" pid="{}" error="{}"'.format(out_dir_path, pid, str(e)),
         )
     else:
-        progress_logger.event("XML file saved. formatId: {}".format(format_id))
+        tracker.event("XML file saved. formatId: {}".format(format_id))
 
 
 async def save_xml(out_dir_path, pid, sciobj_f):
@@ -171,4 +174,4 @@ async def get_random_pid_list(solr_client, format_id, pid_count):
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    sys.exit(main())

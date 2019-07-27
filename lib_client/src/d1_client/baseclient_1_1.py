@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+import json
 import logging
 import d1_common.types.exceptions
 
@@ -77,11 +77,6 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         Returns:
 
         """
-        self._log.debug(
-            "Solr query: {}".format(
-                ", ".join(["{}={}".format(k, v) for (k, v) in list(locals().items())])
-            )
-        )
         return (self.POST if do_post else self.GET)(
             ["query", queryEngine, self.EncodedUrlPathSeg(query_str)],
             headers=vendorSpecific,

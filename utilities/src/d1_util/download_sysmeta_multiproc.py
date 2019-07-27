@@ -40,6 +40,7 @@ import d1_common.system_metadata
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.util
+import d1_common.utils.ulog
 import d1_common.xml
 
 import d1_client.d1client
@@ -80,7 +81,7 @@ def main():
     )
 
     args = parse_cmd_line()
-    d1_common.util.log_setup(args.debug)
+    d1_common.utils.ulog.setup(args.debug)
     events = d1_common.util.EventCounter()
 
     api_major = (
@@ -179,7 +180,7 @@ def _download_objects(args, api_major, events, timeout, cert_pem_path, cert_key_
         max_result_queue_size=10,
         api_major=api_major,
         client_dict=_get_client_dict(timeout, cert_pem_path, cert_key_path),
-        list_objects_dict=_get_list_objects_args_dict(),
+        list_objects_dict=_get_list_objects_arg_dict(),
     )
     start_sec = time.time()
     for i, sysmeta_pyxb in enumerate(sysmeta_iter):
@@ -257,7 +258,7 @@ def _get_client_dict(timeout, cert_pem_path, cert_key_path):
     }
 
 
-def _get_list_objects_args_dict():
+def _get_list_objects_arg_dict():
     return {
         # Restrict query for faster debugging
         # 'fromDate': datetime.datetime(2017, 1, 1),
@@ -266,7 +267,7 @@ def _get_list_objects_args_dict():
 
 
 def _create_source_client(baseurl, api_major, timeout, cert_pem_path, cert_key_path):
-    return d1_client.d1client.get_client_class_by_version_tag(api_major)(
+    return d1_client.d1client.get_mn_client_class_by_version_tag(api_major)(
         baseurl, **_get_client_dict(timeout, cert_pem_path, cert_key_path)
     )
 
@@ -274,27 +275,6 @@ def _create_source_client(baseurl, api_major, timeout, cert_pem_path, cert_key_p
 def _assert_path_is_dir(dir_path):
     if not os.path.isdir(dir_path):
         raise SysMetaRetrieveError('Invalid dir path. path="{}"'.format(dir_path))
-
-
-def _log_progress(event_counter, msg, i, n, pid, start_sec=None):
-    if start_sec:
-        elapsed_sec = time.time() - start_sec
-        total_sec = float(n) / (i + 1) * elapsed_sec
-        eta_sec = int(total_sec - elapsed_sec)
-        s_int = eta_sec % 60
-        eta_sec //= 60
-        m_int = eta_sec % 60
-        eta_sec //= 60
-        h_int = eta_sec
-        eta_str = " {}h{:02d}m{:02d}s".format(h_int, m_int, s_int)
-    else:
-        eta_str = ""
-    logging.info(
-        "{} - {}/{} ({:.2f}%{}) - {}".format(
-            msg, i + 1, n, (i + 1) / float(n) * 100, eta_str, pid
-        )
-    )
-    event_counter.count(msg)
 
 
 def _get_safe_filename(pid, ext_str=None):
