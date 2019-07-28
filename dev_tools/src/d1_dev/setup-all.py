@@ -50,9 +50,8 @@ PKG_PATH_LIST = [
     # 'csw',
 ]
 
-
 log = logging.getLogger(__name__)
-
+logging.basicConfig(level=logging.DEBUG)
 
 def main():
     if sys.version_info[0] != 3:
