@@ -27,7 +27,7 @@ import setuptools
 def main():
     setuptools.setup(
         name="dataone.util",
-        version="3.4.6",
+        version='3.4.7',
         description="DataONE Utilities and Examples",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -36,8 +36,8 @@ def main():
         packages=setuptools.find_packages(),
         include_package_data=True,
         install_requires=[
-            "dataone.common >= 3.4.6",
-            "dataone.libclient >= 3.4.6",
+            "dataone.common >= 3.4.7",
+            "dataone.libclient >= 3.4.7",
             "beautifulsoup4 >= 4.7.1",
             "aiohttp >= 3.5.4",
             "requests >= 2.22.0",

@@ -101,19 +101,10 @@ class DataONEBaseClient_1_1(d1_client.baseclient.DataONEBaseClient):
         response = self.queryResponse(
             queryEngine, query_str, vendorSpecific, do_post, **kwargs
         )
-        try:
+        if self._content_type_is_json(response):
             return self._read_json_response(response)
-        except d1_common.types.exceptions.DataONEException:
-            pass
-        try:
-            return response.json()
-        except Exception:
-            pass
-        try:
-            return json.loads(response.text)
-        except Exception:
-            pass
-        return self._read_stream_response(response)
+        else:
+            return self._read_stream_response(response)
 
     def getQueryEngineDescriptionResponse(
         self, queryEngine, vendorSpecific=None, **kwargs

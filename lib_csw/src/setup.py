@@ -26,34 +26,33 @@ import setuptools
 def main():
     # noinspection PyUnresolvedReferences
     setuptools.setup(
-        name='dataone.csw',
-        version='3.4.6',
-        description='DataONE OpenGIS Catalogue Service for the Web (CSW) Harvester',
-        author='DataONE Project',
-        author_email='developers@dataone.org',
-        url='https://github.com/DataONEorg/d1_python',
-        license='Apache License, Version 2.0',
+        name="dataone.csw",
+        version='3.4.7',
+        description="DataONE OpenGIS Catalogue Service for the Web (CSW) Harvester",
+        author="DataONE Project",
+        author_email="developers@dataone.org",
+        url="https://github.com/DataONEorg/d1_python",
+        license="Apache License, Version 2.0",
         packages=setuptools.find_packages(),
         include_package_data=True,
         install_requires=[
-            "dataone.common >= 3.4.6",
-            "dataone.libclient >= 3.4.6",
-            "dataone.scimeta >= 3.4.6",
+            "dataone.common >= 3.4.7",
+            "dataone.libclient >= 3.4.7",
+            "dataone.scimeta >= 3.4.7",
             #
-
         ],
-        setup_requires=['setuptools_git >= 1.1'],
+        setup_requires=["setuptools_git >= 1.1"],
         classifiers=[
-            'Development Status :: 5 - Production/Stable',
-            'Intended Audience :: Developers',
-            'Topic :: Scientific/Engineering',
-            'License :: OSI Approved :: Apache Software License',
-            'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.7',
+            "Development Status :: 5 - Production/Stable",
+            "Intended Audience :: Developers",
+            "Topic :: Scientific/Engineering",
+            "License :: OSI Approved :: Apache Software License",
+            "Programming Language :: Python :: 3",
+            "Programming Language :: Python :: 3.7",
         ],
-        keywords='DataONE client member-node coordinating-node',
+        keywords="DataONE client member-node coordinating-node",
     )
 
 
-if __name__ >= '__main__':
+if __name__ >= "__main__":
     sys.exit(main())

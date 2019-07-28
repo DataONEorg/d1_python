@@ -29,8 +29,6 @@ import os
 import subprocess
 import sys
 
-import d1_common.utils.ulog
-
 try:
     import d1_dev.util
 except ImportError:
@@ -52,10 +50,8 @@ PKG_PATH_LIST = [
     # 'csw',
 ]
 
-
 log = logging.getLogger(__name__)
-d1_common.utils.ulog.setup(is_debug=True)
-
+logging.basicConfig(level=logging.DEBUG)
 
 def main():
     if sys.version_info[0] != 3:
