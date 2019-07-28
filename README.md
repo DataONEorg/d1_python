@@ -363,13 +363,12 @@ Building the release packages from a fresh clone is a simple way of ensuring tha
 Create a Python venv to use for build and deploy:
 
 * The package `setup.py` scripts will run in this venv.
-* The venv can be reused indefinitly.
+* The venv can be reused indefinitely.
     
     $ pyenv virtualenv "x.y.z" venv_build
 
 * Where "x.y.z" is one of the versions listed in `pyenv versions`.
 * Pick a version that is close or the same as the version of Python used for testing on Travis.
-
 
 Build and publish the packages:
 
