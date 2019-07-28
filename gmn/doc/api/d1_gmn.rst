@@ -24,14 +24,6 @@ d1\_gmn.manage module
    :undoc-members:
    :show-inheritance:
 
-d1\_gmn.serve\-static\-files module
------------------------------------
-
-.. automodule:: d1_gmn.serve-static-files
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 d1\_gmn.settings module
 -----------------------
 

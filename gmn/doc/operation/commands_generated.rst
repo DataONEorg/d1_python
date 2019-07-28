@@ -979,7 +979,7 @@ available.
       --user-agent string   Override the default User-Agent header
 
 
-**process-refresh-queue**
+**process_refresh_queue**
 --------------------------
 
 Process queue of System Metadata refresh requests received from Coordinating Nodes.
@@ -1014,7 +1014,7 @@ This command can be run safely in a production environment.
       --debug               Debug level logging
 
 
-**process-replication-queue**
+**process_replication_queue**
 ------------------------------
 
 Process queue of replication requests received from Coordinating Nodes.

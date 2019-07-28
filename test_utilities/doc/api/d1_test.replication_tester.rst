@@ -33,11 +33,3 @@ d1\_test.replication\_tester.replication\_tester module
    :undoc-members:
    :show-inheritance:
 
-d1\_test.replication\_tester.run\_replication\_tester module
-------------------------------------------------------------
-
-.. automodule:: d1_test.replication_tester.run_replication_tester
-   :members:
-   :undoc-members:
-   :show-inheritance:
-

@@ -6,13 +6,6 @@ d1\_util package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
-
-.. toctree::
-
-   d1_util.access-set-public
-
 Submodules
 ----------
 
@@ -256,14 +249,6 @@ d1\_util.parse\_format\_id\_list module
    :undoc-members:
    :show-inheritance:
 
-d1\_util.ping\_nodes module
----------------------------
-
-.. automodule:: d1_util.ping_nodes
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 d1\_util.resolve\_package\_identifier module
 --------------------------------------------
 
@@ -296,14 +281,6 @@ d1\_util.xml\_apply\_xslt module
    :undoc-members:
    :show-inheritance:
 
-d1\_util.xml\_guess\_format\_id module
---------------------------------------
-
-.. automodule:: d1_util.xml_guess_format_id
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 d1\_util.xml\_remove\_empty\_elements module
 --------------------------------------------
 
@@ -316,14 +293,6 @@ d1\_util.xml\_strip\_whitespace module
 --------------------------------------
 
 .. automodule:: d1_util.xml_strip_whitespace
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-d1\_util.xml\_xpath module
---------------------------
-
-.. automodule:: d1_util.xml_xpath
    :members:
    :undoc-members:
    :show-inheritance:

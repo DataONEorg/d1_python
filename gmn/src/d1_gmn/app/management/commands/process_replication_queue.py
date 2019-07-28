@@ -52,7 +52,6 @@ class Command(d1_gmn.app.mgmt_base.GMNCommandBase):
 
     def add_components(self, parser):
         self.using_single_instance(parser)
-        self.using_
         self.cn_client = self.create_cn_client()
 
     def handle_serial(self):
