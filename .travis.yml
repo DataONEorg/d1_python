@@ -28,7 +28,8 @@ env:
   global:
     - PGPORT=5433
 before_install:
-  - sudo apt-get -q update
+#  - sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 762E3157
+#  - sudo apt-get -q update
 install:
   - pip install --upgrade pip setuptools
 script:
