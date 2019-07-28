@@ -37,6 +37,7 @@ except ImportError:
 else:
     is_d1_dev_installed = True
 
+# Package roots listed in order of fewest to most dependencies.
 PKG_PATH_LIST = [
     "dev_tools",
     "lib_common",
@@ -47,6 +48,12 @@ PKG_PATH_LIST = [
     "gmn",
     "test_utilities",
     "utilities",
+    # All the d1_python packages for which API docs are created with autodoc must have
+    # all modules importable by autodoc. So for a full doc build, the doc package
+    # depends on everything. However, the generated API doc .rst files are included as
+    # source in the repo, so that the second stage, where HTML and PDF is built from the
+    # .rst files can be handled with just Sphinx and some Sphinx extensions.
+    "doc"
     # 'csw',
 ]
 

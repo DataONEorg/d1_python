@@ -27,7 +27,7 @@ def main():
     # noinspection PyUnresolvedReferences
     setuptools.setup(
         name="dataone.doc",
-        version="3.4.6",
+        version="3.4.7",
         description="Documentation for the DataONE Python products",
         author="DataONE Project",
         author_email="developers@dataone.org",
