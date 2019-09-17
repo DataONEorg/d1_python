@@ -90,7 +90,7 @@ ORE_NAMESPACE_DICT = {
     "dcterms": "http://purl.org/dc/terms/",
     "ore": "http://www.openarchives.org/ore/terms/",
     "foaf": "http://xmlns.com/foaf/0.1/",
-    "prov": "https://www.w3.org/ns/prov",
+    "prov": "http://www.w3.org/ns/prov#",
 }
 ORE_FORMAT_ID = "http://www.openarchives.org/ore/terms"
 ORE_SOFTWARE_ID = "DataONE.org Python ITK {}".format(VERSION)

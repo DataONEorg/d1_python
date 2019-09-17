@@ -40,6 +40,7 @@ Common RDF-XML namespaces:
   ore: <http://www.openarchives.org/ore/terms/>
   dcterms: <http://purl.org/dc/terms/>
   cito: <http://purl.org/spar/cito/>
+  prov: <http://www.w3.org/ns/prov#>
 
 Note:
 
