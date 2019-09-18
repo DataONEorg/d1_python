@@ -439,8 +439,8 @@ class ResourceMap(rdflib.ConjunctiveGraph):
             The on-disk location of the object
         """
         self._check_initialized()
-        resouremap_object = self.getObjectByPid(pid)
-        self.add(resouremap_object, PROV.atLocation, location)
+        resoure_map_member = self.getObjectByPid(pid)
+        self.add((resoure_map_member, PROV.atLocation, rdflib.term.Literal(location)))
 
     def getResourceMapPid(self):
         """Returns:
