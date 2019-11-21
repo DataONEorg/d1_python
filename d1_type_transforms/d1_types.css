@@ -1,0 +1,322 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    font-family: "Lucida Console", Monaco, monospace;
+    font-size: .9em;
+    white-space: nowrap;
+    text-align: left;
+    padding: 3em;
+    margin: 0;
+}
+
+a {
+    text-decoration: none;
+}
+
+.container {
+    margin: 2em;
+}
+
+.container-grid {
+    display: inline-grid;
+    margin: 0;
+    grid-template-columns: max-content max-content;
+    grid-template-rows: auto;
+    grid-template-areas: "header-left header-right" "sidebar d1-type " "footer footer";
+    grid-gap: 0.1em 6em;
+
+    justify-items: center;
+}
+
+.header-left {
+    grid-area: header-left;
+    align-self: self-start;
+    justify-self: center;
+}
+
+.header-right {
+    grid-area: header-right;
+    align-self: self-start;
+    justify-items: start;
+}
+
+.sidebar {
+    grid-area: sidebar;
+}
+
+.d1-type {
+    grid-area: d1-type;
+}
+
+.footer {
+    grid-area: footer;
+}
+
+/* Header flex and items */
+
+.flex-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mn-logo {
+    max-width: 16em;
+    max-height: 16em;
+}
+
+.d1-logo {
+    text-align: center;
+    height: 2.0em;
+}
+
+.gmn-logo {
+    text-align: center;
+    height: 2.0em;
+}
+
+/* Allow image size to be set by div block context */
+.logo {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.mn-name {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+/* Left and right panels */
+
+.flex-hor {
+    display: flex;
+    justify-content: center;
+}
+
+.flex-left {
+    margin-right: 3em;
+}
+
+.flex-right {
+}
+
+.flex-vert {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.copyright {
+    padding-top: 2em;
+    font-size: .8em;
+    color: gray;
+    align-items: flex-start;
+}
+
+#d1-type {
+}
+
+.grid-outer {
+    display: inline-block;
+}
+
+.grid-inner {
+    display: grid;
+    grid-auto-rows: max-content;
+    grid-auto-columns: max-content;
+    grid-gap: 0.1em 2em;
+}
+
+.grid-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 30em;
+    align-self: baseline;
+}
+
+.hspace {
+    padding-bottom: .5em;
+}
+
+.hline {
+    padding-bottom: 1.0em;
+    border-bottom-width: 0.5pt;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+
+    margin-right: -2em;
+    margin-left: -2em;
+    margin-bottom: 1.5em;
+}
+
+.type-header {
+    font-size: 1.5em;
+    /*margin-bottom: -0.5em;*/
+}
+
+.section, .label {
+    font-weight: bold;
+}
+
+.long-text {
+    white-space: normal;
+    max-width: 60em;
+}
+
+.nav-outer {
+    text-align: left;
+    margin-top: 2em;
+}
+
+.nav-outer > a {
+    text-align: center;
+}
+
+.round-button-group {
+    display: inline-flex;
+    padding-left: .5em;
+}
+
+.round-button, .nav-button {
+    display: inline-block;
+    font-family: "helvetica", sans-serif;
+    font-size: 0.7em;
+    font-weight: bold;
+    background: none;
+    border-radius: 2em / 2em;
+    color: #505050;
+    border: solid 0.15em #505050;
+    cursor: pointer;
+    padding: 0 0.8em;
+    text-align: center;
+    text-decoration: none;
+    margin: 0 0.25em;
+}
+
+.nav-button {
+    display: block;
+    font-weight: bold;
+    margin: 0.25em 0;
+    font-size: 1.1em;
+}
+
+.center-button {
+    display: inline-block;
+}
+
+.round-button-disabled {
+    background-color: #c0c0c0;
+    color: #808080;
+    cursor: not-allowed;
+}
+
+.round-button:hover:not(.round-button-disabled), .nav-button:hover {
+    background: #909090;
+    color: white;
+}
+
+.nav-link {
+    display: block;
+    margin: 0.25em 0;
+    /*font-size: inherit;*/
+}
+
+ul {
+    padding: 0 0 0 1em;
+    margin: 0;
+    margin-bottom: 0.5em;
+}
+
+.http-error-header {
+    color: darkred;
+}
+
+.http-error-code {
+    font-size: 6em;
+    font-weight: bolder;
+    margin: 0.3em 0;
+}
+
+.http-error-name {
+    font-size: 3em;
+    font-weight: bolder;
+    /*margin-bottom: 1em;*/
+}
+
+/*
+We use the text-overflow:ellipsis style to visualize when very long identifiers,
+subjects, etc, are truncated to fit in a limited width grid area. Frequently, we include
+buttons such as Resolve and Download after these items. By default, the
+text-overflow:ellipsis style causes the ellipsis to be placed at the end of the visible
+area of the table column. This causes any following buttons to be pushed outside of the
+visible area. These styles are a workaround for this issue. They wrap the elements in a
+flex box, which is a more recent CSS layout method that generally makes more sense.
+*/
+.parent {
+    display: flex;
+    justify-content: left;
+    align-items: flex-start;
+}
+
+.description {
+    display: flex;
+    align-items: flex-start;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.text {
+    flex: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* clipboard.xhtml */
+
+.copy-identifier-row {
+    display: flex;
+    align-items: center;
+    margin: 3em 2em;
+}
+
+.copy-identifier {
+    white-space: nowrap;
+    text-align: center;
+    margin: 0 2em;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Dark theme media preference */
+
+@media (prefers-color-scheme: dark) {
+    * {
+        background-color: #181a1b;
+        color: #c0c0c0;
+    }
+
+    a {
+        color: #3391ff;
+    }
+
+    .round-button, .nav-button {
+        color: #c0c0c0;
+        border: solid 0.15em #606060;
+    }
+
+    .round-button-disabled {
+        background-color: #404040;
+        color: #909090;
+    }
+}
+
+/* Light theme media preference */
+
+@media (prefers-color-scheme: light) {
+}
