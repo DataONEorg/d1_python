@@ -1,0 +1,48 @@
+<v1:systemMetadata xmlns:v1="http://ns.dataone.org/service/types/v1">
+  <!--Optional:-->
+  <serialVersion>11</serialVersion>
+  <identifier>string</identifier>
+  <formatId>string</formatId>
+  <size>11</size>
+  <checksum algorithm="string">string</checksum>
+  <!--Optional:-->
+  <submitter>string</submitter>
+  <rightsHolder>string</rightsHolder>
+  <!--Optional:-->
+  <accessPolicy>
+    <!--1 or more repetitions:-->
+    <allow>
+      <!--1 or more repetitions:-->
+      <subject>string</subject>
+      <!--1 or more repetitions:-->
+      <permission>read</permission>
+    </allow>
+  </accessPolicy>
+  <!--Optional:-->
+  <replicationPolicy replicationAllowed="true" numberReplicas="3">
+    <!--Zero or more repetitions:-->
+    <preferredMemberNode>string</preferredMemberNode>
+    <!--Zero or more repetitions:-->
+    <blockedMemberNode>string</blockedMemberNode>
+  </replicationPolicy>
+  <!--Optional:-->
+  <obsoletes>string</obsoletes>
+  <!--Optional:-->
+  <obsoletedBy>string</obsoletedBy>
+  <!--Optional:-->
+  <archived>true</archived>
+  <!--Optional:-->
+  <dateUploaded>2014-09-18T17:18:33</dateUploaded>
+  <!--Optional:-->
+  <dateSysMetadataModified>2006-08-19T11:27:14-06:00</dateSysMetadataModified>
+  <!--Optional:-->
+  <originMemberNode>string</originMemberNode>
+  <!--Optional:-->
+  <authoritativeMemberNode>string</authoritativeMemberNode>
+  <!--Zero or more repetitions:-->
+  <replica>
+    <replicaMemberNode>string</replicaMemberNode>
+    <replicationStatus>failed</replicationStatus>
+    <replicaVerified>2013-05-21T19:02:49-06:00</replicaVerified>
+  </replica>
+</v1:systemMetadata>

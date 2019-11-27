@@ -1,0 +1,10 @@
+<v2:logEntry xmlns:v2="http://ns.dataone.org/service/types/v2.0">
+  <entryId>string</entryId>
+  <identifier>string</identifier>
+  <ipAddress>string</ipAddress>
+  <userAgent>string</userAgent>
+  <subject>string</subject>
+  <event>unbound_v2_event</event>
+  <dateLogged>2008-09-28T19:49:45</dateLogged>
+  <nodeIdentifier>string</nodeIdentifier>
+</v2:logEntry>

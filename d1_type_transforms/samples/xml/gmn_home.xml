@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="/mn/templates/home.xsl"?>
+<status>
+  <value name="baseUrl">https://gmn.example.edu/mn</value>
+  <value name="envRootUrl">https://cn.dataone.org/cn</value>
+  <value name="searchRootUrl">https://search.dataone.org</value>
+  <value name="nodeId">urn:node:DEMO</value>
+  <value name="nodeName">U.S. DEMO Network</value>
+  <value name="gmnVersion">3.4.7</value>
+  <value name="pythonVersion">3, 7, 4, final, 0</value>
+  <value name="djangoVersion">2, 2, 7, final, 0</value>
+  <value name="postgresVersion">1, 0, 10</value>
+  <value name="avgSciDataSize">24304766</value>
+  <value name="totalSciObjCount">432207</value>
+  <value name="totalEventCount">3717047</value>
+  <value name="lastHourEventCount">1</value>
+  <value name="uniqueSubjectCount">188</value>
+  <value name="totalPermissionCount">1424738</value>
+  <value name="serverTime">2019-11-26 15:01:11.502159-06:00</value>
+  <value name="sciobjStorageSpaceUsed">10504690029641</value>
+  <value name="sciobjStorageSpaceFree">54728925184</value>
+  <value name="sciobjCountByFormat">
+    <value name="application/octet-stream">93299</value>
+    <value name="http://www.openarchives.org/ore/terms">55069</value>
+    <value name="text/xml">55068</value>
+    <value name="eml://ecoinformatics.org/eml-2.1.0">52629</value>
+    <value name="text/plain">47524</value>
+    <value name="text/csv">43060</value>
+    <value name="eml://ecoinformatics.org/eml-2.0.1">36962</value>
+    <value name="eml://ecoinformatics.org/eml-2.1.1">23910</value>
+    <value name="image/jpeg">20708</value>
+    <value name="eml://ecoinformatics.org/eml-2.0.0">2265</value>
+    <value name="application/vnd.ms-excel">536</value>
+    <value name="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+      455
+    </value>
+    <value name="application/zip">362</value>
+    <value name="application/vnd.google-earth.kml+xml">215</value>
+    <value name="application/vnd.google-earth.kmz">109</value>
+    <value name="https://eml.ecoinformatics.org/eml-2.2.0">20</value>
+    <value name="application/R">12</value>
+    <value name="eml://ecoinformatics.org/eml-2.2.0">3</value>
+    <value name="application/pdf">1</value>
+  </value>
+  <value name="description">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+    do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+    veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+    dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+    sunt in culpa qui officia deserunt mollit anim id est laborum.
+  </value>
+  <value name="mnLogoUrl">
+    https://raw.githubusercontent.com/DataONEorg/member-node-info/master/production/graphics/web/DEMO.png
+  </value>
+</status>

@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+  <serialVersion>44</serialVersion>
+  <identifier>pid_lsbhgrsljq</identifier>
+  <formatId>FGDC-STD-001.1-1999</formatId>
+  <size>3012</size>
+  <checksum algorithm="SHA-1">765e797b097d17da3cd5e8ccfe33c004303fb7f5</checksum>
+  <submitter>subj_g</submitter>
+  <rightsHolder>subj_q</rightsHolder>
+  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+    <preferredMemberNode>mn_dh</preferredMemberNode>
+    <blockedMemberNode>mn_r</blockedMemberNode>
+    <blockedMemberNode>mn_o</blockedMemberNode>
+    <blockedMemberNode>mn_jx</blockedMemberNode>
+    <blockedMemberNode>mn_ul</blockedMemberNode>
+  </replicationPolicy>
+  <dateUploaded>1971-09-15T03:27:30.00043Z</dateUploaded>
+  <dateSysMetadataModified>2241-03-03T05:40:22.000752Z</dateSysMetadataModified>
+  <originMemberNode>mn_ko</originMemberNode>
+  <authoritativeMemberNode>mn_z</authoritativeMemberNode>
+  <replica>
+    <replicaMemberNode>mn_iq</replicaMemberNode>
+    <replicationStatus>completed</replicationStatus>
+    <replicaVerified>1975-08-12T20:23:29.000272Z</replicaVerified>
+  </replica>
+  <seriesId>sid_qxvaowaygwr</seriesId>
+  <mediaType name="media_type_ut">
+    <property name="prop_lh">tz</property>
+    <property name="prop_rm">bb</property>
+    <property name="prop_rk">vu</property>
+    <property name="prop_nu">gj</property>
+  </mediaType>
+  <fileName>file_soq</fileName>
+</ns1:systemMetadata>

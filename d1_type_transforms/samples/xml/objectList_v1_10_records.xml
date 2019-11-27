@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ns1:objectList count="10" start="0" total="402596" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+  <objectInfo>
+    <identifier>knb-lter-cdr.68001.123-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">65da85fddc9c4d77d2ed0c99a5f9ca73</checksum>
+    <dateSysMetadataModified>2012-07-03T19:36:12.587Z</dateSysMetadataModified>
+    <size>25644</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.82248.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long-long</formatId>
+    <checksum algorithm="MD5">99cd465c7750271bf706dccebc2286ff</checksum>
+    <dateSysMetadataModified>2012-07-03T20:00:13.078Z</dateSysMetadataModified>
+    <size>9829</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.70172.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">610472b856dc7807b0beea99beb7c88f</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:12.86Z</dateSysMetadataModified>
+    <size>11573</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.49172.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">2dcfc905fb0baffec22bf5b9bae5dcc2</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:13.25Z</dateSysMetadataModified>
+    <size>12337</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.82249.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">3c589bda5c5ae676fc2095028209cf99</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:13.787Z</dateSysMetadataModified>
+    <size>9493</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.70248.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">b256df6dfdad45aa6a8c44dc32263486</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:14.049Z</dateSysMetadataModified>
+    <size>10238</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.82244.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">0c3ab25352ba4ddac1f1607454f6d589</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:14.348Z</dateSysMetadataModified>
+    <size>13128</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.64248.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">5f72f4b68f32841b69e0f02b18cf97ca</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:15.133Z</dateSysMetadataModified>
+    <size>10010</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.167234.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">b3c790c1d2232255bde516cf611699ff</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:15.232Z</dateSysMetadataModified>
+    <size>15225</size>
+  </objectInfo>
+  <objectInfo>
+    <identifier>knb-lter-cdr.165199.123</identifier>
+    <formatId>eml://ecoinformatics.org/eml-2.1.0</formatId>
+    <checksum algorithm="MD5">187330679938f1fac0077ab952b63b2b</checksum>
+    <dateSysMetadataModified>2012-07-05T21:21:15.476Z</dateSysMetadataModified>
+    <size>21216</size>
+  </objectInfo>
+</ns1:objectList>
+

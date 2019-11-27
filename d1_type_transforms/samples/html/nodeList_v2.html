@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>DataONE XML Type</title>
+    <link href="../../d1_types.css" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div id="d1-type">
+      <div class="grid-outer">
+        <div class="grid-inner">
+          <div class="section" style="grid-row:2; grid-column:1">services</div>
+          <div class="grid-item label " style="grid-row:2;grid-column:2">name</div>
+          <div class="grid-item label " style="grid-row:2;grid-column:3">version</div>
+          <div class="grid-item label " style="grid-row:2;grid-column:4/5">available</div>
+          <div class="grid-item tree " style="grid-row:4;grid-column:2">string</div>
+          <div class="grid-item tree " style="grid-row:4;grid-column:3">string</div>
+          <div class="grid-item tree " style="grid-row:4;grid-column:4/5">false</div>
+          <div class="hline" style="grid-row:5; grid-column:1/5"></div>
+          <div class="section" style="grid-row:6; grid-column:1">synchronization</div>
+          <div class="grid-item label " style="grid-row:6;grid-column:2">schedule</div>
+          <div class="grid-item tree " style="grid-row:6;grid-column:3/5">hour:* mday:* min:0/3 mon:1 sec:0 wday:? year:*</div>
+          <div class="grid-item label " style="grid-row:8;grid-column:2">lastHarvested</div>
+          <div class="grid-item tree " style="grid-row:8;grid-column:3/5">2009-05-16 06:42:28 (:42:28)</div>
+          <div class="grid-item label " style="grid-row:10;grid-column:2">lastCompleteHarvest</div>
+          <div class="grid-item tree " style="grid-row:10;grid-column:3/5">2003-08-08 18:18:37 (-06:00)</div>
+          <div class="hline" style="grid-row:11; grid-column:1/5"></div>
+          <div class="section" style="grid-row:12; grid-column:1">nodeReplicationPolicy</div>
+          <div class="grid-item label " style="grid-row:12;grid-column:2">maxObjectSize</div>
+          <div class="grid-item tree " style="grid-row:12;grid-column:3/5">11 bytes</div>
+          <div class="grid-item label " style="grid-row:14;grid-column:2">spaceAllocated</div>
+          <div class="grid-item tree " style="grid-row:14;grid-column:3/5">11 bytes</div>
+          <div class="grid-item label " style="grid-row:16;grid-column:2">allowedNode</div>
+          <div class="grid-item tree " style="grid-row:16;grid-column:3/5">
+            <ul xmlns:z="intermediate.types">
+              <li>
+                <a href="https://search.dataone.org/profile/">string</a>
+              </li>
+            </ul>
+          </div>
+          <div class="grid-item label " style="grid-row:18;grid-column:2">allowedObjectFormat</div>
+          <div class="grid-item tree " style="grid-row:18;grid-column:3/5">
+            <ul xmlns:z="intermediate.types">
+              <li>
+                <a href="https://cn.dataone.org/cn/v2/formats/string">string</a>
+              </li>
+            </ul>
+          </div>
+          <div class="hline" style="grid-row:19; grid-column:1/5"></div>
+          <div class="section" style="grid-row:20; grid-column:1">ping</div>
+          <div class="grid-item label " style="grid-row:20;grid-column:2">success</div>
+          <div class="grid-item tree " style="grid-row:20;grid-column:3/5">false</div>
+          <div class="grid-item label " style="grid-row:22;grid-column:2">lastSuccess</div>
+          <div class="grid-item tree " style="grid-row:22;grid-column:3/5">2002-06-24 09:46:32 (-06:00)</div>
+          <div class="hline" style="grid-row:23; grid-column:1/5"></div>
+          <div class="section" style="grid-row:24; grid-column:1">properties</div>
+          <div class="grid-item tree " style="grid-row:24;grid-column:2">
+            <key xmlns:z="intermediate.types">string</key>
+          </div>
+          <div class="grid-item tree " style="grid-row:24;grid-column:3">
+            <type xmlns:z="intermediate.types">string</type>
+          </div>
+          <div class="grid-item tree " style="grid-row:24;grid-column:4/5">
+            <property xmlns:z="intermediate.types">string</property>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

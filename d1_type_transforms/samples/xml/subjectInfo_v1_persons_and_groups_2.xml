@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  SubjectInfo containing person and group records
+  - Nested chain of groups and equivalent identities
+  - Combinations of nested included and excluded elements
+  - Only subjects marked as INCLUDE should appear in the generated samples
+-->
+<ns2:subjectInfo xmlns:ns2="http://ns.dataone.org/service/types/v1">
+  <person>
+    <!--INCLUDE: The initial subject-->
+    <subject>subj-1</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--EXCLUDE: Disconnected-->
+    <isMemberOf>group-1</isMemberOf>
+    <!--EXCLUDE: Disconnected-->
+    <isMemberOf>group-2</isMemberOf>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-2</equivalentIdentity>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-50</equivalentIdentity>
+    <!--INCLUDE: The verifiedUser symbolic subject-->
+    <verified>true</verified>
+  </person>
+  <person>
+    <!--INCLUDE: Connected by equiv id-->
+    <subject>subj-2</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-3</equivalentIdentity>
+    <verified>false</verified>
+  </person>
+  <person>
+    <!--INCLUDE: Connected by equiv id-->
+    <subject>subj-3</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-4</equivalentIdentity>
+    <verified>false</verified>
+  </person>
+  <person>
+    <!--INCLUDE: Connected by equiv id -->
+    <subject>subj-50</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+  </person>
+
+  <person>
+    <!--INCLUDE: Connected by equiv id-->
+    <subject>subj-4</subject>
+    <givenName>Subj</givenName>
+    <familyName>N/A</familyName>
+    <!--INCLUDE: Equiv id-->
+    <equivalentIdentity>subj-6</equivalentIdentity>
+  </person>
+  <group>
+    <!--INCLUDE: Connected by equiv id-->
+    <subject>group-1</subject>
+    <groupName>Group</groupName>
+    <!--EXCLUDE: Disconnected-->
+    <hasMember>subj-5</hasMember>
+    <hasMember>subj-6</hasMember>
+    <!--INCLUDE: Connection -->
+    <hasMember>group-3</hasMember>
+    <rightsHolder>group-rights-subj-1</rightsHolder>
+  </group>
+  <group>
+    <!--INCLUDE: Initial subject is a member of this group -->
+    <subject>group-10</subject>
+    <groupName>Group</groupName>
+    <!--EXCLUDE: Disconnected-->
+    <hasMember>subj-5</hasMember>
+    <hasMember>subj-6</hasMember>
+    <hasMember>group-3</hasMember>
+    <!--INCLUDE: The member that connects this group-->
+    <hasMember>subj-1</hasMember>
+    <rightsHolder>group-rights-subj-1</rightsHolder>
+  </group>
+  <group>
+    <!--INCLUDE-->
+    <subject>group-20</subject>
+    <groupName>Group</groupName>
+    <!--INCLUDE-->
+    <hasMember>subj-50</hasMember>
+    <rightsHolder>group-rights-subj-1</rightsHolder>
+  </group>
+
+  <group>
+    <!--INCLUDE-->
+    <subject>group-21</subject>
+    <groupName>Group</groupName>
+    <hasMember>group-20</hasMember>
+    <hasMember>subj-2</hasMember>
+    <rightsHolder>group-rights-subj-1</rightsHolder>
+  </group>
+
+</ns2:subjectInfo>
