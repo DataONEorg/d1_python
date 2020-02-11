@@ -1,6 +1,6 @@
 Babel==2.7.0
 Click==7.0
-Django==2.2.3
+Django==2.2.10
 GitPython==2.1.11
 Jinja2==2.10.1
 Markdown==3.1.1
