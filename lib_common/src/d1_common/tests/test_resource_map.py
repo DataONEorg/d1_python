@@ -459,3 +459,9 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
 
         for agg_pid in ore.getAggregatedScienceMetadataPids():
             assert unicode_pid in agg_pid
+
+    def test_1190(self, mn_client_v2):
+        ore = self._create()
+        ore.addResource("resource1_pid")
+        ore.setAtLocation("resource1_pid", "scripts/data_cleaning")
+        self.sample.assert_equals(ore, "set_at_location", mn_client_v2)

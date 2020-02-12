@@ -40,6 +40,7 @@ Common RDF-XML namespaces:
   ore: <http://www.openarchives.org/ore/terms/>
   dcterms: <http://purl.org/dc/terms/>
   cito: <http://purl.org/spar/cito/>
+  prov: <http://www.w3.org/ns/prov#>
 
 Note:
 
@@ -62,6 +63,7 @@ import d1_common.url
 DCTERMS = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT["dcterms"])
 CITO = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT["cito"])
 ORE = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT["ore"])
+PROV = rdflib.Namespace(d1_common.const.ORE_NAMESPACE_DICT["prov"])
 
 
 def createSimpleResourceMap(ore_pid, scimeta_pid, sciobj_pid_list):
@@ -424,6 +426,21 @@ class ResourceMap(rdflib.ConjunctiveGraph):
             self.addResource(dpid)
             self.setDocumentedBy(dpid, scimeta_pid)
             self.setDocuments(scimeta_pid, dpid)
+
+    def setAtLocation(self, pid, location):
+        """Establishes a triple relationship between a pid and a file path.
+
+        ``pid`` atLocation ``location``.
+
+        Args:
+          pid: str
+            PID of the object whose location is being described
+          location: str
+            The on-disk location of the object
+        """
+        self._check_initialized()
+        resoure_map_member = self.getObjectByPid(pid)
+        self.add((resoure_map_member, PROV.atLocation, rdflib.term.Literal(location)))
 
     def getResourceMapPid(self):
         """Returns:
