@@ -52,7 +52,7 @@ To create a whitelist with this subject, first create a file, for instance,
 ``gmn`` folder::
 
   sudo -Hu gmn bash -c '
-    cd /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/gmn
+    cd /var/local/dataone/gmn_venv_py3/lib/python3.6/site-packages/d1_gmn
     nano whitelist.txt
   '
 
@@ -63,7 +63,7 @@ Blank lines and lines starting with "#" are ignored in the whitelist file, allow
 
 Then, add the entries in the whitelist text file to GMN's database with the following command::
 
-  $ python manage.py set_whitelist whitelist.txt
+  $ python manage.py whitelist bulk whitelist.txt
 
 Any existing subjects in the database are cleared before adding the subjects from the whitelist file. So subjects can be added or removed from the whitelist by adding or removing them in the file and then synchronizing with the database by running the command above.
 
