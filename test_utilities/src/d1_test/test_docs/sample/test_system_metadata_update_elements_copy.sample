@@ -7,7 +7,7 @@
   <checksum algorithm="SHA-1">765e797b097d17da3cd5e8ccfe33c004303fb7f5</checksum>
   <submitter>submitter_subj</submitter>
   <rightsHolder>rights_holder_subj</rightsHolder>
-  <replicationPolicy numberReplicas="100" replicationAllowed="true"/>
+  <replicationPolicy replicationAllowed="true" numberReplicas="100"/>
   <dateUploaded>1973-08-28T00:00:00</dateUploaded>
   <dateSysMetadataModified>1973-08-28T00:00:00</dateSysMetadataModified>
   <originMemberNode>urn:node:GMNUnitTestOrigin</originMemberNode>

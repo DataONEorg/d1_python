@@ -35,11 +35,11 @@
         <permission>changePermission</permission>
       </allow>
     </accessPolicy>
--   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-?                                      ^                      ^^^^
+-   <replicationPolicy replicationAllowed="false" numberReplicas="0">
+?                                          ^^^^                   ^
 
-+   <replicationPolicy numberReplicas="8" replicationAllowed="true">
-?                                      ^                      ^^^
++   <replicationPolicy replicationAllowed="true" numberReplicas="8">
+?                                          ^^^                   ^
 
 -     <preferredMemberNode>mn_x</preferredMemberNode>
 ?                             ^

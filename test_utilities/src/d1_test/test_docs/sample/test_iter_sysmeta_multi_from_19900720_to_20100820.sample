@@ -28,7 +28,7 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+  <replicationPolicy replicationAllowed="false" numberReplicas="0">
     <preferredMemberNode>mn_f</preferredMemberNode>
     <preferredMemberNode>mn_iu</preferredMemberNode>
     <blockedMemberNode>mn_s</blockedMemberNode>
@@ -84,7 +84,7 @@
   <checksum algorithm="SHA-1">83c44b509ad842b77d48cb3e58c84c89a40991e5</checksum>
   <submitter>subj_wa</submitter>
   <rightsHolder>subj_fw</rightsHolder>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+  <replicationPolicy replicationAllowed="false" numberReplicas="0">
     <preferredMemberNode>mn_b</preferredMemberNode>
     <preferredMemberNode>mn_ys</preferredMemberNode>
     <blockedMemberNode>mn_ba</blockedMemberNode>

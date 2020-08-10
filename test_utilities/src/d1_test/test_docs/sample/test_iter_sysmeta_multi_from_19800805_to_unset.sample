@@ -17,7 +17,7 @@
       <permission>read</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="7" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="7">
     <preferredMemberNode>mn_se</preferredMemberNode>
   </replicationPolicy>
   <archived>false</archived>
@@ -48,7 +48,7 @@
       <permission>write</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="6" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="6">
     <preferredMemberNode>mn_b</preferredMemberNode>
     <preferredMemberNode>mn_q</preferredMemberNode>
     <preferredMemberNode>mn_q</preferredMemberNode>

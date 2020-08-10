@@ -13,7 +13,7 @@
       <permission>read</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false"/>
+  <replicationPolicy replicationAllowed="false" numberReplicas="0"/>
   <archived>false</archived>
   <dateUploaded>1988-05-01T00:00:00Z</dateUploaded>
   <dateSysMetadataModified>1988-05-01T00:00:00Z</dateSysMetadataModified>

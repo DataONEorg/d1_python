@@ -13,7 +13,7 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="4" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="4">
     <preferredMemberNode>mn_be</preferredMemberNode>
     <preferredMemberNode>mn_c</preferredMemberNode>
     <preferredMemberNode>mn_k</preferredMemberNode>

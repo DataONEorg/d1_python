@@ -1,4 +1,4 @@
 <?xml version="1.0" ?>
-<error detailCode="0" errorCode="404" name="NotFound">
+<error name="NotFound" errorCode="404" detailCode="0">
   <description/>
 </error>

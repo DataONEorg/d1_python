@@ -11,7 +11,7 @@
       <permission>read</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="3" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="3">
     <preferredMemberNode>add_pref_urn</preferredMemberNode>
   </replicationPolicy>
   <dateUploaded>1977-01-27T00:00:00</dateUploaded>

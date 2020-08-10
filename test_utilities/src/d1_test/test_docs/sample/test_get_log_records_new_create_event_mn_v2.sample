@@ -32,7 +32,7 @@ sysmeta: <?xml version="1.0" ?>
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+  <replicationPolicy replicationAllowed="false" numberReplicas="0">
     <blockedMemberNode>mn_b</blockedMemberNode>
     <blockedMemberNode>mn_o</blockedMemberNode>
   </replicationPolicy>

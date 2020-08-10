@@ -1,20 +1,20 @@
 <?xml version="1.0" ?>
-<ns1:node replicate="false" state="up" synchronize="true" type="cn" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
+<ns1:node replicate="false" synchronize="true" type="cn" state="up" xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
   <identifier>urn:node:NODEID</identifier>
   <name>Name of Node</name>
   <description>Description of node.</description>
   <baseURL>http://www.any.org/ventos/verrantque</baseURL>
   <services>
-    <service available="true" name="MNCore" version="v1"/>
-    <service available="true" name="MNRead" version="v1"/>
-    <service available="true" name="MNAuthorization" version="v1"/>
-    <service available="true" name="MNStorage" version="v1"/>
-    <service available="true" name="MNReplication" version="v1"/>
-    <service available="true" name="MNCore" version="v2"/>
-    <service available="true" name="MNRead" version="v2"/>
-    <service available="true" name="MNAuthorization" version="v2"/>
-    <service available="true" name="MNStorage" version="v2"/>
-    <service available="true" name="MNReplication" version="v2">
+    <service name="MNCore" version="v1" available="true"/>
+    <service name="MNRead" version="v1" available="true"/>
+    <service name="MNAuthorization" version="v1" available="true"/>
+    <service name="MNStorage" version="v1" available="true"/>
+    <service name="MNReplication" version="v1" available="true"/>
+    <service name="MNCore" version="v2" available="true"/>
+    <service name="MNRead" version="v2" available="true"/>
+    <service name="MNAuthorization" version="v2" available="true"/>
+    <service name="MNStorage" version="v2" available="true"/>
+    <service name="MNReplication" version="v2" available="true">
       <restriction methodName="string">
         <subject>string</subject>
       </restriction>
@@ -34,7 +34,7 @@
     <allowedObjectFormat>http://www.isotc211.org/2005/gmd</allowedObjectFormat>
     <allowedObjectFormat>eml://ecoinformatics.org/eml-2.1.1</allowedObjectFormat>
   </nodeReplicationPolicy>
-  <ping lastSuccess="2002-06-24T15:46:32Z" success="false"/>
+  <ping success="false" lastSuccess="2002-06-24T15:46:32Z"/>
   <subject>subjectStringA</subject>
   <subject>subjectStringB</subject>
   <contactSubject>contactSubjectA</contactSubject>

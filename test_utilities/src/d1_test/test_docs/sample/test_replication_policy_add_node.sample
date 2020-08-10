@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<replicationPolicy numberReplicas="3" replicationAllowed="true">
+<replicationPolicy replicationAllowed="true" numberReplicas="3">
   <preferredMemberNode>add_preferred_urn</preferredMemberNode>
   <preferredMemberNode>node1</preferredMemberNode>
   <preferredMemberNode>node2</preferredMemberNode>

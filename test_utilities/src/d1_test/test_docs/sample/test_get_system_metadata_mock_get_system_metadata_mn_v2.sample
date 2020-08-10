@@ -31,7 +31,7 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+  <replicationPolicy replicationAllowed="false" numberReplicas="0">
     <preferredMemberNode>mn_fw</preferredMemberNode>
     <preferredMemberNode>mn_g</preferredMemberNode>
     <preferredMemberNode>mn_r</preferredMemberNode>

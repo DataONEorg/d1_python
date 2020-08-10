@@ -30,11 +30,11 @@
 -       <permission>changePermission</permission>
 -     </allow>
 -   </accessPolicy>
--   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-?                                                             ^^^^
+-   <replicationPolicy replicationAllowed="false" numberReplicas="0">
+?                                          ^^^^
 
-+   <replicationPolicy numberReplicas="10" replicationAllowed="true">
-?                                      +                       ^^^
++   <replicationPolicy replicationAllowed="true" numberReplicas="10">
+?                                          ^^^                   +
 
 -     <blockedMemberNode>mn_gp</blockedMemberNode>
 +     <preferredMemberNode>mn_h</preferredMemberNode>

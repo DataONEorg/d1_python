@@ -7,7 +7,7 @@
   <checksum algorithm="SHA-1">02083f4579e08a612425c0c1a17ee47add783b94</checksum>
   <submitter>submitter</submitter>
   <rightsHolder>rights_holder</rightsHolder>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false"/>
+  <replicationPolicy replicationAllowed="false" numberReplicas="0"/>
   <archived>false</archived>
   <dateUploaded>2000-01-01T00:00:00Z</dateUploaded>
   <dateSysMetadataModified>2000-01-01T00:00:00Z</dateSysMetadataModified>

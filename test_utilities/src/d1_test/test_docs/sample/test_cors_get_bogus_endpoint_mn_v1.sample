@@ -10,5 +10,5 @@
 > HTTP-Version: HTTP/1.1
 > HTTP/? 404 Not Found
 
-<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="/templates/home.xsl"?><error detailCode="0"
-errorCode="404" name="NotFound" nodeId="urn:node:GMNUnitTestInstance"><description>Invalid API endpoint</description></error>
+<?xml version="1.0" encoding="utf-8"?><?xml-stylesheet type="text/xsl" href="/templates/home.xsl"?><error name="NotFound"
+errorCode="404" detailCode="0" nodeId="urn:node:GMNUnitTestInstance"><description>Invalid API endpoint</description></error>

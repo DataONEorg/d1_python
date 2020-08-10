@@ -1,15 +1,15 @@
 <?xml version="1.0" ?>
-<ns1:node replicate="false" state="up" synchronize="true" type="cn" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+<ns1:node replicate="false" synchronize="true" type="cn" state="up" xmlns:ns1="http://ns.dataone.org/service/types/v1">
   <identifier>urn:node:NODEID</identifier>
   <name>Name of Node</name>
   <description>Description of node.</description>
   <baseURL>http://www.any.org/ventos/verrantque</baseURL>
   <services>
-    <service available="true" name="MNCore" version="v1"/>
-    <service available="true" name="MNRead" version="v1"/>
-    <service available="false" name="MNAuthorization" version="v1"/>
-    <service available="false" name="MNStorage" version="v1"/>
-    <service available="false" name="MNReplication" version="v1">
+    <service name="MNCore" version="v1" available="true"/>
+    <service name="MNRead" version="v1" available="true"/>
+    <service name="MNAuthorization" version="v1" available="false"/>
+    <service name="MNStorage" version="v1" available="false"/>
+    <service name="MNReplication" version="v1" available="false">
       <restriction methodName="string">
         <subject>string</subject>
       </restriction>
@@ -29,7 +29,7 @@
     <allowedObjectFormat>http://www.isotc211.org/2005/gmd</allowedObjectFormat>
     <allowedObjectFormat>eml://ecoinformatics.org/eml-2.1.1</allowedObjectFormat>
   </nodeReplicationPolicy>
-  <ping lastSuccess="2002-06-24T15:46:32Z" success="false"/>
+  <ping success="false" lastSuccess="2002-06-24T15:46:32Z"/>
   <subject>subjectStringA</subject>
   <subject>subjectStringB</subject>
   <contactSubject>contactSubjectA</contactSubject>

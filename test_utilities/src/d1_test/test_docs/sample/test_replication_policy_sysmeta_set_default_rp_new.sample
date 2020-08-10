@@ -11,7 +11,7 @@
       <permission>read</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false"/>
+  <replicationPolicy replicationAllowed="false" numberReplicas="0"/>
   <dateUploaded>1977-01-27T00:00:00</dateUploaded>
   <dateSysMetadataModified>1977-02-27T00:00:00</dateSysMetadataModified>
 </ns1:systemMetadata>

@@ -1,134 +1,134 @@
 <?xml version="1.0" ?>
 <ns1:nodeList xmlns:ns1="http://ns.dataone.org/service/types/v2.0">
-  <node replicate="false" state="up" synchronize="false" type="cn">
+  <node replicate="false" synchronize="false" type="cn" state="up">
     <identifier>urn:node:CN</identifier>
     <name>cn</name>
     <description>Round Robin Router for Production Coordinating Nodes</description>
     <baseURL>https://cn.dataone.org/cn</baseURL>
     <services>
-      <service available="true" name="CNCore" version="v1"/>
-      <service available="true" name="CNRead" version="v1"/>
-      <service available="true" name="CNAuthorization" version="v1"/>
-      <service available="true" name="CNIdentity" version="v1">
+      <service name="CNCore" version="v1" available="true"/>
+      <service name="CNRead" version="v1" available="true"/>
+      <service name="CNAuthorization" version="v1" available="true"/>
+      <service name="CNIdentity" version="v1" available="true">
         <restriction methodName="mapIdentity">
           <subject>CN=urn:node:KNB,DC=dataone,DC=org</subject>
         </restriction>
       </service>
-      <service available="true" name="CNReplication" version="v1"/>
-      <service available="true" name="CNRegister" version="v1"/>
-      <service available="true" name="CNCore" version="v2"/>
-      <service available="true" name="CNRead" version="v2"/>
-      <service available="true" name="CNAuthorization" version="v2"/>
-      <service available="true" name="CNIdentity" version="v2"/>
-      <service available="true" name="CNReplication" version="v2"/>
-      <service available="true" name="CNRegister" version="v2"/>
-      <service available="true" name="CNDiagnostic" version="v2"/>
-      <service available="true" name="CNView" version="v2"/>
+      <service name="CNReplication" version="v1" available="true"/>
+      <service name="CNRegister" version="v1" available="true"/>
+      <service name="CNCore" version="v2" available="true"/>
+      <service name="CNRead" version="v2" available="true"/>
+      <service name="CNAuthorization" version="v2" available="true"/>
+      <service name="CNIdentity" version="v2" available="true"/>
+      <service name="CNReplication" version="v2" available="true"/>
+      <service name="CNRegister" version="v2" available="true"/>
+      <service name="CNDiagnostic" version="v2" available="true"/>
+      <service name="CNView" version="v2" available="true"/>
     </services>
     <subject>CN=urn:node:CN,DC=dataone,DC=org</subject>
     <contactSubject>CN=Robert P Waltz A904,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
   </node>
-  <node replicate="false" state="up" synchronize="false" type="cn">
+  <node replicate="false" synchronize="false" type="cn" state="up">
     <identifier>urn:node:CNUNM1</identifier>
     <name>cn-unm-1</name>
     <description>University of New Mexico Coordinating Node</description>
     <baseURL>https://cn-unm-1.dataone.org/cn</baseURL>
     <services>
-      <service available="true" name="CNCore" version="v1"/>
-      <service available="true" name="CNRead" version="v1"/>
-      <service available="true" name="CNAuthorization" version="v1"/>
-      <service available="true" name="CNIdentity" version="v1">
+      <service name="CNCore" version="v1" available="true"/>
+      <service name="CNRead" version="v1" available="true"/>
+      <service name="CNAuthorization" version="v1" available="true"/>
+      <service name="CNIdentity" version="v1" available="true">
         <restriction methodName="mapIdentity">
           <subject>CN=urn:node:KNB,DC=dataone,DC=org</subject>
         </restriction>
       </service>
-      <service available="true" name="CNReplication" version="v1"/>
-      <service available="true" name="CNRegister" version="v1"/>
-      <service available="true" name="CNCore" version="v2"/>
-      <service available="true" name="CNRead" version="v2"/>
-      <service available="true" name="CNAuthorization" version="v2"/>
-      <service available="true" name="CNIdentity" version="v2"/>
-      <service available="true" name="CNReplication" version="v2"/>
-      <service available="true" name="CNRegister" version="v2"/>
-      <service available="true" name="CNDiagnostic" version="v2"/>
-      <service available="true" name="CNView" version="v2"/>
+      <service name="CNReplication" version="v1" available="true"/>
+      <service name="CNRegister" version="v1" available="true"/>
+      <service name="CNCore" version="v2" available="true"/>
+      <service name="CNRead" version="v2" available="true"/>
+      <service name="CNAuthorization" version="v2" available="true"/>
+      <service name="CNIdentity" version="v2" available="true"/>
+      <service name="CNReplication" version="v2" available="true"/>
+      <service name="CNRegister" version="v2" available="true"/>
+      <service name="CNDiagnostic" version="v2" available="true"/>
+      <service name="CNView" version="v2" available="true"/>
     </services>
     <subject>CN=urn:node:CNUNM1,DC=dataone,DC=org</subject>
     <contactSubject>CN=Robert P Waltz A904,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
   </node>
-  <node replicate="false" state="up" synchronize="false" type="cn">
+  <node replicate="false" synchronize="false" type="cn" state="up">
     <identifier>urn:node:CNUCSB1</identifier>
     <name>cn-ucsb-1</name>
     <description>University of California Santa Barbara Coordinating Node</description>
     <baseURL>https://cn-ucsb-1.dataone.org/cn</baseURL>
     <services>
-      <service available="true" name="CNCore" version="v1"/>
-      <service available="true" name="CNRead" version="v1"/>
-      <service available="true" name="CNAuthorization" version="v1"/>
-      <service available="true" name="CNIdentity" version="v1">
+      <service name="CNCore" version="v1" available="true"/>
+      <service name="CNRead" version="v1" available="true"/>
+      <service name="CNAuthorization" version="v1" available="true"/>
+      <service name="CNIdentity" version="v1" available="true">
         <restriction methodName="mapIdentity">
           <subject>CN=urn:node:KNB,DC=dataone,DC=org</subject>
         </restriction>
       </service>
-      <service available="true" name="CNReplication" version="v1"/>
-      <service available="true" name="CNRegister" version="v1"/>
-      <service available="true" name="CNCore" version="v2"/>
-      <service available="true" name="CNRead" version="v2"/>
-      <service available="true" name="CNAuthorization" version="v2"/>
-      <service available="true" name="CNIdentity" version="v2"/>
-      <service available="true" name="CNReplication" version="v2"/>
-      <service available="true" name="CNRegister" version="v2"/>
-      <service available="true" name="CNDiagnostic" version="v2"/>
-      <service available="true" name="CNView" version="v2"/>
+      <service name="CNReplication" version="v1" available="true"/>
+      <service name="CNRegister" version="v1" available="true"/>
+      <service name="CNCore" version="v2" available="true"/>
+      <service name="CNRead" version="v2" available="true"/>
+      <service name="CNAuthorization" version="v2" available="true"/>
+      <service name="CNIdentity" version="v2" available="true"/>
+      <service name="CNReplication" version="v2" available="true"/>
+      <service name="CNRegister" version="v2" available="true"/>
+      <service name="CNDiagnostic" version="v2" available="true"/>
+      <service name="CNView" version="v2" available="true"/>
     </services>
     <subject>CN=urn:node:CNUCSB1,DC=dataone,DC=org</subject>
     <contactSubject>CN=Robert P Waltz A904,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
   </node>
-  <node replicate="false" state="up" synchronize="false" type="cn">
+  <node replicate="false" synchronize="false" type="cn" state="up">
     <identifier>urn:node:CNORC1</identifier>
     <name>cn-orc-1</name>
     <description>Oak Ridge National Laboratory Coordinating Node</description>
     <baseURL>https://cn-orc-1.dataone.org/cn</baseURL>
     <services>
-      <service available="true" name="CNCore" version="v1"/>
-      <service available="true" name="CNRead" version="v1"/>
-      <service available="true" name="CNAuthorization" version="v1"/>
-      <service available="true" name="CNIdentity" version="v1">
+      <service name="CNCore" version="v1" available="true"/>
+      <service name="CNRead" version="v1" available="true"/>
+      <service name="CNAuthorization" version="v1" available="true"/>
+      <service name="CNIdentity" version="v1" available="true">
         <restriction methodName="mapIdentity">
           <subject>CN=urn:node:KNB,DC=dataone,DC=org</subject>
         </restriction>
       </service>
-      <service available="true" name="CNReplication" version="v1"/>
-      <service available="true" name="CNRegister" version="v1"/>
-      <service available="true" name="CNCore" version="v2"/>
-      <service available="true" name="CNRead" version="v2"/>
-      <service available="true" name="CNAuthorization" version="v2"/>
-      <service available="true" name="CNIdentity" version="v2"/>
-      <service available="true" name="CNReplication" version="v2"/>
-      <service available="true" name="CNRegister" version="v2"/>
-      <service available="true" name="CNDiagnostic" version="v2"/>
-      <service available="true" name="CNView" version="v2"/>
+      <service name="CNReplication" version="v1" available="true"/>
+      <service name="CNRegister" version="v1" available="true"/>
+      <service name="CNCore" version="v2" available="true"/>
+      <service name="CNRead" version="v2" available="true"/>
+      <service name="CNAuthorization" version="v2" available="true"/>
+      <service name="CNIdentity" version="v2" available="true"/>
+      <service name="CNReplication" version="v2" available="true"/>
+      <service name="CNRegister" version="v2" available="true"/>
+      <service name="CNDiagnostic" version="v2" available="true"/>
+      <service name="CNView" version="v2" available="true"/>
     </services>
     <subject>CN=urn:node:CNORC1,DC=dataone,DC=org</subject>
     <contactSubject>CN=Robert P Waltz A904,O=Google,C=US,DC=cilogon,DC=org</contactSubject>
   </node>
-  <node replicate="true" state="up" synchronize="true" type="mn">
+  <node replicate="true" synchronize="true" type="mn" state="up">
     <identifier>urn:node:KNB</identifier>
     <name>KNB Data Repository</name>
     <description>The Knowledge Network for Biocomplexity (KNB) is a national network intended to facilitate ecological and
 environmental research on biocomplexity.</description>
     <baseURL>https://knb.ecoinformatics.org/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -143,18 +143,18 @@ environmental research on biocomplexity.</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/KNB.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:ESA</identifier>
     <name>ESA Data Registry</name>
     <description>The data sets registered here are associated with articles published in the journals of the Ecological Society of
 America.</description>
     <baseURL>https://data.esa.org/esa/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -169,18 +169,18 @@ America.</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/ESA.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:SANPARKS</identifier>
     <name>SANParks Data Repository</name>
     <description>The South African National Park Data Repository is the primary source for comprehensive information about
 scientific and research data sets collected throughout the South African National Park System.</description>
     <baseURL>https://dataknp.sanparks.org/sanparks/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -195,7 +195,7 @@ scientific and research data sets collected throughout the South African Nationa
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/SANPARKS.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:ORNLDAAC</identifier>
     <name>ORNL DAAC</name>
     <description>The ORNL DAAC archives data produced by NASA's Terrestrial Ecology Program. The DAAC provides data and
@@ -203,11 +203,11 @@ information relevant to biogeochemical dynamics, ecological data, and environmen
 dynamics relating to the biological, geological, and chemical components of Earth's environment. </description>
     <baseURL>http://mercury-ops2.ornl.gov/ornldaac/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0,5,10,15,20,25,30,35,40,45,50,55" mon="*" sec="0" wday="?" year="*"/>
@@ -224,7 +224,7 @@ dynamics relating to the biological, geological, and chemical components of Eart
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/ORNLDAAC.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:LTER</identifier>
     <name>U.S. LTER Network</name>
     <description>The U.S. Long Term Ecological Research Network (LTER) data include ecological observations from the study of
@@ -234,16 +234,16 @@ conterminous United States of America, Alaska, Antarctica, Puerto Rico, and Fren
 years ago to the present.</description>
     <baseURL>https://gmn.lternet.edu/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -258,18 +258,18 @@ years ago to the present.</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/LTER.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:CDL</identifier>
     <name>UC3 Merritt</name>
     <description>A cross-domain repository for data and metadata provided by the University of California Curation Center,
 California Digital Library at the University of California</description>
     <baseURL>https://merritt.cdlib.org:8084/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="23" mday="*" min="00" mon="*" sec="00" wday="?" year="*"/>
@@ -285,7 +285,7 @@ President,C=US,DC=cilogon,DC=org</contactSubject>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/CDL.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:PISCO</identifier>
     <name>PISCO MN</name>
     <description>The Partnership for Interdisciplinary Studies of Coastal Oceans is a long-term ecosystem research and monitoring
@@ -293,16 +293,16 @@ program established with the goals of understanding dynamics of the coastal ocea
 that knowledge so ocean managers and policy makers can take science&amp;#8208</description>
     <baseURL>http://data.piscoweb.org/catalog/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -317,18 +317,18 @@ that knowledge so ocean managers and policy makers can take science&amp;#8208</d
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/PISCO.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:ONEShare</identifier>
     <name>ONEShare DataONE Member Node</name>
     <description>A repository for tabular data and metadata created using the DASH tool, sponsored by the California Digital
 Library and the University of New Mexico</description>
     <baseURL>https://oneshare.unm.edu/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="23" mday="*" min="00" mon="*" sec="00" wday="?" year="*"/>
@@ -344,23 +344,23 @@ President,C=US,DC=cilogon,DC=org</contactSubject>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/ONEShare.png</property>
   </node>
-  <node replicate="true" state="up" synchronize="false" type="mn">
+  <node replicate="true" synchronize="false" type="mn" state="up">
     <identifier>urn:node:mnORC1</identifier>
     <name>DataONE ORC Dedicated Replica Server</name>
     <description>A server that provides replica storage across the DataONE Network for all participating
 institutions</description>
     <baseURL>https://mn-orc-1.dataone.org/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -373,23 +373,23 @@ institutions</description>
     <property key="CN_date_operational">2012-07-23T00:00:0.000Z</property>
     <property key="CN_node_name">DataONE ORC Dedicated Replica Server</property>
   </node>
-  <node replicate="true" state="up" synchronize="false" type="mn">
+  <node replicate="true" synchronize="false" type="mn" state="up">
     <identifier>urn:node:mnUNM1</identifier>
     <name>DataONE UNM Dedicated Replica Server</name>
     <description>A server that provides replica storage across the DataONE Network for all participating
 institutions</description>
     <baseURL>https://mn-unm-1.dataone.org/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -402,23 +402,23 @@ institutions</description>
     <property key="CN_date_operational">2012-07-23T00:00:0.000Z</property>
     <property key="CN_node_name">DataONE UNM Dedicated Replica Server</property>
   </node>
-  <node replicate="true" state="up" synchronize="false" type="mn">
+  <node replicate="true" synchronize="false" type="mn" state="up">
     <identifier>urn:node:mnUCSB1</identifier>
     <name>DataONE UCSB Dedicated Replica Server</name>
     <description>A server that provides replica storage across the DataONE Network for all participating
 institutions</description>
     <baseURL>https://mn-ucsb-1.dataone.org/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -431,17 +431,17 @@ institutions</description>
     <property key="CN_date_operational">2012-07-23T00:00:0.000Z</property>
     <property key="CN_node_name">DataONE UCSB Dedicated Replica Server</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:TFRI</identifier>
     <name>TFRI Data Catalog</name>
     <description>TFRI emphasizes the sustainable management and multi-purpose utilization of forests</description>
     <baseURL>https://metacat.tfri.gov.tw/tfri/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -456,17 +456,17 @@ institutions</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/TFRI.png</property>
   </node>
-  <node replicate="false" state="down" synchronize="false" type="mn">
+  <node replicate="false" synchronize="false" type="mn" state="down">
     <identifier>urn:node:USANPN</identifier>
     <name>USA National Phenology Network</name>
     <description>DataONE member node hosting annual phenology datasets for the USA-NPN.</description>
     <baseURL>https://mynpn.usanpn.org/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -481,7 +481,7 @@ info/master/production/graphics/web/TFRI.png</property>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/USANPN.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:SEAD</identifier>
     <name>SEAD Virtual Archive</name>
     <description>SEAD Virtual Archive is part of the SEAD DataNet project [http://sead-data.net/].
@@ -489,11 +489,11 @@ info/master/production/graphics/web/USANPN.png</property>
 preservation of long-tail scientific data.</description>
     <baseURL>http://seadva.d2i.indiana.edu:8081/sead/rest/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="23" mday="*" min="00" mon="*" sec="00" wday="?" year="*"/>
@@ -508,7 +508,7 @@ preservation of long-tail scientific data.</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/SEAD.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:GOA</identifier>
     <name>Gulf of Alaska Data Portal</name>
     <description>The Gulf of Alaska Data Portal archives environmental observations arising from monitoring and experimentation in
@@ -519,16 +519,16 @@ ecosystem changes and shifts that directly or indirectly (e.g. through food web 
 services of the Gulf of Alaska.</description>
     <baseURL>https://goa.nceas.ucsb.edu/goa/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -543,17 +543,17 @@ services of the Gulf of Alaska.</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/GOA.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:KUBI</identifier>
     <name>University of Kansas - Biodiversity Institute</name>
     <description>This DataONE Member Node is operated by The University of Kansas Biodiversity Institute.  The contents of this
 node are predicted climate layers used for species distribution models.</description>
     <baseURL>https://bidataone.nhm.ku.edu/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -568,17 +568,17 @@ node are predicted climate layers used for species distribution models.</descrip
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/KUBI.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:LTER_EUROPE</identifier>
     <name>LTER Europe Member Node</name>
     <description>DataOne node for LTER-Europe</description>
     <baseURL>https://data.lter-europe.net/knb/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -593,18 +593,18 @@ info/master/production/graphics/web/KUBI.png</property>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/LTER_EUROPE.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:DRYAD</identifier>
     <name>Dryad Digital Repository</name>
     <description>Dryad is an international repository of data underlying peer-reviewed scientific and medical
 literature.</description>
     <baseURL>https://datadryad.org/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -619,23 +619,23 @@ literature.</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/DRYAD.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:CLOEBIRD</identifier>
     <name>Cornell Lab of Ornithology - eBird</name>
     <description>eBird collects observational data on birds from around the world with a date range from 1800 to current. eBird is
 a valuable data resource for science and conservation, collecting millions of bird observations per month.</description>
     <baseURL>http://dataone.ornith.cornell.edu/metacat/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -650,7 +650,7 @@ a valuable data resource for science and conservation, collecting millions of bi
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/CLOEBIRD.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:EDACGSTORE</identifier>
     <name>EDAC Gstore Repository</name>
     <description>Earth Data Analysis Center's (EDAC) Geographical Storage, Transformation and Retrieval Engine (GSTORE) platform
@@ -659,8 +659,8 @@ documents relevant to state agencies, local government, and scientific researche
 the scope of data. It currently uses the FGDC metadata standard to describe all of its holdings.</description>
     <baseURL>https://gstore.unm.edu/dataone/</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="1" mday="*" min="1" mon="*" sec="1" wday="?" year="*"/>
@@ -675,7 +675,7 @@ the scope of data. It currently uses the FGDC metadata standard to describe all 
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/EDACGSTORE.png</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:IOE</identifier>
     <name>Montana IoE Data Repository</name>
     <description>The Montana Institute on Ecosystems (IoE) Data Repository archives and manages ecological research collections
@@ -683,11 +683,11 @@ produced investigators within the Montana University System. The Montana IoE Dat
 products generated by Montana EPSCoR projects.</description>
     <baseURL>https://data.rcg.montana.edu/catalog/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -702,7 +702,7 @@ products generated by Montana EPSCoR projects.</description>
     <property key="CN_logo_url">https://raw.githubusercontent.com/DataONEorg/member-node-
 info/master/production/graphics/web/IOE.png</property>
   </node>
-  <node replicate="true" state="up" synchronize="true" type="mn">
+  <node replicate="true" synchronize="true" type="mn" state="up">
     <identifier>urn:node:US_MPC</identifier>
     <name>Minnesota Population Center</name>
     <description>The Minnesota Population Center disseminates integrated census and survey data from the U.S. and around the
@@ -712,11 +712,11 @@ land use, land cover, and climate. MPC data holdings include microdata (describi
 systems include tools for integrating across data sets and formats.</description>
     <baseURL>https://dataone-prod.pop.umn.edu/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -732,7 +732,7 @@ systems include tools for integrating across data sets and formats.</description
 info/master/production/graphics/web/US_MPC.png</property>
     <property key="CN_date_upcoming">2014-12-11T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:EDORA</identifier>
     <name>Environmental Data for the Oak Ridge Area (EDORA)</name>
     <description>Environmental Data for the Oak Ridge Area (EDORA), including the Walker Branch Watershed.  These projects have
@@ -741,11 +741,11 @@ energy-related problems associated with air pollution, contaminant transport, an
 sites in the world characterized by long-term, intensive environmental studies.</description>
     <baseURL>http://mercury-ops2.ornl.gov/EDORA_MN/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0,5,10,15,20,25,30,35,40,45,50,55" mon="*" sec="0" wday="?" year="*"/>
@@ -761,7 +761,7 @@ sites in the world characterized by long-term, intensive environmental studies.<
 info/master/production/graphics/web/EDORA.png</property>
     <property key="CN_date_upcoming">2014-05-29T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:RGD</identifier>
     <name>Regional and Global biogeochemical dynamics Data (RGD)</name>
     <description>Regional and global biogeochemical dynamics data can be used to improve our understanding of the structure and
@@ -769,11 +769,11 @@ function of various ecosystems; to enable prediction across spatial and temporal
 terrestrial ecosystem models.</description>
     <baseURL>http://mercury-ops2.ornl.gov/RGD_MN/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0,5,10,15,20,25,30,35,40,45,50,55" mon="*" sec="0" wday="?" year="*"/>
@@ -789,18 +789,18 @@ terrestrial ecosystem models.</description>
 info/master/production/graphics/web/RGD.png</property>
     <property key="CN_date_upcoming">2014-05-29T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:GLEON</identifier>
     <name>GLEON Data Repository</name>
     <description>Data archive for the Global Lakes Ecological Observatory Network (GLEON), an international community of Lake
 researchers.</description>
     <baseURL>https://poseidon.limnology.wisc.edu/metacat/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -816,18 +816,18 @@ researchers.</description>
 info/master/production/graphics/web/GLEON.png</property>
     <property key="CN_date_upcoming">2014-12-10T00:00:0.000Z</property>
   </node>
-  <node replicate="true" state="up" synchronize="true" type="mn">
+  <node replicate="true" synchronize="true" type="mn" state="up">
     <identifier>urn:node:IARC</identifier>
     <name>IARC Data Archive</name>
     <description>The International Arctic Research Center (IARC) Data Archive, a long term repository for Arctic
 data.</description>
     <baseURL>https://trusty.iarc.uaf.edu/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -843,17 +843,17 @@ data.</description>
 info/master/production/graphics/web/IARC.png</property>
     <property key="CN_date_upcoming">2015-03-06T00:00:0.000Z</property>
   </node>
-  <node replicate="true" state="up" synchronize="true" type="mn">
+  <node replicate="true" synchronize="true" type="mn" state="up">
     <identifier>urn:node:NMEPSCOR</identifier>
     <name>NM EPSCoR Tier 4 Node</name>
     <description>New Mexico Experimental Program to Stimulate Competitive Research Data Collection</description>
     <baseURL>https://nmepscor-d1.unm.edu/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -869,15 +869,15 @@ info/master/production/graphics/web/IARC.png</property>
 info/master/production/graphics/web/NMEPSCOR.png</property>
     <property key="CN_date_upcoming">2015-05-27T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:TERN</identifier>
     <name>TERN Australia</name>
     <description>This member node is operated by TERN Eco-Informatics (Australia). It contains data produced by all of the TERN
 facilities.</description>
     <baseURL>https://dataone.tern.org.au/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -897,7 +897,7 @@ facilities.</description>
 info/master/production/graphics/web/TERN.png</property>
     <property key="CN_date_upcoming">2015-05-26T00:00:0.000Z</property>
   </node>
-  <node replicate="true" state="up" synchronize="true" type="mn">
+  <node replicate="true" synchronize="true" type="mn" state="up">
     <identifier>urn:node:NKN</identifier>
     <name>Northwest Knowledge Network</name>
     <description>NKN manages diverse collections of research data across many disciplines, with a strong emphasis on earth
@@ -907,11 +907,11 @@ Climate Science Center.  Our largest data collections include raw and processed 
 scenario data (netCDF), and legacy stream ecology datasets.</description>
     <baseURL>https://dataone.northwestknowledge.net/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -927,7 +927,7 @@ scenario data (netCDF), and legacy stream ecology datasets.</description>
 info/master/production/graphics/web/NKN.png</property>
     <property key="CN_date_upcoming">2015-03-13T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:USGS_SDC</identifier>
     <name>USGS Science Data Catalog</name>
     <description>The Science Data Catalog describes USGS-produced, authoritative data that have undergone the data release process
@@ -936,11 +936,11 @@ and observational or remotely-sensed data contained in national systems (rather 
 observations).</description>
     <baseURL>http://usgs.ornl.gov/USGS_MN/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0,5,10,15,20,25,30,35,40,45,50,55" mon="*" sec="0" wday="?" year="*"/>
@@ -956,17 +956,17 @@ observations).</description>
 info/master/production/graphics/web/USGS_SDC.png</property>
     <property key="CN_date_upcoming">2015-11-06T00:00:0.000Z</property>
   </node>
-  <node replicate="true" state="up" synchronize="true" type="mn">
+  <node replicate="true" synchronize="true" type="mn" state="up">
     <identifier>urn:node:NRDC</identifier>
     <name>NRDC DataONE member node</name>
     <description>Production Member Node for Nevada Research Data Center (NRDC)</description>
     <baseURL>https://dataone.sensor.nevada.edu/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -986,7 +986,7 @@ info/master/production/graphics/web/USGS_SDC.png</property>
 info/master/production/graphics/web/NRDC.png</property>
     <property key="CN_date_upcoming">2016-01-05T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:NCEI</identifier>
     <name>NOAA NCEI Oceanographic Data Archive</name>
     <description>The NOAA National Centers for Environmental Information (NCEI) manages the world's largest collection of freely
@@ -997,8 +997,8 @@ holdings of the former NODC are available through DataONE though NCEI is investi
 environmental data holdings from the atmospheric, climatic, and geophysical domains.</description>
     <baseURL>https://ncei-node.dataone.org/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -1018,22 +1018,22 @@ environmental data holdings from the atmospheric, climatic, and geophysical doma
 info/master/production/graphics/web/NCEI.png</property>
     <property key="CN_date_upcoming">2016-04-06T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:PPBIO</identifier>
     <name>PPBio</name>
     <description>Western Amazonian Biodiversity Research Project</description>
     <baseURL>https://ppbiodata.inpa.gov.br/metacat/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -1049,22 +1049,22 @@ info/master/production/graphics/web/NCEI.png</property>
 info/master/production/graphics/web/PPBIO.png</property>
     <property key="CN_date_upcoming">2014-08-01T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:NEON</identifier>
     <name>NEON Member Node</name>
     <description>NEON Member Node</description>
     <baseURL>http://dataone.neonscience.org/metacat/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="false" name="MNAuthorization" version="v1"/>
-      <service available="false" name="MNAuthorization" version="v2"/>
-      <service available="false" name="MNStorage" version="v1"/>
-      <service available="false" name="MNStorage" version="v2"/>
-      <service available="false" name="MNReplication" version="v1"/>
-      <service available="false" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="false"/>
+      <service name="MNAuthorization" version="v2" available="false"/>
+      <service name="MNStorage" version="v1" available="false"/>
+      <service name="MNStorage" version="v2" available="false"/>
+      <service name="MNReplication" version="v1" available="false"/>
+      <service name="MNReplication" version="v2" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -1080,7 +1080,7 @@ info/master/production/graphics/web/PPBIO.png</property>
 info/master/production/graphics/web/NEON.png</property>
     <property key="CN_date_upcoming">2015-07-06T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:TDAR</identifier>
     <name>The Digital Archaeological Record</name>
     <description>tDAR is an international digital archive and repository that houses data about archaeological investigations,
@@ -1090,11 +1090,11 @@ archaeological projects spanning the globe.  For data sets, users also can use d
 illuminate comparative research.</description>
     <baseURL>https://dataone.tdar.org/dataone/</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="false" name="MNAuthorization" version="v2"/>
-      <service available="false" name="MNStorage" version="v2"/>
-      <service available="false" name="MNREplication" version="v2"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v2" available="false"/>
+      <service name="MNStorage" version="v2" available="false"/>
+      <service name="MNREplication" version="v2" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0,30" mon="*" sec="0" wday="?" year="*"/>
@@ -1114,7 +1114,7 @@ illuminate comparative research.</description>
 info/master/production/graphics/web/TDAR.png</property>
     <property key="CN_date_upcoming">2016-03-28T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:ARCTIC</identifier>
     <name>Arctic Data Center</name>
     <description>The US National Science Foundation Arctic Data Center operates as the primary repository supporting the NSF
@@ -1123,16 +1123,16 @@ products of NSF-funded science in the Arctic, including data, metadata, software
 open and reproducible way.</description>
     <baseURL>https://arcticdata.io/metacat/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="false" name="MNReplication" version="v1"/>
-      <service available="false" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v1" available="false"/>
+      <service name="MNReplication" version="v2" available="false"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="10" wday="?" year="*"/>
@@ -1148,14 +1148,14 @@ open and reproducible way.</description>
 info/master/production/graphics/web/ARCTIC.png</property>
     <property key="CN_date_upcoming">2016-04-05T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:BCODMO</identifier>
     <name>Biological and Chemical Oceanography Data Management Office (BCO-DMO) </name>
     <description>Biological and Chemical Oceanography Data Management Office (BCO-DMO) </description>
     <baseURL>https://www.bco-dmo.org/d1/mn</baseURL>
     <services>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNCore" version="v1"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNCore" version="v1" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="?" min="*/10" mon="*" sec="0" wday="*" year="*"/>
@@ -1171,7 +1171,7 @@ info/master/production/graphics/web/ARCTIC.png</property>
 info/master/production/graphics/web/BCODMO.png</property>
     <property key="CN_date_upcoming">2016-03-28T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:GRIIDC</identifier>
     <name>Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC)</name>
     <description>The Gulf of Mexico Research Initiative Information and Data Cooperative (GRIIDC) is the vehicle by which the Gulf
@@ -1181,16 +1181,16 @@ ecosystems of the Gulf of Mexico and affected coastal States in a broad context 
 dynamics of such events and their environmental stresses and public health implications. </description>
     <baseURL>https://dataone.tamucc.edu/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -1210,23 +1210,23 @@ dynamics of such events and their environmental stresses and public health impli
 info/master/production/graphics/web/GRIIDC.png</property>
     <property key="CN_date_upcoming">2016-08-29T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:R2R</identifier>
     <name>Rolling Deck to Repository (R2R)</name>
     <description>Allow data from the Rolling Deck to Repository (R2R) at http://www.rvdata.us/ to be accessed through the DataONE
 infrastructure.</description>
     <baseURL>https://r2r-node.dataone.org/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>
@@ -1242,7 +1242,7 @@ infrastructure.</description>
 info/master/production/graphics/web/RD2R.png</property>
     <property key="CN_date_upcoming">2016-04-13T00:00:0.000Z</property>
   </node>
-  <node replicate="false" state="up" synchronize="true" type="mn">
+  <node replicate="false" synchronize="true" type="mn" state="up">
     <identifier>urn:node:EDI</identifier>
     <name>Environmental Data Initiative</name>
     <description>The Environmental Data Initiative is an NSF-funded project meant to accelerate curation and archive of
@@ -1251,16 +1251,16 @@ Environmental Biology (LTREB), Organization for Biological Field Stations (OBFS)
 Ecological Research (LTER). Note that data from the LTER program may be found on the LTER Member Node.</description>
     <baseURL>https://gmn.edirepository.org/mn</baseURL>
     <services>
-      <service available="true" name="MNCore" version="v1"/>
-      <service available="true" name="MNRead" version="v1"/>
-      <service available="true" name="MNAuthorization" version="v1"/>
-      <service available="true" name="MNStorage" version="v1"/>
-      <service available="true" name="MNReplication" version="v1"/>
-      <service available="true" name="MNCore" version="v2"/>
-      <service available="true" name="MNRead" version="v2"/>
-      <service available="true" name="MNAuthorization" version="v2"/>
-      <service available="true" name="MNStorage" version="v2"/>
-      <service available="true" name="MNReplication" version="v2"/>
+      <service name="MNCore" version="v1" available="true"/>
+      <service name="MNRead" version="v1" available="true"/>
+      <service name="MNAuthorization" version="v1" available="true"/>
+      <service name="MNStorage" version="v1" available="true"/>
+      <service name="MNReplication" version="v1" available="true"/>
+      <service name="MNCore" version="v2" available="true"/>
+      <service name="MNRead" version="v2" available="true"/>
+      <service name="MNAuthorization" version="v2" available="true"/>
+      <service name="MNStorage" version="v2" available="true"/>
+      <service name="MNReplication" version="v2" available="true"/>
     </services>
     <synchronization>
       <schedule hour="*" mday="*" min="0/3" mon="*" sec="0" wday="?" year="*"/>

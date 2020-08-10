@@ -42,11 +42,11 @@
         <permission>changePermission</permission>
       </allow>
     </accessPolicy>
--   <replicationPolicy numberReplicas="0" replicationAllowed="false">
-?                                      ^                      ^^^^
+-   <replicationPolicy replicationAllowed="false" numberReplicas="0">
+?                                          ^^^^                   ^
 
-+   <replicationPolicy numberReplicas="9" replicationAllowed="true">
-?                                      ^                      ^^^
++   <replicationPolicy replicationAllowed="true" numberReplicas="9">
+?                                          ^^^                   ^
 
 -     <preferredMemberNode>mn_m</preferredMemberNode>
 -     <blockedMemberNode>mn_fv</blockedMemberNode>

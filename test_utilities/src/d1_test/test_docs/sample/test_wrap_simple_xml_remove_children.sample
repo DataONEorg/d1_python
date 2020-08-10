@@ -26,7 +26,7 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="3" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="3">
     </replicationPolicy>
   <archived>true</archived>
   <dateUploaded>1933-03-03T13:13:13.3333-11:33</dateUploaded>

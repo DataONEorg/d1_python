@@ -13,7 +13,7 @@
       <permission>read</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false"/>
+  <replicationPolicy replicationAllowed="false" numberReplicas="0"/>
   <obsoletes>obsoletes_pid</obsoletes>
   <obsoletedBy>obsoleted_by_pid</obsoletedBy>
   <archived>true</archived>

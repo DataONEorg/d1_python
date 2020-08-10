@@ -24,7 +24,7 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="3" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="3">
     <preferredMemberNode>node1</preferredMemberNode>
     <preferredMemberNode>node2</preferredMemberNode>
     <preferredMemberNode>node3</preferredMemberNode>

@@ -1,5 +1,5 @@
 <?xml version="1.0" ?>
-<ns1:objectList count="100" start="0" total="100" xmlns:ns1="http://ns.dataone.org/service/types/v1">
+<ns1:objectList xmlns:ns1="http://ns.dataone.org/service/types/v1" count="100" start="0" total="100">
   <objectInfo>
     <identifier>object#0000</identifier>
     <formatId>application/msword</formatId>

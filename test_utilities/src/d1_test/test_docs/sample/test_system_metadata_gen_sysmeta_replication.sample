@@ -13,7 +13,7 @@
       <permission>read</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="3" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="3">
     <preferredMemberNode>pref_mn1</preferredMemberNode>
     <preferredMemberNode>pref_mn2</preferredMemberNode>
     <preferredMemberNode>pref_mn3</preferredMemberNode>

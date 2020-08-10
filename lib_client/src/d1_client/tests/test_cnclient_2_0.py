@@ -33,6 +33,7 @@ import d1_client.cnclient_2_0
 import d1_test.d1_test_case
 import d1_test.instance_generator.sciobj
 import d1_test.mock_api.catch_all
+import requests
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestCNClient20")

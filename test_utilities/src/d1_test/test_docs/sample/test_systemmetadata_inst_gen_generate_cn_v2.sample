@@ -27,7 +27,7 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false">
+  <replicationPolicy replicationAllowed="false" numberReplicas="0">
     <preferredMemberNode>mn_m</preferredMemberNode>
     <preferredMemberNode>mn_rs</preferredMemberNode>
     <preferredMemberNode>mn_w</preferredMemberNode>

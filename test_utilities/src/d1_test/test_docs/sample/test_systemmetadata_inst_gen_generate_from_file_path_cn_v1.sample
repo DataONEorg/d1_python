@@ -22,7 +22,7 @@
       <permission>write</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="5" replicationAllowed="true">
+  <replicationPolicy replicationAllowed="true" numberReplicas="5">
     <preferredMemberNode>mn_sv</preferredMemberNode>
     <preferredMemberNode>mn_xp</preferredMemberNode>
   </replicationPolicy>

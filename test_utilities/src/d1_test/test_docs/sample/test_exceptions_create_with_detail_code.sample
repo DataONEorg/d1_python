@@ -1,2 +1,2 @@
 <?xml version="1.0" ?>
-<error detailCode="123" errorCode="500" name="ServiceFailure"/>
+<error name="ServiceFailure" errorCode="500" detailCode="123"/>

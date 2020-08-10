@@ -24,7 +24,7 @@
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy numberReplicas="0" replicationAllowed="false"/>
+  <replicationPolicy replicationAllowed="false" numberReplicas="0"/>
   <obsoletes>test_obsoletes_pid</obsoletes>
   <obsoletedBy>test_obsoleted_by</obsoletedBy>
   <archived>true</archived>
