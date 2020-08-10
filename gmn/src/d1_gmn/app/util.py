@@ -25,7 +25,7 @@ import traceback
 import d1_common
 import d1_common.const
 
-import django.contrib.staticfiles.templatetags.staticfiles
+import django.templatetags.static
 import django.http
 
 logger = logging.getLogger(__name__)
@@ -88,4 +88,5 @@ def create_http_echo_response(request):
 
 
 def get_static_path(rel_path):
-    return django.contrib.staticfiles.templatetags.staticfiles.static(rel_path)
+    return django.templatetags.static.static(rel_path)
+

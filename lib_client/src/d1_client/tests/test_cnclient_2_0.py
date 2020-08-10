@@ -96,7 +96,7 @@ class TestCNClient_2_0(d1_test.d1_test_case.D1TestCase):
                 "cert/cert_with_equivalents_invalid_serialization.pem"
             ),
         )
-        with pytest.raises(OpenSSL.SSL.Error):
+        with pytest.raises(requests.exceptions.SSLError):
             live_client.echoCredentials()
 
     # CNDiagnostic.echoSystemMetadata(session, sysmeta) → SystemMetadata
