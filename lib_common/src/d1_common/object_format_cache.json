@@ -332,7 +332,7 @@
       "property_list": []
     }
   },
-  "_last_refresh_timestamp": "2019-07-11 23:17:49.987001+00:00",
+  "_last_refresh_timestamp": "2020-08-03 05:34:18.485143+00:00",
   "anvl/erc-v02": {
     "extension": ".anvl",
     "format_name": "Kernel Metadata and Electronic Resource Citations (ERCs), 2010.05.13",
@@ -951,6 +951,33 @@
     "format_type": "DATA",
     "media_type": {
       "name": "application/xhtml+xml",
+      "property_list": []
+    }
+  },
+  "https://eml.ecoinformatics.org/eml-2.2.0": {
+    "extension": ".xml",
+    "format_name": "Ecological Metadata Language, version 2.2.0",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "text/xml",
+      "property_list": []
+    }
+  },
+  "https://purl.dataone.org/collections-1.0.0": {
+    "extension": ".xml",
+    "format_name": "Dataset collections v1.0.0",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "text/xml",
+      "property_list": []
+    }
+  },
+  "https://purl.dataone.org/portals-1.0.0": {
+    "extension": ".xml",
+    "format_name": "Dataset portals v1.0.0",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "text/xml",
       "property_list": []
     }
   },
