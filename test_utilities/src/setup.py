@@ -54,7 +54,7 @@ def main():
             "pytest-random-order >= 1.0.4",
             "pytest-xdist >= 1.29.0",
             "pyxb >= 1.2.6",
-            "rdflib >= 4.2.2",
+            "rdflib >= 5.0.0",
             "requests >= 2.22.0",
             "responses >= 0.10.6",
         ],

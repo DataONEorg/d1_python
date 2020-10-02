@@ -42,7 +42,7 @@ def main():
             "fusepy >= 3.0.1",
             "pyxb >= 1.2.6",
             "pyzotero >= 1.4.4",
-            "rdflib >= 4.2.2",
+            "rdflib >= 5.0.0",
             "requests >= 2.22.0",
         ],
         setup_requires=["setuptools_git >= 1.1"],

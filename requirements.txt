@@ -80,7 +80,7 @@ pytest==5.0.0
 python-dateutil==2.8.0
 python-xlib==0.25
 pytz==2019.1
-rdflib==4.2.2
+rdflib==5.0.0
 requests-toolbelt==0.9.1
 requests==2.22.0
 responses==0.10.6

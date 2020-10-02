@@ -43,7 +43,7 @@ def main():
             "PyJWT >= 1.7.1",
             "pyasn1 >= 0.4.5",
             "pyxb >= 1.2.6",
-            "rdflib >= 4.2.2",
+            "rdflib >= 5.0.0",
             "zipstream >= 1.1.4",
         ],
         setup_requires=["setuptools_git >= 1.1"],
