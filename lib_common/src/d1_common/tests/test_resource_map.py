@@ -465,3 +465,9 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
         ore.addResource("resource1_pid")
         ore.setAtLocation("resource1_pid", "scripts/data_cleaning")
         self.sample.assert_equals(ore, "set_at_location", mn_client_v2)
+
+    def test_1200(self, mn_client_v2):
+        """getObjectByPid()"""
+        ore = self._create()
+        u = ore.getObjectByPid("non_existing_pid")
+        assert u is None
