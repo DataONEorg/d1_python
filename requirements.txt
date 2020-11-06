@@ -32,7 +32,7 @@ click==7.1.2
 contextlib2==0.6.0.post1
 coverage==5.2.1
 coveralls==2.1.1
-cryptography==3.0
+cryptography==3.2
 decorator==4.4.2
 doc8==0.8.1
 docopt==0.6.2
