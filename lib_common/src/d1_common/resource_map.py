@@ -327,9 +327,11 @@ class ResourceMap(rdflib.ConjunctiveGraph):
       str : URIRef of the entry identified by ``pid``."""
         self._check_initialized()
         opid = rdflib.term.Literal(pid)
-        res = [o for o in self.subjects(predicate=DCTERMS.identifier, object=opid)]
-        if len(res):
+        try:
+            res = [o for o in self.subjects(predicate=DCTERMS.identifier, object=opid)]
             return res[0]
+        except IndexError:
+            raise ValueError('Failed to find the object, {pid}, in the resource map')
 
     def addResource(self, pid):
         """Add a resource to the Resource Map.

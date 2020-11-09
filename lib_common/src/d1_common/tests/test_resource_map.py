@@ -293,6 +293,8 @@ import io
 #
 import warnings
 
+import pytest
+
 import rdflib
 
 import d1_common.resource_map
@@ -469,5 +471,5 @@ class TestResourceMap(d1_test.d1_test_case.D1TestCase):
     def test_1200(self, mn_client_v2):
         """getObjectByPid()"""
         ore = self._create()
-        u = ore.getObjectByPid("non_existing_pid")
-        assert u is None
+        with pytest.raises(ValueError):
+            ore.getObjectByPid("non_existing_pid")
