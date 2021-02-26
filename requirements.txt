@@ -11,7 +11,7 @@ Pyment==0.3.3
 Pyzotero==1.4.16
 Sphinx==3.2.0
 Werkzeug==1.0.1
-aiohttp==3.6.2
+aiohttp==3.7.4
 alabaster==0.7.12
 apipkg==1.5
 appdirs==1.4.4
