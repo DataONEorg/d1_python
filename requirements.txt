@@ -55,7 +55,7 @@ iso8601==0.1.12
 isodate==0.6.0
 isort==5.3.2
 itsdangerous==1.1.0
-lxml==4.5.2
+lxml==4.6.3
 mock==4.0.2
 more-itertools==8.4.0
 multi-mechanize==1.2.0
