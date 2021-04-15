@@ -1,7 +1,7 @@
 language:
   python
 dist:
-  trusty
+  xenial
 sudo:
   required
 python:
