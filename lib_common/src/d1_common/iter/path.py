@@ -38,7 +38,7 @@ DEFAULT_EXCLUDE_GLOB_LIST = [
     ".pytest_cache/",
     "build/",
     "dist/",
-    "doc/",
+    # "doc/",
     "generated/",
     "migrations/",
     # Files

@@ -27,7 +27,7 @@ def main():
     # noinspection PyUnresolvedReferences
     setuptools.setup(
         name="dataone.doc",
-        version="3.4.6",
+        version='3.5.1',
         description="Documentation for the DataONE Python products",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -36,18 +36,18 @@ def main():
         packages=setuptools.find_packages(),
         include_package_data=True,
         install_requires=[
-            "dataone.cli >= 3.4.6",
-            "dataone.onedrive >= 3.4.6",
-            "dataone.dev >= 3.4.6",
-            "dataone.gmn >= 3.4.6",
-            "dataone.libclient >= 3.4.6",
-            "dataone.common >= 3.4.6",
-            "dataone.scimeta >= 3.4.6",
-            "dataone.test >= 3.4.6",
-            "dataone.util >= 3.4.6",
+            "dataone.cli >= 3.5.1",
+            "dataone.onedrive >= 3.5.1",
+            "dataone.dev >= 3.5.1",
+            "dataone.gmn >= 3.5.1",
+            "dataone.libclient >= 3.5.1",
+            "dataone.common >= 3.5.1",
+            "dataone.scimeta >= 3.5.1",
+            "dataone.test >= 3.5.1",
+            "dataone.util >= 3.5.1",
             #
-            'sphinx-argparse >=0.2.5',
-            'sphinx-better-theme >=0.1.5',
+            "sphinx-argparse >= 0.3.1",
+            "sphinx-better-theme >= 0.1.5",
         ],
         setup_requires=["setuptools_git >= 1.1"],
         classifiers=[

@@ -296,6 +296,33 @@
       "property_list": []
     }
   },
+  "CF-1.5": {
+    "extension": ".nc",
+    "format_name": "NetCDF Climate and Forecast Metadata Convention, version 1.5",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/netcdf",
+      "property_list": []
+    }
+  },
+  "CF-1.6": {
+    "extension": ".nc",
+    "format_name": "NetCDF Climate and Forecast Metadata Convention, version 1.6",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/netcdf",
+      "property_list": []
+    }
+  },
+  "CF-1.7": {
+    "extension": ".nc",
+    "format_name": "NetCDF Climate and Forecast Metadata Convention, version 1.7",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/netcdf",
+      "property_list": []
+    }
+  },
   "FGDC-STD-001-1998": {
     "extension": ".xml",
     "format_name": "Content Standard for Digital Geospatial Metadata, version 001-1998",
@@ -332,7 +359,7 @@
       "property_list": []
     }
   },
-  "_last_refresh_timestamp": "2020-08-03 05:34:18.485143+00:00",
+  "_last_refresh_timestamp": "2021-12-14 06:51:19.319169+00:00",
   "anvl/erc-v02": {
     "extension": ".anvl",
     "format_name": "Kernel Metadata and Electronic Resource Citations (ERCs), 2010.05.13",
@@ -411,6 +438,24 @@
     "format_type": "DATA",
     "media_type": {
       "name": null,
+      "property_list": []
+    }
+  },
+  "application/geo+json": {
+    "extension": ".json",
+    "format_name": "GeoJSON",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/geo+json",
+      "property_list": []
+    }
+  },
+  "application/geopackage+sqlite3": {
+    "extension": ".gpkg",
+    "format_name": "GeoPackage Encoding Standard (OGC) Format Family",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/geopackage+sqlite3",
       "property_list": []
     }
   },
@@ -495,6 +540,15 @@
       "property_list": []
     }
   },
+  "application/vnd.gdb+zip": {
+    "extension": ".zip",
+    "format_name": "Esri File Geodatabase (zipped)",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/vnd.gdb+zip",
+      "property_list": []
+    }
+  },
   "application/vnd.google-earth.kml+xml": {
     "extension": ".kml",
     "format_name": "Google Earth Keyhole Markup Language (KML)",
@@ -567,6 +621,15 @@
       "property_list": []
     }
   },
+  "application/vnd.shp+zip": {
+    "extension": ".zip",
+    "format_name": "Esri Shapefile (zipped)",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/vnd.shp+zip",
+      "property_list": []
+    }
+  },
   "application/x-bzip2": {
     "extension": ".zip",
     "format_name": "Bzip2 Compressed File",
@@ -612,6 +675,15 @@
       "property_list": []
     }
   },
+  "application/x-ipynb+json": {
+    "extension": ".ipynb",
+    "format_name": "Jupyter Notebook",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/x-ipynb+json",
+      "property_list": []
+    }
+  },
   "application/x-python": {
     "extension": ".py",
     "format_name": "Python programming language script",
@@ -627,6 +699,15 @@
     "format_type": "DATA",
     "media_type": {
       "name": "application/x-rar-compressed",
+      "property_list": []
+    }
+  },
+  "application/x-sh": {
+    "extension": ".sh",
+    "format_name": "Bourne shell script",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/x-sh",
       "property_list": []
     }
   },
@@ -813,7 +894,7 @@
   "http://www.cuahsi.org/waterML/1.0/": {
     "extension": ".xml",
     "format_name": "Water Markup Language, version 1.0",
-    "format_type": "METADATA",
+    "format_type": "DATA",
     "media_type": {
       "name": "text/xml",
       "property_list": []
@@ -821,8 +902,8 @@
   },
   "http://www.cuahsi.org/waterML/1.1/": {
     "extension": ".xml",
-    "format_name": "Water Markup Language, version 1.0",
-    "format_type": "METADATA",
+    "format_name": "Water Markup Language, version 1.1",
+    "format_type": "DATA",
     "media_type": {
       "name": "text/xml",
       "property_list": []
@@ -910,11 +991,11 @@
     }
   },
   "http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2": {
-    "extension": ".nc",
+    "extension": ".ncml",
     "format_name": "NetCDF Markup Language, version 2.2",
     "format_type": "METADATA",
     "media_type": {
-      "name": "application/netcdf",
+      "name": "application/ncML+xml",
       "property_list": []
     }
   },
@@ -954,6 +1035,24 @@
       "property_list": []
     }
   },
+  "https://doi.org/10.5063/schema/codemeta-1.0": {
+    "extension": ".json",
+    "format_name": "CodeMeta, version 1.0",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/ld+json",
+      "property_list": []
+    }
+  },
+  "https://doi.org/10.5063/schema/codemeta-2.0": {
+    "extension": ".json",
+    "format_name": "CodeMeta, version 2.0",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/ld+json",
+      "property_list": []
+    }
+  },
   "https://eml.ecoinformatics.org/eml-2.2.0": {
     "extension": ".xml",
     "format_name": "Ecological Metadata Language, version 2.2.0",
@@ -972,9 +1071,27 @@
       "property_list": []
     }
   },
+  "https://purl.dataone.org/collections-1.1.0": {
+    "extension": ".xml",
+    "format_name": "Dataset collections v1.1.0",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "text/xml",
+      "property_list": []
+    }
+  },
   "https://purl.dataone.org/portals-1.0.0": {
     "extension": ".xml",
     "format_name": "Dataset portals v1.0.0",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "text/xml",
+      "property_list": []
+    }
+  },
+  "https://purl.dataone.org/portals-1.1.0": {
+    "extension": ".xml",
+    "format_name": "Dataset portals v1.1.0",
     "format_type": "METADATA",
     "media_type": {
       "name": "text/xml",
@@ -987,6 +1104,24 @@
     "format_type": "DATA",
     "media_type": {
       "name": "image/bmp",
+      "property_list": []
+    }
+  },
+  "image/geotiff": {
+    "extension": ".tiff",
+    "format_name": "GeoTIFF",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "image/tiff",
+      "property_list": []
+    }
+  },
+  "image/geotiff+zip": {
+    "extension": ".zip",
+    "format_name": "GeoTIFF (zipped)",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "image/tiff+zip",
       "property_list": []
     }
   },
@@ -1071,12 +1206,30 @@
       "property_list": []
     }
   },
+  "netCDF-CF": {
+    "extension": ".nc",
+    "format_name": "NetCDF Climate and Forecast Metadata Convention",
+    "format_type": "DATA",
+    "media_type": {
+      "name": "application/netcdf",
+      "property_list": []
+    }
+  },
   "nexus/1997": {
     "extension": ".nxs",
     "format_name": "NEXUS File Format for Systematic Information",
     "format_type": "DATA",
     "media_type": {
       "name": "text/plain",
+      "property_list": []
+    }
+  },
+  "science-on-schema.org/Dataset;ld+json": {
+    "extension": ".jsonld",
+    "format_name": "JSON-LD metadata",
+    "format_type": "METADATA",
+    "media_type": {
+      "name": "application/ld+json",
       "property_list": []
     }
   },
@@ -1100,7 +1253,7 @@
   },
   "text/markdown": {
     "extension": ".md",
-    "format_name": "Markdown file (pandoc markdown compatible)",
+    "format_name": "Markdown file",
     "format_type": "DATA",
     "media_type": {
       "name": "text/markdown",
@@ -1145,7 +1298,7 @@
   },
   "text/x-rmarkdown": {
     "extension": ".Rmd",
-    "format_name": "R Markdown file (pandoc markdown compatible)",
+    "format_name": "R Markdown file",
     "format_type": "DATA",
     "media_type": {
       "name": "text/markdown",

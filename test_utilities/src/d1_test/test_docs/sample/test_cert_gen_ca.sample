@@ -1,0 +1,30 @@
+[
+  [
+    "Subject",
+    "localCA / dataone / local"
+  ],
+  [
+    "Issuer",
+    "localCA / dataone / local"
+  ],
+  [
+    "Not Valid Before",
+    "1999-01-01T00:00:00"
+  ],
+  [
+    "Not Valid After",
+    "2008-12-29T00:00:00"
+  ],
+  [
+    "Subject Alt Names",
+    "localhost"
+  ],
+  [
+    "CRL Distribution Points",
+    "<not found>"
+  ],
+  [
+    "Authority Access Location",
+    "<not found>"
+  ]
+]

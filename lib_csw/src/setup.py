@@ -27,7 +27,7 @@ def main():
     # noinspection PyUnresolvedReferences
     setuptools.setup(
         name="dataone.csw",
-        version='3.5.0',
+        version='3.5.1',
         description="DataONE OpenGIS Catalogue Service for the Web (CSW) Harvester",
         author="DataONE Project",
         author_email="developers@dataone.org",
@@ -36,9 +36,9 @@ def main():
         packages=setuptools.find_packages(),
         include_package_data=True,
         install_requires=[
-            "dataone.common >= 3.5.0",
-            "dataone.libclient >= 3.5.0",
-            "dataone.scimeta >= 3.5.0",
+            "dataone.common >= 3.5.1",
+            "dataone.libclient >= 3.5.1",
+            "dataone.scimeta >= 3.5.1",
             #
         ],
         setup_requires=["setuptools_git >= 1.1"],

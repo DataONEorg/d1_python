@@ -19,7 +19,7 @@
 import d1_common.utils.filesystem
 import d1_common.utils.ulog
 
-import django.conf.urls
+import django.urls
 import django.views.static
 
 import d1_gmn.app.views.external
@@ -41,14 +41,14 @@ urlpatterns = [
     # function, which checks the method and dispatches to the appropriate handler.
     # Tier 1: Core API (MNCore)
     # MNCore.ping() - GET /monitor/ping
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/monitor/ping/?$",
         d1_gmn.app.views.external.get_monitor_ping,
         kwargs={"allowed_method_list": ["GET"]},
         name="get_monitor_ping",
     ),
     # MNCore.getLogRecords() - GET /log
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/log/?$",
         d1_gmn.app.views.external.get_log,
         kwargs={"allowed_method_list": ["GET"]},
@@ -56,7 +56,7 @@ urlpatterns = [
     ),
     # MNCore.getCapabilities() - GET /node
     # Also available via Apache redirect from /
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/(?:node/?)?$",
         d1_gmn.app.views.external.get_node,
         kwargs={"allowed_method_list": ["GET"]},
@@ -64,21 +64,21 @@ urlpatterns = [
     ),
     # Tier 1: Read API (MNRead)
     # MNRead.get() - GET /object/{did}
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/object/(.+)$",
         d1_gmn.app.views.external.dispatch_object,
         kwargs={"allowed_method_list": ["GET", "HEAD", "PUT", "DELETE"]},
         name="dispatch_object",
     ),
     # MNRead.getSystemMetadata() - GET /meta/{did}
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/meta/(.+)$",
         d1_gmn.app.views.external.get_meta,
         kwargs={"allowed_method_list": ["GET"]},
         name="get_meta",
     ),
     # MNStorage.updateSystemMetadata() - PUT /meta
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v2/meta$",
         d1_gmn.app.views.external.put_meta,
         kwargs={"allowed_method_list": ["PUT"]},
@@ -87,28 +87,28 @@ urlpatterns = [
     # MNRead.describe() - HEAD /object/{did}
     # (handled by object dispatcher)
     # MNRead.getChecksum() - GET /checksum/{did}
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/checksum/(.+)$",
         d1_gmn.app.views.external.get_checksum,
         kwargs={"allowed_method_list": ["HEAD", "GET"]},
         name="get_checksum",
     ),
     # MNRead.listObjects() - GET /object
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/object/?$",
         d1_gmn.app.views.external.dispatch_object_list,
         kwargs={"allowed_method_list": ["GET", "POST"]},
         name="dispatch_object_list",
     ),
     # MNRead.synchronizationFailed() - POST /error
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/error/?$",
         d1_gmn.app.views.external.post_error,
         kwargs={"allowed_method_list": ["POST"]},
         name="post_error",
     ),
     # MNRead.getReplica() - GET /replica/{did}
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/replica/(.+)/?$",
         d1_gmn.app.views.external.get_replica,
         kwargs={"allowed_method_list": ["GET"]},
@@ -116,14 +116,14 @@ urlpatterns = [
     ),
     # Tier 2: Authorization API  (MNAuthorization)
     # MNAuthorization.isAuthorized() - GET /isAuthorized/{did}
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/isAuthorized/(.+)/?$",
         d1_gmn.app.views.external.get_is_authorized,
         kwargs={"allowed_method_list": ["GET"]},
         name="get_is_authorized",
     ),
     # MNStorage.systemMetadataChanged() - POST /refreshSystemMetadata/{did}
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/dirtySystemMetadata/?$",
         d1_gmn.app.views.external.post_refresh_system_metadata,
         kwargs={"allowed_method_list": ["POST"]},
@@ -135,7 +135,7 @@ urlpatterns = [
     # MNStorage.update() - PUT /object/{did}
     # (handled by object dispatcher)
     # MNStorage.generateIdentifier()
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/generate/?$",
         d1_gmn.app.views.external.post_generate_identifier,
         kwargs={"allowed_method_list": ["POST", "PUT"]},
@@ -144,7 +144,7 @@ urlpatterns = [
     # MNStorage.delete() - DELETE /object/{did}
     # (handled by object dispatcher)
     # MNStorage.archive() - PUT /archive/{did}
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/archive/(.+)/?$",
         d1_gmn.app.views.external.put_archive,
         kwargs={"allowed_method_list": ["delete", "PUT"]},
@@ -152,7 +152,7 @@ urlpatterns = [
     ),
     # Tier 4: Replication API (MNReplication)
     # MNReplication.replicate() - POST /replicate
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v[12]/replicate/?$",
         d1_gmn.app.views.external.post_replicate,
         kwargs={"allowed_method_list": ["POST"]},
@@ -160,7 +160,7 @@ urlpatterns = [
     ),
     # Package API
     # MNPackage.getPackage() - GET /package
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^v2/packages/(?P<package_type>.+)/(?P<pid>.+)/?$",
         d1_gmn.app.views.get_package.get_package,
         kwargs={"allowed_method_list": ["GET"]},
@@ -170,25 +170,25 @@ urlpatterns = [
     # Web UI
     #
     # Redirect / to /home
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^$",
         d1_gmn.app.views.internal.root,
         kwargs={"allowed_method_list": ["GET"]},
         name="root",
     ),
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^home/?$",
         d1_gmn.app.views.internal.home,
         kwargs={"allowed_method_list": ["GET"]},
         name="home",
     ),
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^templates/home.xsl$",
         d1_gmn.app.views.internal.home_xslt,
         kwargs={"allowed_method_list": ["GET"]},
         name="home_xslt",
     ),
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^templates/clipboard/(.+)/?$",
         d1_gmn.app.views.internal.clipboard,
         kwargs={"allowed_method_list": ["GET"]},
@@ -197,19 +197,19 @@ urlpatterns = [
     #
     # GMN vendor specific extensions
     #
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^gmn/object/?$",
         d1_gmn.app.views.gmn.get_object_list_json,
         kwargs={"allowed_method_list": ["GET"]},
         name="get_object_list_json",
     ),
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^gmn/echo/session/?$",
         d1_gmn.app.views.gmn.echo_session,
         kwargs={"allowed_method_list": ["GET"]},
         name="echo_session",
     ),
-    django.conf.urls.url(
+    django.urls.re_path(
         r"^gmn/echo/request/?$",
         d1_gmn.app.views.gmn.echo_request,
         kwargs={"allowed_method_list": ["GET"]},
@@ -219,7 +219,7 @@ urlpatterns = [
 
 if django.conf.settings.STATIC_SERVER:
     urlpatterns.append(
-        django.conf.urls.url(
+        django.urls.re_path(
             r"^static/(?P<path>.*)$",
             django.views.static.serve,
             kwargs={
