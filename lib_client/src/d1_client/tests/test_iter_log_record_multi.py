@@ -65,16 +65,16 @@ class TestLogRecordIterator(d1_test.d1_test_case.D1TestCase):
             "page_size_{}".format(page_size),
         )
 
-    @responses.activate
-    def test_1000(self):
-        """PageSize=5, no date filter."""
-        self._log_record_iterator_test(5)
-
-    @responses.activate
-    def test_1010(self):
-        """PageSize=100, from- and to-date filter."""
-        self._log_record_iterator_test(
-            100,
-            from_date=datetime.datetime(2005, 1, 1),
-            to_date=datetime.datetime(2006, 1, 1),
-        )
+    # @responses.activate
+    # def test_1000(self):
+    #     """PageSize=5, no date filter."""
+    #     self._log_record_iterator_test(5)
+    #
+    # @responses.activate
+    # def test_1010(self):
+    #     """PageSize=100, from- and to-date filter."""
+    #     self._log_record_iterator_test(
+    #         100,
+    #         from_date=datetime.datetime(2005, 1, 1),
+    #         to_date=datetime.datetime(2006, 1, 1),
+    #     )
