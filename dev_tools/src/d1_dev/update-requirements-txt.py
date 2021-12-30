@@ -4,9 +4,11 @@ import os
 import re
 import shutil
 
-import pip._internal.utils.misc
-
+# import pip._internal.utils.misc
+import importlib.metadata
 import d1_dev.util
+import pkg_resources
+
 
 REQUIREMENTS_FILENAME = "requirements.txt"
 
@@ -40,22 +42,20 @@ def main():
 
 def get_reqs():
     req_list = []
-    # noinspection PyProtectedMember
-    for package_dist in pip._internal.utils.misc.get_installed_distributions(
-        local_only=True
-    ):
-        if not is_filtered_package(package_dist.project_name):
+    for package_dist in pkg_resources.working_set:
+        package_name = str(package_dist).split(' ')[0]
+        if not is_filtered_package(package_name):
             req_str = str(package_dist.as_requirement())
             req_list.append(req_str)
     return req_list
 
 
-def is_filtered_package(project_name):
+def is_filtered_package(package_name):
     for filter_rx in PACKAGE_EXCLUDE_REGEX_LIST:
-        if re.match(filter_rx, project_name, re.IGNORECASE):
-            print("Filtered: {}".format(project_name, filter_rx))
+        if re.match(filter_rx, package_name, re.IGNORECASE):
+            print("Filtered: {}".format(package_name, filter_rx))
             return True
-    print("Included: {}".format(project_name))
+    print("Included: {}".format(package_name))
     return False
 
 
