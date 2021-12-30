@@ -65,7 +65,7 @@ path-and-address==2.0.1
 pathlib==1.0.1
 pathspec==0.8.0
 pbr==5.4.5
-pip==20.2.1
+pip==21.1
 pipdeptree==1.0.0
 pluggy==0.13.1
 pockets==0.9.1
