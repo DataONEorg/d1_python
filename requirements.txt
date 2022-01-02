@@ -115,7 +115,7 @@ pockets==0.9.1
 posix-ipc==1.0.5
 prompt-toolkit==3.0.24
 psutil==5.9.0
-psycopg2-binary==2.9.3
+psycopg2==2.9.3
 ptyprocess==0.7.0
 py==1.11.0
 pyOpenSSL==21.0.0

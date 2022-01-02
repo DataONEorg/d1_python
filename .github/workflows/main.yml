@@ -2,7 +2,7 @@ name: DataONE Python Stack CI
 on: push
 
 jobs:
-  tests:
+  build:
     runs-on: ubuntu-latest
 
     env:
@@ -10,12 +10,25 @@ jobs:
       DJANGO_SETTINGS_MODULE: d1_gmn.settings_test
       PYTHONPATH: ${{ github.workspace }}
 
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: github_actions
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-python@v2
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
         with:
-          python-version: '3.8'
-          architecture: 'x64'
+          python-version: 3.8
+          architecture: x64
 
       - name: Install packaged deps
         run: |
@@ -35,30 +48,30 @@ jobs:
             python3-gi \
             python3-gi-cairo
 
-
       - name: Start Postgres
         run: |
           sudo pg_ctlcluster 12 main start
 
       - name: Prepare Python env
         run: |
-          pip install --upgrade pip setuptools wheel
-          pip install -r ./requirements.txt
+          python -m pip install --upgrade pip setuptools wheel
+          python -m pip install -r ./requirements.txt
 
-      - name: Dump environment (for troubleshooting)
+      - name: Dump OS environment (for troubleshooting)
         run: |
           pwd
           ls -l
           python --version
-          python ./dev_tools/src/d1_dev/syspath.py
-          pip freeze
-          pip check || true
-          # pytest --version
 
       - name: Prepare d1_python environment
         run: |
           python ./dev_tools/src/d1_dev/setup-all.py --root . develop
           python ./dev_tools/src/d1_dev/syspath.py
+
+      - name: Dump Python environment (for troubleshooting)
+        run: |
+          # python -m pip freeze
+          python -m pip check || true
 
       - name: Create GMN database from fixture
         run: |
