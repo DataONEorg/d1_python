@@ -143,7 +143,13 @@ def postgres_db_exists(db_name):
 
 def run_postgres_sql(db, sql):
     try:
-        conn = psycopg2.connect(database=db)
+        conn = psycopg2.connect(
+            dbname='postgres',
+            user='postgres',
+            password='postgres',
+            host='postgres',
+            port=5432,
+        )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
         cur.execute(sql)
