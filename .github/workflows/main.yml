@@ -10,16 +10,25 @@ jobs:
       DJANGO_SETTINGS_MODULE: d1_gmn.settings_test
       PYTHONPATH: ${{ github.workspace }}
 
+    # Service containers to run with `container-job`
     services:
+      # Label used to access the service container
       postgres:
+        # Docker Hub image
         image: postgres:latest
+        # Provide the password for postgres
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: github_actions
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
         ports:
           - 5432:5432
-        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - uses: actions/checkout@v2
@@ -50,9 +59,8 @@ jobs:
 
       - name: Start PostgreSQL
         run: |
-          ls -al /tmp
-          sudo service postgresql start
-          sudo ln -s /tmp/.s.PGSQL.5432 /var/run/postgresql/.s.PGSQL.5432
+          # sudo service postgresql start
+          # sudo ln -s /tmp/.s.PGSQL.5432 /var/run/postgresql/.s.PGSQL.5432
           # sudo -u postgres createuser --superuser "$USER"
           # sudo pg_ctlcluster 12 main start
 
