@@ -62,7 +62,7 @@ def main():
         d1_gmn.tests.gmn_test_case.MOCK_GMN_BASE_URL
     )
 
-    db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key() + '_test'
+    db_name = d1_gmn.tests.gmn_test_case.django_get_db_name_by_key() + '_template'
     d1_gmn.tests.gmn_test_case.postgres_drop_if_exists(db_name)
     d1_gmn.tests.gmn_test_case.postgres_create_blank(db_name)
     d1_gmn.tests.gmn_test_case.django_migrate()
