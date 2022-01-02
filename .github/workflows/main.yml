@@ -1,0 +1,69 @@
+name: EZID CI
+on: push
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    env:
+      IS_CI: 1
+      DJANGO_SETTINGS_MODULE: d1_gmn.settings_test
+      PYTHONPATH: ${{ github.workspace }}
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+          architecture: 'x64'
+
+      - name: Install packaged deps
+        run: |
+          sudo apt-get install --yes
+            libffi-dev \
+            librsync-dev \
+            libsmbclient-dev \
+            libssl-dev \
+            libxml2-dev \
+            libxslt1-dev \
+            openssl \
+            postgresql-10 \
+            postgresql-client-10 \
+            python-dev \
+            python-pip \
+            python3-dev \
+
+      - name: Prepare Python env
+        run: |
+          pip install --upgrade pip setuptools wheel
+          # pip install -r ./requirements-dev.txt
+          # Travis clones the project to $TRAVIS_BUILD_DIR and CDs there before running
+          # the scripts.
+          # pip install -r ./requirements.txt
+          # python ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
+
+      - name: Dump environment (for troubleshooting)
+        run: |
+          ls -l
+          python --version
+          python ./dev_tools/src/d1_dev/syspath.py
+          pip freeze
+          pip check || true
+          pytest --version
+
+      - name: Create GMN template database
+        run: |
+          python ./gmn/src/d1_gmn/tests/mk_db_template.py
+          # Run tests in parallel, using as many threads as are supported by Actions
+
+      - name: Run tests
+        run: |
+          # pytest -n auto --cov-config .coveragerc --cov-report=term --cov-report=xml
+          #  - pytest -n auto --cov-config .coveragerc --cov-report=term --cov-report=xml ./gmn/src/d1_gmn/tests/test_sysmeta_extract.py -k 1010
+          # --cov=.
+          # --cov-config=tox.ini
+          # --cov-config=coverage.cfg --cov-report=term --cov-report=xml
+
+      - name: Submit results to Coveralls.io
+        run: |
+          coveralls
