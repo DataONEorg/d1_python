@@ -101,7 +101,7 @@ DATABASES = {
         "NAME": "gmn_test_db_template",
         "USER": "",
         "PASSWORD": "",
-        "HOST": "localhost",
+        "HOST": "",
         "PORT": "",
         "ATOMIC_REQUESTS": False,
         "AUTOCOMMIT": False,

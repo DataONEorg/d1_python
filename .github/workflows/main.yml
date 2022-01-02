@@ -50,7 +50,9 @@ jobs:
 
       - name: Start PostgreSQL
         run: |
+          ls -al /tmp
           sudo service postgresql start
+          sudo ln -s /tmp/.s.PGSQL.5432 /var/run/postgresql/.s.PGSQL.5432
           # sudo -u postgres createuser --superuser "$USER"
           # sudo pg_ctlcluster 12 main start
 
