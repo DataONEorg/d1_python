@@ -48,9 +48,11 @@ jobs:
             python3-gi \
             python3-gi-cairo
 
-      - name: Start Postgres
+      - name: Start PostgreSQL
         run: |
-          sudo pg_ctlcluster 12 main start
+          sudo service postgresql start
+          # sudo -u postgres createuser --superuser "$USER"
+          # sudo pg_ctlcluster 12 main start
 
       - name: Prepare Python env
         run: |
@@ -73,7 +75,7 @@ jobs:
           # python -m pip freeze
           python -m pip check || true
 
-      - name: Create GMN database from fixture
+      - name: Create GMN database template
         run: |
           python ./gmn/src/d1_gmn/tests/mk_db_template.py
 
