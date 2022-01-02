@@ -22,6 +22,7 @@ jobs:
           sudo apt-get install --yes \
             gir1.2-gtk-3.0 \
             libffi-dev \
+            libgirepository1.0-dev \
             librsync-dev \
             libsmbclient-dev \
             libssl-dev \
