@@ -142,7 +142,7 @@ def postgres_db_exists(db_name):
 
 def run_postgres_sql(sql):
     try:
-        db_dict = django.conf.settings.DATABASE['default']
+        db_dict = django.conf.settings.DATABASES['default']
         conn = psycopg2.connect(
             dbname=db_dict['NAME'],
             user=db_dict['USER'],
