@@ -20,8 +20,6 @@
 # stuck with a bit of a messy import section that isort and flake8 don't like.
 # isort:skip_file
 
-import requests.exceptions
-import d1_gmn.tests.gmn_test_case
 import bz2
 import contextlib
 import copy
@@ -40,6 +38,7 @@ import django.conf
 import django.core.management
 import django.db
 import django.test
+import requests.exceptions
 
 os.environ["DJANGO_SETTINGS_MODULE"] = "d1_gmn.settings_test"
 django.setup()
@@ -119,19 +118,19 @@ def unique_sciobj_store(store_root_path):
 
 def postgres_drop_if_exists(db_name):
     logger.debug("Dropping DB if exists: db_name={}".format(db_name))
-    run_postgres_sql("postgres", "drop database if exists {};".format(db_name))
+    run_postgres_sql("drop database if exists {};".format(db_name))
 
 
 def postgres_create_blank(db_name):
     logger.debug("Creating blank DB. db_name={}".format(db_name))
-    run_postgres_sql("postgres", "create database {} encoding 'utf-8';".format(db_name))
+    run_postgres_sql("create database {} encoding 'utf-8';".format(db_name))
 
 
 def postgres_db_exists(db_name):
     logger.debug("Checking if DB exists. db_name={}".format(db_name))
     exists_bool = bool(
         run_postgres_sql(
-            "postgres", "select 1 from pg_database WHERE datname='{}'".format(db_name)
+            "select 1 from pg_database WHERE datname='{}'".format(db_name)
         )
     )
     if exists_bool:
@@ -143,12 +142,13 @@ def postgres_db_exists(db_name):
 
 def run_postgres_sql(db, sql):
     try:
+        db_dict = django.conf.settings.DATABASE['default']
         conn = psycopg2.connect(
-            dbname='postgres',
-            user='postgres',
-            password='postgres',
-            host='localhost',
-            port=5432,
+            dbname=db_dict['NAME'],
+            user=db_dict['USER'],
+            password=db_dict['PASSWORD'],
+            host=db_dict['HOST'],
+            port=db_dict['PORT'],
         )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
         cur = conn.cursor()
