@@ -33,7 +33,7 @@ jobs:
 
       - name: Start Postgres
         run: |
-          pg_ctlcluster 12 main start
+          sudo pg_ctlcluster 12 main start
 
       - name: Prepare Python env
         run: |
