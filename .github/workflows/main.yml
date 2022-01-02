@@ -47,7 +47,7 @@ jobs:
 
       - name: Dump environment (for troubleshooting)
         run: |
-          cwd
+          pwd
           ls -l
           python --version
           python ./dev_tools/src/d1_dev/syspath.py
