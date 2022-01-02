@@ -57,7 +57,7 @@ jobs:
 
       - name: Prepare d1_python environment
         run: |
-          python ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
+          python ./dev_tools/src/d1_dev/setup-all.py --root . develop
           python ./dev_tools/src/d1_dev/syspath.py
 
       - name: Create GMN database from fixture
