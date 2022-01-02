@@ -33,7 +33,6 @@ backports.zoneinfo==0.2.1
 baron==0.10.1
 beautifulsoup4==4.10.0
 bibtexparser==1.2.0
-black==21.12b0
 blessings==1.7
 bpython==0.22.1
 cached-property==1.5.2
