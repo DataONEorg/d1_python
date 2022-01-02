@@ -506,7 +506,6 @@ def postgres_create_from_template(new_db_name, template_db_name):
         )
     )
     d1_gmn.tests.gmn_test_case.run_postgres_sql(
-        "postgres",
         "create database {} template {};".format(new_db_name, template_db_name),
     )
 
