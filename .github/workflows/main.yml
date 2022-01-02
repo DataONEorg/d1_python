@@ -27,8 +27,8 @@ jobs:
             libxml2-dev \
             libxslt1-dev \
             openssl \
-            postgresql-10 \
-            postgresql-client-10 \
+            postgresql-12 \
+            postgresql-client-12 \
             python-dev \
             python-pip \
             python3-dev \
