@@ -1,4 +1,4 @@
-name: EZID CI
+name: DataONE Python Stack CI
 on: push
 
 jobs:
