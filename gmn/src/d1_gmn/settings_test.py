@@ -101,7 +101,7 @@ DATABASES = {
         "NAME": "github_actions",
         "USER": "postgres",
         "PASSWORD": "postgres",
-        "HOST": "postgres",
+        "HOST": "localhost",
         "PORT": "5432",
         "ATOMIC_REQUESTS": False,
         "AUTOCOMMIT": False,
