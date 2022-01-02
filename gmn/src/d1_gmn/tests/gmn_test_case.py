@@ -147,7 +147,7 @@ def run_postgres_sql(db, sql):
             dbname='postgres',
             user='postgres',
             password='postgres',
-            host='postgres',
+            host='localhost',
             port=5432,
         )
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT)
