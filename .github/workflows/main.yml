@@ -47,7 +47,7 @@ jobs:
           python ./dev_tools/src/d1_dev/syspath.py
           pip freeze
           pip check || true
-          pytest --version
+          # pytest --version
 
       - name: Create GMN template database
         run: |
@@ -64,4 +64,4 @@ jobs:
 
       - name: Submit results to Coveralls.io
         run: |
-          coveralls
+          # coveralls
