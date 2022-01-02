@@ -31,17 +31,18 @@ jobs:
             postgresql-client-12 \
             python3-dev
 
+      - name: Start Postgres
+        run: |
+          pg_ctlcluster 12 main start
+
       - name: Prepare Python env
         run: |
           pip install --upgrade pip setuptools wheel
-          # pip install -r ./requirements-dev.txt
-          # Travis clones the project to $TRAVIS_BUILD_DIR and CDs there before running
-          # the scripts.
-          # pip install -r ./requirements.txt
-          # python ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
+          pip install -r ./requirements-dev.txt
 
       - name: Dump environment (for troubleshooting)
         run: |
+          cwd
           ls -l
           python --version
           python ./dev_tools/src/d1_dev/syspath.py
@@ -49,18 +50,23 @@ jobs:
           pip check || true
           # pytest --version
 
+      - name: Prepare d1_python environment
+        run: |
+          python ./dev_tools/src/d1_dev/setup-all.py --root $TRAVIS_BUILD_DIR develop
+          python ./dev_tools/src/d1_dev/syspath.py
+
       - name: Create GMN template database
         run: |
           python ./gmn/src/d1_gmn/tests/mk_db_template.py
-          # Run tests in parallel, using as many threads as are supported by Actions
 
       - name: Run tests
         run: |
-          # pytest -n auto --cov-config .coveragerc --cov-report=term --cov-report=xml
-          #  - pytest -n auto --cov-config .coveragerc --cov-report=term --cov-report=xml ./gmn/src/d1_gmn/tests/test_sysmeta_extract.py -k 1010
-          # --cov=.
-          # --cov-config=tox.ini
-          # --cov-config=coverage.cfg --cov-report=term --cov-report=xml
+          # Run tests in parallel, using as many threads as are supported by Actions
+          # pytest -n auto --cov-config .coveragerc --cov-report=term --cov-report=xml \
+          # ./gmn/src/d1_gmn/tests/test_sysmeta_extract.py -k 1010 \
+          # --cov=. \
+          # --cov-config=tox.ini \
+          # --cov-config=coverage.cfg --cov-report=term --cov-report=xml \
 
       - name: Submit results to Coveralls.io
         run: |
