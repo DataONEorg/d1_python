@@ -84,7 +84,7 @@ isodate==0.6.1
 isort==5.10.1
 itsdangerous==2.0.1
 jedi==0.18.1
-joblib==1.1.0
+joblib==1.2.0
 kaptan==0.5.12
 lazy==1.4
 libcst==0.3.23
