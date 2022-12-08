@@ -37,7 +37,7 @@ black==21.12b0
 blessings==1.7
 bpython==0.22.1
 cached-property==1.5.2
-certifi==2021.10.8
+certifi==2022.12.7
 cffi==1.15.0
 chardet==4.0.0
 charset-normalizer==2.0.9
