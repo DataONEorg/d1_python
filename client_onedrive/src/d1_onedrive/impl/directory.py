@@ -19,7 +19,7 @@
 # limitations under the License.
 """Hold the list of files and folders for a directory."""
 
-import collections
+import collections.abc
 import logging
 
 log = logging.getLogger(__name__)
@@ -27,7 +27,7 @@ log = logging.getLogger(__name__)
 # log.setLevel(logging.DEBUG)
 
 
-class Directory(collections.MutableSequence):
+class Directory(collections.abc.MutableSequence):
     def __init__(self, init_list=None, disable_cache=False):
         self._list = []
         if init_list is not None:

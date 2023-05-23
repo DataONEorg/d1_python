@@ -18,7 +18,8 @@
 
 import logging
 
-import cryptography.hazmat.backends.openssl.x509
+import cryptography.x509.base
+# import cryptography.hazmat.backends.openssl.x509
 import freezegun
 
 import d1_common.cert.subjects
@@ -41,9 +42,7 @@ class TestCert(d1_test.d1_test_case.D1TestCase):
         cert_obj = d1_common.cert.x509.deserialize_pem(
             self.cert_simple_subject_info_pem
         )
-        assert isinstance(
-            cert_obj, cryptography.hazmat.backends.openssl.x509._Certificate
-        )
+        assert isinstance(cert_obj, cryptography.x509.base.Certificate)
         self.sample.assert_equals(cert_obj, "deserialize_pem_to_crypt_cert")
 
     def test_1010(self):

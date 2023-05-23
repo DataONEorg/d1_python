@@ -25,6 +25,7 @@ import base64
 import json
 import re
 
+import django.test
 import freezegun
 import pytest
 import requests
@@ -33,18 +34,17 @@ import responses
 import d1_common.type_conversions
 import d1_common.types.exceptions
 import d1_common.url
-
-import django.test
-
+import d1_gmn.app.proxy
 import d1_gmn.app.sciobj_store
 import d1_gmn.tests.gmn_test_case
-
 import d1_test.d1_test_case
 import d1_test.instance_generator.identifier
 import d1_test.mock_api.catch_all
+import d1_test.mock_api.get
+import d1_gmn.tests.gmn_mock
 
-AUTH_USERNAME = "Auth user name 123"
-AUTH_PASSWORD = "!@#%$45 343&^$% asfdAFSD"
+AUTH_USERNAME = "Auth user name"
+AUTH_PASSWORD = "Auth user password !@#$%"
 
 
 @d1_test.d1_test_case.reproducible_random_decorator("TestProxyMode")
@@ -60,9 +60,9 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
 
         """
 
-        # Use the catch_all echo to simulate a remote 3rd party server that holds
+        # Use the MNRead.get() mock API to simulate a remote 3rd party server that holds
         # proxy objects.
-        d1_test.mock_api.catch_all.add_callback(
+        d1_test.mock_api.get.add_callback(
             d1_test.d1_test_case.MOCK_REMOTE_BASE_URL
         )
 
@@ -81,9 +81,11 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
         # Check that object was not stored locally
         assert not d1_gmn.app.sciobj_store.is_existing_sciobj_file(pid)
 
-        # Retrieve the proxy object and return echo dict.
+        # Retrieve the proxy object and check it
         response = self.call_d1_client(client.get, pid)
-        return json.loads(response.text)
+        recv_sciobj_bytes = response.content
+        assert recv_sciobj_bytes == sciobj_bytes
+        return response
 
     def get_remote_sciobj_url(self, pid, client):
         return d1_common.url.joinPathElements(
@@ -105,9 +107,18 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
             d1_common.url.encodePathElement(pid),
         )
 
-    def get_remote_sciobj_bytes(self, pid):
-        sciobj_url = self.get_remote_sciobj_url(pid)
+    def get_remote_sciobj_bytes(self, pid, client):
+        sciobj_url = self.get_remote_sciobj_url(pid, client)
         return requests.get(sciobj_url).content
+
+    def decode_basic_auth(self, basic_auth_str):
+        """Decode a Basic Authentication header to (username, password)."""
+        m = re.match(r"Basic (.*)", basic_auth_str)
+        return (
+            base64.standard_b64decode(m.group(1).encode("utf-8"))
+            .decode("utf-8")
+            .split(":")
+        )
 
     def test_1000(self, gmn_client_v1_v2):
         """create(): Proxy mode: Create and retrieve proxy object, no redirect."""
@@ -135,10 +146,14 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     def test_1050(self):
         """get(): Authentication headers: Not passed to remote server when
-        AUTH_ENABLED=False."""
-        echo_dict = self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
-        assert "Authorization" not in echo_dict["header_dict"]
-        self.sample.assert_equals(echo_dict, "auth_headers_disabled")
+        AUTH_ENABLED=False.
+
+        We check this implicitly by checking that the method that generates the
+        Authentication header IS NOT called.
+        """
+        with d1_gmn.tests.gmn_mock.detect_proxy_auth() as m:
+            self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
+            assert m.call_count == 0
 
     @django.test.override_settings(
         PROXY_MODE_BASIC_AUTH_ENABLED=True,
@@ -148,15 +163,26 @@ class TestProxyMode(d1_gmn.tests.gmn_test_case.GMNTestCase):
     )
     def test_1060(self):
         """get(): Authentication headers: Passed to remote server when
-        AUTH_ENABLED=True."""
-        echo_dict = self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
-        assert "Authorization" in echo_dict["header_dict"]
-        m = re.match(r"Basic (.*)", echo_dict["header_dict"]["Authorization"])
-        auth_username, auth_password = (
-            base64.standard_b64decode(m.group(1).encode("utf-8"))
-            .decode("utf-8")
-            .split(":")
-        )
-        assert auth_username == AUTH_USERNAME
-        assert auth_password == AUTH_PASSWORD
-        self.sample.assert_equals(echo_dict, "auth_headers_enabled")
+        AUTH_ENABLED=True.
+
+        We check this implicitly by checking that the method that generates the
+        Authentication header IS called.
+        """
+        with d1_gmn.tests.gmn_mock.detect_proxy_auth() as m:
+            self.create_and_check_proxy_obj(self.client_v2, do_redirect=False)
+            assert m.call_count ==1
+
+    @django.test.override_settings(
+        PROXY_MODE_BASIC_AUTH_ENABLED=True,
+        PROXY_MODE_BASIC_AUTH_USERNAME=AUTH_USERNAME,
+        PROXY_MODE_BASIC_AUTH_PASSWORD=AUTH_PASSWORD,
+        PROXY_MODE_STREAM_TIMEOUT=30,
+    )
+    def test_1070(self):
+        """_mk_http_basic_auth_header(): Returns a correctly encoded basic auth
+        header value.
+        """
+        auth_str = d1_gmn.app.proxy._mk_http_basic_auth_header()["Authorization"]
+        user_str, pw_str = self.decode_basic_auth(auth_str)
+        assert user_str == AUTH_USERNAME
+        assert pw_str == AUTH_PASSWORD

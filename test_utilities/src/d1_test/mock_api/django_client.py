@@ -121,9 +121,10 @@ def _request_callback(request):
     # with mock.patch('django.test.RequestFactory._encode_data', return_value=data):
 
     django_client = django.test.Client()
+    method_str = request.method.lower()
     try:
         # Call GMN API endpoint
-        django_response = getattr(django_client, request.method.lower())(
+        django_response = getattr(django_client, method_str)(
             url_path,
             data=data,
             content_type=request.headers.get("Content-Type", "MISSING-CONTENT-TYPE"),
@@ -144,13 +145,21 @@ def _request_callback(request):
         raise
 
     django_response.setdefault("HTTP-Version", "HTTP/1.1")
-    return (
-        django_response.status_code,
-        list(django_response.items()),
-        b"".join(django_response.streaming_content)
-        if django_response.streaming
-        else django_response.content,
-    )
+
+    if method_str == "head":
+        return (
+            django_response.status_code,
+            list(django_response.items()),
+            None,
+        )
+    else:
+        return (
+            django_response.status_code,
+            list(django_response.items()),
+            b"".join(django_response.streaming_content)
+            if django_response.streaming
+            else django_response.content,
+        )
 
 
 def _headers_to_wsgi_env(header_dict):

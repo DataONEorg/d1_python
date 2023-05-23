@@ -18,7 +18,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Utilities for unit- and integration tests."""
-import collections
+import collections.abc
 import contextlib
 import datetime
 import gc
@@ -146,7 +146,7 @@ def reproducible_random_decorator(seed):
     def reproducible_random_decorator_real(cls_or_func):
         if inspect.isclass(cls_or_func):
             return _reproducible_random_class_decorator(cls_or_func, seed)
-        elif isinstance(cls_or_func, collections.Callable):
+        elif isinstance(cls_or_func, collections.abc.Callable):
             return _reproducible_random_func_decorator(cls_or_func, seed)
         else:
             raise ValueError("Decorated object must be a class or callable (function)")

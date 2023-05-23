@@ -5,7 +5,7 @@
     "Accept-Encoding": "gzip, deflate",
     "Connection": "keep-alive",
     "Content-Length": "0",
-    "User-Agent": "python-requests/2.22.0"
+    "User-Agent": "python-requests/2.30.0"
   },
   "query_dict": {}
 }

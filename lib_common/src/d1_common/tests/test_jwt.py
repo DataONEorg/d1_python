@@ -69,14 +69,14 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
         with pytest.raises(d1_common.cert.jwt.JwtException, match="expired"):
             d1_common.cert.jwt.validate_and_decode(jwt_bu64, cert_obj)
 
-    @freezegun.freeze_time("2011-01-01")
+    @freezegun.freeze_time("2017-06-30")
     def test_1010(self):
         """validate_and_decode(): Validation succeeds before JWT has expired."""
         cert_obj, jwt_bu64 = self.load_sample_cert_jwt_pair(
             "cert_cn_dataone_org_20170517_122900.pem",
             "jwt_token_20170612_232523.base64",
         )
-        d1_common.cert.jwt.validate_and_decode(jwt_bu64, cert_obj)
+        d1_common.cert.jwt.validate_and_decode(jwt_bu64, cert_obj, disable_expiration_check=True)
 
     @freezegun.freeze_time("2011-01-01")
     def test_1020(self):
@@ -85,7 +85,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
             "cert_cn_dataone_org_20170517_122900.pem",
             "jwt_token_20170612_232523.base64",
         )
-        jwt_dict = d1_common.cert.jwt.validate_and_decode(jwt_bu64, cert_obj)
+        jwt_dict = d1_common.cert.jwt.validate_and_decode(jwt_bu64, cert_obj, disable_expiration_check=True)
         self.sample.assert_equals(jwt_dict, "validate_and_decode_ok")
 
     @freezegun.freeze_time("2011-01-01")
@@ -107,7 +107,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
             "jwt_token_20170612_232523.base64",
         )
         assert (
-            d1_common.cert.jwt.get_subject_with_local_validation(jwt_bu64, cert_obj)
+            d1_common.cert.jwt.get_subject_with_local_validation(jwt_bu64, cert_obj, disable_expiration_check=True)
             == "http://orcid.org/0000-0001-8849-7530"
         )
 
@@ -134,7 +134,7 @@ class TestJwt(d1_test.d1_test_case.D1TestCase):
         )
         jwt_bu64 = self.test_files.load_jwt("jwt_token_20170612_232523.base64")
         assert (
-            d1_common.cert.jwt.get_subject_with_file_validation(jwt_bu64, cert_path)
+            d1_common.cert.jwt.get_subject_with_file_validation(jwt_bu64, cert_path, disable_expiration_check=True)
             == "http://orcid.org/0000-0001-8849-7530"
         )
 

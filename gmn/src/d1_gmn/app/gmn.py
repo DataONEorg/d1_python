@@ -23,7 +23,7 @@ settings.INSTALLED_APPS. This app must be set to load before the main GMN app by
 it above the main app in settings.INSTALLED_APPS.
 
 """
-import collections
+import collections.abc
 import functools
 import logging
 import mimetypes
@@ -145,7 +145,7 @@ class Startup(django.apps.AppConfig):
             else "True or False"
             if exp_type is bool
             else " or ".join(['"{}"'.format(s) for s in exp_type])
-            if isinstance(exp_type, collections.Iterable)
+            if isinstance(exp_type, collections.abc.Iterable)
             else "of type {}".format(exp_type.__name__)
         )
 

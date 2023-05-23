@@ -87,7 +87,7 @@ def _add_standard(response, sciobj_model):
 
 
 def _add_sciobj_standard(response, sciobj_model):
-    response["Content-Length"] = sciobj_model.size
+    response["Content-Length"] = str(sciobj_model.size)
     response["Content-Type"] = d1_gmn.app.object_format_cache.get_content_type(
         sciobj_model
     )

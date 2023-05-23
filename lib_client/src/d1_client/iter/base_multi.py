@@ -15,17 +15,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-"""Base for multiprocessed iterator of DataONE types."""
+
+"""Base for multiprocessing iterator of DataONE types."""
 
 import logging
 import multiprocessing
 import time
 
-import d1_common.const
-import d1_common.types.exceptions
-
 import d1_client.mnclient_1_2
 import d1_client.mnclient_2_0
+import d1_common.const
+import d1_common.types.exceptions
 
 # Defaults
 PAGE_SIZE = 1000
@@ -125,40 +125,36 @@ def _get_all_pages(
     client_arg_dict, page_arg_dict, item_proc_arg_dict, page_func, iter_func, item_proc_func, n_total
 ):
     logger.debug("Creating pool of {} workers".format(max_workers))
-    pool = multiprocessing.Pool(processes=max_workers)
+
     n_pages = (n_total - 1) // page_size + 1
 
-    for page_idx in range(n_pages):
-        if namespace.stop:
-            logger.debug("Received stop signal")
-            break
-        try:
-            pool.apply_async(
-                _get_page,
-                args=(
-                    queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
-                    client_arg_dict, page_arg_dict, item_proc_arg_dict, page_func,
-                    iter_func, item_proc_func
-                ),
-            )
-        except Exception as e:
-            logger.debug('Continuing after exception. error="{}"'.format(str(e)))
-        # The pool does not support a clean way to limit the number of queued tasks
-        # so we have to access the internals to check the queue size and wait if
-        # necessary.
-        while pool._taskqueue.qsize() > max_task_queue_size:
+    # See test_iter_sysmeta_multi.py for notes on 'spawn'.
+    with multiprocessing.get_context('spawn').Pool(processes=max_workers) as pool:
+        for page_idx in range(n_pages):
             if namespace.stop:
                 logger.debug("Received stop signal")
                 break
-            # logger.debug('_get_all_pages(): Waiting to queue task')
-            time.sleep(1)
+            try:
+                pool.apply_async(
+                    _get_page,
+                    args=(
+                        queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
+                        client_arg_dict, page_arg_dict, item_proc_arg_dict, page_func,
+                        iter_func, item_proc_func
+                    ),
+                )
+            except Exception as e:
+                logger.debug('Continuing after exception. error="{}"'.format(str(e)))
+            # The pool does not support a clean way to limit the number of queued tasks
+            # so we have to access the internals to check the queue size and wait if
+            # necessary.
+            while pool._taskqueue.qsize() > max_task_queue_size:
+                if namespace.stop:
+                    logger.debug("Received stop signal")
+                    break
+                logger.debug('_get_all_pages(): Waiting to queue task')
+                time.sleep(1)
 
-    # Workaround for workers hanging at exit.
-    # pool.terminate()
-    logger.debug("Preventing more tasks for being added to the pool")
-    pool.close()
-    logger.debug("Waiting for the workers to exit")
-    pool.join()
     logger.debug("Sending None sentinel value to stop the generator")
     queue.put(None)
 
@@ -167,6 +163,10 @@ def _get_page(
     queue, namespace, base_url, page_idx, n_pages, page_size, api_major,
     client_arg_dict, page_arg_dict, item_proc_arg_dict, page_func, iter_func, item_proc_func
 ):
+    # Because the worker processes are spawned, they do not inherit the logging, so we
+    # have to configure logging here in order to see log messages from the workers.
+    logging.basicConfig(level=logging.WARNING)
+
     logger.debug("Processing page. page_idx={} n_pages={}".format(page_idx, n_pages))
 
     if namespace.stop:
@@ -202,7 +202,6 @@ def _get_page(
         queue.put(item_proc_func(client, item_pyxb, item_proc_arg_dict))
 
     logger.debug("Completed page")
-
 
 def create_client(base_url=d1_common.const.URL_DATAONE_ROOT, api_major=2, client_arg_dict=None):
     client_arg_dict = client_arg_dict or {}

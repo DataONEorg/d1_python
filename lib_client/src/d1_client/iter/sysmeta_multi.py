@@ -16,14 +16,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import logging
+# import logging
 
 import d1_common.const
 import d1_common.xml
 
 import d1_client.iter.base_multi
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
 
 
 # fmt: off
@@ -66,13 +66,13 @@ def _iter_func(page_pyxb):
 
 def _item_proc_func(client, item_pyxb, get_system_metadata_arg_dict):
     pid = d1_common.xml.get_req_val(item_pyxb.identifier)
-    logger.debug('Retrieving System Metadata. pid="{}".format(pid)')
+    # logger.debug('Retrieving System Metadata. pid="{}"'.format(pid))
     try:
         return client.getSystemMetadata(pid, get_system_metadata_arg_dict)
     except Exception as e:
-        logger.error(
-            'Unable to retrieve System Metadata. pid="{}" error="{}"'.format(
-                pid, str(e)
-            )
-        )
-        return {"pid": pid, "error": e.name}
+        # logger.error(
+        #     'Unable to retrieve System Metadata. pid="{}" error="{}"'.format(
+        #         pid, str(e)
+        #     )
+        # )
+        return {"pid": pid, "error": str(e)}

@@ -30,8 +30,9 @@ import d1_client.iter.objectlist_multi
 import d1_test.d1_test_case
 import d1_test.mock_api.list_objects
 
+import pytest
 
-# @pytest.mark.skipif(sys.version_info <= (3, 6), reason="Requires >= Python 3.7")
+@pytest.mark.skip('See comment at top of file')
 @d1_test.d1_test_case.reproducible_random_decorator("TestIterObjectListIterator")
 @freezegun.freeze_time("1945-06-01")
 class TestIterObjectListIterator(d1_test.d1_test_case.D1TestCase):

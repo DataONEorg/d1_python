@@ -209,7 +209,7 @@ class ResponseHandler:
             response["Last-Modified"] = d1_common.date_time.normalize_datetime_to_utc(
                 content_modified_timestamp
             )
-        response["Content-Length"] = content_length
+        response["Content-Length"] = str(content_length)
         response["Content-Type"] = d1_common.const.CONTENT_TYPE_XML
 
     def _latest_date(self, query, datetime_field_name):

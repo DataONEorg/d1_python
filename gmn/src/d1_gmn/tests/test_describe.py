@@ -41,10 +41,6 @@ class TestDescribe(d1_gmn.tests.gmn_test_case.GMNTestCase):
                 gmn_client_v1_v2, sid=True
             )
             info_dict = gmn_client_v1_v2.describe(pid)
-            assert "dataone-formatid" in info_dict
-            assert "content-length" in info_dict
-            assert "last-modified" in info_dict
-            assert "dataone-checksum" in info_dict
             self.sample.assert_equals(info_dict, "valid_object", gmn_client_v1_v2)
 
     @responses.activate

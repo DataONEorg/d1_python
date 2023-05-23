@@ -17,15 +17,14 @@
 # limitations under the License.
 """Proxy mode."""
 import base64
-import urllib.parse
 
+import django.conf
 import requests
 
 import d1_common.const
 import d1_common.types
 import d1_common.types.exceptions
-
-import django.conf
+import d1_common.url
 
 
 def get_sciobj_iter_remote(url):

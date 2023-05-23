@@ -41,6 +41,8 @@ import d1_common.cert
 import d1_common.cert.x509
 import d1_common.date_time
 
+HUNDRED_YEARS_SEC = 60 * 60 * 24 * 365 * 100
+
 CLAIM_LIST = [
     # JSON key, title, is_date
     ("iss", "Issuer", False),
@@ -51,7 +53,9 @@ CLAIM_LIST = [
 ]
 
 
-def get_subject_with_local_validation(jwt_bu64, cert_obj):
+def get_subject_with_local_validation(
+    jwt_bu64, cert_obj, leeway_sec=0, disable_expiration_check=False
+):
     """Validate the JWT and return the subject it contains.
 
     - The JWT is validated by checking that it was signed with a CN certificate.
@@ -72,6 +76,13 @@ def get_subject_with_local_validation(jwt_bu64, cert_obj):
       cert_obj: cryptography.Certificate
         Public certificate used for signing the JWT (typically the CN cert).
 
+      leeway_sec: integer
+        Number of seconds to allow certificate to keep working before and after it has
+        expired. For use in tests and for working around inexact server clock.
+
+      disable_expiration_check: bool
+        True: Skip check for expired or not yet valid certificate.
+
     Returns:
       - On successful validation, the subject contained in the JWT is returned.
 
@@ -79,7 +90,9 @@ def get_subject_with_local_validation(jwt_bu64, cert_obj):
 
     """
     try:
-        jwt_dict = validate_and_decode(jwt_bu64, cert_obj)
+        jwt_dict = validate_and_decode(
+            jwt_bu64, cert_obj, leeway_sec, disable_expiration_check
+        )
     except JwtException as e:
         return log_jwt_bu64_info(logging.error, str(e), jwt_bu64)
     try:
@@ -88,7 +101,9 @@ def get_subject_with_local_validation(jwt_bu64, cert_obj):
         log_jwt_dict_info(logging.error, 'Missing "sub" key', jwt_dict)
 
 
-def get_subject_with_remote_validation(jwt_bu64, base_url):
+def get_subject_with_remote_validation(
+    jwt_bu64, base_url, leeway_sec=0, disable_expiration_check=False
+):
     """Same as get_subject_with_local_validation() except that the signing certificate
     is automatically downloaded from the CN.
 
@@ -98,14 +113,20 @@ def get_subject_with_remote_validation(jwt_bu64, base_url):
 
     """
     cert_obj = d1_common.cert.x509.download_as_obj(base_url)
-    return get_subject_with_local_validation(jwt_bu64, cert_obj)
+    return get_subject_with_local_validation(
+        jwt_bu64, cert_obj, leeway_sec, disable_expiration_check
+    )
 
 
-def get_subject_with_file_validation(jwt_bu64, cert_path):
+def get_subject_with_file_validation(
+    jwt_bu64, cert_path, leeway_sec=0, disable_expiration_check=False
+):
     """Same as get_subject_with_local_validation() except that the signing certificate
     is read from a local PEM file."""
     cert_obj = d1_common.cert.x509.deserialize_pem_file(cert_path)
-    return get_subject_with_local_validation(jwt_bu64, cert_obj)
+    return get_subject_with_local_validation(
+        jwt_bu64, cert_obj, leeway_sec, disable_expiration_check
+    )
 
 
 def get_subject_without_validation(jwt_bu64):
@@ -208,7 +229,9 @@ def get_jwt_dict(jwt_bu64):
     return jwt_dict
 
 
-def validate_and_decode(jwt_bu64, cert_obj):
+def validate_and_decode(
+    jwt_bu64, cert_obj, leeway_sec=0, disable_expiration_check=False
+):
     """Validate the JWT and return as a dict.
 
     - JWTs contain a set of values serialized to a JSON dict. This decodes the JWT and
@@ -221,16 +244,26 @@ def validate_and_decode(jwt_bu64, cert_obj):
       cert_obj: cryptography.Certificate
         Public certificate used for signing the JWT (typically the CN cert).
 
+      leeway_sec: integer
+        Number of seconds to allow certificate to keep working before and after it has
+        expired. For use in tests and for working around inexact server clock.
+
+      disable_expiration_check: bool
+        True: Skip check for expired or not yet valid certificate.
+
     Raises:
       JwtException: If validation fails.
 
     Returns:
       dict: Values embedded in the JWT.
-
     """
     try:
         return jwt.decode(
-            jwt_bu64.strip(), cert_obj.public_key(), algorithms=["RS256"], verify=True
+            jwt_bu64.strip(),
+            cert_obj.public_key(),
+            algorithms=["RS256"],
+            verify=True,
+            leeway=HUNDRED_YEARS_SEC if disable_expiration_check else leeway_sec,
         )
     except jwt.InvalidTokenError as e:
         raise JwtException('Signature is invalid. error="{}"'.format(str(e)))

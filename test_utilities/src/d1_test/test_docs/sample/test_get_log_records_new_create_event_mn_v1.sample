@@ -1,14 +1,14 @@
-pid: PID_fbvelwifflvu
+pid: PID_fflvuoqsjkbu
 sid: None
 sysmeta: <?xml version="1.0" ?>
 <ns1:systemMetadata xmlns:ns1="http://ns.dataone.org/service/types/v1">
-  <serialVersion>42</serialVersion>
-  <identifier>PID_fbvelwifflvu</identifier>
-  <formatId>CF-1.2</formatId>
-  <size>258</size>
-  <checksum algorithm="SHA-1">be78e42f0d4332c3e5c71269d89c59427b94eab2</checksum>
-  <submitter>subj_di</submitter>
-  <rightsHolder>subj_ht</rightsHolder>
+  <serialVersion>82</serialVersion>
+  <identifier>PID_fflvuoqsjkbu</identifier>
+  <formatId>application/msword</formatId>
+  <size>298</size>
+  <checksum algorithm="SHA-1">114258ce43197d50ceca327c54d555442842ebf7</checksum>
+  <submitter>subj_z</submitter>
+  <rightsHolder>subj_v</rightsHolder>
   <accessPolicy>
     <allow>
       <subject>subj1</subject>
@@ -32,39 +32,19 @@ sysmeta: <?xml version="1.0" ?>
       <permission>changePermission</permission>
     </allow>
   </accessPolicy>
-  <replicationPolicy replicationAllowed="false" numberReplicas="0">
-    <blockedMemberNode>mn_b</blockedMemberNode>
-    <blockedMemberNode>mn_o</blockedMemberNode>
+  <replicationPolicy replicationAllowed="true" numberReplicas="5">
+    <preferredMemberNode>mn_qu</preferredMemberNode>
+    <blockedMemberNode>mn_m</blockedMemberNode>
   </replicationPolicy>
   <archived>false</archived>
   <dateUploaded>2388-08-28T00:00:00</dateUploaded>
   <dateSysMetadataModified>2388-08-28T00:00:00</dateSysMetadataModified>
-  <originMemberNode>mn_ti</originMemberNode>
-  <authoritativeMemberNode>mn_bb</authoritativeMemberNode>
+  <originMemberNode>mn_g</originMemberNode>
+  <authoritativeMemberNode>mn_id</authoritativeMemberNode>
   <replica>
-    <replicaMemberNode>mn_gi</replicaMemberNode>
-    <replicationStatus>invalidated</replicationStatus>
-    <replicaVerified>2010-05-24T05:05:24Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_v</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2025-08-10T17:52:59Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_f</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2028-09-24T13:08:03Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_xf</replicaMemberNode>
-    <replicationStatus>failed</replicationStatus>
-    <replicaVerified>2036-10-02T00:41:59Z</replicaVerified>
-  </replica>
-  <replica>
-    <replicaMemberNode>mn_lt</replicaMemberNode>
+    <replicaMemberNode>mn_t</replicaMemberNode>
     <replicationStatus>requested</replicationStatus>
-    <replicaVerified>2058-11-17T13:22:33Z</replicaVerified>
+    <replicaVerified>2019-07-18T21:04:02Z</replicaVerified>
   </replica>
 </ns1:systemMetadata>
 create_event: <?xml version="1.0" ?>

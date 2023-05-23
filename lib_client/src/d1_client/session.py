@@ -366,6 +366,15 @@ class Session(object):
                 self.get_curl_command_line(method, url, **kwargs)
             )
         )
+        # This is a workaround for Requests attempting to buffer the non-existing body
+        # of a HEAD request. We want HEAD requests to include the Content-Length header,
+        # with length of the bytes that would be included in a GET request. But Requests
+        # ends up attempting to buffer the number of bytes declared by the
+        # Content-Length even in HEAD requests. With stream=True, Requests does not
+        # attempt to read the bytes automatically, expecting them to be read by the
+        # user.
+        if method.lower() == 'head':
+            kwargs['stream'] = True
         return self._session.request(method, url, **kwargs)
 
     def _prep_url(self, rest_path_list):

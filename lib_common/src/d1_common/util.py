@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """General utilities often needed by DataONE clients and servers."""
-import collections
+
 import collections.abc
 import contextlib
 import datetime

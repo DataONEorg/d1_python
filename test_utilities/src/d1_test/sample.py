@@ -319,6 +319,9 @@ def obj_to_pretty_str(o, no_clobber=False, no_wrap=False):
                     base64.standard_b64encode(o_).decode("ascii"),
                 ),
             )
+        # ORE and anything that has a serialize() method.
+        with ignore_exceptions():
+            return ".serialized", o.serialize()
         # Valid XML str
         with ignore_exceptions():
             return ".xml", d1_common.xml.reformat_to_pretty_xml(o_)

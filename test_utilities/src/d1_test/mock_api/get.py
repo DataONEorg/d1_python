@@ -39,7 +39,7 @@ of desired redirects. E.g.:
 client.get('<REDIRECT:303:3>pid')
 
 """
-
+import json
 import logging
 import re
 
@@ -88,7 +88,11 @@ def _request_callback(request):
     pid, sid, sciobj_bytes, sysmeta_pyxb = d1_test.instance_generator.sciobj.generate_reproducible_sciobj_with_sysmeta(
         client, pid
     )
-    header_dict = {"Content-Type": d1_common.const.CONTENT_TYPE_OCTET_STREAM}
+    header_dict = {
+        "Content-Type": d1_common.const.CONTENT_TYPE_OCTET_STREAM,
+        "Content-Length": str(len(sciobj_bytes)),
+        # "REQUEST-HEADERS": json.dumps(dict(request.headers)),
+    }
     return 200, header_dict, sciobj_bytes
 
 

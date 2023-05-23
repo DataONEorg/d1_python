@@ -80,8 +80,8 @@ Also implemented is a simple process for cleaning out unused sample files. Sampl
 
 When staging `test_docs`, stage the directory, so that new files are included, and deleted files get deleted on the server:
 
-    $ git add test_utilities/src/d1_test/test_docs
-    $ git commit -m 'Update samples'
+    git add test_utilities/src/d1_test/test_docs
+    git commit -m 'Update samples'
 
 #### DataONE Client to Django test adapter
 
@@ -133,11 +133,11 @@ pytest searches for and runs all tests below the current directory, so starting 
 
 To run a specific test module, add a path to the test module. E.g.:
 
-    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py
+    p d1_python/lib_common/src/d1_common/tests/test_checksum.py
  
 To run only a single test, add a filter on the test number. E.g.:
 
-    $ p d1_python/lib_common/src/d1_common/tests/test_checksum.py -k 1050
+    p d1_python/lib_common/src/d1_common/tests/test_checksum.py -k 1050
 
 #### Debugging tests with PyCharm
 
@@ -179,13 +179,13 @@ After changing any of the ORM classes in models.py, the database test fixture mu
 
 Generate the fixture file with:
 
-    $ ./gmn/src/d1_gmn/tests/mk_db_fixture.py
+    ./gmn/src/d1_gmn/tests/mk_db_fixture.py
 
 Fixtures can be loaded directly into the test database from the JSON files but it's much faster to keep an extra copy of the db as a template and create the test db as needed with Postgres' "create database from template" function. So we only load the fixtures into a template database and reuse the template. This is implemented in `./conftest.py`.
 
 Create template database from fixture with:
 
-    $ ./gmn/src/d1_gmn/tests/mk_db_template.py  
+    ./gmn/src/d1_gmn/tests/mk_db_template.py
 
 The template is reused between test runs.
 
@@ -194,14 +194,40 @@ Science object bytes are stored on disk, so they are not captured in the db fixt
 
 ### Setting up the development environment
 
-These instructions are tested on Linux Mint 18 and should also work on close derivatives.
+These instructions are tested on Linux Ubuntu 22.04 and should also work on close derivatives.
 
 #### Install packaged dependencies
 
     sudo bash -c '
       apt update
       apt -fy dist-upgrade
-      apt install -y python-setuptools libssl-dev postgresql postgresql-server-dev-all git python3-dev
+      apt install -y \
+        build-essential \
+        curl \
+        git \
+        libbz2-dev \
+        libffi-dev \
+        liblzma-dev \
+        libncursesw5-dev \
+        libreadline-dev \
+        librsync-dev \
+        libsmbclient-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        libxml2-dev \
+        libxmlsec1-dev \
+        libxslt1-dev \
+        llvm \
+        make \
+        openssl \
+        postgresql \
+        postgresql-server-dev-all \
+        python-setuptools \
+        python3-dev \
+        tk-dev \
+        wget \
+        xz-utils \
+        zlib1g-dev
     '
 
 #### Install pyenv
@@ -224,16 +250,16 @@ This is the environment all of d1_python's packaged Python dependencies will be 
 The `CONFIGURE_OPTS=--enable-shared` setting in the snippet is required for `mod_wsgi` to be able to run from the environment. 
 
     bash -c '
-        pyver=3.7.3
+        pyver=3.11.3
         CONFIGURE_OPTS=--enable-shared pyenv install ${pyver}
         pyenv virtualenv ${pyver} d1_python
         pyenv activate d1_python
-        pip install --upgrade pip
+        pip install --upgrade pip wheel
     '
 
-Select a location for the d1_python git repository. Changed this as needed.
+Select a location for the d1_python git repository. Change this as needed.
 
-    $ export d1path=~/dev/d1_python
+    export d1path=~/dev/d1_python
 
 Download the source from GitHub and install:
 
@@ -241,9 +267,65 @@ Download the source from GitHub and install:
         git clone https://github.com/DataONEorg/d1_python.git ${d1path}
         cd ${d1path}
         pyenv activate d1_python
-        sudo ./dev_tools/src/d1_dev/setup-all.py --root . develop
+        ./dev_tools/src/d1_dev/setup-all.py --root . develop
     '
-    
+
+#### Postgres
+
+    sudo apt install --yes postgresql
+
+Set the password of the postgres superuser account:
+
+    sudo passwd -d postgres
+    sudo su postgres -c passwd
+
+When prompted for the password, enter a new superuser password (and remember it :-).
+
+    sudo -u postgres createdb -E UTF8 gmn2
+    sudo -u postgres createuser --superuser `whoami`
+
+PyCharm (and other IntelliJ based platforms), are not able to connect to database with local (UNIX) sockets. Postgres' convenient "peer" authentication type only works over local sockets. A convenient workaround for this is to set Postgres up to trust local connections made over TCP/IP.
+
+    sudo editor /etc/postgresql/14/main/pg_hba.conf
+
+Add line:
+
+    host all all 127.0.0.1/32 trust
+
+A similar line for `scram-sha-256` may already be present and, if so, must be commented out:
+
+    # host all all 127.0.0.1/32 scram-sha-256
+
+#### Certificates
+
+Copy the OpenSSL config file from the repository.
+
+Make sure to update the `d1path` if necessary. 
+
+    sudo bash -c '
+        export d1path=~/dev/d1_python
+        mv /etc/ssl/openssl.cnf /etc/ssl/openssl.cnf.bak
+        cp ${d1path}/gmn/src/d1_gmn/deployment/openssl.cnf /etc/ssl/openssl.cnf
+    '
+
+#### Tests
+
+Run the tests and verify that they all pass:
+
+    pyenv activate d1_python
+    pip install pytest
+    pytest
+
+#### PyPI
+
+Set up credentials for working with the DataONE account on PyPI:
+
+Edit `~/.pypirc`:
+
+    [server-login]
+    username: dataone
+    password: <secret>
+
 #### Running GMN under Apache
 
 The setup above is sufficient for testing against GMN using HTTP and the Django test client, which is normally all that is required. However, if testing over HTTPS or in an environment that is closer to production is required, Apache can be set up to host GMN directly from its location in d1_python, using the d1_python virtual environment.
@@ -274,70 +356,23 @@ The APT package version of `mod_wsgi` has been compiled to work with the APT pac
         service apache2 restart
     '
 
-#### Postgres
-
-    $ sudo apt install --yes postgresql
-
-Set the password of the postgres superuser account:
-
-    $ sudo passwd -d postgres
-    $ sudo su postgres -c passwd
-
-When prompted for the password, enter a new superuser password (and remember it :-).
-
-    $ sudo -u postgres createdb -E UTF8 gmn2
-    $ sudo -u postgres createuser --superuser `whoami`
-
-PyCharm (and other IntelliJ based platforms), are not able to connect to database with local (UNIX) sockets. Postgres' convenient "peer" authentication type only works over local sockets. A convenient workaround for this is to set Postgres up to trust local connections made over TCP/IP.
-
-    $ sudo editor /etc/postgresql/10/main/pg_hba.conf
-
-Add line:
-
-    host all all 127.0.0.1/32 trust
-
-A similar line for MD5 may already be present and, if so, must be commented out.
-
-
-#### Certificates
-
-Run the following commands (all sections), except, change the location for openssl.cnf, so the line that copies it becomes:
-
-    $ sudo cp <your_d1_python_path>/d1_mn_generic/src/deployment/openssl.cnf .
-
-#### Tests
-
-Run the tests and verify that they all pass:
-
-    $ pytest
-
-#### PyPI
-
-Set up credentials for working with the DataONE account on PyPI:
-
-Edit `~/.pypirc`:
-
-    [server-login]
-    username: dataone
-    password: <secret>
-
 ### Creating a new release
 
 #### Updating dependencies
 
 Update all packages managed by pip:
 
-    $ ./dev_tools/src/d1_dev/pip-update-all.py
+    ./dev_tools/src/d1_dev/pip-update-all.py
 
 The DataONE Python stack specifies the versions that were tested in CI builds before release as the lowest required versions, and allows any later versions to be installed as part of regular maintenance.
 
 Check that there are no package version conflicts:
 
-    $ pip check 
+    pip check 
 
 As updating the versions in the `setup.py` files manually is time consuming and error prone, a script is included that automates the task. The script updates the version information for the dependencies in the `setup.py` files to match the versions of the currently installed dependencies. Update the `setup.py` files with:
 
-    $ ./dev_tools/src/d1_dev/src-sync-dependencies.py . <version>
+    ./dev_tools/src/d1_dev/src-sync-dependencies.py . <version>
 
 The `<version>` argument specifies what the version will be for the release. E.g., `"2.3.1"`. We keep the version numbers in sync between all of the packages in the d1_python git repository, so only one version string needs to be specified.
 
@@ -349,7 +384,7 @@ The `requirements.txt` file contains a list of packages and pinned versions that
 
 Update the `requirements.txt` file:
 
-    $ ./dev_tools/src/d1_dev/update-requirements-txt.py
+    ./dev_tools/src/d1_dev/update-requirements-txt.py
 
 
 Commit and push the changes, and check the build on Travis.
@@ -365,7 +400,7 @@ Create a Python venv to use for build and deploy:
 * The package `setup.py` scripts will run in this venv.
 * The venv can be reused indefinitely.
     
-    $ pyenv virtualenv "x.y.z" venv_build
+    pyenv virtualenv "x.y.z" venv_build
 
 * Where "x.y.z" is one of the versions listed in `pyenv versions`.
 * Pick a version that is close or the same as the version of Python used for testing on Travis.
@@ -374,9 +409,9 @@ Build and publish the packages:
 
 * Download current master from GitHub, create binary wheel packages and push the packages to PyPI.
 
-    $ pyenv activate venv_build
+    pyenv activate venv_build
     
-    $ bash -c '
+    bash -c '
       bdir=~/d1_python_build
       rm -rf ${bdir}
       pip install --upgrade pip
@@ -397,7 +432,6 @@ So it is not absolutely necessary to have a local build environment set up for t
 
 Clear out the installed libraries and reinstall:
 
-    $ sudo rm -rf /usr/local/lib/python2.7/dist-packages/d1_*
-    $ sudo nano /usr/local/lib/python2.7/dist-packages/easy-install.pth
+    sudo rm -rf /usr/local/lib/python2.7/dist-packages/d1_*
+    sudo nano /usr/local/lib/python2.7/dist-packages/easy-install.pth
     Remove all lines that are: dataone.*.egg and that are paths to your d1_python.
-

@@ -374,7 +374,9 @@ def download_as_der(
     # versions of Python and current best practices for protocol selection.
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(timeout_sec)
-    ssl_socket = ssl.wrap_socket(sock)
+    # ssl_socket = ssl.wrap_socket(sock)
+    ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+    ssl_socket = ssl_context.wrap_socket(sock)
     url_obj = urllib.parse.urlparse(base_url)
     ssl_socket.connect((url_obj.netloc, 443))
     return ssl_socket.getpeercert(binary_form=True)
@@ -746,7 +748,7 @@ def check_cert_type(cert):
 def rdn_escape(rdn_str):
     """Escape string for use as an RDN (RelativeDistinguishedName)
 
-    The following chars must be escaped in RDNs: , = + < > # ; \ "
+    The following chars must be escaped in RDNs: , = + < > # ; \\ "
 
     Args:
       rdn_str : str

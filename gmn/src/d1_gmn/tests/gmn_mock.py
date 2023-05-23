@@ -39,6 +39,7 @@ import d1_gmn.tests
 
 import d1_test.d1_test_case
 import d1_test.instance_generator.random_data
+import d1_gmn.app.proxy
 
 logger = logging.getLogger(__name__)
 
@@ -280,3 +281,10 @@ def disable_sciobj_store_write():
     logging.debug("ContextManager: disable_sciobj_store_write()")
     with mock.patch("d1_gmn.app.sciobj_store.open_sciobj_file_by_path"):
         yield os.devnull
+
+@contextlib.contextmanager
+def detect_proxy_auth():
+    """"""
+    logging.debug("ContextManager: detect_proxy_auth()")
+    with mock.patch("d1_gmn.app.proxy._mk_http_basic_auth_header") as m:
+        yield m

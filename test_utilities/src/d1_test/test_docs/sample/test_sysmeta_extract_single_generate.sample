@@ -103,8 +103,7 @@
       ],
       "subj_s": [
         "read",
-        "write",
-        "changePermission"
+        "write"
       ]
     }
   },

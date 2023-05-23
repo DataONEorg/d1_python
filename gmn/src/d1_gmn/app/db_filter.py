@@ -32,8 +32,8 @@ return: Filtered query
 return: QuerySet
 
 """
-
 import django.db.models
+import django.db.models.expressions
 
 import d1_gmn.app.auth
 import d1_gmn.app.did
@@ -67,16 +67,17 @@ def add_redact_annotation(request, query):
     associated SciObj.
 
     Subjects with only ``read`` access receive redacted records.
-
     """
+
     return query.annotate(
-        redact=django.db.models.Exists(
-            d1_gmn.app.models.Permission.objects.filter(
-                sciobj=django.db.models.OuterRef("sciobj"),
-                subject__subject__in=request.all_subjects_set,
-                level__gte=d1_gmn.app.auth.WRITE_LEVEL,
-            ),
-            negated=True,
+        redact=django.db.models.expressions.NegatedExpression(
+            django.db.models.expressions.Exists(
+                d1_gmn.app.models.Permission.objects.filter(
+                    sciobj=django.db.models.OuterRef("sciobj"),
+                    subject__subject__in=request.all_subjects_set,
+                    level__gte=d1_gmn.app.auth.WRITE_LEVEL,
+                )
+            )
         )
     )
 

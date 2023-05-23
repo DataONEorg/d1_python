@@ -375,7 +375,7 @@ class DataONEBaseClient(d1_client.session.Session):
 
     def _read_header_response(self, response):
         if self._status_is_200_ok(response):
-            self._read_response_to_content(response)
+            # There is no body to read in a HEAD request, so we return only the headers.
             return response.headers
         raise d1_common.types.exceptions.deserialize_from_headers(response.headers)
 
