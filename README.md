@@ -204,9 +204,12 @@ These instructions are tested on Linux Ubuntu 22.04 and should also work on clos
       apt install -y \
         build-essential \
         curl \
+        gir1.2-gtk-4.0
         git \
         libbz2-dev \
+        libcairo2-dev
         libffi-dev \
+        libgirepository1.0-dev
         liblzma-dev \
         libncursesw5-dev \
         libreadline-dev \
