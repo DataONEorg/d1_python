@@ -53,7 +53,7 @@ def main():
             "pytest-forked >= 1.6.0",
             "pytest-random-order >= 1.1.0",
             "pytest-xdist >= 3.3.1",
-            "pyxb >= 1.2.6",
+            "pyxb-x >= 1.2.6.1",
             "rdflib >= 6.3.2",
             "requests >= 2.31.0",
             "responses >= 0.23.1",

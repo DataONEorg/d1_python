@@ -46,7 +46,7 @@ def main():
             "iso8601 >= 1.1.0",
             "psycopg2-binary >= 2.9.6",
             "PyJWT >= 2.7.0",
-            "pyxb >= 1.2.6",
+            "pyxb-x >= 1.2.6.1",
             "requests >= 2.31.0",
         ],
         setup_requires=["setuptools_git >= 1.1"],

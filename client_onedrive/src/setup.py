@@ -40,7 +40,7 @@ def main():
             "dataone.libclient >= 3.5.2",
             #
             "fusepy >= 3.0.1",
-            "pyxb >= 1.2.6",
+            "pyxb-x >= 1.2.6.1",
             "pyzotero >= 1.5.9",
             "rdflib >= 6.3.2",
             "requests >= 2.31.0",

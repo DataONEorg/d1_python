@@ -42,7 +42,7 @@ def main():
             "iso8601 >= 1.1.0",
             "PyJWT >= 2.7.0",
             "pyasn1 >= 0.5.0",
-            "pyxb >= 1.2.6",
+            "pyxb-x >= 1.2.6.1",
             "rdflib >= 6.3.2",
             "zipstream >= 1.1.4",
         ],
