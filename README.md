@@ -198,40 +198,42 @@ These instructions are tested on Linux Ubuntu 22.04 and should also work on clos
 
 #### Install packaged dependencies
 
-    sudo bash -c '
-      apt update
-      apt -fy dist-upgrade
-      apt install -y \
-        build-essential \
-        curl \
-        gir1.2-gtk-4.0
-        git \
-        libbz2-dev \
-        libcairo2-dev
-        libffi-dev \
-        libgirepository1.0-dev
-        liblzma-dev \
-        libncursesw5-dev \
-        libreadline-dev \
-        librsync-dev \
-        libsmbclient-dev \
-        libsqlite3-dev \
-        libssl-dev \
-        libxml2-dev \
-        libxmlsec1-dev \
-        libxslt1-dev \
-        llvm \
-        make \
-        openssl \
-        postgresql \
-        postgresql-server-dev-all \
-        python-setuptools \
-        python3-dev \
-        tk-dev \
-        wget \
-        xz-utils \
-        zlib1g-dev
-    '
+```shell
+sudo bash -c '
+  apt update
+  apt -fy dist-upgrade
+  apt install -y \
+    build-essential \
+    curl \
+    gir1.2-gtk-4.0 \
+    git \
+    libbz2-dev \
+    libcairo2-dev \
+    libffi-dev \
+    libgirepository1.0-dev \
+    liblzma-dev \
+    libncursesw5-dev \
+    libreadline-dev \
+    librsync-dev \
+    libsmbclient-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
+    libxslt1-dev \
+    llvm \
+    make \
+    openssl \
+    postgresql \
+    postgresql-server-dev-all \
+    python-setuptools \
+    python3-dev \
+    tk-dev \
+    wget \
+    xz-utils \
+    zlib1g-dev
+'
+```
 
 #### Install pyenv
 
