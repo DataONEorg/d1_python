@@ -64,14 +64,14 @@ def home(request):
 
 
 def home_xslt(request):
-    return django.shortcuts.render_to_response(
-        "home.xsl", get_context_dict(), content_type=d1_common.const.CONTENT_TYPE_XSLT
+    return django.shortcuts.render(
+        request, "home.xsl", get_context_dict(), content_type=d1_common.const.CONTENT_TYPE_XSLT
     )
 
 
 def clipboard(request, did):
-    return django.shortcuts.render_to_response(
-        "clipboard.xhtml", {"did": did}, content_type=d1_common.const.CONTENT_TYPE_XHTML
+    return django.shortcuts.render(
+        request, "clipboard.xhtml", {"did": did}, content_type=d1_common.const.CONTENT_TYPE_XHTML
     )
 
 
