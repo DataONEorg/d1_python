@@ -187,7 +187,7 @@ body {
 
 .round-button, .nav-button {
   display: inline-block;
-  font-family: "helvetica", sans-serif;
+  font-family: arial, sans-serif;
   font-size: 0.7em;
   font-weight: bold;
   background: none;
