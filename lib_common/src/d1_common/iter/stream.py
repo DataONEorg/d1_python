@@ -46,8 +46,7 @@ class StreamIterator(object):
         return self
 
     def __exit__(self, type, value, traceback):
-        if hasattr(self._stream, "close"):
-            self._stream.close()
+        self.close()
 
     def __iter__(self):
         """Returns: Chunks of ``read()`` on stream.
@@ -59,6 +58,7 @@ class StreamIterator(object):
         while True:
             chunk_str = self._stream.read(self._chunk_size)
             if not chunk_str:
+                self.close()
                 break
             yield chunk_str
 
@@ -78,3 +78,7 @@ class StreamIterator(object):
             size = self._stream.seek(0, os.SEEK_END)
             self._stream.seek(cur_pos)
             return size
+
+    def close(self):
+        if hasattr(self._stream, "close"):
+            self._stream.close()

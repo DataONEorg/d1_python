@@ -255,10 +255,10 @@ def get_checksum(request, pid):
         )
 
     sciobj_model = d1_gmn.app.models.ScienceObject.objects.get(pid__did=pid)
-    with _get_sciobj_iter(sciobj_model) as sciobj_iter:
-        checksum_obj = d1_common.checksum.create_checksum_object_from_iterator(
-            sciobj_iter, algorithm
-        )
+    sciobj_iter = _get_sciobj_iter(sciobj_model)
+    checksum_obj = d1_common.checksum.create_checksum_object_from_iterator(
+        sciobj_iter, algorithm
+    )
     # Log the access of this object.
     # TODO: look into log type other than 'read'
     d1_gmn.app.event_log.log_read_event(pid, request)
