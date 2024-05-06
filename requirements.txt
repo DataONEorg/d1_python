@@ -73,7 +73,7 @@ isodate==0.6.1
 isort==5.12.0
 itsdangerous==2.1.2
 jedi==0.18.2
-Jinja2==3.1.2
+Jinja2==3.1.4
 joblib==1.2.0
 kaptan==0.5.12
 lazy==1.5
