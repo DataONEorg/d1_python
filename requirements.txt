@@ -38,7 +38,7 @@ cwcwidth==0.1.8
 ddt==1.6.0
 decorator==5.1.1
 Deprecated==1.2.13
-Django==4.2.1
+Django==4.2.14
 doc8==1.1.1
 docopt==0.6.2
 docutils==0.20.1
