@@ -28,7 +28,7 @@ import django.http
 import django.utils
 import django.utils.datastructures
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "d1_gmn.settings"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "d1_gmn.settings")
 
 # Add the service folder to the search path.
 sys.path.append(d1_common.utils.filesystem.abs_path("."))
