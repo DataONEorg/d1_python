@@ -41,7 +41,7 @@ import django.core.management
 import django.db
 import django.test
 
-os.environ["DJANGO_SETTINGS_MODULE"] = "d1_gmn.settings_test"
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "d1_gmn.settings_test")
 django.setup()
 
 import d1_test.test_files
