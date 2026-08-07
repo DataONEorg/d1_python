@@ -148,7 +148,7 @@ requests-toolbelt==1.0.0
 responses==0.23.1
 restructuredtext-lint==1.4.0
 rply==0.7.8
-scikit-learn==1.2.2
+scikit-learn==1.5.0
 scipy==1.10.1
 scprep==1.2.2
 sgmllib3k==1.0.0
