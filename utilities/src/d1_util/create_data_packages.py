@@ -171,30 +171,31 @@ def main():
 # once, for the MD5 checksum calculation.
 def create_science_object_on_member_node(client, file_path):
     pid = os.path.basename(file_path)
-    sci_obj = open(file_path, "rb").read()
+    with open(file_path, "rb") as fp:
+        sci_obj = fp.read()
     sys_meta = generate_system_metadata_for_science_object(
         pid, SYSMETA_FORMATID, sci_obj
     )
-    client.create(pid, io.StringIO(sci_obj), sys_meta)
+    client.create(pid, io.BytesIO(sci_obj), sys_meta)
 
 
 def create_package_on_member_node(client, files_in_group):
     package_pid = group_name(files_in_group[0])
     pids = [os.path.basename(p) for p in files_in_group]
-    resource_map = create_resource_map_for_pids(package_pid, pids)
+    resource_map = create_resource_map_for_pids(
+        package_pid, pids
+    ).serialize_to_transport()
     sys_meta = generate_system_metadata_for_science_object(
         package_pid, RESOURCE_MAP_FORMAT_ID, resource_map
     )
-    client.create(package_pid, io.StringIO(resource_map), sys_meta)
+    client.create(package_pid, io.BytesIO(resource_map), sys_meta)
 
 
 def create_resource_map_for_pids(package_pid, pids):
-    # Create a resource map generator that will generate resource maps that, by
-    # default, use the DataONE production environment for resolving the object
-    # URIs. To use the resource map generator in a test environment, pass the base
-    # url to the root CN in that environment in the dataone_root parameter.
-    resource_map_generator = d1_common.resource_map.ResourceMapGenerator()
-    return resource_map_generator.simple_generate_resource_map(
+    # Create a resource map that, by default, uses the DataONE production environment for resolving
+    # the object URIs. To use the resource map generator in a test environment, pass the base url to
+    # the root CN in that environment in the dataone_root parameter.
+    return d1_common.resource_map.createSimpleResourceMap(
         package_pid, pids[0], pids[1:]
     )
 
